@@ -1,0 +1,216 @@
+"use client";
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, Bell, LogOut, User as UserIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/useAuthStore";
+import { roleLabels, roleColors } from "@/lib/rbac";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { SearchResults, useSearchResults } from "@/components/layout/search-results";
+
+export function Topbar() {
+    const { user, notifications, logout, markNotificationRead } = useAuthStore();
+    const [showSearch, setShowSearch] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [activeIndex, setActiveIndex] = useState(-1);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const unreadCount = notifications.filter((n) => !n.read).length;
+    const router = useRouter();
+
+    const results = useSearchResults(searchQuery, user?.role ?? "employee");
+
+    const closeSearch = useCallback(() => {
+        setShowSearch(false);
+        setSearchQuery("");
+        setActiveIndex(-1);
+    }, []);
+
+    // ⌘K global shortcut
+    useEffect(() => {
+        const handler = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+                e.preventDefault();
+                setShowSearch(true);
+                setTimeout(() => inputRef.current?.focus(), 50);
+            }
+            if (e.key === "Escape" && showSearch) {
+                closeSearch();
+            }
+        };
+        window.addEventListener("keydown", handler);
+        return () => window.removeEventListener("keydown", handler);
+    }, [showSearch, closeSearch]);
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setActiveIndex((i) => Math.min(i + 1, results.length - 1));
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setActiveIndex((i) => Math.max(i - 1, 0));
+        } else if (e.key === "Enter" && activeIndex >= 0 && results[activeIndex]) {
+            e.preventDefault();
+            router.push(results[activeIndex].href);
+            closeSearch();
+        } else if (e.key === "Escape") {
+            closeSearch();
+        }
+    };
+
+    if (!user) return null;
+
+    const handleLogout = () => {
+        logout();
+        router.push("/login");
+    };
+
+    return (
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-white/80 backdrop-blur-xl px-6">
+            {/* Left: Search */}
+            <div className="flex items-center gap-3 flex-1">
+                <AnimatePresence mode="wait">
+                    {showSearch ? (
+                        <motion.div
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: 380, opacity: 1 }}
+                            exit={{ width: 0, opacity: 0 }}
+                            className="relative"
+                        >
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
+                            <Input
+                                ref={inputRef}
+                                placeholder="Search projects, tasks, users..."
+                                className="pl-9 bg-[#f1f5f9] border-none focus-visible:ring-1 focus-visible:ring-[#2568C1]"
+                                autoFocus
+                                value={searchQuery}
+                                onChange={(e) => { setSearchQuery(e.target.value); setActiveIndex(-1); }}
+                                onKeyDown={handleKeyDown}
+                                onBlur={() => {
+                                    // Small delay to allow click on results
+                                    setTimeout(closeSearch, 150);
+                                }}
+                            />
+                            <AnimatePresence>
+                                {searchQuery.trim().length >= 2 && (
+                                    <SearchResults
+                                        query={searchQuery}
+                                        role={user.role}
+                                        activeIndex={activeIndex}
+                                        onSelect={closeSearch}
+                                    />
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+                    ) : (
+                        <Button variant="ghost" size="sm" onClick={() => setShowSearch(true)} className="gap-2 text-muted-foreground">
+                            <Search className="h-4 w-4" />
+                            <span className="text-xs hidden md:inline">Search...</span>
+                            <kbd className="hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 text-[10px] font-medium text-muted-foreground">
+                                ⌘K
+                            </kbd>
+                        </Button>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Right: Actions */}
+            <div className="flex items-center gap-2">
+                {/* Role indicator */}
+                <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#f1f5f9] text-xs font-medium text-[#64748b]">
+                    <div className={cn("h-2 w-2 rounded-full", roleColors[user.role])} />
+                    {roleLabels[user.role]}
+                </div>
+
+                {/* Notifications */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="relative h-9 w-9">
+                            <Bell className="h-4 w-4" />
+                            {unreadCount > 0 && (
+                                <motion.span
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white font-bold"
+                                >
+                                    {unreadCount}
+                                </motion.span>
+                            )}
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-80">
+                        <DropdownMenuLabel className="flex items-center justify-between">
+                            <span>Notifications</span>
+                            <Badge variant="secondary" className="text-xs">{unreadCount} new</Badge>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <ScrollArea className="h-64">
+                            {notifications.map((notif) => (
+                                <DropdownMenuItem
+                                    key={notif.id}
+                                    onClick={() => markNotificationRead(notif.id)}
+                                    className={cn("flex flex-col items-start gap-1 py-3 px-3 cursor-pointer", !notif.read && "bg-[#2568C1]/5")}
+                                >
+                                    <div className="flex items-center gap-2 w-full">
+                                        <span className={cn(
+                                            "h-2 w-2 rounded-full shrink-0",
+                                            notif.type === "ai" && "bg-[#2568C1]",
+                                            notif.type === "warning" && "bg-amber-500",
+                                            notif.type === "error" && "bg-red-500",
+                                            notif.type === "success" && "bg-emerald-500",
+                                            notif.type === "info" && "bg-blue-500",
+                                        )} />
+                                        <span className="text-xs font-medium truncate">{notif.title}</span>
+                                        {!notif.read && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#2568C1]" />}
+                                    </div>
+                                    <span className="text-[11px] text-muted-foreground pl-4">{notif.message}</span>
+                                </DropdownMenuItem>
+                            ))}
+                        </ScrollArea>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+                {/* User Menu */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="gap-2 ml-1">
+                            <Avatar className="h-7 w-7">
+                                <AvatarFallback className="text-xs bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                    {user.name.split(" ").map((n) => n[0]).join("")}
+                                </AvatarFallback>
+                            </Avatar>
+                            <span className="hidden md:inline text-xs font-medium">{user.name}</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuLabel className="text-xs">
+                            <div>{user.name}</div>
+                            <div className="text-muted-foreground font-normal">{user.email}</div>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="gap-2">
+                            <UserIcon className="h-3 w-3" /> Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="gap-2 text-red-500" onClick={handleLogout}>
+                            <LogOut className="h-3 w-3" /> Log Out
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        </header>
+    );
+}
