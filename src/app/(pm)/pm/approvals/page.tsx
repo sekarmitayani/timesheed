@@ -1,168 +1,209 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Inbox, Sparkles, CheckCircle2, XCircle, ChevronDown, AlertTriangle } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PageHeader, RiskBadge, AIConfidence } from "@/components/ai/ai-components";
-import { useDataStore } from "@/store/useDataStore";
-import { detectAnomaly } from "@/lib/ai/anomaly";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PageHeader } from "@/components/ai/ai-components";
+import { Inbox, CheckCircle2, XCircle, Loader2, CheckCheck, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
+import { approvalService, ReviewTimesheetPayload } from "@/lib/services/approval-service";
+import { TimesheetLog } from "@/lib/services/timesheet-service";
 
 export default function ApprovalsPage() {
-    const [filter, setFilter] = useState<"all" | "flagged">("all");
-    const timesheets = useDataStore((s) => s.timesheets);
-    const users = useDataStore((s) => s.users);
-    const projects = useDataStore((s) => s.projects);
-    const approveTimesheet = useDataStore((s) => s.approveTimesheet);
-    const rejectTimesheet = useDataStore((s) => s.rejectTimesheet);
+    const [inbox, setInbox] = useState<TimesheetLog[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isProcessing, setIsProcessing] = useState(false);
 
-    const pendingApprovals = useMemo(() => {
-        const submitted = timesheets.filter((t) => t.status === "submitted");
-        return submitted.map((ts) => ({
-            ...ts,
-            anomaly: detectAnomaly(ts),
-            userName: users.find((u) => u.id === ts.userId)?.name || "Unknown",
-            projectName: projects.find((p) => p.id === ts.projectId)?.name || "Unknown",
-        }));
-    }, [timesheets, users, projects]);
+    // Reject Dialog
+    const [rejectOpen, setRejectOpen] = useState(false);
+    const [rejectTarget, setRejectTarget] = useState<TimesheetLog | null>(null);
+    const [rejectNote, setRejectNote] = useState("");
 
-    const filtered = filter === "flagged"
-        ? pendingApprovals.filter((a) => a.anomaly.riskScore > 0)
-        : pendingApprovals;
+    // Bulk Selection
+    const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
-    const flaggedCount = pendingApprovals.filter((a) => a.anomaly.riskScore > 0).length;
-
-    const handleApprove = (id: string, name: string) => {
-        approveTimesheet(id);
-        toast.success(`Approved timesheet for ${name}`);
+    const fetchInbox = async () => {
+        setIsLoading(true);
+        try {
+            const res = await approvalService.getInbox();
+            setInbox(Array.isArray(res) ? res : []);
+        } catch (e: any) {
+            toast.error(e.message || "Failed to load approval inbox");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleReject = (id: string, name: string) => {
-        rejectTimesheet(id);
-        toast.error(`Rejected timesheet for ${name}`);
+    useEffect(() => { fetchInbox(); }, []);
+
+    const handleApprove = async (id: number) => {
+        setIsProcessing(true);
+        try {
+            await approvalService.reviewTimesheet(id, { status: "approved" });
+            toast.success("Timesheet approved");
+            fetchInbox();
+        } catch (e: any) {
+            toast.error(e.message || "Failed to approve");
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const openReject = (log: TimesheetLog) => {
+        setRejectTarget(log);
+        setRejectNote("");
+        setRejectOpen(true);
+    };
+
+    const handleReject = async () => {
+        if (!rejectTarget) return;
+        if (!rejectNote.trim()) { toast.error("Rejection note is required"); return; }
+        setIsProcessing(true);
+        try {
+            await approvalService.reviewTimesheet(rejectTarget.id, { status: "rejected", rejection_note: rejectNote });
+            toast.success("Timesheet rejected");
+            setRejectOpen(false);
+            fetchInbox();
+        } catch (e: any) {
+            toast.error(e.message || "Failed to reject");
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const toggleSelect = (id: number) => {
+        setSelectedIds(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id); else next.add(id);
+            return next;
+        });
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedIds.size === inbox.length) setSelectedIds(new Set());
+        else setSelectedIds(new Set(inbox.map(l => l.id)));
+    };
+
+    const handleBulkApprove = async () => {
+        if (selectedIds.size === 0) { toast.error("Select at least one timesheet"); return; }
+        setIsProcessing(true);
+        try {
+            const res = await approvalService.bulkAction({
+                timesheet_ids: Array.from(selectedIds),
+                status: "approved",
+            });
+            toast.success(`${res.rows_affected} timesheets approved`);
+            setSelectedIds(new Set());
+            fetchInbox();
+        } catch (e: any) {
+            toast.error(e.message || "Bulk action failed");
+        } finally {
+            setIsProcessing(false);
+        }
     };
 
     return (
         <div className="space-y-6">
-            <PageHeader title="Approval Inbox" description={`${pendingApprovals.length} pending approvals • ${flaggedCount} AI flagged`}>
-                <div className="flex gap-2">
-                    <Button variant={filter === "all" ? "default" : "outline"} size="sm" onClick={() => setFilter("all")}>
-                        All ({pendingApprovals.length})
+            <PageHeader title="Approvals Inbox" description={`${inbox.length} pending review${inbox.length !== 1 ? "s" : ""}`}>
+                {selectedIds.size > 0 && (
+                    <Button size="sm" className="gap-2 bg-emerald-600 hover:bg-emerald-700 shadow-md" onClick={handleBulkApprove} disabled={isProcessing}>
+                        <CheckCheck className="h-4 w-4" /> Approve {selectedIds.size} Selected
                     </Button>
-                    <Button variant={filter === "flagged" ? "default" : "outline"} size="sm" onClick={() => setFilter("flagged")} className="gap-1">
-                        <Sparkles className="h-3 w-3" /> AI Flagged ({flaggedCount})
-                    </Button>
-                </div>
+                )}
             </PageHeader>
 
-            <AnimatePresence mode="popLayout">
-                <div className="space-y-3">
-                    {filtered.map((approval) => (
-                        <ApprovalCard
-                            key={approval.id}
-                            approval={approval}
-                            onApprove={() => handleApprove(approval.id, approval.userName)}
-                            onReject={() => handleReject(approval.id, approval.userName)}
-                        />
-                    ))}
-                    {filtered.length === 0 && (
-                        <Card>
-                            <CardContent className="py-12 text-center">
-                                <Inbox className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                                <p className="text-sm text-muted-foreground">No pending approvals</p>
-                            </CardContent>
-                        </Card>
-                    )}
-                </div>
-            </AnimatePresence>
-        </div>
-    );
-}
-
-function ApprovalCard({ approval, onApprove, onReject }: { approval: any; onApprove: () => void; onReject: () => void }) {
-    const [expanded, setExpanded] = useState(false);
-    const hasRisk = approval.anomaly.riskScore > 0;
-
-    return (
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -100, height: 0 }} layout>
-            <Card className={cn(
-                "transition-all",
-                approval.anomaly.riskLevel === "high" && "border-red-500/30 shadow-[0_0_20px_rgba(0,0,0,0.06)]",
-                approval.anomaly.riskLevel === "medium" && "border-amber-500/30",
-            )}>
-                <CardContent className="p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#FFBE18]/10 to-[#E5A800]/10 flex items-center justify-center text-sm font-medium">
-                                {approval.userName.split(" ").map((n: string) => n[0]).join("")}
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium">{approval.userName}</span>
-                                    {hasRisk && (
-                                        <Badge variant="outline" className="text-[10px] bg-gradient-to-r from-[#FFBE18]/10 to-[#E5A800]/10 text-[#FFBE18] border-[#FFBE18]/20 gap-1">
-                                            <Sparkles className="h-2.5 w-2.5" /> AI Flagged
-                                        </Badge>
-                                    )}
-                                </div>
-                                <p className="text-xs text-muted-foreground">{approval.projectName} • {approval.date} • {approval.hours}h</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            {hasRisk && <RiskBadge level={approval.anomaly.riskLevel} score={approval.anomaly.riskScore} />}
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setExpanded(!expanded)}>
-                                <motion.div animate={{ rotate: expanded ? 180 : 0 }}>
-                                    <ChevronDown className="h-4 w-4" />
-                                </motion.div>
-                            </Button>
-                        </div>
-                    </div>
-
-                    {expanded && hasRisk && (
-                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-3">
-                            <div className="p-3 rounded-lg bg-muted/30 space-y-2">
-                                <div className="flex items-center gap-2 text-xs font-medium">
-                                    <Sparkles className="h-3 w-3 text-[#FFBE18]" />
-                                    AI Analysis — Explainable AI
-                                </div>
-                                {approval.anomaly.reasons.map((reason: string, i: number) => (
-                                    <div key={i} className="flex items-start gap-2 text-sm">
-                                        <AlertTriangle className="h-3.5 w-3.5 text-amber-500 mt-0.5 shrink-0" />
-                                        <span className="text-muted-foreground">{reason}</span>
-                                    </div>
-                                ))}
-                                <AIConfidence confidence={approval.anomaly.aiConfidence} />
-                                <div className="p-2 rounded-md bg-[#FFBE18]/5 border border-[#FFBE18]/10">
-                                    <p className="text-xs text-[#FFBE18]">
-                                        <strong>AI Suggestion:</strong> {approval.anomaly.riskLevel === "high"
-                                            ? "Reject this entry and request clarification from the employee."
-                                            : "Review carefully before approving — minor anomaly detected."
-                                        }
-                                    </p>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span>Clock: {approval.clockIn} - {approval.clockOut}</span>
-                        {approval.overtime > 0 && <span className="text-amber-500">+{approval.overtime}h OT</span>}
-                    </div>
-
-                    <div className="flex gap-2 pt-1">
-                        <Button size="sm" className="gap-1 bg-emerald-600 hover:bg-emerald-700 text-xs h-8" onClick={onApprove}>
-                            <CheckCircle2 className="h-3 w-3" /> Approve
-                        </Button>
-                        <Button size="sm" variant="outline" className="gap-1 text-red-500 hover:text-red-600 text-xs h-8" onClick={onReject}>
-                            <XCircle className="h-3 w-3" /> Reject
-                        </Button>
+            <Card className="border-[#e2e8f0] shadow-sm overflow-hidden">
+                <CardContent className="p-0">
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader className="bg-[#f8fafc]">
+                                <TableRow className="hover:bg-transparent">
+                                    <TableHead className="w-[50px]">
+                                        <input type="checkbox" className="rounded" checked={inbox.length > 0 && selectedIds.size === inbox.length} onChange={toggleSelectAll} />
+                                    </TableHead>
+                                    <TableHead>Employee</TableHead>
+                                    <TableHead>Project</TableHead>
+                                    <TableHead>Clock In</TableHead>
+                                    <TableHead>Clock Out</TableHead>
+                                    <TableHead>Duration</TableHead>
+                                    <TableHead>Description</TableHead>
+                                    <TableHead className="text-right pr-6">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {isLoading ? (
+                                    <TableRow><TableCell colSpan={8} className="h-48 text-center"><Loader2 className="h-6 w-6 animate-spin text-[#2568C1] mx-auto" /></TableCell></TableRow>
+                                ) : inbox.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={8} className="h-32 text-center">
+                                            <div className="flex flex-col items-center text-muted-foreground">
+                                                <Inbox className="h-8 w-8 mb-2 opacity-40" />
+                                                <p className="text-sm">All caught up! No pending timesheets.</p>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    inbox.map(log => (
+                                        <TableRow key={log.id} className={`hover:bg-[#f0f4fa]/50 transition-colors ${selectedIds.has(log.id) ? "bg-blue-50/50" : ""}`}>
+                                            <TableCell>
+                                                <input type="checkbox" className="rounded" checked={selectedIds.has(log.id)} onChange={() => toggleSelect(log.id)} />
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="text-sm font-medium">{log.user?.full_name || `User #${log.user_id}`}</span>
+                                                {log.user?.email && <div className="text-[10px] text-muted-foreground">{log.user.email}</div>}
+                                            </TableCell>
+                                            <TableCell><span className="text-xs">{log.project?.name || `Project #${log.project_id}`}</span></TableCell>
+                                            <TableCell className="text-xs">{new Date(log.clock_in).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" })}</TableCell>
+                                            <TableCell className="text-xs">{log.clock_out ? new Date(log.clock_out).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" }) : "—"}</TableCell>
+                                            <TableCell className="text-xs font-medium">{log.duration_minutes > 0 ? `${Math.floor(log.duration_minutes / 60)}h ${log.duration_minutes % 60}m` : "—"}</TableCell>
+                                            <TableCell className="text-xs text-muted-foreground max-w-[180px] truncate">{log.task_description || "—"}</TableCell>
+                                            <TableCell className="text-right pr-4">
+                                                <div className="flex justify-end gap-1">
+                                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-600 hover:bg-emerald-50 rounded-full" onClick={() => handleApprove(log.id)} disabled={isProcessing} title="Approve">
+                                                        <CheckCircle2 className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:bg-red-50 rounded-full" onClick={() => openReject(log)} disabled={isProcessing} title="Reject">
+                                                        <XCircle className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
                     </div>
                 </CardContent>
             </Card>
-        </motion.div>
+
+            {/* Reject Dialog */}
+            <Dialog open={rejectOpen} onOpenChange={open => !isProcessing && setRejectOpen(open)}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <div className="mx-auto w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4"><AlertTriangle className="h-6 w-6 text-red-600" /></div>
+                        <DialogTitle className="text-center">Reject Timesheet</DialogTitle>
+                        <DialogDescription className="text-center text-xs">
+                            Rejecting log from <b>{rejectTarget?.user?.full_name || `User #${rejectTarget?.user_id}`}</b>
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-3 pt-2">
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-medium">Rejection Note <span className="text-red-500">*</span></label>
+                            <Input value={rejectNote} onChange={e => setRejectNote(e.target.value)} placeholder="Explain why this timesheet is being rejected..." disabled={isProcessing} />
+                        </div>
+                    </div>
+                    <DialogFooter className="sm:justify-center gap-2 pt-4">
+                        <Button variant="outline" onClick={() => setRejectOpen(false)} disabled={isProcessing}>Cancel</Button>
+                        <Button variant="destructive" onClick={handleReject} disabled={isProcessing} className="min-w-[100px]">
+                            {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Reject"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </div>
     );
 }

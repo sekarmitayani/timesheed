@@ -2,7 +2,7 @@
 // GLOBAL TYPES FOR AI-ENHANCED TIMESHEET SYSTEM
 // ============================================================
 
-export type Role = "employee" | "pm" | "admin" | "management";
+export type Role = "employee" | "projectmanager" | "admin" | "finance";
 
 export type RiskLevel = "low" | "medium" | "high";
 export type WorkloadStatus = "overloaded" | "balanced" | "underutilized";
@@ -10,20 +10,26 @@ export type WorkloadStatus = "overloaded" | "balanced" | "underutilized";
 // ---- User & Auth ----
 export interface User {
     id: string;
-    name: string;
+    full_name: string;
+    name: string; // Compatibility with frontend mock data
     email: string;
+    phone_number?: string;
     username: string;
     password: string;
     role: Role;
-    avatar?: string;
+    employee_type: "fulltime" | "parttime" | "freelance" | null;
+    avatar: string;
     department: string;
     position: string;
     hourlyRate: number;
     joinDate: string;
     status: "active" | "inactive";
+    is_active?: boolean;
+    created_at?: string;
+    updated_at?: string;
 }
 
-// ---- Project ----
+// ---- Project (Legacy/Mock) ----
 export interface Project {
     id: string;
     name: string;
@@ -38,6 +44,36 @@ export interface Project {
     pmId: string;
     members: string[];
     description: string;
+}
+
+// ---- Project (API) ----
+export interface ApiProject {
+    id: number;
+    name: string;
+    client_name: string;
+    client_email: string | null;
+    status: "active" | "completed" | "on-hold" | "cancelled";
+    budget_revenue: number | null;
+    budget_cost: number | null;
+    budget_cost_threshold: number | null;
+    actual_cost?: number;
+    created_at: string;
+    updated_at: string;
+    members?: ProjectMember[];
+}
+
+export interface ProjectMember {
+    id: number;
+    project_id: number;
+    user_id: number;
+    role_in_project: string;
+    created_at?: string;
+    user?: {
+        id: number;
+        email: string;
+        full_name: string;
+        role?: string;
+    };
 }
 
 // ---- Timesheet ----

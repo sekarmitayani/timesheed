@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { SessionExpiryDialog } from "@/components/layout/SessionExpiryDialog";
 
 const plusJakarta = Plus_Jakarta_Sans({ variable: "--font-plus-jakarta", subsets: ["latin"] });
 
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${plusJakarta.variable} antialiased`}>
         {children}
+        <SessionExpiryDialog />
         <Toaster />
       </body>
     </html>

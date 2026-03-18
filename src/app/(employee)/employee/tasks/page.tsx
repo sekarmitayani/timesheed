@@ -1,202 +1,244 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageHeader } from "@/components/ai/ai-components";
-import { getPriorityBadgeClasses } from "@/lib/priority-utils";
-import { useDataStore } from "@/store/useDataStore";
-import { useAuthStore } from "@/store/useAuthStore";
-import { GripVertical, Play, Square, Clock, FileText } from "lucide-react";
+import { Plus, Loader2, ArrowRight, CheckCircle2, Circle, PlayCircle, ListTodo } from "lucide-react";
 import { toast } from "sonner";
+import { taskService, ApiTask, CreateTaskPayload } from "@/lib/services/task-service";
+import { projectService } from "@/lib/services/project-service";
+import { ApiProject, ProjectMember } from "@/lib/types";
+import { useAuthStore } from "@/store/useAuthStore";
 
-const statusColumns: { key: "todo" | "in-progress" | "review" | "done"; label: string; color: string; bg: string }[] = [
-    { key: "todo", label: "To Do", color: "text-muted-foreground", bg: "bg-muted/30" },
-    { key: "in-progress", label: "In Progress", color: "text-blue-500", bg: "bg-blue-500/5" },
-    { key: "review", label: "Review", color: "text-amber-500", bg: "bg-amber-500/5" },
-    { key: "done", label: "Done", color: "text-emerald-500", bg: "bg-emerald-500/5" },
-];
-
-function formatElapsed(ms: number): string {
-    const h = Math.floor(ms / 3600000);
-    const m = Math.floor((ms % 3600000) / 60000);
-    const s = Math.floor((ms % 60000) / 1000);
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-}
-
-function TimerDisplay({ startedAt }: { startedAt: number }) {
-    const [, setTick] = useState(0);
-    useEffect(() => {
-        const interval = setInterval(() => setTick((t) => t + 1), 1000);
-        return () => clearInterval(interval);
-    }, []);
-    return (
-        <span className="font-mono text-[10px] text-[#FFBE18] font-bold">
-            {formatElapsed(Date.now() - startedAt)}
-        </span>
-    );
-}
+const statusConfig: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
+    todo: { label: "To Do", color: "text-slate-500", bg: "bg-slate-50 border-slate-200", icon: <Circle className="h-3.5 w-3.5" /> },
+    in_progress: { label: "In Progress", color: "text-blue-600", bg: "bg-blue-50 border-blue-200", icon: <PlayCircle className="h-3.5 w-3.5" /> },
+    done: { label: "Done", color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200", icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
+};
 
 export default function TasksPage() {
-    const user = useAuthStore((s) => s.user);
-    const tasks = useDataStore((s) => s.tasks);
-    const projects = useDataStore((s) => s.projects);
-    const moveTask = useDataStore((s) => s.moveTask);
-    const activeTimers = useDataStore((s) => s.activeTimers);
-    const startTimer = useDataStore((s) => s.startTimer);
-    const stopTimer = useDataStore((s) => s.stopTimer);
-    const [mounted, setMounted] = useState(false);
+    const currentUser = useAuthStore(s => s.user);
+    const isEmployee = currentUser?.role === "employee";
 
-    useEffect(() => { setMounted(true); }, []);
+    const [projects, setProjects] = useState<ApiProject[]>([]);
+    const [selectedProjectId, setSelectedProjectId] = useState<string>("");
+    const [tasks, setTasks] = useState<ApiTask[]>([]);
+    const [isLoadingProjects, setIsLoadingProjects] = useState(true);
+    const [isLoadingTasks, setIsLoadingTasks] = useState(false);
 
-    const myTasks = tasks.filter((t) => t.assigneeId === user?.id);
+    // Members for assign dropdown
+    const [members, setMembers] = useState<ProjectMember[]>([]);
 
-    const onDragEnd = useCallback((result: DropResult) => {
-        const { draggableId, destination } = result;
-        if (!destination) return;
-        const newStatus = destination.droppableId as "todo" | "in-progress" | "review" | "done";
-        const task = myTasks.find((t) => t.id === draggableId);
-        if (!task || task.status === newStatus) return;
-        moveTask(draggableId, newStatus);
-        const colLabel = statusColumns.find((c) => c.key === newStatus)?.label;
-        toast.success(`"${task.title}" → ${colLabel}`);
-    }, [myTasks, moveTask]);
+    // Create Task
+    const [createOpen, setCreateOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [createForm, setCreateForm] = useState<CreateTaskPayload>({
+        project_id: 0, assigned_to_id: 0, title: "", description: "",
+    });
 
-    const handleStartTimer = (taskId: string, title: string) => {
-        startTimer(taskId);
-        toast.success(`Timer started for "${title}"`, { description: "Tracks even when you navigate away" });
-    };
+    // Fetch projects
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const res = await projectService.getProjects(1, 100);
+                setProjects(res.data || []);
+                if (res.data?.length) {
+                    setSelectedProjectId(String(res.data[0].id));
+                }
+            } catch (e: any) {
+                toast.error(e.message || "Failed to load projects");
+            } finally {
+                setIsLoadingProjects(false);
+            }
+        };
+        load();
+    }, []);
 
-    const handleStopTimer = (taskId: string, title: string) => {
-        if (!user) return;
-        const timer = activeTimers.find((t) => t.taskId === taskId);
-        if (timer) {
-            const elapsed = (Date.now() - timer.startedAt) / 3600000;
-            const roundedHours = Math.max(0.1, Math.round(elapsed * 10) / 10);
-            stopTimer(taskId, user.id);
-            toast.success(`Timer stopped for "${title}"`, {
-                description: `${roundedHours}h logged → added to timesheet as draft`,
-            });
+    // Fetch tasks when project changes
+    useEffect(() => {
+        if (!selectedProjectId) return;
+        const load = async () => {
+            setIsLoadingTasks(true);
+            try {
+                const res = await taskService.getProjectTasks(selectedProjectId);
+                setTasks(Array.isArray(res) ? res : []);
+            } catch (e: any) {
+                toast.error(e.message || "Failed to load tasks");
+            } finally {
+                setIsLoadingTasks(false);
+            }
+        };
+        load();
+
+        // Also fetch members for the project
+        const loadMembers = async () => {
+            try {
+                const res = await projectService.getProjectMembers(selectedProjectId);
+                setMembers(Array.isArray(res) ? res : []);
+            } catch { /* skip */ }
+        };
+        if (!isEmployee) loadMembers();
+    }, [selectedProjectId]);
+
+    const handleStatusChange = async (task: ApiTask, newStatus: "todo" | "in_progress" | "done") => {
+        try {
+            await taskService.updateTaskStatus(task.id, { status: newStatus });
+            toast.success(`Task "${task.title}" → ${statusConfig[newStatus].label}`);
+            // Refresh
+            const res = await taskService.getProjectTasks(selectedProjectId);
+            setTasks(Array.isArray(res) ? res : []);
+        } catch (e: any) {
+            toast.error(e.message || "Failed to update status");
         }
     };
 
-    const activeTimerCount = activeTimers.filter((t) => myTasks.some((mt) => mt.id === t.taskId)).length;
+    const handleCreate = async () => {
+        if (!createForm.title) { toast.error("Title is required"); return; }
+        setIsSaving(true);
+        try {
+            const payload: CreateTaskPayload = {
+                project_id: Number(selectedProjectId),
+                title: createForm.title,
+                description: createForm.description || undefined,
+            };
+            if (!isEmployee && createForm.assigned_to_id) {
+                payload.assigned_to_id = Number(createForm.assigned_to_id);
+            }
+            await taskService.createTask(payload);
+            toast.success(`Task "${createForm.title}" created`);
+            setCreateOpen(false);
+            setCreateForm({ project_id: 0, assigned_to_id: 0, title: "", description: "" });
+            const res = await taskService.getProjectTasks(selectedProjectId);
+            setTasks(Array.isArray(res) ? res : []);
+        } catch (e: any) {
+            toast.error(e.message || "Failed to create task");
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
-    if (!mounted) return null;
+    const grouped = {
+        todo: tasks.filter(t => t.status === "todo"),
+        in_progress: tasks.filter(t => t.status === "in_progress"),
+        done: tasks.filter(t => t.status === "done"),
+    };
 
     return (
         <div className="space-y-6">
-            <PageHeader title="My Tasks" description={`${myTasks.length} tasks · drag cards between columns`}>
-                {activeTimerCount > 0 && (
-                    <Badge className="bg-[#FFBE18]/10 text-[#FFBE18] border-[#FFBE18]/30 gap-1 animate-pulse">
-                        <Clock className="h-3 w-3" /> {activeTimerCount} timer{activeTimerCount > 1 ? "s" : ""} running
-                    </Badge>
-                )}
+            <PageHeader title="My Tasks" description="Manage your project assignments">
+                <Button size="sm" className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] shadow-md shadow-[#2568C1]/20" onClick={() => setCreateOpen(true)} disabled={!selectedProjectId}>
+                    <Plus className="h-4 w-4" /> New Task
+                </Button>
             </PageHeader>
 
-            <DragDropContext onDragEnd={onDragEnd}>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-                    {statusColumns.map((col) => {
-                        const colTasks = myTasks.filter((t) => t.status === col.key);
+            {/* Project Selector */}
+            <div className="max-w-sm">
+                {isLoadingProjects ? (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Loading projects...</div>
+                ) : (
+                    <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+                        <SelectTrigger className="border-[#e2e8f0] focus:ring-[#2568C1]"><SelectValue placeholder="Select project" /></SelectTrigger>
+                        <SelectContent>
+                            {projects.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                )}
+            </div>
+
+            {isLoadingTasks ? (
+                <div className="py-16 flex flex-col items-center text-muted-foreground"><Loader2 className="h-8 w-8 animate-spin text-[#2568C1] mb-4" /><p>Loading tasks...</p></div>
+            ) : !selectedProjectId ? (
+                <div className="py-16 text-center text-muted-foreground text-sm">Select a project to view tasks.</div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {(["todo", "in_progress", "done"] as const).map(col => {
+                        const cfg = statusConfig[col];
+                        const items = grouped[col];
                         return (
-                            <div key={col.key} className="space-y-3">
-                                <div className="flex items-center justify-between px-1">
-                                    <h3 className={`text-sm font-semibold ${col.color}`}>{col.label}</h3>
-                                    <Badge variant="secondary" className="text-xs">{colTasks.length}</Badge>
+                            <div key={col} className="space-y-3">
+                                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${cfg.bg}`}>
+                                    <span className={cfg.color}>{cfg.icon}</span>
+                                    <span className={`text-sm font-semibold ${cfg.color}`}>{cfg.label}</span>
+                                    <Badge variant="outline" className="ml-auto text-[10px]">{items.length}</Badge>
                                 </div>
-
-                                <Droppable droppableId={col.key}>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            {...provided.droppableProps}
-                                            className={`space-y-2 min-h-[200px] p-2 rounded-xl border-2 border-dashed transition-colors ${snapshot.isDraggingOver
-                                                ? "border-[#FFBE18]/50 bg-[#FFBE18]/5"
-                                                : "border-transparent"
-                                                }`}
-                                        >
-                                            {colTasks.map((task, index) => {
-                                                const project = projects.find((p) => p.id === task.projectId);
-                                                const progress = task.estimatedHours > 0 ? Math.round((task.loggedHours / task.estimatedHours) * 100) : 0;
-                                                const activeTimer = activeTimers.find((t) => t.taskId === task.id);
-                                                const isTimerRunning = !!activeTimer;
-
-                                                return (
-                                                    <Draggable key={task.id} draggableId={task.id} index={index}>
-                                                        {(provided, snapshot) => (
-                                                            <div
-                                                                ref={provided.innerRef}
-                                                                {...provided.draggableProps}
-                                                                style={provided.draggableProps.style}
-                                                            >
-                                                                <Card className={`transition-all ${snapshot.isDragging
-                                                                    ? "shadow-xl shadow-[#FFBE18]/20 rotate-2 scale-105 border-[#FFBE18]/50"
-                                                                    : isTimerRunning
-                                                                        ? "border-[#FFBE18]/50 shadow-[0_0_12px_rgba(255,190,24,0.15)]"
-                                                                        : "hover:border-[#FFBE18]/30"
-                                                                    }`}>
-                                                                    <CardContent className="p-3 space-y-2">
-                                                                        <div className="flex items-start gap-2">
-                                                                            <div {...provided.dragHandleProps} className="mt-0.5 shrink-0 cursor-grab active:cursor-grabbing">
-                                                                                <GripVertical className="h-4 w-4 text-muted-foreground hover:text-[#FFBE18] transition-colors" />
-                                                                            </div>
-                                                                            <div className="flex-1 min-w-0">
-                                                                                <p className="text-sm font-medium truncate">{task.title}</p>
-                                                                                <p className="text-xs text-muted-foreground">{project?.name}</p>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        {isTimerRunning && activeTimer && (
-                                                                            <div className="flex items-center gap-2 p-1.5 rounded-md bg-[#FFBE18]/10 border border-[#FFBE18]/20">
-                                                                                <div className="h-2 w-2 rounded-full bg-[#FFBE18] animate-pulse" />
-                                                                                <TimerDisplay startedAt={activeTimer.startedAt} />
-                                                                                <span className="text-[10px] text-muted-foreground ml-auto">tracking</span>
-                                                                            </div>
-                                                                        )}
-
-                                                                        <div className="flex items-center justify-between text-xs">
-                                                                            <Badge variant="outline" className={`text-[10px] ${getPriorityBadgeClasses(task.priority)}`}>
-                                                                                {task.priority}
-                                                                            </Badge>
-                                                                            <span className="text-muted-foreground">{task.loggedHours}/{task.estimatedHours}h</span>
-                                                                        </div>
-                                                                        <div className="w-full bg-muted rounded-full h-1.5">
-                                                                            <div className="bg-[#FFBE18] h-1.5 rounded-full transition-all" style={{ width: `${Math.min(progress, 100)}%` }} />
-                                                                        </div>
-
-                                                                        <div className="flex gap-1 pt-1">
-                                                                            {col.key !== "done" ? (
-                                                                                isTimerRunning ? (
-                                                                                    <Button size="sm" variant="outline" className="h-6 text-[10px] gap-1 flex-1 border-red-500/30 text-red-500 hover:bg-red-500/10" onClick={() => handleStopTimer(task.id, task.title)}>
-                                                                                        <Square className="h-2.5 w-2.5 fill-current" /> Stop Timer
-                                                                                    </Button>
-                                                                                ) : (
-                                                                                    <Button size="sm" variant="outline" className="h-6 text-[10px] gap-1 flex-1 border-[#FFBE18]/30 text-[#FFBE18] hover:bg-[#FFBE18]/10" onClick={() => handleStartTimer(task.id, task.title)}>
-                                                                                        <Play className="h-2.5 w-2.5 fill-current" /> Track Time
-                                                                                    </Button>
-                                                                                )
-                                                                            ) : (
-                                                                                <span className="text-[10px] text-emerald-500 flex items-center gap-1"><FileText className="h-3 w-3" /> {task.loggedHours}h logged</span>
-                                                                            )}
-                                                                        </div>
-                                                                    </CardContent>
-                                                                </Card>
-                                                            </div>
-                                                        )}
-                                                    </Draggable>
-                                                );
-                                            })}
-                                            {provided.placeholder}
-                                        </div>
-                                    )}
-                                </Droppable>
+                                <div className="space-y-2">
+                                    {items.length === 0 ? (
+                                        <p className="text-xs text-muted-foreground text-center py-6">No tasks</p>
+                                    ) : items.map(task => (
+                                        <Card key={task.id} className="border-[#e2e8f0] hover:border-[#2568C1]/30 transition-colors">
+                                            <CardContent className="p-3 space-y-2">
+                                                <h4 className="text-sm font-medium text-[#0f172a] leading-tight">{task.title}</h4>
+                                                {task.description && <p className="text-[11px] text-muted-foreground line-clamp-2">{task.description}</p>}
+                                                <div className="flex gap-1 pt-1">
+                                                    {col !== "todo" && (
+                                                        <Button variant="ghost" size="sm" className="h-6 text-[10px] px-2 text-slate-500" onClick={() => handleStatusChange(task, "todo")}>
+                                                            <ArrowRight className="h-3 w-3 rotate-180 mr-1" /> To Do
+                                                        </Button>
+                                                    )}
+                                                    {col !== "in_progress" && (
+                                                        <Button variant="ghost" size="sm" className="h-6 text-[10px] px-2 text-blue-600" onClick={() => handleStatusChange(task, "in_progress")}>
+                                                            <PlayCircle className="h-3 w-3 mr-1" /> In Progress
+                                                        </Button>
+                                                    )}
+                                                    {col !== "done" && (
+                                                        <Button variant="ghost" size="sm" className="h-6 text-[10px] px-2 text-emerald-600" onClick={() => handleStatusChange(task, "done")}>
+                                                            <CheckCircle2 className="h-3 w-3 mr-1" /> Done
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                </div>
                             </div>
                         );
                     })}
                 </div>
-            </DragDropContext>
+            )}
+
+            {/* Create Task Dialog */}
+            <Dialog open={createOpen} onOpenChange={open => !isSaving && setCreateOpen(open)}>
+                <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden border-[#e2e8f0]">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
+                        <DialogTitle className="text-lg">Create New Task</DialogTitle>
+                        <DialogDescription className="text-xs">Assign a task within the selected project.</DialogDescription>
+                    </div>
+                    <div className="px-6 py-5 space-y-4">
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-medium">Title <span className="text-red-500">*</span></label>
+                            <Input value={createForm.title} onChange={e => setCreateForm({ ...createForm, title: e.target.value })} placeholder="Fix login endpoint" disabled={isSaving} />
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-medium">Description</label>
+                            <Input value={createForm.description || ""} onChange={e => setCreateForm({ ...createForm, description: e.target.value })} placeholder="Add brute force protection" disabled={isSaving} />
+                        </div>
+                        {!isEmployee && (
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-medium">Assign To</label>
+                                <Select value={String(createForm.assigned_to_id || "")} onValueChange={v => setCreateForm({ ...createForm, assigned_to_id: Number(v) })}>
+                                    <SelectTrigger><SelectValue placeholder="Select member" /></SelectTrigger>
+                                    <SelectContent>
+                                        {members.map(m => (
+                                            <SelectItem key={m.user_id} value={String(m.user_id)}>{m.user?.full_name || `User #${m.user_id}`}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+                    </div>
+                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
+                        <Button variant="ghost" onClick={() => setCreateOpen(false)} disabled={isSaving}>Cancel</Button>
+                        <Button onClick={handleCreate} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[100px]">
+                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create"}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

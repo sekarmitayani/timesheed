@@ -31,14 +31,14 @@ const categoryConfig = {
 
 function getProjectHref(role: Role): string {
     if (role === "employee") return "/employee/dashboard";
-    if (role === "pm") return "/pm/projects";
+    if (role === "projectmanager") return "/pm/projects";
     if (role === "admin") return "/admin/projects";
     return "/management/dashboard";
 }
 
 function getTaskHref(role: Role): string {
     if (role === "employee") return "/employee/tasks";
-    if (role === "pm") return "/pm/team";
+    if (role === "projectmanager") return "/pm/team";
     return "/admin/dashboard";
 }
 

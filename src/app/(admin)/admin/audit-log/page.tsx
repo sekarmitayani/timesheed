@@ -52,15 +52,21 @@ export default function AuditLogPage() {
                 <CardContent className="p-0">
                     <Table>
                         <TableHeader>
-                            <TableRow><TableHead>User</TableHead><TableHead>Action</TableHead><TableHead>Details</TableHead><TableHead>IP Address</TableHead><TableHead>Timestamp</TableHead></TableRow>
+                            <TableRow className="hover:bg-transparent border-b border-slate-100">
+                                <TableHead className="pl-6  text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">User</TableHead>
+                                <TableHead className=" text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Action</TableHead>
+                                <TableHead className=" text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Details</TableHead>
+                                <TableHead className=" text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">IP Address</TableHead>
+                                <TableHead className=" text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Timestamp</TableHead>
+                            </TableRow>
                         </TableHeader>
                         <TableBody>
                             {filtered.map((log) => {
                                 const user = users.find((u) => u.id === log.userId);
                                 return (
                                     <TableRow key={log.id}>
-                                        <TableCell className="font-medium text-sm">{user?.name || "System"}</TableCell>
-                                        <TableCell><Badge variant="outline" className="text-[10px]">{log.action}</Badge></TableCell>
+                                        <TableCell className="pl-6 font-medium text-sm">{user?.name || "System"}</TableCell>
+                                        <TableCell className=""><Badge variant="outline" className="text-[10px]">{log.action}</Badge></TableCell>
                                         <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">{log.details}</TableCell>
                                         <TableCell className="text-xs text-muted-foreground font-mono">{log.ipAddress}</TableCell>
                                         <TableCell className="text-sm text-muted-foreground">{new Date(log.timestamp).toLocaleString()}</TableCell>

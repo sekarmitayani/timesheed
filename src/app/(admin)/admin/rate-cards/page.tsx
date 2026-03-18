@@ -62,16 +62,22 @@ export default function RateCardsPage() {
                 <CardContent className="p-0">
                     <Table>
                         <TableHeader>
-                            <TableRow><TableHead>Role</TableHead><TableHead>Level</TableHead><TableHead>Hourly Rate</TableHead><TableHead>Monthly Rate</TableHead><TableHead className="w-20">Actions</TableHead></TableRow>
+                            <TableRow className="hover:bg-transparent border-b border-slate-100">
+                                <TableHead className="pl-6  text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Role</TableHead>
+                                <TableHead className=" text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Level</TableHead>
+                                <TableHead className=" text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Hourly Rate</TableHead>
+                                <TableHead className=" text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Monthly Rate</TableHead>
+                                <TableHead className="w-20 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 pr-6">Actions</TableHead>
+                            </TableRow>
                         </TableHeader>
                         <TableBody>
                             {rateCards.map((rc) => (
                                 <TableRow key={rc.id}>
-                                    <TableCell className="font-medium text-sm">{rc.role}</TableCell>
-                                    <TableCell><Badge variant="outline" className="text-[10px]">{rc.level}</Badge></TableCell>
+                                    <TableCell className="pl-6 font-medium text-sm">{rc.role}</TableCell>
+                                    <TableCell className=""><Badge variant="outline" className="text-[10px]">{rc.level}</Badge></TableCell>
                                     <TableCell className="text-sm">Rp {rc.hourly.toLocaleString()}</TableCell>
                                     <TableCell className="text-sm">Rp {rc.monthly.toLocaleString()}</TableCell>
-                                    <TableCell>
+                                    <TableCell className="">
                                         <div className="flex gap-1">
                                             <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => openEdit(rc.id)}><Edit className="h-3.5 w-3.5" /></Button>
                                             <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-red-500" onClick={() => handleDelete(rc.id, rc.role)}><Trash2 className="h-3.5 w-3.5" /></Button>

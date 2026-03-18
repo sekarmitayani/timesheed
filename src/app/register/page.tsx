@@ -3,42 +3,68 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { LogIn, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { UserPlus, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuthStore } from "@/store/useAuthStore";
-import { getDefaultRoute } from "@/lib/rbac";
+import { fetchApi } from "@/lib/api";
 
-export default function LoginPage() {
+export default function RegisterPage() {
+    const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { login } = useAuthStore();
+    const [success, setSuccess] = useState<string | null>(null);
     const router = useRouter();
 
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
+        setSuccess(null);
 
-        if (!email.trim() || !password.trim()) {
-            setError("Please enter your email and password.");
+        if (!fullName.trim() || !email.trim() || !phoneNumber.trim() || !password.trim()) {
+            setError("Please fill in all fields (including phone number).");
             return;
         }
 
         setIsLoading(true);
 
-        const result = await login(email.trim(), password);
-        if (result.success) {
-            const user = useAuthStore.getState().user;
-            if (user) {
-                router.push(getDefaultRoute(user.role));
+        try {
+            const data = await fetchApi("/auth/register", {
+                method: "POST",
+                body: JSON.stringify({
+                    email: email.trim(),
+                    password: password,
+                    full_name: fullName.trim(),
+                    phone_number: phoneNumber.trim(),
+                    role: "admin",
+                    employee_type: null
+                }),
+            });
+
+            if (data && data.token && data.user) {
+                // If API returns token on register, we can automatically log them in
+                if (typeof window !== "undefined") {
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                }
+
+                setSuccess("Admin account created successfully! Redirecting...");
+
+                setTimeout(() => {
+                    // Redirect to login or admin dashboard (hardcoded to admin dashboard since role is admin)
+                    router.push("/admin/dashboard");
+                }, 1500);
+            } else {
+                setError("Registration failed, invalid response.");
+                setIsLoading(false);
             }
-        } else {
-            setError(result.error || "Login failed. Please try again.");
+        } catch (err: any) {
+            setError(err.message || "Registration failed. Endpoint might be closed.");
             setIsLoading(false);
         }
     };
@@ -68,21 +94,21 @@ export default function LoginPage() {
                     >
                         <span className="text-2xl font-extrabold text-white tracking-tighter">H</span>
                     </motion.div>
-                    <h1 className="text-3xl font-bold tracking-tight text-[#0f172a]">Haerarchy</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-[#0f172a]">Setup Admin</h1>
                     <p className="text-sm text-[#64748b] mt-2">
-                        Enterprise Project & Workforce Management
+                        Initialize the master admin account for Haerarchy
                     </p>
                 </div>
 
-                {/* Login Form */}
+                {/* Register Form */}
                 <Card className="border-[#e2e8f0] bg-white/90 backdrop-blur-xl shadow-2xl shadow-[#2568C1]/5">
                     <CardHeader className="text-center pb-2">
-                        <CardTitle className="text-lg text-[#0f172a]">Sign In</CardTitle>
-                        <CardDescription>Enter your credentials to continue</CardDescription>
+                        <CardTitle className="text-lg text-[#0f172a]">Admin Registration</CardTitle>
+                        <CardDescription>Create the first admin user</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-2">
-                        <form onSubmit={handleLogin} className="space-y-4">
-                            {/* Error Message */}
+                        <form onSubmit={handleRegister} className="space-y-4">
+                            {/* Error / Success Messages */}
                             {error && (
                                 <motion.div
                                     initial={{ opacity: 0, y: -8 }}
@@ -94,6 +120,33 @@ export default function LoginPage() {
                                 </motion.div>
                             )}
 
+                            {success && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="flex items-center gap-2 p-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm"
+                                >
+                                    <UserPlus className="h-4 w-4 shrink-0" />
+                                    <span>{success}</span>
+                                </motion.div>
+                            )}
+
+                            {/* Full Name */}
+                            <div className="space-y-2">
+                                <Label htmlFor="fullName" className="text-sm font-medium text-[#0f172a]">
+                                    Full Name
+                                </Label>
+                                <Input
+                                    id="fullName"
+                                    type="text"
+                                    placeholder="Enter your full name"
+                                    value={fullName}
+                                    onChange={(e) => { setFullName(e.target.value); setError(null); }}
+                                    className="bg-[#f8fafc] border-[#e2e8f0] focus-visible:ring-[#2568C1] h-11"
+                                    disabled={isLoading || !!success}
+                                />
+                            </div>
+
                             {/* Email */}
                             <div className="space-y-2">
                                 <Label htmlFor="email" className="text-sm font-medium text-[#0f172a]">
@@ -102,12 +155,27 @@ export default function LoginPage() {
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="Enter your email"
+                                    placeholder="admin@example.com"
                                     value={email}
                                     onChange={(e) => { setEmail(e.target.value); setError(null); }}
                                     className="bg-[#f8fafc] border-[#e2e8f0] focus-visible:ring-[#2568C1] h-11"
-                                    disabled={isLoading}
-                                    autoComplete="email"
+                                    disabled={isLoading || !!success}
+                                />
+                            </div>
+
+                            {/* Phone Number */}
+                            <div className="space-y-2">
+                                <Label htmlFor="phoneNumber" className="text-sm font-medium text-[#0f172a]">
+                                    Phone Number
+                                </Label>
+                                <Input
+                                    id="phoneNumber"
+                                    type="tel"
+                                    placeholder="08123456789"
+                                    value={phoneNumber}
+                                    onChange={(e) => { setPhoneNumber(e.target.value.replace(/\D/g, '')); setError(null); }}
+                                    className="bg-[#f8fafc] border-[#e2e8f0] focus-visible:ring-[#2568C1] h-11"
+                                    disabled={isLoading || !!success}
                                 />
                             </div>
 
@@ -120,18 +188,18 @@ export default function LoginPage() {
                                     <Input
                                         id="password"
                                         type={showPassword ? "text" : "password"}
-                                        placeholder="Enter your password"
+                                        placeholder="Create a strong password"
                                         value={password}
                                         onChange={(e) => { setPassword(e.target.value); setError(null); }}
                                         className="bg-[#f8fafc] border-[#e2e8f0] focus-visible:ring-[#2568C1] h-11 pr-10"
-                                        disabled={isLoading}
-                                        autoComplete="current-password"
+                                        disabled={isLoading || !!success}
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
                                         className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748b] hover:text-[#0f172a] transition-colors"
                                         tabIndex={-1}
+                                        disabled={isLoading || !!success}
                                     >
                                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </button>
@@ -142,7 +210,7 @@ export default function LoginPage() {
                             <Button
                                 type="submit"
                                 className="w-full h-11 bg-[#2568C1] hover:bg-[#1e56a6] text-white font-semibold shadow-lg shadow-[#2568C1]/20 transition-all duration-200"
-                                disabled={isLoading}
+                                disabled={isLoading || !!success}
                             >
                                 {isLoading ? (
                                     <motion.div
@@ -152,8 +220,8 @@ export default function LoginPage() {
                                     />
                                 ) : (
                                     <>
-                                        <LogIn className="h-4 w-4 mr-2" />
-                                        Sign In
+                                        <UserPlus className="h-4 w-4 mr-2" />
+                                        Register Admin
                                     </>
                                 )}
                             </Button>

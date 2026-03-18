@@ -4,7 +4,7 @@ import {
     History, UserCircle, FolderKanban, Inbox, Users, BarChart3,
     Brain, Settings, Shield, CreditCard, FileSearch, Activity,
     Building2, PieChart, TrendingUp, Scale, Gauge, ClipboardList,
-    UserCog, FileKey, Landmark, MonitorCheck, Zap
+    UserCog, FileKey, Landmark, MonitorCheck, Zap, Package
 } from "lucide-react";
 
 export interface MenuItem {
@@ -25,7 +25,7 @@ export const roleMenus: Record<Role, MenuItem[]> = {
         { label: "History", href: "/employee/history", icon: History },
         { label: "Profile", href: "/employee/profile", icon: UserCircle },
     ],
-    pm: [
+    projectmanager: [
         { label: "Dashboard", href: "/pm/dashboard", icon: LayoutDashboard },
         { label: "My Projects", href: "/pm/projects", icon: FolderKanban },
         { label: "Approvals", href: "/pm/approvals", icon: Inbox, badge: "AI" },
@@ -40,14 +40,13 @@ export const roleMenus: Record<Role, MenuItem[]> = {
         { label: "User Management", href: "/admin/users", icon: UserCog },
         { label: "Contracts", href: "/admin/contracts", icon: FileKey },
         { label: "Projects", href: "/admin/projects", icon: FolderKanban },
-        { label: "Rate Cards", href: "/admin/rate-cards", icon: CreditCard },
         { label: "Proxy Login", href: "/admin/proxy-login", icon: Shield },
         { label: "Payments", href: "/admin/payments", icon: Landmark },
+        { label: "Resources", href: "/admin/resources", icon: Package },
         { label: "Audit Log", href: "/admin/audit-log", icon: Activity },
         { label: "Settings", href: "/admin/settings", icon: Settings },
-        { label: "AI Monitoring", href: "/admin/ai-monitoring", icon: MonitorCheck },
     ],
-    management: [
+    finance: [
         { label: "Executive Dashboard", href: "/management/dashboard", icon: LayoutDashboard },
         { label: "Profitability", href: "/management/profitability", icon: TrendingUp },
         { label: "Cost Breakdown", href: "/management/cost-breakdown", icon: PieChart },
@@ -61,16 +60,16 @@ export const roleMenus: Record<Role, MenuItem[]> = {
 
 export const roleLabels: Record<Role, string> = {
     employee: "Employee",
-    pm: "Project Manager",
+    projectmanager: "Project Manager",
     admin: "Admin",
-    management: "Management",
+    finance: "Management",
 };
 
 export const roleColors: Record<Role, string> = {
     employee: "bg-[#2568C1]",
-    pm: "bg-[#2568C1]",
+    projectmanager: "bg-[#2568C1]",
     admin: "bg-[#2568C1]",
-    management: "bg-[#2568C1]",
+    finance: "bg-[#2568C1]",
 };
 
 export function canAccess(userRole: Role, requiredRole: Role | Role[]): boolean {
@@ -79,5 +78,7 @@ export function canAccess(userRole: Role, requiredRole: Role | Role[]): boolean 
 }
 
 export function getDefaultRoute(role: Role): string {
+    if (role === "projectmanager") return "/pm/dashboard";
+    if (role === "finance") return "/management/dashboard";
     return `/${role}/dashboard`;
 }

@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Sidebar } from "./sidebar";
 import { Topbar } from "./topbar";
 import { Role } from "@/lib/types";
+import { getDefaultRoute } from "@/lib/rbac";
 
 interface AppShellProps {
     children: React.ReactNode;
@@ -14,23 +15,36 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, requiredRole }: AppShellProps) {
-    const { user, isAuthenticated, sidebarCollapsed } = useAuthStore();
+    const { user, isAuthenticated, sidebarCollapsed, isImpersonating } = useAuthStore();
     const router = useRouter();
     const pathname = usePathname();
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        if (!isAuthenticated) {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (mounted && !isAuthenticated) {
             router.push("/login");
         }
-    }, [isAuthenticated, router]);
+    }, [isAuthenticated, router, mounted]);
 
-    if (!isAuthenticated || !user) {
+    // Move role redirect into useEffect to avoid setState-during-render error
+    useEffect(() => {
+        if (!mounted || !isAuthenticated || !user || isImpersonating) return;
+
+        const allowedPath = user.role === "projectmanager" ? "/pm" : user.role === "finance" ? "/management" : `/${user.role}`;
+        if (user.role !== requiredRole && !pathname.startsWith(allowedPath)) {
+            router.push(getDefaultRoute(user.role as Role));
+        }
+    }, [mounted, isAuthenticated, user, isImpersonating, requiredRole, pathname, router]);
+
+    if (!mounted) {
         return null;
     }
 
-    // Redirect if wrong role accessed
-    if (user.role !== requiredRole && !pathname.startsWith(`/${user.role}`)) {
-        router.push(`/${user.role}/dashboard`);
+    if (!isAuthenticated || !user) {
         return null;
     }
 

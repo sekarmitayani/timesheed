@@ -1,63 +1,155 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageHeader } from "@/components/ai/ai-components";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { Plus, Loader2, Package, Wrench, Users } from "lucide-react";
 import { toast } from "sonner";
+import { resourceService, ResourceRequest, CreateResourcePayload } from "@/lib/services/resource-service";
+import { projectService } from "@/lib/services/project-service";
+import { ApiProject } from "@/lib/types";
 
-interface Request { id: string; type: string; from: string; date: string; status: string; desc: string }
+const statusColors: Record<string, string> = {
+    pending: "bg-amber-50 text-amber-600 border-amber-200",
+    approved: "bg-emerald-50 text-emerald-600 border-emerald-200",
+    rejected: "bg-red-50 text-red-500 border-red-200",
+};
+
+const typeIcons: Record<string, React.ReactNode> = {
+    manpower: <Users className="h-4 w-4 text-blue-500" />,
+    tools: <Wrench className="h-4 w-4 text-orange-500" />,
+};
 
 export default function RequestsPage() {
-    const [requests, setRequests] = useState<Request[]>([
-        { id: "r1", type: "Leave", from: "Andi Pratama", date: "2026-02-20", status: "pending", desc: "Annual leave - 3 days" },
-        { id: "r2", type: "Overtime", from: "Sari Dewi", date: "2026-02-19", status: "approved", desc: "4h overtime for API deadline" },
-        { id: "r3", type: "Resource", from: "Budi Santoso", date: "2026-02-18", status: "pending", desc: "Need additional design tools license" },
-        { id: "r4", type: "Leave", from: "Lina Hartono", date: "2026-02-21", status: "pending", desc: "Sick leave - 1 day" },
-        { id: "r5", type: "Overtime", from: "Reza Firmansyah", date: "2026-02-19", status: "pending", desc: "2h overtime for QA testing" },
-    ]);
+    const [requests, setRequests] = useState<ResourceRequest[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const handleApprove = (id: string, from: string) => {
-        setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status: "approved" } : r));
-        toast.success(`Approved request from ${from}`);
+    // Create
+    const [createOpen, setCreateOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [projects, setProjects] = useState<ApiProject[]>([]);
+    const [form, setForm] = useState<CreateResourcePayload>({ project_id: 0, type: "tools", details: "" });
+
+    const fetchRequests = async () => {
+        setIsLoading(true);
+        try {
+            const res = await resourceService.getResourceRequests();
+            setRequests(Array.isArray(res) ? res : []);
+        } catch (e: any) {
+            toast.error(e.message || "Failed to load requests");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleReject = (id: string, from: string) => {
-        setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status: "rejected" } : r));
-        toast.error(`Rejected request from ${from}`);
+    useEffect(() => { fetchRequests(); }, []);
+
+    const openCreate = async () => {
+        setCreateOpen(true);
+        setForm({ project_id: 0, type: "tools", details: "" });
+        if (projects.length === 0) {
+            try {
+                const res = await projectService.getProjects(1, 100);
+                setProjects(res.data || []);
+            } catch { /* skip */ }
+        }
     };
+
+    const handleCreate = async () => {
+        if (!form.project_id || !form.details.trim()) { toast.error("Project and details are required"); return; }
+        setIsSaving(true);
+        try {
+            await resourceService.createResourceRequest(form);
+            toast.success("Request submitted!");
+            setCreateOpen(false);
+            fetchRequests();
+        } catch (e: any) {
+            toast.error(e.message || "Failed to submit request");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const pendingCount = requests.filter(r => r.status === "pending").length;
 
     return (
         <div className="space-y-6">
-            <PageHeader title="Requests" description="Team requests and resource management" />
-            <div className="space-y-3">
-                {requests.map((req) => (
-                    <Card key={req.id}>
-                        <CardContent className="p-4 flex items-center gap-4">
-                            <Badge variant="outline" className="text-[10px]">{req.type}</Badge>
-                            <div className="flex-1">
-                                <p className="text-sm font-medium">{req.from}</p>
-                                <p className="text-xs text-muted-foreground">{req.desc} • {req.date}</p>
-                            </div>
-                            <Badge variant={req.status === "approved" ? "secondary" : req.status === "rejected" ? "destructive" : "outline"} className={`text-[10px] ${req.status === "approved" ? "bg-emerald-500/10 text-emerald-500" : req.status === "rejected" ? "bg-red-500/10 text-red-500" : ""}`}>
-                                {req.status}
-                            </Badge>
-                            {req.status === "pending" && (
-                                <div className="flex gap-1">
-                                    <Button size="sm" variant="outline" className="h-7 text-xs text-emerald-500 gap-1" onClick={() => handleApprove(req.id, req.from)}>
-                                        <CheckCircle2 className="h-3 w-3" /> Approve
-                                    </Button>
-                                    <Button size="sm" variant="outline" className="h-7 text-xs text-red-500 gap-1" onClick={() => handleReject(req.id, req.from)}>
-                                        <XCircle className="h-3 w-3" /> Reject
-                                    </Button>
+            <PageHeader title="Resource Requests" description={`${pendingCount} pending`}>
+                <Button size="sm" className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] shadow-md shadow-[#2568C1]/20" onClick={openCreate}>
+                    <Plus className="h-4 w-4" /> New Request
+                </Button>
+            </PageHeader>
+
+            {isLoading ? (
+                <div className="py-16 flex flex-col items-center text-muted-foreground"><Loader2 className="h-8 w-8 animate-spin text-[#2568C1] mb-4" /><p>Loading requests...</p></div>
+            ) : requests.length === 0 ? (
+                <div className="py-16 text-center text-muted-foreground text-sm">No resource requests yet.</div>
+            ) : (
+                <div className="space-y-3">
+                    {requests.map(req => (
+                        <Card key={req.id} className="hover:border-[#2568C1]/30 transition-colors">
+                            <CardContent className="p-4 flex items-center gap-4">
+                                <div className="h-10 w-10 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center shrink-0">
+                                    {typeIcons[req.type] || <Package className="h-4 w-4 text-slate-400" />}
                                 </div>
-                            )}
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                        <Badge variant="outline" className="text-[10px] capitalize">{req.type}</Badge>
+                                        <span className="text-xs text-muted-foreground">{req.Project?.name || `Project #${req.project_id}`}</span>
+                                    </div>
+                                    <p className="text-sm font-medium text-[#0f172a] mt-0.5 truncate">{req.details}</p>
+                                    {req.amount > 0 && <p className="text-xs text-emerald-600 font-medium">Rp {req.amount.toLocaleString("id-ID")}</p>}
+                                </div>
+                                <Badge variant="outline" className={`text-[10px] font-bold capitalize ${statusColors[req.status]}`}>{req.status}</Badge>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            )}
+
+            {/* Create Request Dialog */}
+            <Dialog open={createOpen} onOpenChange={open => !isSaving && setCreateOpen(open)}>
+                <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden border-[#e2e8f0]">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
+                        <DialogTitle className="text-lg">New Resource Request</DialogTitle>
+                        <DialogDescription className="text-xs">Submit a request for resources needed in your project.</DialogDescription>
+                    </div>
+                    <div className="px-6 py-5 space-y-4">
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-medium">Project <span className="text-red-500">*</span></label>
+                            <Select value={String(form.project_id || "")} onValueChange={v => setForm({ ...form, project_id: Number(v) })}>
+                                <SelectTrigger><SelectValue placeholder="Select project" /></SelectTrigger>
+                                <SelectContent>{projects.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}</SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-medium">Type</label>
+                            <Select value={form.type} onValueChange={v => setForm({ ...form, type: v })}>
+                                <SelectTrigger><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="manpower">Manpower</SelectItem>
+                                    <SelectItem value="tools">Tools</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-medium">Details <span className="text-red-500">*</span></label>
+                            <Input value={form.details} onChange={e => setForm({ ...form, details: e.target.value })} placeholder="Describe the resource needed..." disabled={isSaving} />
+                        </div>
+                    </div>
+                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
+                        <Button variant="ghost" onClick={() => setCreateOpen(false)} disabled={isSaving}>Cancel</Button>
+                        <Button onClick={handleCreate} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[110px]">
+                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit Request"}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
