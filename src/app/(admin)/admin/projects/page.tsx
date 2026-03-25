@@ -32,10 +32,10 @@ function schemeLabel(s: string): string {
 }
 
 const statusColors: Record<string, string> = {
-    active: "bg-emerald-50 text-emerald-600 border-transparent",
-    completed: "bg-blue-50 text-blue-600 border-transparent",
-    "on-hold": "bg-amber-50 text-amber-600 border-transparent",
-    cancelled: "bg-slate-100 text-slate-500 border-transparent",
+    active: "bg-emerald-50 text-emerald-600 border-none",
+    completed: "bg-blue-50 text-blue-600 border-none",
+    "on-hold": "bg-amber-50 text-amber-600 border-none",
+    cancelled: "bg-slate-100 text-slate-500 border-none",
 };
 
 interface PendingEmployee { user: User; role_in_project: string; rateMode: "contract" | "custom"; selectedContractId: string; custom_rate: number | null; contract_type: string; payment_scheme: string; }
@@ -206,7 +206,7 @@ export default function AdminProjectsPage() {
                                     <TableCell className=""><span className="text-sm text-[#475569]">{p.client_name}</span>{p.client_email && <div className="text-[10px] text-muted-foreground">{p.client_email}</div>}</TableCell>
                                     <TableCell className=""><span className="text-sm font-medium">Rp {formatNumber(p.budget_revenue || 0)}</span></TableCell>
                                     <TableCell className=""><div className="flex flex-col"><span className="text-sm font-medium">{p.actual_cost ? `Rp ${formatNumber(p.actual_cost)}` : 'Rp 0'}</span>{(p.budget_cost || 0) > 0 && <span className="text-[10px] text-muted-foreground">Planned: Rp {formatNumber(p.budget_cost || 0)}</span>}{(p.budget_cost_threshold || 0) > 0 && (p.actual_cost || 0) > (p.budget_cost_threshold || 0) && <span className="text-[10px] text-red-500 font-medium">⚠ Over Threshold</span>}</div></TableCell>
-                                    <TableCell className=""><Badge variant="outline" className={`capitalize text-[10px] font-bold ${statusColors[p.status] || ""}`}>{p.status}</Badge></TableCell>
+                                    <TableCell className=""><Badge variant="outline" className={`capitalize text-[10px] font-bold rounded-full px-2.5 py-0.5 ${statusColors[p.status] || ""}`}>{p.status}</Badge></TableCell>
                                     <TableCell className=""><div className="flex gap-1">
                                         <Button variant="ghost" size="icon" className="h-8 w-8 text-[#64748b] hover:text-[#2568C1] hover:bg-[#2568C1]/10 rounded-full" onClick={() => openDetail(p)}><Eye className="h-4 w-4" /></Button>
                                         <Button variant="ghost" size="icon" className="h-8 w-8 text-[#64748b] hover:text-[#2568C1] hover:bg-[#2568C1]/10 rounded-full" onClick={() => openMembers(p)}><Users className="h-4 w-4" /></Button>
@@ -324,7 +324,7 @@ export default function AdminProjectsPage() {
             <Dialog open={detailOpen} onOpenChange={o => !isSavingDetail && setDetailOpen(o)}><DialogContent className="sm:max-w-[600px] max-w-[95vw] max-h-[90vh] p-0 overflow-hidden border-[#e2e8f0] flex flex-col">
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-5 py-4 pr-10 flex items-center justify-between shrink-0">
                     <DialogTitle className="text-lg font-bold text-[#0f172a] tracking-tight">Project Detail</DialogTitle>
-                    <Badge variant="outline" className={`capitalize text-xs px-2.5 py-0.5 font-bold ${statusColors[detailProject?.status || ""] || ""}`}>{detailProject?.status}</Badge>
+                    <Badge variant="outline" className={`capitalize text-[10px] px-2.5 py-0.5 rounded-full font-bold ${statusColors[detailProject?.status || ""] || ""}`}>{detailProject?.status}</Badge>
                 </div>
                 <div className="px-5 py-4 space-y-4 overflow-y-auto h-full">
                     {!isEditing && <div className="p-4 rounded-xl border border-slate-200 bg-white shadow-sm space-y-4">

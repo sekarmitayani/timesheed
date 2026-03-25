@@ -15,9 +15,9 @@ import { toast } from "sonner";
 import { resourceService, ResourceRequest, ApprovalActionPayload, EditResourcePayload } from "@/lib/services/resource-service";
 
 const statusColors: Record<string, string> = {
-    pending: "bg-amber-50 text-amber-600 border-amber-200",
-    approved: "bg-emerald-50 text-emerald-600 border-emerald-200",
-    rejected: "bg-red-50 text-red-500 border-red-200",
+    pending: "bg-amber-50 text-amber-600 border-none",
+    approved: "bg-emerald-50 text-emerald-600 border-none",
+    rejected: "bg-red-50 text-red-500 border-none",
 };
 
 export default function AdminResourcesPage() {
@@ -193,7 +193,7 @@ export default function AdminResourcesPage() {
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Badge variant="outline" className={`text-[10px] font-bold capitalize ${statusColors[r.status]}`}>{r.status}</Badge>
+                                                    <Badge variant="outline" className={`text-[10px] font-bold capitalize rounded-full px-2.5 py-0.5 ${statusColors[r.status]}`}>{r.status}</Badge>
                                                 </TableCell>
                                                 <TableCell>
                                                     <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs text-[#2568C1] hover:bg-[#2568C1]/10" onClick={() => openDetail(r)}>
@@ -251,7 +251,7 @@ export default function AdminResourcesPage() {
                             </div>
                             <div>
                                 <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Status</p>
-                                <Badge variant="outline" className={`text-[10px] font-bold capitalize ${statusColors[detailTarget?.status || "pending"]}`}>{detailTarget?.status}</Badge>
+                                <Badge variant="outline" className={`text-[10px] font-bold capitalize rounded-full px-2.5 py-0.5 ${statusColors[detailTarget?.status || "pending"]}`}>{detailTarget?.status}</Badge>
                             </div>
                             <div>
                                 <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Amount</p>

@@ -220,9 +220,9 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Users */}
                 <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer" onClick={() => router.push("/admin/users")}>
-                    <CardContent className="p-5">
+                    <CardContent className="p-4">
                         <div className="flex items-start justify-between">
-                            <div className="space-y-2">
+                            <div className="flex flex-col gap-0">
                                 <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Users</p>
                                 <p className="text-3xl font-bold text-[#0f172a]">{stats.totalUsers}</p>
                                 <p className="text-xs text-slate-500">{stats.activeUsers} active</p>
@@ -236,9 +236,9 @@ export default function AdminDashboard() {
 
                 {/* Projects */}
                 <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer" onClick={() => router.push("/admin/projects")}>
-                    <CardContent className="p-5">
+                    <CardContent className="p-4">
                         <div className="flex items-start justify-between">
-                            <div className="space-y-2">
+                            <div className="flex flex-col gap-0">
                                 <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Active Projects</p>
                                 <p className="text-3xl font-bold text-[#0f172a]">{stats.activeProjects}</p>
                                 <p className="text-xs text-slate-500">{stats.totalProjects} total</p>
@@ -252,9 +252,9 @@ export default function AdminDashboard() {
 
                 {/* Contract Value */}
                 <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer" onClick={() => router.push("/admin/contracts")}>
-                    <CardContent className="p-5">
+                    <CardContent className="p-4">
                         <div className="flex items-start justify-between">
-                            <div className="space-y-2">
+                            <div className="flex flex-col gap-0">
                                 <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Employee Contracts</p>
                                 <p className="text-2xl font-bold text-[#0f172a]">{fmtCurrency(stats.totalContractValue)}</p>
                                 <p className="text-[10px] text-slate-500">All contract schemes</p>
@@ -268,9 +268,9 @@ export default function AdminDashboard() {
 
                 {/* Pending Resources */}
                 <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer" onClick={() => router.push("/admin/resources")}>
-                    <CardContent className="p-5">
+                    <CardContent className="p-4">
                         <div className="flex items-start justify-between">
-                            <div className="space-y-2">
+                            <div className="flex flex-col gap-0">
                                 <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pending Requests</p>
                                 <p className="text-3xl font-bold text-[#0f172a]">{stats.pendingResources}</p>
                                 <p className="text-xs text-slate-500">resource requests waiting</p>
@@ -286,44 +286,44 @@ export default function AdminDashboard() {
             {/* ── Row 2: Financial Overview + Outstanding ─────── */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Employee Payment Distribution */}
-                <Card className="lg:col-span-2 border-[#e2e8f0]">
-                    <CardHeader className="pb-1">
+                <Card className="lg:col-span-2 border-[#e2e8f0] shadow-sm">
+                    <CardHeader className="pb-1 border-b border-slate-100/60">
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle className="text-sm font-semibold text-[#0f172a] flex items-center gap-2">
-                                    <BarChart3 className="h-4 w-4 text-[#2568C1]" /> Employee Distribution by Project
+                                <CardTitle className="text-base font-bold text-[#0f172a] flex items-center gap-2">
+                                    <BarChart3 className="h-5 w-5 text-[#2568C1]" /> Employee Distribution by Project
                                 </CardTitle>
-                                <p className="text-[10px] text-slate-500 font-normal ml-6 mt-1">All contract schemes</p>
+                                <p className="text-xs text-slate-500 font-medium ml-7 -mt-0.5">All contract schemes</p>
                             </div>
-                            <Button variant="ghost" size="sm" className="text-xs text-[#2568C1] gap-1" onClick={() => router.push("/admin/payments")}>
-                                View Distributions <ArrowRight className="h-3 w-3" />
+                            <Button variant="ghost" size="sm" className="text-xs font-semibold text-[#2568C1] gap-1 hover:bg-blue-50" onClick={() => router.push("/admin/payments")}>
+                                View Distributions <ArrowRight className="h-3.5 w-3.5" />
                             </Button>
                         </div>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-3 pt-3">
                         {projectFinancials.length === 0 ? (
                             <div className="py-8 text-center text-sm text-slate-400">No project financial data available yet.</div>
                         ) : (
                             projectFinancials.map(pf => (
-                                <div key={pf.id} className="space-y-2">
+                                <div key={pf.id} className="space-y-1.5">
                                     <div className="flex items-center justify-between">
-                                        <div className="min-w-0">
-                                            <p className="text-sm font-medium text-[#0f172a] truncate">{pf.name}</p>
-                                            <p className="text-[10px] text-slate-400">{pf.client}</p>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-sm font-bold text-[#0f172a] truncate">{pf.name}</p>
+                                            <p className="text-xs text-slate-500 truncate">{pf.client}</p>
                                         </div>
-                                        <div className="text-right shrink-0 ml-4">
-                                            <p className="text-xs font-medium text-[#0f172a]">{fmtCurrency(pf.totalPaid)}</p>
-                                            <p className="text-[10px] text-slate-400">of {fmtCurrency(pf.totalContractValue)}</p>
+                                        <div className="text-right shrink-0 ml-4 flex flex-col items-end">
+                                            <p className="text-sm font-bold text-[#0f172a]">{fmtCurrency(pf.totalPaid)}</p>
+                                            <p className="text-[11px] text-slate-500 font-medium">of {fmtCurrency(pf.totalContractValue)}</p>
                                         </div>
                                     </div>
-                                    <div className="relative h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="relative h-2.5 bg-slate-100 rounded-full overflow-hidden">
                                         <div
                                             className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#2568C1] to-[#4a8be0] transition-all duration-700"
                                             style={{ width: `${Math.min(pf.progressPercent, 100)}%` }}
                                         />
                                     </div>
-                                    <div className="flex justify-between text-[10px] text-slate-400">
-                                        <span>{pf.progressPercent}% distributed</span>
+                                    <div className="flex justify-between text-[11px] font-medium text-slate-500">
+                                        <span className="text-[#2568C1]">{pf.progressPercent}% distributed</span>
                                         <span>{fmtCurrency(pf.remaining)} unpaid</span>
                                     </div>
                                 </div>
@@ -333,60 +333,51 @@ export default function AdminDashboard() {
                 </Card>
 
                 {/* Sub-Ledger Payment Status Summary */}
-                <Card className="border-[#e2e8f0]">
-                    <CardHeader className="pb-1">
+                <Card className="border-[#e2e8f0] shadow-sm">
+                    <CardHeader className="pb-1 border-b border-slate-100/60">
                         <div>
-                            <CardTitle className="text-sm font-semibold text-[#0f172a] flex items-center gap-2">
-                                <Wallet className="h-4 w-4 text-[#2568C1]" /> Sub-Ledger Payment Status
+                            <CardTitle className="text-base font-bold text-[#0f172a] flex items-center gap-2">
+                                <Wallet className="h-5 w-5 text-[#2568C1]" /> Sub-Ledger Payment Status
                             </CardTitle>
-                            <p className="text-[10px] text-slate-500 font-normal ml-6 mt-1">All contract schemes</p>
+                            <p className="text-xs text-slate-500 font-medium ml-7 -mt-0.5">All contract schemes</p>
                         </div>
                     </CardHeader>
-                    <CardContent className="space-y-5">
+                    <CardContent className="space-y-2 pt-3 flex flex-col h-full">
                         {/* Overall Progress */}
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-xs">
-                                <span className="text-slate-500">Overall Distribution</span>
-                                <span className="font-bold text-[#0f172a]">{paymentProgress}%</span>
+                        <div className="space-y-1 flex-none">
+                            <div className="flex justify-between items-end">
+                                <span className="text-sm font-semibold text-slate-600">Overall Distribution</span>
+                                <span className="font-bold text-lg text-[#0f172a] leading-none">{paymentProgress}%</span>
                             </div>
-                            <Progress value={paymentProgress} className="h-2.5" />
-                            <div className="flex justify-between text-[10px] text-slate-400">
-                                <span>Distributed: {fmtCurrency(stats.totalPaid)}</span>
-                                <span>Unpaid: {fmtCurrency(stats.totalRemaining)}</span>
+                            <Progress value={paymentProgress} className="h-3 bg-slate-100" />
+                            <div className="flex justify-between text-[11px] font-medium text-slate-500 pt-1">
+                                <span>Distributed: <span className="text-slate-700 font-bold">{fmtCurrency(stats.totalPaid)}</span></span>
+                                <span>Unpaid: <span className="text-slate-700 font-bold">{fmtCurrency(stats.totalRemaining)}</span></span>
                             </div>
                         </div>
 
                         {/* Status Breakdown */}
-                        <div className="space-y-3 pt-2 border-t border-slate-100">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <div className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                                    <span className="text-xs text-slate-600">Pending</span>
-                                </div>
-                                <span className="text-sm font-bold text-[#0f172a]">{stats.contractsPending}</span>
+                        <div className="space-y-1.5 pt-2 border-t border-slate-100 flex-1">
+                            <div className="flex items-center justify-between py-1 px-1 hover:bg-slate-50 transition-colors rounded">
+                                <Badge className="bg-amber-50 text-amber-600 hover:bg-amber-100 border-none rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase">Pending</Badge>
+                                <span className="text-base font-bold text-[#0f172a]">{stats.contractsPending}</span>
                             </div>
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <div className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-                                    <span className="text-xs text-slate-600">Partially Paid</span>
-                                </div>
-                                <span className="text-sm font-bold text-[#0f172a]">{stats.contractsPartiallyPaid}</span>
+                            <div className="flex items-center justify-between py-1 px-1 hover:bg-slate-50 transition-colors rounded">
+                                <Badge className="bg-orange-50 text-orange-600 hover:bg-orange-100 border-none rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase">Partially Paid</Badge>
+                                <span className="text-base font-bold text-[#0f172a]">{stats.contractsPartiallyPaid}</span>
                             </div>
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                                    <span className="text-xs text-slate-600">Paid</span>
-                                </div>
-                                <span className="text-sm font-bold text-[#0f172a]">{stats.contractsPaid}</span>
+                            <div className="flex items-center justify-between py-1 px-1 hover:bg-slate-50 transition-colors rounded">
+                                <Badge className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-none rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase">Paid</Badge>
+                                <span className="text-base font-bold text-[#0f172a]">{stats.contractsPaid}</span>
                             </div>
                         </div>
 
                         {/* Resource Cost */}
-                        <div className="pt-3 border-t border-slate-100">
+                        <div className="pt-2 pb-0 border-t border-slate-100 flex-none mt-auto">
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1.5">
                                     <Wrench className="h-3.5 w-3.5 text-slate-400" />
-                                    <span className="text-xs text-slate-600">Approved Resource Cost</span>
+                                    <span className="text-xs font-medium text-slate-500">Approved Resource Cost</span>
                                 </div>
                                 <span className="text-sm font-bold text-[#0f172a]">{fmtCurrency(stats.totalResourceCost)}</span>
                             </div>
@@ -426,7 +417,7 @@ export default function AdminDashboard() {
                                             <p className="text-xs font-medium text-[#0f172a] truncate">{r.details}</p>
                                             <p className="text-[10px] text-slate-400">{r.User?.full_name || `User #${r.user_id}`} · {r.Project?.name || `Project #${r.project_id}`}</p>
                                         </div>
-                                        <Badge variant="outline" className="text-[9px] bg-amber-50 text-amber-600 border-amber-200 shrink-0">Pending</Badge>
+                                        <Badge variant="outline" className="text-[9px] font-bold rounded-full px-2.5 py-0.5 bg-amber-50 text-amber-600 border-none shrink-0">Pending</Badge>
                                     </div>
                                 ))}
                             </div>
@@ -448,11 +439,10 @@ export default function AdminDashboard() {
                             <div className="space-y-2">
                                 {recentResources.map(r => (
                                     <div key={r.id} className="flex items-center gap-3 p-3 rounded-lg bg-slate-50/80">
-                                        <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${
-                                            r.status === "approved" ? "bg-emerald-50 border border-emerald-200" :
-                                            r.status === "rejected" ? "bg-red-50 border border-red-200" :
-                                            "bg-slate-100 border border-slate-200"
-                                        }`}>
+                                        <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${r.status === "approved" ? "bg-emerald-50 border border-emerald-200" :
+                                                r.status === "rejected" ? "bg-red-50 border border-red-200" :
+                                                    "bg-slate-100 border border-slate-200"
+                                            }`}>
                                             {r.status === "approved" ? (
                                                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                                             ) : r.status === "rejected" ? (
@@ -470,11 +460,10 @@ export default function AdminDashboard() {
                                                 {r.amount > 0 && <><span>·</span><span className="text-emerald-600 font-medium">{fmtCurrency(r.amount)}</span></>}
                                             </div>
                                         </div>
-                                        <Badge variant="outline" className={`text-[9px] font-bold capitalize shrink-0 ${
-                                            r.status === "approved" ? "bg-emerald-50 text-emerald-600 border-emerald-200" :
-                                            r.status === "rejected" ? "bg-red-50 text-red-500 border-red-200" :
-                                            "bg-amber-50 text-amber-600 border-amber-200"
-                                        }`}>{r.status}</Badge>
+                                        <Badge variant="outline" className={`text-[9px] font-bold capitalize shrink-0 rounded-full px-2.5 py-0.5 border-none ${r.status === "approved" ? "bg-emerald-50 text-emerald-600" :
+                                                r.status === "rejected" ? "bg-red-50 text-red-500" :
+                                                    "bg-amber-50 text-amber-600"
+                                            }`}>{r.status}</Badge>
                                     </div>
                                 ))}
                             </div>

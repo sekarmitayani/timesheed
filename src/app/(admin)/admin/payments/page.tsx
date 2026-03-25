@@ -41,9 +41,9 @@ const fmtDate = (d?: string) => {
 };
 
 const summaryStatusColor = (s: string) => {
-    if (s === "Paid") return "bg-emerald-50 text-emerald-600 border-emerald-200";
-    if (s === "PartiallyPaid") return "bg-amber-50 text-amber-600 border-amber-200";
-    return "bg-slate-100 text-slate-500 border-slate-200";
+    if (s === "Paid") return "bg-emerald-50 text-emerald-600 border-none";
+    if (s === "PartiallyPaid") return "bg-amber-50 text-amber-600 border-none";
+    return "bg-slate-100 text-slate-500 border-none";
 };
 
 export default function PaymentsPage() {
@@ -340,7 +340,7 @@ export default function PaymentsPage() {
                                             </TableCell>
                                             <TableCell className="">
                                                 <div className="flex flex-col gap-0.5">
-                                                    <Badge variant="outline" className={`capitalize text-[10px] font-bold px-2 py-0.5 tracking-wider w-fit ${c.payment_scheme === 'back_to_back' ? "bg-teal-50 text-teal-700 border-teal-200" : c.payment_scheme === 'monthly' ? "bg-blue-50 text-blue-700 border-blue-200" : "bg-indigo-50 text-indigo-700 border-indigo-200"}`}>
+                                                    <Badge variant="outline" className={`capitalize text-[10px] font-bold px-2.5 py-0.5 tracking-wider w-fit rounded-full border-none ${c.payment_scheme === 'back_to_back' ? "bg-teal-50 text-teal-700" : c.payment_scheme === 'monthly' ? "bg-blue-50 text-blue-700" : "bg-indigo-50 text-indigo-700"}`}>
                                                         {c.payment_scheme === 'back_to_back' ? 'Back-to-back' : c.payment_scheme === 'monthly' ? 'Monthly' : 'Termin'}
                                                     </Badge>
                                                     <span className="text-[10px] text-slate-400">{c.contract_type}</span>
@@ -348,7 +348,7 @@ export default function PaymentsPage() {
                                             </TableCell>
                                             <TableCell className="">
                                                 <div className="flex flex-col gap-0.5">
-                                                    <Badge variant="outline" className={`text-[10px] font-bold px-2 py-0.5 tracking-wider w-fit ${(c as any).origin === 'Custom Rate' ? 'bg-orange-50 text-orange-600 border-orange-200' : 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+                                                    <Badge variant="outline" className={`text-[10px] font-bold px-2.5 py-0.5 tracking-wider w-fit rounded-full border-none ${(c as any).origin === 'Custom Rate' ? 'bg-orange-50 text-orange-600' : 'bg-slate-50 text-slate-600'}`}>
                                                         {(c as any).origin || 'Base Rate'}
                                                     </Badge>
                                                     {(c as any).project_name && <span className="text-[10px] text-slate-400 truncate max-w-[120px]">{(c as any).project_name}</span>}
@@ -361,9 +361,9 @@ export default function PaymentsPage() {
                                                 </div>
                                             </TableCell>
                                             <TableCell className="">
-                                                <Badge variant="outline" className={`uppercase text-[10px] font-bold px-2 py-0.5 tracking-wider ${c.paymentStatus === 'paid' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
-                                                    c.paymentStatus === 'partially_paid' ? 'bg-amber-50 text-amber-600 border-amber-200' :
-                                                        'bg-slate-100 text-slate-500 border-slate-200'
+                                                <Badge variant="outline" className={`uppercase text-[10px] font-bold px-2.5 py-0.5 tracking-wider rounded-full border-none ${c.paymentStatus === 'paid' ? 'bg-emerald-50 text-emerald-600' :
+                                                    c.paymentStatus === 'partially_paid' ? 'bg-amber-50 text-amber-600' :
+                                                        'bg-slate-100 text-slate-500'
                                                     }`}>
                                                     {c.paymentStatus === 'partially_paid' ? 'Partially Paid' : c.paymentStatus === 'paid' ? 'DONE' : 'PENDING'}
                                                 </Badge>
@@ -417,14 +417,14 @@ export default function PaymentsPage() {
                             <div className="grid grid-cols-3 gap-3">
                                 <div>
                                     <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Scheme</div>
-                                    <Badge variant="outline" className={`text-[9px] font-bold ${selectedContract?.payment_scheme === 'back_to_back' ? "bg-teal-50 text-teal-700 border-teal-200" : selectedContract?.payment_scheme === 'monthly' ? "bg-blue-50 text-blue-700 border-blue-200" : "bg-indigo-50 text-indigo-700 border-indigo-200"}`}>
+                                    <Badge variant="outline" className={`text-[9px] font-bold rounded-full px-2.5 py-0.5 border-none ${selectedContract?.payment_scheme === 'back_to_back' ? "bg-teal-50 text-teal-700" : selectedContract?.payment_scheme === 'monthly' ? "bg-blue-50 text-blue-700" : "bg-indigo-50 text-indigo-700"}`}>
                                         {selectedContract?.payment_scheme === 'back_to_back' ? 'Back-to-back' : selectedContract?.payment_scheme === 'monthly' ? 'Monthly' : 'Termin'}
                                     </Badge>
                                     <div className="text-[10px] text-slate-400 mt-0.5">{selectedContract?.contract_type}</div>
                                 </div>
                                 <div>
                                     <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Origin</div>
-                                    <Badge variant="outline" className={`text-[9px] font-bold ${(selectedContract as any)?.origin === 'Custom Rate' ? 'bg-orange-50 text-orange-600 border-orange-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                                    <Badge variant="outline" className={`text-[9px] font-bold rounded-full px-2.5 py-0.5 border-none ${(selectedContract as any)?.origin === 'Custom Rate' ? 'bg-orange-50 text-orange-600' : 'bg-slate-100 text-slate-600'}`}>
                                         {(selectedContract as any)?.origin || 'Base Rate'}
                                     </Badge>
                                 </div>
@@ -444,7 +444,7 @@ export default function PaymentsPage() {
                                 </div>
                                 <div>
                                     <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Status</div>
-                                    <Badge variant="outline" className={`text-[10px] uppercase font-black tracking-widest ${summaryStatusColor(contractSummary.status)}`}>{contractSummary.status}</Badge>
+                                    <Badge variant="outline" className={`text-[10px] uppercase font-black tracking-widest rounded-full px-2.5 py-0.5 border-none ${summaryStatusColor(contractSummary.status)}`}>{contractSummary.status}</Badge>
                                 </div>
                             </div>
                         </div>

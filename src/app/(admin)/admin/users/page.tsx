@@ -467,13 +467,13 @@ export default function UsersPage() {
                                             <TableCell className="">
                                                 <Badge
                                                     variant="outline"
-                                                    className={`capitalize text-[11px] font-medium ${user.role === "admin"
-                                                        ? "bg-amber-50 text-amber-700 border-amber-200"
+                                                    className={`capitalize text-[11px] font-bold tracking-wider rounded-full px-2.5 py-0.5 border-none ${user.role === "admin"
+                                                        ? "bg-amber-50 text-amber-600"
                                                         : user.role === "projectmanager"
-                                                            ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                                                            ? "bg-indigo-50 text-indigo-600"
                                                             : user.role === "finance"
-                                                                ? "bg-purple-50 text-purple-700 border-purple-200"
-                                                                : "bg-blue-50 text-[#2568C1] border-blue-200"
+                                                                ? "bg-purple-50 text-purple-600"
+                                                                : "bg-blue-50 text-[#2568C1]"
                                                         }`}
                                                 >
                                                     {user.role === "projectmanager"
@@ -484,14 +484,18 @@ export default function UsersPage() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="">
-                                                <span className="text-xs text-muted-foreground capitalize">
+                                                <Badge className={`capitalize font-bold tracking-wider rounded-full px-2.5 py-0.5 border-none text-[10px] w-fit
+                                                    ${user.employee_type === 'parttime' ? "bg-slate-100 text-slate-600" :
+                                                      user.employee_type === 'freelance' ? "bg-purple-50 text-purple-600" :
+                                                      user.employee_type === 'fulltime' ? "bg-emerald-50 text-emerald-600" :
+                                                      "bg-amber-50 text-amber-600"}`} variant="outline">
                                                     {user.employee_type ? user.employee_type.replace("time", "-time") : "System"}
-                                                </span>
+                                                </Badge>
                                             </TableCell>
                                             <TableCell className="">
-                                                <Badge className={`text-[10px] capitalize font-bold tracking-wider ${user.status === "active"
-                                                    ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-transparent"
-                                                    : "bg-slate-100 text-slate-500 hover:bg-slate-200 border-transparent"
+                                                <Badge className={`text-[10px] capitalize font-bold tracking-wider rounded-full px-2.5 py-0.5 border-none ${user.status === "active"
+                                                    ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+                                                    : "bg-rose-50 text-rose-600 hover:bg-rose-100"
                                                     }`}>
                                                     {user.status === "active" ? "Active" : "Inactive"}
                                                 </Badge>
@@ -780,7 +784,7 @@ export default function UsersPage() {
                             <DialogDescription className="text-sm flex gap-2 items-center mt-1">
                                 <span className="capitalize text-muted-foreground font-medium">{selectedUserForDetails?.role === "projectmanager" ? "Project Manager" : selectedUserForDetails?.role === "finance" ? "Management" : selectedUserForDetails?.role}</span>
                                 •
-                                <Badge variant="outline" className="text-[10px] font-bold tracking-wider py-0 rounded bg-emerald-50 text-emerald-600 border-none px-2 capitalize">{selectedUserForDetails?.status === "active" ? "Active" : "Inactive"}</Badge>
+                                <Badge variant="outline" className="text-[10px] font-bold tracking-wider py-0.5 rounded-full bg-emerald-50 text-emerald-600 border-none px-2.5 capitalize">{selectedUserForDetails?.status === "active" ? "Active" : "Inactive"}</Badge>
                             </DialogDescription>
                         </div>
                     </div>
@@ -854,7 +858,7 @@ export default function UsersPage() {
                                                         <Card key={c.id} className={`p-4 space-y-3 cursor-pointer transition-all border-l-4 ${c.is_active ? 'border-l-[#2568C1] border-y-[#e2e8f0] border-r-[#e2e8f0] shadow-sm hover:shadow-md' : 'border-l-slate-300 border-y-[#e2e8f0] border-r-[#e2e8f0] opacity-80'}`} onClick={() => editContract(c)}>
                                                             <div className="flex justify-between items-start">
                                                                 <div className="flex flex-col gap-1">
-                                                                    <Badge variant="outline" className={`capitalize text-[10px] w-fit font-semibold py-0.5 px-2 ${c.is_active ? 'bg-blue-50 text-[#2568C1] border-blue-200' : 'bg-slate-100 text-slate-500'}`}>
+                                                                    <Badge variant="outline" className={`capitalize text-[10px] w-fit font-bold rounded-full px-2.5 py-0.5 border-none ${c.is_active ? 'bg-blue-50 text-[#2568C1]' : 'bg-slate-100 text-slate-500'}`}>
                                                                         {c.contract_type} Rate
                                                                     </Badge>
                                                                     <span className="text-[10px] text-muted-foreground font-medium uppercase mt-0.5 tracking-wider">
@@ -922,7 +926,7 @@ export default function UsersPage() {
                                                                         <div className="font-semibold text-sm text-slate-800">{pData?.name || `Project #${pid}`}</div>
                                                                         <div className="text-[10px] text-slate-500">{pData?.client_name || "Unknown Client"}</div>
                                                                     </div>
-                                                                    <Badge variant="outline" className={`text-[10px] uppercase font-bold px-2 py-0 border-none ${pData?.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}`}>{pData?.status || "historical"}</Badge>
+                                                                    <Badge variant="outline" className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border-none ${pData?.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}`}>{pData?.status || "historical"}</Badge>
                                                                 </div>
 
                                                                 {/* Sub-Contracts for this project */}
@@ -931,7 +935,7 @@ export default function UsersPage() {
                                                                         <div key={c.id} className={`flex items-center justify-between p-3 rounded-md border ${c.is_active ? 'border-amber-200 bg-amber-50/30' : 'border-slate-100 bg-slate-50/50'} cursor-pointer hover:border-[#2568C1]/50`} onClick={() => editContract(c)}>
                                                                             <div className="flex flex-col gap-1">
                                                                                 <div className="flex items-center gap-2">
-                                                                                    <Badge className={`px-1.5 py-0 rounded text-[9px] uppercase tracking-wider font-bold ${c.is_active ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-slate-200 text-slate-600 border-slate-300'}`} variant="outline">
+                                                                                    <Badge className={`rounded-full px-2.5 py-0.5 text-[9px] uppercase tracking-wider font-bold border-none ${c.is_active ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-600'}`} variant="outline">
                                                                                         Custom Rate
                                                                                     </Badge>
                                                                                     <span className="text-xs font-bold text-slate-700 capitalize">{c.contract_type}</span>

@@ -364,10 +364,21 @@ export default function ContractsPage() {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="">
-                                                    <span className="text-xs font-semibold text-slate-500 capitalize">{c.contract_type}</span>
+                                                    <Badge className={`capitalize font-bold tracking-wider rounded-full px-2.5 py-0.5 border-none text-[10px] w-fit
+                                                        ${c.contract_type === 'timesheet' ? "bg-slate-100 text-slate-600" :
+                                                          c.contract_type === 'monthly' ? "bg-indigo-50 text-indigo-600" :
+                                                          c.contract_type === 'yearly' ? "bg-purple-50 text-purple-600" :
+                                                          "bg-blue-50 text-blue-600"}`} variant="outline">
+                                                        {c.contract_type}
+                                                    </Badge>
                                                 </TableCell>
                                                 <TableCell className="">
-                                                    <span className="text-xs font-semibold text-slate-500 capitalize">{paymentSchemeLabel(c.payment_scheme)}</span>
+                                                    <Badge className={`capitalize font-bold tracking-wider rounded-full px-2.5 py-0.5 border-none text-[10px] w-fit
+                                                        ${c.payment_scheme === 'monthly' ? "bg-blue-50 text-blue-600" :
+                                                          c.payment_scheme === 'termin' ? "bg-emerald-50 text-emerald-600" :
+                                                          "bg-amber-50 text-amber-600"}`} variant="outline">
+                                                        {paymentSchemeLabel(c.payment_scheme)}
+                                                    </Badge>
                                                 </TableCell>
                                                 <TableCell className="">
                                                     <div className="flex flex-col gap-0.5">
@@ -378,9 +389,9 @@ export default function ContractsPage() {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="">
-                                                    <Badge className={`text-[10px] capitalize font-bold tracking-wider rounded-full px-2.5 py-0.5 ${c.is_active
-                                                        ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-transparent"
-                                                        : "bg-slate-100 text-slate-500 hover:bg-slate-200 border-transparent"}`}>
+                                                    <Badge className={`text-[10px] capitalize font-bold tracking-wider rounded-full px-2.5 py-0.5 border-none ${c.is_active
+                                                        ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+                                                        : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}>
                                                         {c.is_active ? "Active" : "Inactive"}
                                                     </Badge>
                                                 </TableCell>
@@ -575,7 +586,7 @@ export default function ContractsPage() {
                                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-3 gap-x-4">
                                     <div>
                                         <div className="text-[10px] uppercase font-bold text-slate-400 mb-0">Contract Status</div>
-                                        <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-wider ${selectedContract.is_active ? "bg-emerald-50 text-emerald-600 border-none" : "bg-slate-100 text-slate-500 border-none"}`}>
+                                        <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5 border-none ${selectedContract.is_active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-500"}`}>
                                             {selectedContract.is_active ? "Active" : "Historical"}
                                         </Badge>
                                     </div>

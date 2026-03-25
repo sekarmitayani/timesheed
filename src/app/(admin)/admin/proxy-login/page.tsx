@@ -110,7 +110,7 @@ export default function ProxyLoginPage() {
                     : "bg-blue-50 text-[#2568C1] border-blue-200";
         const label = role === "projectmanager" ? "Project Manager" : role === "finance" ? "Management" : role;
         return (
-            <Badge variant="outline" className={`capitalize text-[11px] font-medium ${cls}`}>
+            <Badge variant="outline" className={`capitalize text-[11px] font-bold rounded-full px-2.5 py-0.5 border-none ${cls}`}>
                 {label}
             </Badge>
         );
@@ -228,9 +228,9 @@ export default function ProxyLoginPage() {
                                                     </span>
                                                 </TableCell>
                                                 <TableCell className="">
-                                                    <Badge className={`text-[10px] capitalize font-bold tracking-wider rounded-full px-2.5 py-0.5 ${user.status === "active"
-                                                        ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-transparent"
-                                                        : "bg-slate-100 text-slate-500 hover:bg-slate-200 border-transparent"
+                                                    <Badge className={`text-[10px] capitalize font-bold tracking-wider rounded-full px-2.5 py-0.5 border-none ${user.status === "active"
+                                                        ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+                                                        : "bg-rose-50 text-rose-600 hover:bg-rose-100"
                                                         }`}>
                                                         {user.status === "active" ? "Active" : "Inactive"}
                                                     </Badge>
