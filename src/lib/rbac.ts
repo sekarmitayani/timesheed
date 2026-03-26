@@ -14,47 +14,107 @@ export interface MenuItem {
     badge?: string;
 }
 
-export const roleMenus: Record<Role, MenuItem[]> = {
+export interface MenuCategory {
+    title: string;
+    items: MenuItem[];
+}
+
+export const roleMenus: Record<Role, MenuCategory[]> = {
     employee: [
-        { label: "Dashboard", href: "/employee/dashboard", icon: LayoutDashboard },
-        { label: "Attendance", href: "/employee/attendance", icon: Clock },
-        { label: "My Tasks", href: "/employee/tasks", icon: ListTodo },
-        { label: "Timesheet", href: "/employee/timesheet", icon: FileText },
-        { label: "Milestones", href: "/employee/milestones", icon: Target },
-        { label: "Earnings", href: "/employee/earnings", icon: DollarSign },
-        { label: "History", href: "/employee/history", icon: History },
-        { label: "Profile", href: "/employee/profile", icon: UserCircle },
+        {
+            title: "MAIN MENU",
+            items: [
+                { label: "Dashboard", href: "/employee/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            title: "WORK SPACE",
+            items: [
+                { label: "Attendance", href: "/employee/attendance", icon: Clock },
+                { label: "My Tasks", href: "/employee/tasks", icon: ListTodo },
+                { label: "Timesheet", href: "/employee/timesheet", icon: FileText },
+                { label: "Milestones", href: "/employee/milestones", icon: Target },
+                { label: "Earnings", href: "/employee/earnings", icon: DollarSign },
+                { label: "History", href: "/employee/history", icon: History },
+                { label: "Profile", href: "/employee/profile", icon: UserCircle },
+            ]
+        }
     ],
     projectmanager: [
-        { label: "Dashboard", href: "/pm/dashboard", icon: LayoutDashboard },
-        { label: "My Projects", href: "/pm/projects", icon: FolderKanban },
-        { label: "Approvals", href: "/pm/approvals", icon: Inbox, badge: "AI" },
-        { label: "Team & Tasks", href: "/pm/team", icon: Users },
-        { label: "Budget Monitor", href: "/pm/budget", icon: BarChart3 },
-        { label: "Workload AI", href: "/pm/workload", icon: Brain },
-        { label: "Requests", href: "/pm/requests", icon: FileSearch },
-        { label: "Reports", href: "/pm/reports", icon: ClipboardList },
+        {
+            title: "MAIN MENU",
+            items: [
+                { label: "Dashboard", href: "/pm/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            title: "MANAGEMENT",
+            items: [
+                { label: "My Projects", href: "/pm/projects", icon: FolderKanban },
+                { label: "Approvals", href: "/pm/approvals", icon: Inbox, badge: "AI" },
+                { label: "Requests", href: "/pm/requests", icon: FileSearch },
+                { label: "Team & Tasks", href: "/pm/team", icon: Users },
+                { label: "Budget Monitor", href: "/pm/budget", icon: BarChart3 },
+                { label: "Workload AI", href: "/pm/workload", icon: Brain },
+                { label: "Reports", href: "/pm/reports", icon: ClipboardList },
+            ]
+        }
     ],
     admin: [
-        { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-        { label: "User Management", href: "/admin/users", icon: UserCog },
-        { label: "Contracts", href: "/admin/contracts", icon: FileKey },
-        { label: "Projects", href: "/admin/projects", icon: FolderKanban },
-        { label: "Proxy Login", href: "/admin/proxy-login", icon: Shield },
-        { label: "Payments", href: "/admin/payments", icon: Landmark },
-        { label: "Resources", href: "/admin/resources", icon: Package },
-        { label: "Audit Log", href: "/admin/audit-log", icon: Activity },
-        { label: "Settings", href: "/admin/settings", icon: Settings },
+        {
+            title: "MAIN MENU",
+            items: [
+                { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            title: "ADMINISTRATION",
+            items: [
+                { label: "User Management", href: "/admin/users", icon: UserCog },
+                { label: "Contracts", href: "/admin/contracts", icon: FileKey },
+                { label: "Proxy Login", href: "/admin/proxy-login", icon: Shield },
+                { label: "Settings", href: "/admin/settings", icon: Settings },
+            ]
+        },
+        {
+            title: "PROJECTS",
+            items: [
+                { label: "Projects", href: "/admin/projects", icon: FolderKanban },
+                { label: "Resources", href: "/admin/resources", icon: Package },
+            ]
+        },
+        {
+            title: "REPORTS",
+            items: [
+                { label: "Payments", href: "/admin/payments", icon: Landmark },
+                { label: "Audit Log", href: "/admin/audit-log", icon: Activity },
+            ]
+        }
     ],
     finance: [
-        { label: "Executive Dashboard", href: "/management/dashboard", icon: LayoutDashboard },
-        { label: "Profitability", href: "/management/profitability", icon: TrendingUp },
-        { label: "Cost Breakdown", href: "/management/cost-breakdown", icon: PieChart },
-        { label: "Liability Monitor", href: "/management/liability", icon: Scale },
-        { label: "Utilization", href: "/management/resources", icon: Gauge },
-        { label: "Workload Overview", href: "/management/workload", icon: Zap },
-        { label: "Reports & Export", href: "/management/reports", icon: Building2 },
-        { label: "Audit & Compliance", href: "/management/audit", icon: ClipboardList },
+        {
+            title: "MAIN MENU",
+            items: [
+                { label: "Executive Dashboard", href: "/management/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            title: "OVERSIGHT",
+            items: [
+                { label: "Profitability", href: "/management/profitability", icon: TrendingUp },
+                { label: "Cost Breakdown", href: "/management/cost-breakdown", icon: PieChart },
+                { label: "Liability Monitor", href: "/management/liability", icon: Scale },
+                { label: "Utilization", href: "/management/resources", icon: Gauge },
+                { label: "Workload Overview", href: "/management/workload", icon: Zap },
+            ]
+        },
+        {
+            title: "REPORTS",
+            items: [
+                { label: "Reports & Export", href: "/management/reports", icon: Building2 },
+                { label: "Audit & Compliance", href: "/management/audit", icon: ClipboardList },
+            ]
+        }
     ],
 };
 
@@ -66,10 +126,10 @@ export const roleLabels: Record<Role, string> = {
 };
 
 export const roleColors: Record<Role, string> = {
-    employee: "bg-[#2568C1]",
-    projectmanager: "bg-[#2568C1]",
-    admin: "bg-[#2568C1]",
-    finance: "bg-[#2568C1]",
+    employee: "bg-blue-600",
+    projectmanager: "bg-blue-600",
+    admin: "bg-blue-600",
+    finance: "bg-blue-600",
 };
 
 export function canAccess(userRole: Role, requiredRole: Role | Role[]): boolean {

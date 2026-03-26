@@ -9,11 +9,14 @@ interface AuthState {
     isImpersonating: boolean;
     notifications: Notification[];
     sidebarCollapsed: boolean;
+    mobileSidebarOpen: boolean;
     login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
     impersonate: (token: string, userData: any) => void;
     exitImpersonation: () => void;
     logout: () => void;
     toggleSidebar: () => void;
+    toggleMobileSidebar: () => void;
+    closeMobileSidebar: () => void;
     markNotificationRead: (id: string) => void;
     isSessionExpired: boolean;
     setSessionExpired: (expired: boolean) => void;
@@ -27,6 +30,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     isSessionExpired: false,
     notifications: mockNotifications,
     sidebarCollapsed: false,
+    mobileSidebarOpen: false,
     setSessionExpired: (expired: boolean) => set({ isSessionExpired: expired }),
     checkTokenExpiry: () => {
         if (typeof window === "undefined") return;
@@ -134,6 +138,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         set({ user: null, isAuthenticated: false, isImpersonating: false, isSessionExpired: false });
     },
     toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
+    toggleMobileSidebar: () => set((s) => ({ mobileSidebarOpen: !s.mobileSidebarOpen })),
+    closeMobileSidebar: () => set({ mobileSidebarOpen: false }),
     markNotificationRead: (id) =>
         set((s) => ({
             notifications: s.notifications.map((n) =>

@@ -64,4 +64,10 @@ export const resourceService = {
             body: JSON.stringify(payload),
         });
     },
+
+    async deleteResourceRequest(id: number | string): Promise<{ message: string }> {
+        return fetchApi(`/resources/${id}`, {
+            method: "DELETE",
+        });
+    },
 };

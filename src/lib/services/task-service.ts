@@ -24,6 +24,13 @@ export interface UpdateTaskStatusPayload {
     status: "todo" | "in_progress" | "done";
 }
 
+export interface UpdateTaskPayload {
+    title?: string;
+    description?: string;
+    assigned_to_id?: number;
+    status?: "todo" | "in_progress" | "done";
+}
+
 // ---- Service ----
 export const taskService = {
     async createTask(payload: CreateTaskPayload): Promise<ApiTask> {
@@ -44,6 +51,19 @@ export const taskService = {
         return fetchApi(`/tasks/${taskId}/status`, {
             method: "PUT",
             body: JSON.stringify(payload),
+        });
+    },
+
+    async updateTask(taskId: number | string, payload: UpdateTaskPayload): Promise<ApiTask> {
+        return fetchApi(`/tasks/${taskId}`, {
+            method: "PUT",
+            body: JSON.stringify(payload),
+        });
+    },
+
+    async deleteTask(taskId: number | string): Promise<{ message: string }> {
+        return fetchApi(`/tasks/${taskId}`, {
+            method: "DELETE",
         });
     },
 };
