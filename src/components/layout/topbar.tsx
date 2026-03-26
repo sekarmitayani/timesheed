@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Bell, LogOut, User as UserIcon, Shield, ArrowLeft } from "lucide-react";
+import { Search, Bell, LogOut, User as UserIcon, Shield, ArrowLeft, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { roleLabels, roleColors } from "@/lib/rbac";
@@ -23,7 +23,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchResults, useSearchResults } from "@/components/layout/search-results";
 
 export function Topbar() {
-    const { user, notifications, logout, markNotificationRead, isImpersonating, exitImpersonation } = useAuthStore();
+    const { user, notifications, logout, markNotificationRead, isImpersonating, exitImpersonation, toggleMobileSidebar } = useAuthStore();
     const [showSearch, setShowSearch] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [activeIndex, setActiveIndex] = useState(-1);
@@ -119,9 +119,12 @@ export function Topbar() {
                 )}
             </AnimatePresence>
 
-            <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-white/80 backdrop-blur-xl px-6">
-                {/* Left: Search */}
-                <div className="flex items-center gap-3 flex-1">
+            <header className="sticky top-0 z-30 flex h-14 sm:h-16 items-center justify-between border-b border-border bg-white/80 backdrop-blur-xl px-3 sm:px-6">
+                {/* Left: Mobile Hamburger + Search */}
+                <div className="flex items-center gap-2 sm:gap-3 flex-1">
+                    <Button variant="ghost" size="icon" className="h-9 w-9 lg:hidden" onClick={toggleMobileSidebar}>
+                        <Menu className="h-5 w-5" />
+                    </Button>
                     <AnimatePresence mode="wait">
                         {showSearch ? (
                             <motion.div
@@ -134,7 +137,7 @@ export function Topbar() {
                                 <Input
                                     ref={inputRef}
                                     placeholder="Search projects, tasks, users..."
-                                    className="pl-9 bg-[#f1f5f9] border-none focus-visible:ring-1 focus-visible:ring-[#2568C1]"
+                                    className="pl-9 h-9 rounded-full bg-slate-100 border-none shadow-none focus-visible:ring-1 focus-visible:ring-blue-500"
                                     autoFocus
                                     value={searchQuery}
                                     onChange={(e) => { setSearchQuery(e.target.value); setActiveIndex(-1); }}
@@ -156,7 +159,7 @@ export function Topbar() {
                                 </AnimatePresence>
                             </motion.div>
                         ) : (
-                            <Button variant="ghost" size="sm" onClick={() => setShowSearch(true)} className="gap-2 text-muted-foreground">
+                            <Button variant="ghost" size="sm" onClick={() => setShowSearch(true)} className="gap-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 rounded-full h-9 px-4">
                                 <Search className="h-4 w-4" />
                                 <span className="text-xs hidden md:inline">Search...</span>
                                 <kbd className="hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 text-[10px] font-medium text-muted-foreground">
@@ -207,19 +210,19 @@ export function Topbar() {
                                     <DropdownMenuItem
                                         key={notif.id}
                                         onClick={() => markNotificationRead(notif.id)}
-                                        className={cn("flex flex-col items-start gap-1 py-3 px-3 cursor-pointer", !notif.read && "bg-[#2568C1]/5")}
+                                        className={cn("flex flex-col items-start gap-1 py-3 px-3 cursor-pointer transition-colors", !notif.read && "bg-blue-50/50 hover:bg-blue-50")}
                                     >
                                         <div className="flex items-center gap-2 w-full">
                                             <span className={cn(
                                                 "h-2 w-2 rounded-full shrink-0",
-                                                notif.type === "ai" && "bg-[#2568C1]",
+                                                notif.type === "ai" && "bg-blue-600",
                                                 notif.type === "warning" && "bg-amber-500",
                                                 notif.type === "error" && "bg-red-500",
                                                 notif.type === "success" && "bg-emerald-500",
                                                 notif.type === "info" && "bg-blue-500",
                                             )} />
-                                            <span className="text-xs font-medium truncate">{notif.title}</span>
-                                            {!notif.read && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#2568C1]" />}
+                                            <span className={cn("text-xs truncate", !notif.read ? "font-semibold text-slate-900" : "font-medium text-slate-600")}>{notif.title}</span>
+                                            {!notif.read && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-blue-600" />}
                                         </div>
                                         <span className="text-[11px] text-muted-foreground pl-4">{notif.message}</span>
                                     </DropdownMenuItem>
@@ -237,7 +240,7 @@ export function Topbar() {
                                         "text-xs text-white",
                                         isImpersonating
                                             ? "bg-amber-500"
-                                            : "bg-[#2568C1]"
+                                            : "bg-blue-600"
                                     )}>
                                         {user.name.split(" ").map((n) => n[0]).join("")}
                                     </AvatarFallback>

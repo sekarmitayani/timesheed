@@ -15,7 +15,7 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, requiredRole }: AppShellProps) {
-    const { user, isAuthenticated, sidebarCollapsed, isImpersonating } = useAuthStore();
+    const { user, isAuthenticated, sidebarCollapsed, mobileSidebarOpen, closeMobileSidebar, isImpersonating } = useAuthStore();
     const router = useRouter();
     const pathname = usePathname();
     const [mounted, setMounted] = useState(false);
@@ -29,6 +29,11 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
             router.push("/login");
         }
     }, [isAuthenticated, router, mounted]);
+
+    // Close mobile sidebar on route change
+    useEffect(() => {
+        closeMobileSidebar();
+    }, [pathname, closeMobileSidebar]);
 
     // Move role redirect into useEffect to avoid setState-during-render error
     useEffect(() => {
@@ -50,15 +55,24 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
 
     return (
         <div className="min-h-screen bg-background">
+            {/* Mobile overlay */}
+            {mobileSidebarOpen && (
+                <div
+                    className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+                    onClick={closeMobileSidebar}
+                />
+            )}
+
             <Sidebar />
+
             <motion.div
                 initial={false}
                 animate={{ marginLeft: sidebarCollapsed ? 72 : 260 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                className="flex flex-col min-h-screen"
+                className="hidden lg:flex flex-col min-h-screen"
             >
                 <Topbar />
-                <main className="flex-1 p-6">
+                <main className="flex-1 p-4 sm:p-6">
                     <motion.div
                         key={pathname}
                         initial={{ opacity: 0, y: 8 }}
@@ -69,6 +83,21 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
                     </motion.div>
                 </main>
             </motion.div>
+
+            {/* Mobile content area */}
+            <div className="flex flex-col min-h-screen lg:hidden">
+                <Topbar />
+                <main className="flex-1 p-3 sm:p-4">
+                    <motion.div
+                        key={pathname}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        {children}
+                    </motion.div>
+                </main>
+            </div>
         </div>
     );
 }
