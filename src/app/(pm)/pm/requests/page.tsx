@@ -9,15 +9,21 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageHeader } from "@/components/ai/ai-components";
 import { Plus, Loader2, Package, Wrench, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { resourceService, ResourceRequest, CreateResourcePayload } from "@/lib/services/resource-service";
 import { projectService } from "@/lib/services/project-service";
 import { ApiProject } from "@/lib/types";
 
 const statusColors: Record<string, string> = {
-    pending: "bg-amber-50 text-amber-600 border-amber-200",
-    approved: "bg-emerald-50 text-emerald-600 border-emerald-200",
-    rejected: "bg-red-50 text-red-500 border-red-200",
+    pending: "bg-amber-50 text-amber-700 border-none",
+    approved: "bg-emerald-50 text-emerald-700 border-none",
+    rejected: "bg-red-50 text-red-700 border-none",
+};
+const statusDotColors: Record<string, string> = {
+    pending: "bg-amber-500",
+    approved: "bg-emerald-500",
+    rejected: "bg-red-500",
 };
 
 const typeIcons: Record<string, React.ReactNode> = {
@@ -80,7 +86,7 @@ export default function RequestsPage() {
     return (
         <div className="space-y-6">
             <PageHeader title="Resource Requests" description={`${pendingCount} pending`}>
-                <Button size="sm" className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] shadow-md shadow-[#2568C1]/20" onClick={openCreate}>
+                <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm" onClick={openCreate}>
                     <Plus className="h-4 w-4" /> New Request
                 </Button>
             </PageHeader>
@@ -105,7 +111,7 @@ export default function RequestsPage() {
                                     <p className="text-sm font-medium text-[#0f172a] mt-0.5 truncate">{req.details}</p>
                                     {req.amount > 0 && <p className="text-xs text-emerald-600 font-medium">Rp {req.amount.toLocaleString("id-ID")}</p>}
                                 </div>
-                                <Badge variant="outline" className={`text-[10px] font-bold capitalize ${statusColors[req.status]}`}>{req.status}</Badge>
+                                <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider", statusColors[req.status])}><div className={cn("w-1.5 h-1.5 rounded-full", statusDotColors[req.status])} /><span className="uppercase">{req.status}</span></div>
                             </CardContent>
                         </Card>
                     ))}
@@ -144,7 +150,7 @@ export default function RequestsPage() {
                     </div>
                     <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
                         <Button variant="ghost" onClick={() => setCreateOpen(false)} disabled={isSaving}>Cancel</Button>
-                        <Button onClick={handleCreate} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[110px]">
+                        <Button onClick={handleCreate} disabled={isSaving} className="bg-blue-600 hover:bg-blue-700 min-w-[110px]">
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit Request"}
                         </Button>
                     </div>

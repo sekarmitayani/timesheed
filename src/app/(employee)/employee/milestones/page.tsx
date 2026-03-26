@@ -4,13 +4,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { PageHeader } from "@/components/ai/ai-components";
+import { cn } from "@/lib/utils";
 import { mockMilestones, mockProjects } from "@/lib/mock-data";
 
 const statusColors: Record<string, string> = {
-    pending: "bg-gray-500/10 text-gray-500",
-    "in-progress": "bg-blue-500/10 text-blue-500",
-    completed: "bg-emerald-500/10 text-emerald-500",
-    overdue: "bg-red-500/10 text-red-500",
+    pending: "bg-slate-50 text-slate-700 border-none",
+    "in-progress": "bg-blue-50 text-blue-700 border-none",
+    completed: "bg-emerald-50 text-emerald-700 border-none",
+    overdue: "bg-red-50 text-red-700 border-none",
+};
+const statusDotColors: Record<string, string> = {
+    pending: "bg-slate-500",
+    "in-progress": "bg-blue-500",
+    completed: "bg-emerald-500",
+    overdue: "bg-red-500",
 };
 
 export default function MilestonesPage() {
@@ -28,7 +35,7 @@ export default function MilestonesPage() {
                                         <h3 className="font-medium text-sm">{m.title}</h3>
                                         <p className="text-xs text-muted-foreground mt-0.5">{project?.name}</p>
                                     </div>
-                                    <Badge variant="outline" className={`text-[10px] ${statusColors[m.status]}`}>{m.status}</Badge>
+                                    <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider", statusColors[m.status])}><div className={cn("w-1.5 h-1.5 rounded-full", statusDotColors[m.status])} /><span className="uppercase">{m.status}</span></div>
                                 </div>
                                 <div className="space-y-1">
                                     <div className="flex justify-between text-xs text-muted-foreground">

@@ -120,18 +120,18 @@ export default function ApprovalsPage() {
                 <CardContent className="p-0">
                     <div className="overflow-x-auto">
                         <Table>
-                            <TableHeader className="bg-[#f8fafc]">
+                            <TableHeader>
                                 <TableRow className="hover:bg-transparent">
-                                    <TableHead className="w-[50px]">
+                                    <TableHead className="w-[50px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">
                                         <input type="checkbox" className="rounded" checked={inbox.length > 0 && selectedIds.size === inbox.length} onChange={toggleSelectAll} />
                                     </TableHead>
-                                    <TableHead>Employee</TableHead>
-                                    <TableHead>Project</TableHead>
-                                    <TableHead>Clock In</TableHead>
-                                    <TableHead>Clock Out</TableHead>
-                                    <TableHead>Duration</TableHead>
-                                    <TableHead>Description</TableHead>
-                                    <TableHead className="text-right pr-6">Actions</TableHead>
+                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Employee</TableHead>
+                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Project</TableHead>
+                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Clock In</TableHead>
+                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Clock Out</TableHead>
+                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Duration</TableHead>
+                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Description</TableHead>
+                                    <TableHead className="text-right pr-6 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>

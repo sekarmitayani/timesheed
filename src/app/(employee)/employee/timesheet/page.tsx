@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PageHeader } from "@/components/ai/ai-components";
 import { PlayCircle, StopCircle, Loader2, Clock, FileText, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { timesheetService, TimesheetLog, ClockInPayload } from "@/lib/services/timesheet-service";
 import { projectService } from "@/lib/services/project-service";
@@ -17,9 +18,14 @@ import { taskService, ApiTask } from "@/lib/services/task-service";
 import { ApiProject } from "@/lib/types";
 
 const statusColors: Record<string, string> = {
-    pending: "bg-amber-50 text-amber-600 border-amber-200",
-    approved: "bg-emerald-50 text-emerald-600 border-emerald-200",
-    rejected: "bg-red-50 text-red-500 border-red-200",
+    pending: "bg-amber-50 text-amber-700 border-none",
+    approved: "bg-emerald-50 text-emerald-700 border-none",
+    rejected: "bg-red-50 text-red-700 border-none",
+};
+const statusDotColors: Record<string, string> = {
+    pending: "bg-amber-500",
+    approved: "bg-emerald-500",
+    rejected: "bg-red-500",
 };
 
 export default function TimesheetPage() {
@@ -171,7 +177,7 @@ export default function TimesheetPage() {
                                             <TableCell className="text-xs">{l.clock_out ? new Date(l.clock_out).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) : <span className="text-emerald-600 font-medium">Active</span>}</TableCell>
                                             <TableCell className="text-xs">{l.duration_minutes > 0 ? `${Math.floor(l.duration_minutes / 60)}h ${l.duration_minutes % 60}m` : "—"}</TableCell>
                                             <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">{l.task_description || "—"}</TableCell>
-                                            <TableCell><Badge variant="outline" className={`text-[10px] font-bold capitalize ${statusColors[l.status]}`}>{l.status}</Badge></TableCell>
+                                            <TableCell><div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider", statusColors[l.status])}><div className={cn("w-1.5 h-1.5 rounded-full", statusDotColors[l.status])} /><span className="uppercase">{l.status}</span></div></TableCell>
                                         </TableRow>
                                     ))
                                 )}

@@ -126,15 +126,24 @@ export function AISuggestionCard({ suggestions, title }: { suggestions: string[]
 
 // ── Stat Card ───────────────────────────────────────────
 export function StatCard({
-    title, value, subtitle, icon: Icon, trend, trendUp, className, glow,
+    title, value, subtitle, icon: Icon, trend, trendUp, className, glow, theme = "primary"
 }: {
     title: string; value: string | number; subtitle?: string;
     icon?: React.ComponentType<{ className?: string }>;
     trend?: string; trendUp?: boolean; className?: string; glow?: boolean;
+    theme?: "primary" | "secondary" | "destructive" | "ai";
 }) {
+    const themeConfig = {
+        primary: { bg: "bg-primary/10", text: "text-primary", glowClass: "shadow-[0_0_20px_rgba(59,130,246,0.15)]" },
+        secondary: { bg: "bg-secondary/15", text: "text-secondary", glowClass: "shadow-[0_0_20px_rgba(245,158,11,0.15)]" },
+        destructive: { bg: "bg-destructive/10", text: "text-destructive", glowClass: "shadow-[0_0_20px_rgba(239,68,68,0.15)]" },
+        ai: { bg: "bg-gradient-to-br from-[#FFBE18]/10 to-[#E5A800]/10", text: "text-[#FFBE18]", glowClass: "shadow-[0_0_20px_rgba(255,190,24,0.15)]" },
+    };
+    const t = themeConfig[theme] || themeConfig.primary;
+
     return (
-        <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.15 }}>
-            <Card className={cn("relative overflow-hidden", glow && "shadow-[0_0_20px_rgba(255,190,24,0.15)]", className)}>
+        <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.15 }} className="h-full">
+            <Card className={cn("relative overflow-hidden h-full", glow && t.glowClass, className)}>
                 <CardContent className="p-5">
                     <div className="flex items-start justify-between">
                         <div className="space-y-2">
@@ -148,8 +157,8 @@ export function StatCard({
                             )}
                         </div>
                         {Icon && (
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#FFBE18]/10 to-[#E5A800]/10">
-                                <Icon className="h-5 w-5 text-[#FFBE18]" />
+                            <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", t.bg)}>
+                                <Icon className={cn("h-5 w-5", t.text)} />
                             </div>
                         )}
                     </div>
