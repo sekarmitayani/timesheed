@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { PageHeader } from "@/components/ai/ai-components";
 import { CurrencyInput } from "@/components/ui/currency-input";
 import { Plus, Trash2, Users, Loader2, ChevronLeft, ChevronRight, Search, AlertTriangle, UserPlus, X, Eye, Edit, Save, Check, ArrowRight, ArrowLeft, Crown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { projectService, CreateProjectPayload, UpdateProjectPayload, AssignMemberPayload } from "@/lib/services/project-service";
 import { adminUserService } from "@/lib/services/admin-users";
@@ -32,10 +34,16 @@ function schemeLabel(s: string): string {
 }
 
 const statusColors: Record<string, string> = {
-    active: "bg-emerald-50 text-emerald-600 border-none",
-    completed: "bg-blue-50 text-blue-600 border-none",
-    "on-hold": "bg-amber-50 text-amber-600 border-none",
-    cancelled: "bg-slate-100 text-slate-500 border-none",
+    active: "bg-emerald-50 text-emerald-700 border-none",
+    completed: "bg-blue-50 text-blue-700 border-none",
+    "on-hold": "bg-amber-50 text-amber-700 border-none",
+    cancelled: "bg-red-50 text-red-700 border-none",
+};
+const statusDotColors: Record<string, string> = {
+    active: "bg-emerald-500",
+    completed: "bg-blue-500",
+    "on-hold": "bg-amber-500",
+    cancelled: "bg-red-500",
 };
 
 interface PendingEmployee { user: User; role_in_project: string; rateMode: "contract" | "custom"; selectedContractId: string; custom_rate: number | null; contract_type: string; payment_scheme: string; }
@@ -75,13 +83,7 @@ export default function AdminProjectsPage() {
     const [memberAssignRateMode, setMemberAssignRateMode] = useState<"contract" | "custom">("contract");
     const [memberSelectedContractId, setMemberSelectedContractId] = useState("");
     const [assignForm, setAssignForm] = useState<AssignMemberPayload>({ project_id: 0, user_id: 0, role_in_project: "", custom_rate: null, contract_type: "", payment_scheme: "" });
-    const [detailOpen, setDetailOpen] = useState(false);
-    const [detailProject, setDetailProject] = useState<ApiProject | null>(null);
-    const [detailMembers, setDetailMembers] = useState<ProjectMember[]>([]);
-    const [isLoadingDetail, setIsLoadingDetail] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [isSavingDetail, setIsSavingDetail] = useState(false);
-    const [editForm, setEditForm] = useState({ name: "", client_name: "", client_email: "", status: "", budget_revenue: 0, budget_revenue_display: "", budget_cost: 0, budget_cost_display: "", budget_cost_threshold: 0, budget_cost_threshold_display: "" });
+    const router = useRouter();
 
     const fetchProjects = async (page: number = pagination.page) => { setIsLoading(true); try { const res = await projectService.getProjects(page, pagination.limit); setProjects(res.data || []); setPagination(res.pagination); } catch (e: any) { toast.error(e.message || "Failed to fetch"); } finally { setIsLoading(false); } };
     useEffect(() => { fetchProjects(1); }, []);
@@ -142,16 +144,7 @@ export default function AdminProjectsPage() {
     };
     const handleRemoveMember = async (id: number) => { setIsSavingMember(true); try { await projectService.removeMember(id); toast.success("Member removed!"); if (selectedProject) fetchMembers(selectedProject.id); } catch (e: any) { toast.error(e.message || "Failed"); } finally { setIsSavingMember(false); } };
 
-    const openDetail = async (p: ApiProject) => {
-        setDetailProject(p); setIsEditing(false); setDetailOpen(true);
-        setEditForm({ name: p.name, client_name: p.client_name, client_email: p.client_email || "", status: p.status, budget_revenue: p.budget_revenue || 0, budget_revenue_display: formatNumber(p.budget_revenue || 0), budget_cost: p.budget_cost || 0, budget_cost_display: formatNumber(p.budget_cost || 0), budget_cost_threshold: p.budget_cost_threshold || 0, budget_cost_threshold_display: formatNumber(p.budget_cost_threshold || 0) });
-        setIsLoadingDetail(true); try { const r = await projectService.getProjectMembers(p.id); setDetailMembers(Array.isArray(r) ? r : []); } catch { setDetailMembers([]); } finally { setIsLoadingDetail(false); }
-    };
-    const handleSaveDetail = async () => {
-        if (!detailProject) return; setIsSavingDetail(true);
-        try { const payload: UpdateProjectPayload = { name: editForm.name, client_name: editForm.client_name, client_email: editForm.client_email || undefined, status: editForm.status, budget_revenue: editForm.budget_revenue, budget_cost: editForm.budget_cost, budget_cost_threshold: editForm.budget_cost_threshold }; const u = await projectService.updateProject(detailProject.id, payload); toast.success(`"${editForm.name}" updated!`); setDetailProject({ ...detailProject, ...u }); setIsEditing(false); fetchProjects(); }
-        catch (e: any) { toast.error(e.message || "Failed"); } finally { setIsSavingDetail(false); }
-    };
+
 
     const filtered = projects.filter(p => {
         const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.client_name.toLowerCase().includes(search.toLowerCase());
@@ -162,21 +155,13 @@ export default function AdminProjectsPage() {
     const pmUsers = allUsers.filter(u => u.role === "projectmanager");
     const availableEmployees = allUsers.filter(u => String(u.id) !== selectedPmId && !pendingEmployees.find(e => String(e.user.id) === String(u.id)));
     const stepLabels = ["Project Info", "Assign PM", "Assign Employees"];
-    const detailPm = detailMembers.find(m => m.role_in_project === "Project Manager");
-    const detailNonPm = detailMembers.filter(m => m.role_in_project !== "Project Manager");
     const initials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("");
     const fmtRate = (n: number) => Number(n).toLocaleString("id-ID");
-    const fmtDate = (d?: string) => {
-        if (!d) return "-";
-        const date = new Date(d);
-        if (isNaN(date.getTime())) return "-";
-        return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-    };
 
     return (
         <div className="space-y-6">
             <PageHeader title="Project Management" description={`${pagination.total} total projects`}>
-                <Button size="sm" className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] shadow-md shadow-[#2568C1]/20" onClick={openWizard}><Plus className="h-4 w-4" /> New Project</Button>
+                <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm" onClick={openWizard}><Plus className="h-4 w-4" /> New Project</Button>
             </PageHeader>
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -206,9 +191,9 @@ export default function AdminProjectsPage() {
                                     <TableCell className=""><span className="text-sm text-[#475569]">{p.client_name}</span>{p.client_email && <div className="text-[10px] text-muted-foreground">{p.client_email}</div>}</TableCell>
                                     <TableCell className=""><span className="text-sm font-medium">Rp {formatNumber(p.budget_revenue || 0)}</span></TableCell>
                                     <TableCell className=""><div className="flex flex-col"><span className="text-sm font-medium">{p.actual_cost ? `Rp ${formatNumber(p.actual_cost)}` : 'Rp 0'}</span>{(p.budget_cost || 0) > 0 && <span className="text-[10px] text-muted-foreground">Planned: Rp {formatNumber(p.budget_cost || 0)}</span>}{(p.budget_cost_threshold || 0) > 0 && (p.actual_cost || 0) > (p.budget_cost_threshold || 0) && <span className="text-[10px] text-red-500 font-medium">⚠ Over Threshold</span>}</div></TableCell>
-                                    <TableCell className=""><Badge variant="outline" className={`capitalize text-[10px] font-bold rounded-full px-2.5 py-0.5 ${statusColors[p.status] || ""}`}>{p.status}</Badge></TableCell>
+                                    <TableCell className=""><div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider", statusColors[p.status])}><div className={cn("w-1.5 h-1.5 rounded-full", statusDotColors[p.status])} /><span className="uppercase">{p.status}</span></div></TableCell>
                                     <TableCell className=""><div className="flex gap-1">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-[#64748b] hover:text-[#2568C1] hover:bg-[#2568C1]/10 rounded-full" onClick={() => openDetail(p)}><Eye className="h-4 w-4" /></Button>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-[#64748b] hover:text-[#2568C1] hover:bg-[#2568C1]/10 rounded-full" onClick={() => router.push(`/admin/projects/${p.id}`)}><Eye className="h-4 w-4" /></Button>
                                         <Button variant="ghost" size="icon" className="h-8 w-8 text-[#64748b] hover:text-[#2568C1] hover:bg-[#2568C1]/10 rounded-full" onClick={() => openMembers(p)}><Users className="h-4 w-4" /></Button>
                                         <Button variant="ghost" size="icon" className="h-8 w-8 text-[#64748b] hover:text-red-600 hover:bg-red-50 rounded-full" onClick={() => { setProjectToDelete(p); setDeleteOpen(true); }}><Trash2 className="h-4 w-4" /></Button>
                                     </div></TableCell>
@@ -280,7 +265,7 @@ export default function AdminProjectsPage() {
                 </div>
                 <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex items-center justify-between gap-3">
                     <Button variant="ghost" onClick={() => { if (wizardStep === 1) setWizardOpen(false); else setWizardStep(wizardStep - 1); }} disabled={isSaving} className="gap-1.5">{wizardStep === 1 ? "Cancel" : <><ArrowLeft className="h-4 w-4" /> Back</>}</Button>
-                    {wizardStep < 3 ? <Button onClick={() => { if (wizardStep === 1 && (!projectForm.name || !projectForm.client_name)) { toast.error("Name and client required"); return; } setWizardStep(wizardStep + 1); }} className="gap-1.5 bg-[#2568C1] hover:bg-[#1e56a6] min-w-[120px]">Next <ArrowRight className="h-4 w-4" /></Button>
+                    {wizardStep < 3 ? <Button onClick={() => { if (wizardStep === 1 && (!projectForm.name || !projectForm.client_name)) { toast.error("Name and client required"); return; } setWizardStep(wizardStep + 1); }} className="gap-1.5 bg-blue-600 hover:bg-blue-700 min-w-[120px]">Next <ArrowRight className="h-4 w-4" /></Button>
                         : <Button onClick={handleWizardSave} disabled={isSaving} className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 min-w-[160px]">{isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4" /> Save & Create</>}</Button>}
                 </div>
             </DialogContent></Dialog>
@@ -320,62 +305,7 @@ export default function AdminProjectsPage() {
                 </div>
             </DialogContent></Dialog>
 
-            {/* === DETAIL === */}
-            <Dialog open={detailOpen} onOpenChange={o => !isSavingDetail && setDetailOpen(o)}><DialogContent className="sm:max-w-[600px] max-w-[95vw] max-h-[90vh] p-0 overflow-hidden border-[#e2e8f0] flex flex-col">
-                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-5 py-4 pr-10 flex items-center justify-between shrink-0">
-                    <DialogTitle className="text-lg font-bold text-[#0f172a] tracking-tight">Project Detail</DialogTitle>
-                    <Badge variant="outline" className={`capitalize text-[10px] px-2.5 py-0.5 rounded-full font-bold ${statusColors[detailProject?.status || ""] || ""}`}>{detailProject?.status}</Badge>
-                </div>
-                <div className="px-5 py-4 space-y-4 overflow-y-auto h-full">
-                    {!isEditing && <div className="p-4 rounded-xl border border-slate-200 bg-white shadow-sm space-y-4">
-                        <div>
-                            <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">Project Name</div>
-                            <div className="text-2xl font-bold text-[#0f172a] tracking-tight">{detailProject?.name}</div>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
-                            <div>
-                                <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">Client Name</div>
-                                <div className="text-base font-medium text-slate-700">{detailProject?.client_name || "-"}</div>
-                            </div>
-                            <div>
-                                <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">Client Email</div>
-                                <div className="text-base font-medium text-slate-700">{detailProject?.client_email || "-"}</div>
-                            </div>
-                        </div>
-                    </div>}
 
-                    {isEditing && <div className="space-y-4 p-4 rounded-xl border border-slate-200 bg-white shadow-sm">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div className="space-y-1.5"><label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Project Name</label><Input value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} className="h-9 text-sm" /></div><div className="space-y-1.5"><label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Status</label><Select value={editForm.status} onValueChange={v => setEditForm({ ...editForm, status: v })}><SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="active">Active</SelectItem><SelectItem value="completed">Completed</SelectItem><SelectItem value="on-hold">On Hold</SelectItem><SelectItem value="cancelled">Cancelled</SelectItem></SelectContent></Select></div></div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div className="space-y-1.5"><label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Client Name</label><Input value={editForm.client_name} onChange={e => setEditForm({ ...editForm, client_name: e.target.value })} className="h-9 text-sm" /></div><div className="space-y-1.5"><label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Client Email</label><Input type="email" value={editForm.client_email} onChange={e => setEditForm({ ...editForm, client_email: e.target.value })} className="h-9 text-sm" /></div></div>
-                    </div>}
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="flex items-center gap-3 p-3.5 rounded-lg border border-slate-200 bg-slate-50">
-                            <div className="flex items-center justify-center h-9 w-9 rounded-full bg-white border border-slate-200 shadow-sm"><Crown className="h-4 w-4 text-slate-500" /></div>
-                            {isLoadingDetail ? <Loader2 className="h-4 w-4 animate-spin text-slate-400" /> : detailPm ? <div><div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Project Manager</div><div className="text-sm font-medium text-[#0f172a]">{detailPm.user?.full_name || `User #${detailPm.user_id}`}</div></div> : <div><div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Project Manager</div><div className="text-sm text-muted-foreground">Not assigned</div></div>}
-                        </div>
-                        <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50 flex flex-col justify-center space-y-1.5">
-                            <div className="flex justify-between items-center text-xs"><span className="text-slate-500 font-medium whitespace-nowrap">Created At:</span><span className="font-semibold text-slate-700">{fmtDate(detailProject?.created_at)}</span></div>
-                            <div className="flex justify-between items-center text-xs"><span className="text-slate-500 font-medium whitespace-nowrap">Last Updated:</span><span className="font-semibold text-slate-700">{fmtDate(detailProject?.updated_at)}</span></div>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                        <div className="p-3.5 rounded-lg border border-slate-200 bg-white shadow-sm"><div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Revenue</div>{isEditing ? <CurrencyInput value={editForm.budget_revenue || ""} onChange={(v: any) => { setEditForm({ ...editForm, budget_revenue: Number(v) || 0 }); }} className="h-8 mt-1 text-sm bg-slate-50" /> : <div className="text-lg font-bold text-[#0f172a] mt-1">Rp {formatNumber(detailProject?.budget_revenue || 0)}</div>}</div>
-                        <div className="p-3.5 rounded-lg border border-slate-200 bg-white shadow-sm"><div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Threshold</div>{isEditing ? <CurrencyInput value={editForm.budget_cost_threshold || ""} onChange={(v: any) => { setEditForm({ ...editForm, budget_cost_threshold: Number(v) || 0 }); }} className="h-8 mt-1 text-sm bg-slate-50" /> : <div className="text-lg font-bold text-slate-600 mt-1">Rp {formatNumber(detailProject?.budget_cost_threshold || 0)}</div>}</div>
-                        <div className="p-3.5 rounded-lg border border-slate-200 bg-white shadow-sm"><div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Planned Cost</div>{isEditing ? <CurrencyInput value={editForm.budget_cost || ""} onChange={(v: any) => { setEditForm({ ...editForm, budget_cost: Number(v) || 0 }); }} className="h-8 mt-1 text-sm bg-slate-50" /> : <div className="text-lg font-bold text-slate-600 mt-1">Rp {formatNumber(detailProject?.budget_cost || 0)}</div>}</div>
-                        <div className="p-3.5 rounded-lg border border-slate-200 bg-white shadow-sm"><div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Actual Cost</div><div className={`text-lg font-bold mt-1 ${(detailProject?.actual_cost || 0) > (detailProject?.budget_cost_threshold || Infinity) ? 'text-red-600' : 'text-slate-600'}`}>Rp {formatNumber(detailProject?.actual_cost || 0)}</div><div className="text-[10px] text-slate-400 italic">Payments + Resources</div></div>
-                    </div>
-
-                    <div className="border-t border-slate-200 pt-5">
-                        <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2"><Users className="h-3.5 w-3.5" /> Assigned Members ({detailNonPm.length})</h4>
-                        {isLoadingDetail ? <div className="py-6 flex justify-center"><Loader2 className="h-5 w-5 animate-spin text-slate-400" /></div> : detailNonPm.length === 0 ? <p className="text-sm text-slate-400 text-center py-6 border border-dashed border-slate-200 rounded-lg">No additional team members.</p> : <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{detailNonPm.map(m => <div key={m.id} className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 bg-white shadow-sm"><Avatar className="h-8 w-8 border border-slate-100"><AvatarFallback className="text-xs bg-slate-50 text-slate-600 font-medium">{initials(m.user?.full_name || "")}</AvatarFallback></Avatar><div className="min-w-0 flex-1"><div className="text-sm font-medium text-[#0f172a] truncate">{m.user?.full_name || `User #${m.user_id}`}</div><div className="text-[11px] text-slate-500">{m.role_in_project}</div></div></div>)}</div>}
-                    </div>
-                </div>
-                <div className="px-5 py-3 border-t border-[#e2e8f0] bg-[#f8fafc] flex items-center justify-end gap-3 shrink-0">
-                    {!isEditing ? <Button onClick={() => setIsEditing(true)} className="gap-1.5 min-w-[120px] bg-[#0f172a] hover:bg-slate-800"><Edit className="h-4 w-4" /> Edit</Button> : <><Button variant="ghost" onClick={() => setIsEditing(false)} disabled={isSavingDetail}>Cancel</Button><Button onClick={handleSaveDetail} disabled={isSavingDetail} className="gap-1.5 min-w-[120px] bg-[#2568C1] hover:bg-[#1e56a6]">{isSavingDetail ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4" /> Save changes</>}</Button></>}
-                </div>
-            </DialogContent></Dialog>
         </div>
     );
 }

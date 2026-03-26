@@ -17,6 +17,7 @@ import { adminContractService, Contract, ContractSummary } from "@/lib/services/
 import { resourceService, ResourceRequest } from "@/lib/services/resource-service";
 import { User, ApiProject } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 // ---- Helper ----
 const fmtCurrency = (v: number) => `Rp ${v.toLocaleString("id-ID")}`;
@@ -219,111 +220,119 @@ export default function AdminDashboard() {
             {/* ── Row 1: KPI Stats ───────────────────────────── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Users */}
-                <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer" onClick={() => router.push("/admin/users")}>
-                    <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                            <div className="flex flex-col gap-0">
-                                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Users</p>
-                                <p className="text-3xl font-bold text-[#0f172a]">{stats.totalUsers}</p>
-                                <p className="text-xs text-slate-500">{stats.activeUsers} active</p>
+                <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.15 }}>
+                    <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer h-full" onClick={() => router.push("/admin/users")}>
+                        <CardContent className="p-4">
+                            <div className="flex items-start justify-between">
+                                <div className="flex flex-col gap-0">
+                                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Users</p>
+                                    <p className="text-3xl font-bold text-foreground">{stats.totalUsers}</p>
+                                    <p className="text-xs text-muted-foreground">{stats.activeUsers} active</p>
+                                </div>
+                                <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center">
+                                    <Users className="h-5 w-5 text-primary" />
+                                </div>
                             </div>
-                            <div className="h-11 w-11 rounded-xl bg-blue-50 flex items-center justify-center">
-                                <Users className="h-5 w-5 text-blue-600" />
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
                 {/* Projects */}
-                <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer" onClick={() => router.push("/admin/projects")}>
-                    <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                            <div className="flex flex-col gap-0">
-                                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Active Projects</p>
-                                <p className="text-3xl font-bold text-[#0f172a]">{stats.activeProjects}</p>
-                                <p className="text-xs text-slate-500">{stats.totalProjects} total</p>
+                <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.15 }}>
+                    <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer h-full" onClick={() => router.push("/admin/projects")}>
+                        <CardContent className="p-4">
+                            <div className="flex items-start justify-between">
+                                <div className="flex flex-col gap-0">
+                                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Active Projects</p>
+                                    <p className="text-3xl font-bold text-foreground">{stats.activeProjects}</p>
+                                    <p className="text-xs text-muted-foreground">{stats.totalProjects} total</p>
+                                </div>
+                                <div className="h-11 w-11 rounded-xl bg-accent flex items-center justify-center">
+                                    <FolderKanban className="h-5 w-5 text-accent-foreground" />
+                                </div>
                             </div>
-                            <div className="h-11 w-11 rounded-xl bg-violet-50 flex items-center justify-center">
-                                <FolderKanban className="h-5 w-5 text-violet-600" />
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
                 {/* Contract Value */}
-                <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer" onClick={() => router.push("/admin/contracts")}>
-                    <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                            <div className="flex flex-col gap-0">
-                                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Employee Contracts</p>
-                                <p className="text-2xl font-bold text-[#0f172a]">{fmtCurrency(stats.totalContractValue)}</p>
-                                <p className="text-[10px] text-slate-500">All contract schemes</p>
+                <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.15 }}>
+                    <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer h-full" onClick={() => router.push("/admin/contracts")}>
+                        <CardContent className="p-4">
+                            <div className="flex items-start justify-between">
+                                <div className="flex flex-col gap-0">
+                                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Employee Contracts</p>
+                                    <p className="text-2xl font-bold text-foreground">{fmtCurrency(stats.totalContractValue)}</p>
+                                    <p className="text-[10px] text-muted-foreground">All contract schemes</p>
+                                </div>
+                                <div className="h-11 w-11 rounded-xl bg-secondary/15 flex items-center justify-center">
+                                    <DollarSign className="h-5 w-5 text-secondary" />
+                                </div>
                             </div>
-                            <div className="h-11 w-11 rounded-xl bg-emerald-50 flex items-center justify-center">
-                                <DollarSign className="h-5 w-5 text-emerald-600" />
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
                 {/* Pending Resources */}
-                <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer" onClick={() => router.push("/admin/resources")}>
-                    <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                            <div className="flex flex-col gap-0">
-                                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pending Requests</p>
-                                <p className="text-3xl font-bold text-[#0f172a]">{stats.pendingResources}</p>
-                                <p className="text-xs text-slate-500">resource requests waiting</p>
+                <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.15 }}>
+                    <Card className="border-[#e2e8f0] hover:shadow-md transition-shadow cursor-pointer h-full" onClick={() => router.push("/admin/resources")}>
+                        <CardContent className="p-4">
+                            <div className="flex items-start justify-between">
+                                <div className="flex flex-col gap-0">
+                                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Pending Requests</p>
+                                    <p className="text-3xl font-bold text-foreground">{stats.pendingResources}</p>
+                                    <p className="text-xs text-muted-foreground">resource requests waiting</p>
+                                </div>
+                                <div className="h-11 w-11 rounded-xl bg-destructive/10 flex items-center justify-center">
+                                    <Package className="h-5 w-5 text-destructive" />
+                                </div>
                             </div>
-                            <div className="h-11 w-11 rounded-xl bg-amber-50 flex items-center justify-center">
-                                <Package className="h-5 w-5 text-amber-600" />
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </motion.div>
             </div>
 
             {/* ── Row 2: Financial Overview + Outstanding ─────── */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Employee Payment Distribution */}
                 <Card className="lg:col-span-2 border-[#e2e8f0] shadow-sm">
-                    <CardHeader className="pb-1 border-b border-slate-100/60">
+                    <CardHeader className="pb-1 border-b border-border/60">
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle className="text-base font-bold text-[#0f172a] flex items-center gap-2">
-                                    <BarChart3 className="h-5 w-5 text-[#2568C1]" /> Employee Distribution by Project
+                                <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
+                                    <BarChart3 className="h-5 w-5 text-primary" /> Employee Distribution by Project
                                 </CardTitle>
-                                <p className="text-xs text-slate-500 font-medium ml-7 -mt-0.5">All contract schemes</p>
+                                <p className="text-xs text-muted-foreground font-medium ml-7 -mt-0.5">All contract schemes</p>
                             </div>
-                            <Button variant="ghost" size="sm" className="text-xs font-semibold text-[#2568C1] gap-1 hover:bg-blue-50" onClick={() => router.push("/admin/payments")}>
+                            <Button variant="ghost" size="sm" className="text-xs font-semibold text-primary gap-1 hover:bg-primary/10" onClick={() => router.push("/admin/payments")}>
                                 View Distributions <ArrowRight className="h-3.5 w-3.5" />
                             </Button>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-3 pt-3">
                         {projectFinancials.length === 0 ? (
-                            <div className="py-8 text-center text-sm text-slate-400">No project financial data available yet.</div>
+                            <div className="py-8 text-center text-sm text-muted-foreground">No project financial data available yet.</div>
                         ) : (
                             projectFinancials.map(pf => (
-                                <div key={pf.id} className="space-y-1.5">
+                                <div className="space-y-1.5">
                                     <div className="flex items-center justify-between">
                                         <div className="min-w-0 flex-1">
-                                            <p className="text-sm font-bold text-[#0f172a] truncate">{pf.name}</p>
-                                            <p className="text-xs text-slate-500 truncate">{pf.client}</p>
+                                            <p className="text-sm font-bold text-foreground truncate">{pf.name}</p>
+                                            <p className="text-xs text-muted-foreground truncate">{pf.client}</p>
                                         </div>
                                         <div className="text-right shrink-0 ml-4 flex flex-col items-end">
-                                            <p className="text-sm font-bold text-[#0f172a]">{fmtCurrency(pf.totalPaid)}</p>
-                                            <p className="text-[11px] text-slate-500 font-medium">of {fmtCurrency(pf.totalContractValue)}</p>
+                                            <p className="text-sm font-bold text-foreground">{fmtCurrency(pf.totalPaid)}</p>
+                                            <p className="text-[11px] text-muted-foreground font-medium">of {fmtCurrency(pf.totalContractValue)}</p>
                                         </div>
                                     </div>
-                                    <div className="relative h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="relative h-2.5 bg-muted rounded-full overflow-hidden">
                                         <div
-                                            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#2568C1] to-[#4a8be0] transition-all duration-700"
+                                            className="absolute inset-y-0 left-0 rounded-full bg-primary transition-all duration-700"
                                             style={{ width: `${Math.min(pf.progressPercent, 100)}%` }}
                                         />
                                     </div>
-                                    <div className="flex justify-between text-[11px] font-medium text-slate-500">
-                                        <span className="text-[#2568C1]">{pf.progressPercent}% distributed</span>
+                                    <div className="flex justify-between text-[11px] font-medium text-muted-foreground">
+                                        <span className="text-primary">{pf.progressPercent}% distributed</span>
                                         <span>{fmtCurrency(pf.remaining)} unpaid</span>
                                     </div>
                                 </div>
@@ -334,41 +343,41 @@ export default function AdminDashboard() {
 
                 {/* Sub-Ledger Payment Status Summary */}
                 <Card className="border-[#e2e8f0] shadow-sm">
-                    <CardHeader className="pb-1 border-b border-slate-100/60">
+                    <CardHeader className="pb-1 border-b border-border/60">
                         <div>
-                            <CardTitle className="text-base font-bold text-[#0f172a] flex items-center gap-2">
-                                <Wallet className="h-5 w-5 text-[#2568C1]" /> Sub-Ledger Payment Status
+                            <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
+                                <Wallet className="h-5 w-5 text-primary" /> Sub-Ledger Payment Status
                             </CardTitle>
-                            <p className="text-xs text-slate-500 font-medium ml-7 -mt-0.5">All contract schemes</p>
+                            <p className="text-xs text-muted-foreground font-medium ml-7 -mt-0.5">All contract schemes</p>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-2 pt-3 flex flex-col h-full">
                         {/* Overall Progress */}
                         <div className="space-y-1 flex-none">
                             <div className="flex justify-between items-end">
-                                <span className="text-sm font-semibold text-slate-600">Overall Distribution</span>
-                                <span className="font-bold text-lg text-[#0f172a] leading-none">{paymentProgress}%</span>
+                                <span className="text-sm font-semibold text-muted-foreground">Overall Distribution</span>
+                                <span className="font-bold text-lg text-foreground leading-none">{paymentProgress}%</span>
                             </div>
-                            <Progress value={paymentProgress} className="h-3 bg-slate-100" />
-                            <div className="flex justify-between text-[11px] font-medium text-slate-500 pt-1">
-                                <span>Distributed: <span className="text-slate-700 font-bold">{fmtCurrency(stats.totalPaid)}</span></span>
-                                <span>Unpaid: <span className="text-slate-700 font-bold">{fmtCurrency(stats.totalRemaining)}</span></span>
+                            <Progress value={paymentProgress} className="h-3 bg-muted" />
+                            <div className="flex justify-between text-[11px] font-medium text-muted-foreground pt-1">
+                                <span>Distributed: <span className="text-foreground font-bold">{fmtCurrency(stats.totalPaid)}</span></span>
+                                <span>Unpaid: <span className="text-foreground font-bold">{fmtCurrency(stats.totalRemaining)}</span></span>
                             </div>
                         </div>
 
                         {/* Status Breakdown */}
-                        <div className="space-y-1.5 pt-2 border-t border-slate-100 flex-1">
-                            <div className="flex items-center justify-between py-1 px-1 hover:bg-slate-50 transition-colors rounded">
-                                <Badge className="bg-amber-50 text-amber-600 hover:bg-amber-100 border-none rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase">Pending</Badge>
-                                <span className="text-base font-bold text-[#0f172a]">{stats.contractsPending}</span>
+                        <div className="space-y-1.5 pt-2 border-t border-border flex-1">
+                            <div className="flex items-center justify-between py-1 px-1 hover:bg-muted/50 transition-colors rounded">
+                                <Badge className="bg-destructive/10 text-destructive hover:bg-destructive/20 border-none rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase">Pending</Badge>
+                                <span className="text-base font-bold text-foreground">{stats.contractsPending}</span>
                             </div>
-                            <div className="flex items-center justify-between py-1 px-1 hover:bg-slate-50 transition-colors rounded">
-                                <Badge className="bg-orange-50 text-orange-600 hover:bg-orange-100 border-none rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase">Partially Paid</Badge>
-                                <span className="text-base font-bold text-[#0f172a]">{stats.contractsPartiallyPaid}</span>
+                            <div className="flex items-center justify-between py-1 px-1 hover:bg-muted/50 transition-colors rounded">
+                                <Badge className="bg-secondary/15 text-secondary hover:bg-secondary/30 border-none rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase">Partially Paid</Badge>
+                                <span className="text-base font-bold text-foreground">{stats.contractsPartiallyPaid}</span>
                             </div>
-                            <div className="flex items-center justify-between py-1 px-1 hover:bg-slate-50 transition-colors rounded">
-                                <Badge className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-none rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase">Paid</Badge>
-                                <span className="text-base font-bold text-[#0f172a]">{stats.contractsPaid}</span>
+                            <div className="flex items-center justify-between py-1 px-1 hover:bg-muted/50 transition-colors rounded">
+                                <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase">Paid</Badge>
+                                <span className="text-base font-bold text-foreground">{stats.contractsPaid}</span>
                             </div>
                         </div>
 
@@ -392,10 +401,10 @@ export default function AdminDashboard() {
                 <Card className="border-[#e2e8f0]">
                     <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
-                            <CardTitle className="text-sm font-semibold text-[#0f172a] flex items-center gap-2">
-                                <AlertCircle className="h-4 w-4 text-amber-500" /> Pending Approvals
+                            <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                                <AlertCircle className="h-4 w-4 text-destructive" /> Pending Approvals
                             </CardTitle>
-                            <Button variant="ghost" size="sm" className="text-xs text-[#2568C1] gap-1" onClick={() => router.push("/admin/resources")}>
+                            <Button variant="ghost" size="sm" className="text-xs text-primary gap-1" onClick={() => router.push("/admin/resources")}>
                                 View All <ArrowRight className="h-3 w-3" />
                             </Button>
                         </div>
@@ -409,15 +418,15 @@ export default function AdminDashboard() {
                         ) : (
                             <div className="space-y-2">
                                 {pendingResourceList.map(r => (
-                                    <div key={r.id} className="flex items-center gap-3 p-3 rounded-lg bg-slate-50/80 hover:bg-slate-100/80 transition-colors cursor-pointer" onClick={() => router.push("/admin/resources")}>
-                                        <div className="h-8 w-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
-                                            {r.type === "manpower" ? <Users className="h-3.5 w-3.5 text-amber-600" /> : <Wrench className="h-3.5 w-3.5 text-amber-600" />}
+                                    <div key={r.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/60 transition-colors cursor-pointer" onClick={() => router.push("/admin/resources")}>
+                                        <div className="h-8 w-8 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center justify-center shrink-0">
+                                            {r.type === "manpower" ? <Users className="h-3.5 w-3.5 text-destructive" /> : <Wrench className="h-3.5 w-3.5 text-destructive" />}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-xs font-medium text-[#0f172a] truncate">{r.details}</p>
-                                            <p className="text-[10px] text-slate-400">{r.User?.full_name || `User #${r.user_id}`} · {r.Project?.name || `Project #${r.project_id}`}</p>
+                                            <p className="text-xs font-medium text-foreground truncate">{r.details}</p>
+                                            <p className="text-[10px] text-muted-foreground">{r.User?.full_name || `User #${r.user_id}`} · {r.Project?.name || `Project #${r.project_id}`}</p>
                                         </div>
-                                        <Badge variant="outline" className="text-[9px] font-bold rounded-full px-2.5 py-0.5 bg-amber-50 text-amber-600 border-none shrink-0">Pending</Badge>
+                                        <Badge variant="outline" className="text-[9px] font-bold rounded-full px-2.5 py-0.5 bg-destructive/10 text-destructive border-none shrink-0">Pending</Badge>
                                     </div>
                                 ))}
                             </div>
@@ -428,8 +437,8 @@ export default function AdminDashboard() {
                 {/* Recent Resource Activity */}
                 <Card className="border-[#e2e8f0]">
                     <CardHeader className="pb-3">
-                        <CardTitle className="text-sm font-semibold text-[#0f172a] flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-slate-400" /> Recent Resource Activity
+                        <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                            <Clock className="h-4 w-4 text-muted-foreground" /> Recent Resource Activity
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -438,31 +447,31 @@ export default function AdminDashboard() {
                         ) : (
                             <div className="space-y-2">
                                 {recentResources.map(r => (
-                                    <div key={r.id} className="flex items-center gap-3 p-3 rounded-lg bg-slate-50/80">
-                                        <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${r.status === "approved" ? "bg-emerald-50 border border-emerald-200" :
-                                                r.status === "rejected" ? "bg-red-50 border border-red-200" :
-                                                    "bg-slate-100 border border-slate-200"
+                                    <div key={r.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                                        <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 border ${r.status === "approved" ? "bg-primary/10 border-primary/20" :
+                                                r.status === "rejected" ? "bg-destructive/10 border-destructive/20" :
+                                                    "bg-muted border-border"
                                             }`}>
                                             {r.status === "approved" ? (
-                                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                                                <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
                                             ) : r.status === "rejected" ? (
-                                                <XCircle className="h-3.5 w-3.5 text-red-500" />
+                                                <XCircle className="h-3.5 w-3.5 text-destructive" />
                                             ) : (
-                                                <Clock className="h-3.5 w-3.5 text-slate-400" />
+                                                <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                                             )}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-xs font-medium text-[#0f172a] truncate">{r.details}</p>
-                                            <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                                            <p className="text-xs font-medium text-foreground truncate">{r.details}</p>
+                                            <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                                                 <span>{r.User?.full_name || `User #${r.user_id}`}</span>
                                                 <span>·</span>
                                                 <span className="capitalize">{r.type}</span>
-                                                {r.amount > 0 && <><span>·</span><span className="text-emerald-600 font-medium">{fmtCurrency(r.amount)}</span></>}
+                                                {r.amount > 0 && <><span>·</span><span className="text-primary font-medium">{fmtCurrency(r.amount)}</span></>}
                                             </div>
                                         </div>
-                                        <Badge variant="outline" className={`text-[9px] font-bold capitalize shrink-0 rounded-full px-2.5 py-0.5 border-none ${r.status === "approved" ? "bg-emerald-50 text-emerald-600" :
-                                                r.status === "rejected" ? "bg-red-50 text-red-500" :
-                                                    "bg-amber-50 text-amber-600"
+                                        <Badge variant="outline" className={`text-[9px] font-bold capitalize shrink-0 rounded-full px-2.5 py-0.5 border-none ${r.status === "approved" ? "bg-primary/10 text-primary" :
+                                                r.status === "rejected" ? "bg-destructive/10 text-destructive" :
+                                                    "bg-secondary/15 text-secondary"
                                             }`}>{r.status}</Badge>
                                     </div>
                                 ))}

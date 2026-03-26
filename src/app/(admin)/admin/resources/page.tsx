@@ -11,13 +11,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { PageHeader } from "@/components/ai/ai-components";
 import { CurrencyInput } from "@/components/ui/currency-input";
 import { CheckCircle2, XCircle, Edit, Loader2, Package, Wrench, Users, AlertTriangle, Search, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { resourceService, ResourceRequest, ApprovalActionPayload, EditResourcePayload } from "@/lib/services/resource-service";
 
 const statusColors: Record<string, string> = {
-    pending: "bg-amber-50 text-amber-600 border-none",
-    approved: "bg-emerald-50 text-emerald-600 border-none",
-    rejected: "bg-red-50 text-red-500 border-none",
+    pending: "bg-amber-50 text-amber-700 border-none",
+    approved: "bg-emerald-50 text-emerald-700 border-none",
+    rejected: "bg-red-50 text-red-700 border-none",
+};
+const statusDotColors: Record<string, string> = {
+    pending: "bg-amber-500",
+    approved: "bg-emerald-500",
+    rejected: "bg-red-500",
 };
 
 export default function AdminResourcesPage() {
@@ -193,7 +199,7 @@ export default function AdminResourcesPage() {
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Badge variant="outline" className={`text-[10px] font-bold capitalize rounded-full px-2.5 py-0.5 ${statusColors[r.status]}`}>{r.status}</Badge>
+                                                    <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider", statusColors[r.status])}><div className={cn("w-1.5 h-1.5 rounded-full", statusDotColors[r.status])} /><span className="uppercase">{r.status}</span></div>
                                                 </TableCell>
                                                 <TableCell>
                                                     <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs text-[#2568C1] hover:bg-[#2568C1]/10" onClick={() => openDetail(r)}>
@@ -251,7 +257,7 @@ export default function AdminResourcesPage() {
                             </div>
                             <div>
                                 <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Status</p>
-                                <Badge variant="outline" className={`text-[10px] font-bold capitalize rounded-full px-2.5 py-0.5 ${statusColors[detailTarget?.status || "pending"]}`}>{detailTarget?.status}</Badge>
+                                <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider", statusColors[detailTarget?.status || "pending"])}><div className={cn("w-1.5 h-1.5 rounded-full", statusDotColors[detailTarget?.status || "pending"])} /><span className="uppercase">{detailTarget?.status}</span></div>
                             </div>
                             <div>
                                 <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Amount</p>
@@ -387,7 +393,7 @@ export default function AdminResourcesPage() {
                                         {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm & Save"}
                                     </Button>
                                 ) : (
-                                    <Button size="sm" onClick={() => handleEdit(false)} disabled={isProcessing} className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[100px]">
+                                    <Button size="sm" onClick={() => handleEdit(false)} disabled={isProcessing} className="bg-blue-600 hover:bg-blue-700 min-w-[100px]">
                                         {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
                                     </Button>
                                 )
