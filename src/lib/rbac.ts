@@ -53,9 +53,8 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
                 { label: "My Projects", href: "/pm/projects", icon: FolderKanban },
                 { label: "Approvals", href: "/pm/approvals", icon: Inbox, badge: "AI" },
                 { label: "Requests", href: "/pm/requests", icon: FileSearch },
-                { label: "Team & Tasks", href: "/pm/team", icon: Users },
-                { label: "Budget Monitor", href: "/pm/budget", icon: BarChart3 },
-                { label: "Workload AI", href: "/pm/workload", icon: Brain },
+                { label: "Tasks", href: "/pm/task", icon: ListTodo },
+                { label: "Budget Monitor", href: "/pm/budget", icon: BarChart3 },                { label: "Workload AI", href: "/pm/workload", icon: Brain },
                 { label: "Reports", href: "/pm/reports", icon: ClipboardList },
             ]
         }

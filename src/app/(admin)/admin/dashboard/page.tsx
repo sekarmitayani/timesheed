@@ -314,7 +314,7 @@ export default function AdminDashboard() {
                             <div className="py-8 text-center text-sm text-muted-foreground">No project financial data available yet.</div>
                         ) : (
                             projectFinancials.map(pf => (
-                                <div className="space-y-1.5">
+                                <div key={pf.id} className="space-y-1.5">
                                     <div className="flex items-center justify-between">
                                         <div className="min-w-0 flex-1">
                                             <p className="text-sm font-bold text-foreground truncate">{pf.name}</p>

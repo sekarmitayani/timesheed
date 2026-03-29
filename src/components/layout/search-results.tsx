@@ -38,7 +38,7 @@ function getProjectHref(role: Role): string {
 
 function getTaskHref(role: Role): string {
     if (role === "employee") return "/employee/tasks";
-    if (role === "projectmanager") return "/pm/team";
+    if (role === "projectmanager") return "/pm/task";
     return "/admin/dashboard";
 }
 
