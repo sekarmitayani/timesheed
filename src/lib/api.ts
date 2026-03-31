@@ -20,7 +20,7 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
     });
 
     if (!response.ok) {
-        if (response.status === 401 && typeof window !== "undefined") {
+        if (response.status === 401 && typeof window !== "undefined" && endpoint !== "/auth/login") {
             useAuthStore.getState().setSessionExpired(true);
         }
         const errorData = await response.json().catch(() => ({}));

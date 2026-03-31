@@ -2,16 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { usePathname } from "next/navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 
 export function SessionExpiryDialog() {
     const { isSessionExpired, logout, checkTokenExpiry } = useAuthStore();
+    const pathname = usePathname();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
+        // Do not check token expiry if on login page
+        if (pathname === "/login") return;
+
         // Initial check on mount
         checkTokenExpiry();
 
@@ -30,9 +35,9 @@ export function SessionExpiryDialog() {
             clearInterval(interval);
             window.removeEventListener("focus", handleFocus);
         };
-    }, [checkTokenExpiry]);
+    }, [checkTokenExpiry, pathname]);
 
-    if (!mounted) return null;
+    if (!mounted || pathname === "/login") return null;
 
     const handleLoginAgain = () => {
         logout();

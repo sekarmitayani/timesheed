@@ -65,6 +65,7 @@ import { ApiProject, User } from "@/lib/types";
 import { taskService, ApiTask, CreateTaskPayload, UpdateTaskPayload } from "@/lib/services/task-service";
 import { projectService } from "@/lib/services/project-service";
 import { adminUserService } from "@/lib/services/admin-users";
+import { timesheetService, TimesheetLog } from "@/lib/services/timesheet-service";
 import { cn } from "@/lib/utils";
 
 export default function TasksPage() {
@@ -72,8 +73,13 @@ export default function TasksPage() {
     const [tasks, setTasks] = useState<ApiTask[]>([]);
     const [projects, setProjects] = useState<ApiProject[]>([]);
     const [users, setUsers] = useState<any[]>([]);
+    const [projectMembers, setProjectMembers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+
+    // Timesheet States
+    const [taskTimesheets, setTaskTimesheets] = useState<TimesheetLog[]>([]);
+    const [isLoadingTimesheets, setIsLoadingTimesheets] = useState(false);
 
     // Pagination State
     const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
@@ -105,7 +111,8 @@ export default function TasksPage() {
         try {
             // Load projects for lookup (PM has access to /getproject)
             const projRes = await projectService.getProjects(1, 100);
-            setProjects(projRes.data || []);
+            const allProjects = projRes.data || [];
+            setProjects(allProjects);
 
             let allTasks: ApiTask[] = [];
             let allUsers: any[] = [];
@@ -118,17 +125,28 @@ export default function TasksPage() {
                 ]);
 
                 allTasks = Array.isArray(taskRes) ? taskRes : [];
-                // Map project members to simple user objects for the UI
                 allUsers = Array.isArray(memberRes) ? memberRes.map(m => m.user).filter(Boolean) : [];
-            } else if (projRes.data && projRes.data.length > 0) {
-                // Fetch from first project as fallback for "All" view to show some data
-                const firstProjId = projRes.data[0].id;
-                const [taskRes, memberRes] = await Promise.all([
-                    taskService.getProjectTasks(firstProjId),
-                    projectService.getProjectMembers(firstProjId)
+            } else if (allProjects.length > 0) {
+                // Fetch tasks and members from ALL projects assigned to the PM
+                const taskPromises = allProjects.map(p => taskService.getProjectTasks(p.id));
+                const memberPromises = allProjects.map(p => projectService.getProjectMembers(p.id));
+                
+                const [taskResults, memberResults] = await Promise.all([
+                    Promise.all(taskPromises),
+                    Promise.all(memberPromises)
                 ]);
-                allTasks = Array.isArray(taskRes) ? taskRes : [];
-                allUsers = Array.isArray(memberRes) ? memberRes.map(m => m.user).filter(Boolean) : [];
+
+                // Flatten and deduplicate
+                allTasks = taskResults.flat();
+                
+                // Use a Map for deduplication of users by ID
+                const userMap = new Map();
+                memberResults.flat().forEach(m => {
+                    if (m && m.user) {
+                        userMap.set(m.user.id, m.user);
+                    }
+                });
+                allUsers = Array.from(userMap.values());
             }
 
             setTasks(allTasks);
@@ -149,8 +167,8 @@ export default function TasksPage() {
 
         try {
             const memberRes = await projectService.getProjectMembers(Number(projectId));
-            const projectUsers = Array.isArray(memberRes) ? memberRes.map(m => m.user).filter(Boolean) : [];
-            setUsers(projectUsers);
+            const members = Array.isArray(memberRes) ? memberRes.map(m => m.user).filter(Boolean) : [];
+            setProjectMembers(members);
         } catch (error: any) {
             toast.error("Failed to load project members");
         }
@@ -179,6 +197,7 @@ export default function TasksPage() {
                 await taskService.updateTask(selectedTask.id, updatePayload);
                 toast.success("Task updated successfully");
                 setIsEditMode(false);
+                setIsDetailOpen(false);
             } else {
                 const createPayload: CreateTaskPayload = {
                     title: form.title,
@@ -224,6 +243,7 @@ export default function TasksPage() {
             description: "",
             status: "todo"
         });
+        setProjectMembers([]);
     };
 
     const getStatusBadge = (status: string) => {
@@ -246,7 +266,14 @@ export default function TasksPage() {
     };
 
     const getProjectName = (id: number) => projects.find(p => p.id === id)?.name || `Project #${id}`;
-    const getUserName = (id: number) => users.find(u => String(u.id) === String(id))?.full_name || `User #${id}`;
+    const getUserContext = (id: number) => users.find(u => String(u.id) === String(id));
+    const getUserName = (id: number) => getUserContext(id)?.full_name || getUserContext(id)?.name || `User #${id}`;
+
+    const formatDuration = (mins: number) => {
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        return h > 0 ? `${h}h ${m}m` : `${m}m`;
+    };
 
     const totalPages = Math.ceil(pagination.total / pagination.limit);
 
@@ -268,14 +295,26 @@ export default function TasksPage() {
     }, [tasks, searchQuery, filterStatus, pagination.page, pagination.limit]);
 
     // Open task detail sheet
-    const handleOpenDetail = (task: ApiTask) => {
+    const handleOpenDetail = async (task: ApiTask) => {
         setSelectedTask(task);
         setIsEditMode(false);
         setIsDetailOpen(true);
+
+        // Fetch timesheets
+        setIsLoadingTimesheets(true);
+        try {
+            const res = await timesheetService.getTaskTimesheets(task.id);
+            setTaskTimesheets(Array.isArray(res) ? res : []);
+        } catch (error) {
+            console.error("Failed to fetch task timesheets", error);
+            setTaskTimesheets([]);
+        } finally {
+            setIsLoadingTimesheets(false);
+        }
     };
 
     // Switch detail sheet to edit mode
-    const handleOpenEdit = () => {
+    const handleOpenEdit = async () => {
         if (!selectedTask) return;
         setForm({
             title: selectedTask.title,
@@ -284,6 +323,16 @@ export default function TasksPage() {
             description: selectedTask.description || "",
             status: selectedTask.status
         });
+
+        // Load project members for the dropdown
+        try {
+            const memberRes = await projectService.getProjectMembers(selectedTask.project_id);
+            const members = Array.isArray(memberRes) ? memberRes.map(m => m.user).filter(Boolean) : [];
+            setProjectMembers(members);
+        } catch (error) {
+            console.error("Failed to load members for edit", error);
+        }
+        
         setIsEditMode(true);
     };
 
@@ -296,13 +345,7 @@ export default function TasksPage() {
         <div className="space-y-6 animate-in fade-in duration-500">
             <PageHeader title="Tasks" description={`Monitoring ${pagination.total} total assignments`}>
                 <Button size="sm" className="gap-2 bg-[#2568C1] hover:bg-[#1a4f99] text-white shadow-sm" onClick={() => {
-                    setForm({
-                        title: "",
-                        project_id: 0,
-                        assigned_to_id: 0,
-                        description: "",
-                        status: "todo"
-                    });
+                    resetForm();
                     setIsNewTaskOpen(true);
                 }}>
                     <Plus className="h-4 w-4" /> New Task
@@ -323,7 +366,6 @@ export default function TasksPage() {
                     </div>
                     <Select value={filterProject} onValueChange={setFilterProject}>
                         <SelectTrigger className="h-10 w-[180px] bg-white border-slate-200">
-                            <Briefcase className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
                             <SelectValue placeholder="All Projects" />
                         </SelectTrigger>
                         <SelectContent>
@@ -355,11 +397,11 @@ export default function TasksPage() {
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent border-b border-slate-100">
                                     <TableHead className="pl-6 w-12 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
-                                    <TableHead className="w-[200px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Assignee</TableHead>
+                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Task</TableHead>
                                     <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Project</TableHead>
-                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Task Details</TableHead>
+                                    <TableHead className="w-[180px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Assignee</TableHead>
                                     <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Status</TableHead>
-                                    <TableHead className="w-[100px] pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actions</TableHead>
+                                    <TableHead className="w-[80px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 text-left">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -384,37 +426,60 @@ export default function TasksPage() {
                                             <TableCell className="pl-6 text-sm text-muted-foreground font-medium">
                                                 {(pagination.page - 1) * pagination.limit + index + 1}
                                             </TableCell>
+                                            <TableCell className="max-w-[200px] sm:max-w-[300px]">
+                                                <div className="flex flex-col py-1">
+                                                    <span className="text-sm font-semibold text-slate-900 truncate" title={task.title}>{task.title}</span>
+                                                    <span className="text-[10px] text-muted-foreground opacity-70 break-words line-clamp-2 mt-0.5">{task.description || "No description"}</span>
+                                                    {task.description && task.description.length > 60 && (
+                                                        <button 
+                                                            onClick={() => handleOpenDetail(task)}
+                                                            className="text-[10px] text-[#2568C1] font-medium text-left mt-0.5 hover:underline"
+                                                        >
+                                                            View Full
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </TableCell>
                                             <TableCell>
-                                                <div className="flex items-center gap-3">
-                                                    <Avatar className="h-8 w-8 border border-slate-200">
-                                                        <AvatarFallback className="bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-[10px] text-white font-bold">
+                                                <span className="text-sm font-medium text-slate-600">
+                                                    {getProjectName(task.project_id)}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-2 overflow-hidden">
+                                                    <Avatar className="h-7 w-7 border border-slate-200 shrink-0">
+                                                        <AvatarFallback className="bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-[9px] text-white font-bold">
                                                             {getUserName(task.assigned_to_id).split(" ").map((n: string) => n[0]).join("")}
                                                         </AvatarFallback>
                                                     </Avatar>
-                                                    <span className="text-sm font-medium text-slate-700">{getUserName(task.assigned_to_id)}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-none font-medium text-[11px]">
-                                                    {getProjectName(task.project_id)}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex flex-col max-w-[300px]">
-                                                    <span className="text-sm font-semibold text-slate-900 truncate">{task.title}</span>
-                                                    <span className="text-[10px] text-muted-foreground truncate opacity-70">{task.description || "No description"}</span>
+                                                    <span className="text-sm font-medium text-slate-700 truncate">{getUserName(task.assigned_to_id)}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>{getStatusBadge(task.status)}</TableCell>
-                                            <TableCell className="pr-6 text-right">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8 text-[#64748b] hover:text-[#2568C1] hover:bg-[#2568C1]/10 rounded-full"
-                                                    onClick={() => handleOpenDetail(task)}
-                                                >
-                                                    <Eye className="h-4 w-4" />
-                                                </Button>
+                                            <TableCell className="text-left">
+                                                <div className="flex items-center gap-1">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-[#64748b] hover:text-[#2568C1] hover:bg-[#2568C1]/10 rounded-full"
+                                                        onClick={() => handleOpenDetail(task)}
+                                                        title="View Details"
+                                                    >
+                                                        <Eye className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-[#64748b] hover:text-red-600 hover:bg-red-50 rounded-full"
+                                                        onClick={() => {
+                                                            setSelectedTask(task);
+                                                            setIsDeleteOpen(true);
+                                                        }}
+                                                        title="Delete Task"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -423,6 +488,7 @@ export default function TasksPage() {
                         </Table>
                     </div>
                 </CardContent>
+
                 {!isLoading && totalPages > 1 && (
                     <div className="border-t border-[#e2e8f0] bg-white px-4 py-3 flex items-center justify-between">
                         <div className="text-xs text-muted-foreground">
@@ -440,8 +506,9 @@ export default function TasksPage() {
             {/* Task Detail Sheet */}
             <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
                 <SheetContent className="sm:max-w-xl overflow-y-auto bg-white p-0 border-l border-slate-200">
-                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-6">
-                        <div className="flex items-center justify-between mb-4">
+                    {/* Header with better padding to avoid close button collision */}
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-8 py-8 pr-16 relative">
+                        <div className="flex items-center justify-between mb-5">
                             {selectedTask && getStatusBadge(selectedTask.status)}
                             <div className="flex gap-2">
                                 <Button variant="outline" size="sm" className="h-8 gap-1.5 border-slate-200 text-slate-600 hover:bg-slate-50" onClick={handleOpenEdit}>
@@ -453,23 +520,23 @@ export default function TasksPage() {
                             </div>
                         </div>
                         <SheetHeader className="text-left">
-                            <SheetTitle className="text-xl font-bold text-slate-900 leading-tight">
+                            <SheetTitle className="text-2xl font-bold text-slate-900 leading-tight break-words whitespace-normal">
                                 {isEditMode ? "Update Task Parameters" : selectedTask?.title}
                             </SheetTitle>
-                            <SheetDescription className="text-slate-500">
-                                {isEditMode ? "Modifying existing assignment details." : `Created on ${selectedTask?.created_at ? new Date(selectedTask.created_at).toLocaleDateString('id-ID') : '-'}`}
+                            <SheetDescription className="text-slate-500 font-medium break-words">
+                                {isEditMode ? "Modifying existing assignment details." : `ID #${selectedTask?.id} • Created ${selectedTask?.created_at ? new Date(selectedTask.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-'}`}
                             </SheetDescription>
                         </SheetHeader>
                     </div>
 
-                    <div className="p-6">
+                    <div className="p-8">
                         {isEditMode ? (
                             <div className="space-y-6">
-                                <div className="grid grid-cols-1 gap-4">
+                                <div className="grid grid-cols-1 gap-5">
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Project <span className="text-red-500">*</span></label>
-                                        <Select value={String(form.project_id)} onValueChange={(v) => setForm({ ...form, project_id: Number(v) })}>
-                                            <SelectTrigger className="h-10 bg-white border-slate-200 focus:ring-[#2568C1]">
+                                        <Select value={String(form.project_id)} onValueChange={(v) => handleProjectChange(v)}>
+                                            <SelectTrigger className="h-11 bg-white border-slate-200 focus:ring-[#2568C1]">
                                                 <SelectValue placeholder="Select project" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -482,11 +549,11 @@ export default function TasksPage() {
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Assign To <span className="text-red-500">*</span></label>
                                         <Select value={String(form.assigned_to_id)} onValueChange={(v) => setForm({ ...form, assigned_to_id: Number(v) })}>
-                                            <SelectTrigger className="h-10 bg-white border-slate-200 focus:ring-[#2568C1]">
+                                            <SelectTrigger className="h-11 bg-white border-slate-200 focus:ring-[#2568C1]">
                                                 <SelectValue placeholder="Select team member" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {users.map((u) => (
+                                                {projectMembers.map((u) => (
                                                     <SelectItem key={u.id} value={String(u.id)}>{u.full_name || u.name}</SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -494,12 +561,12 @@ export default function TasksPage() {
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Task Title <span className="text-red-500">*</span></label>
-                                        <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="h-10 bg-white border-slate-200 focus:ring-[#2568C1]" />
+                                        <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="h-11 bg-white border-slate-200 focus:ring-[#2568C1]" />
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Description</label>
                                         <textarea
-                                            className="w-full min-h-[100px] p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#2568C1]/20 text-sm"
+                                            className="w-full min-h-[120px] p-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#2568C1]/20 text-sm leading-relaxed"
                                             value={form.description}
                                             onChange={(e) => setForm({ ...form, description: e.target.value })}
                                         />
@@ -507,7 +574,7 @@ export default function TasksPage() {
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Current Status</label>
                                         <Select value={form.status} onValueChange={(v: any) => setForm({ ...form, status: v })}>
-                                            <SelectTrigger className="h-10 bg-white border-slate-200 focus:ring-[#2568C1]"><SelectValue /></SelectTrigger>
+                                            <SelectTrigger className="h-11 bg-white border-slate-200 focus:ring-[#2568C1]"><SelectValue /></SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="todo">Todo</SelectItem>
                                                 <SelectItem value="in_progress">In Progress</SelectItem>
@@ -516,63 +583,104 @@ export default function TasksPage() {
                                         </Select>
                                     </div>
                                 </div>
-                                <div className="flex gap-3 pt-4 border-t border-slate-100">
-                                    <Button className="flex-1 bg-[#2568C1] hover:bg-[#1a4f99]" onClick={handleSaveTask} disabled={isSaving}>
+                                <div className="flex gap-3 pt-6 border-t border-slate-100">
+                                    <Button className="flex-1 bg-[#2568C1] hover:bg-[#1a4f99] h-11" onClick={handleSaveTask} disabled={isSaving}>
                                         {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Changes"}
                                     </Button>
-                                    <Button variant="outline" className="flex-1" onClick={() => setIsEditMode(false)}>Cancel</Button>
+                                    <Button variant="outline" className="flex-1 h-11" onClick={() => setIsEditMode(false)}>Cancel</Button>
                                 </div>
                             </div>
                         ) : (
                             <div className="space-y-8">
-                                <div className="grid grid-cols-2 gap-y-6 gap-x-4">
-                                    <div className="space-y-1.5">
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                                            <UserIcon className="h-3 w-3" /> Assignee
+                                <div className="grid grid-cols-2 gap-y-8 gap-x-6">
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                            <UserIcon className="h-3.5 w-3.5" /> Assignee
                                         </p>
-                                        <p className="text-sm font-semibold text-slate-800">{getUserName(selectedTask?.assigned_to_id || 0)}</p>
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                                            <Briefcase className="h-3 w-3" /> Project
-                                        </p>
-                                        <p className="text-sm font-semibold text-slate-800">{getProjectName(selectedTask?.project_id || 0)}</p>
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                                            <Calendar className="h-3 w-3" /> Last Update
-                                        </p>
-                                        <p className="text-sm font-semibold text-slate-800">{selectedTask?.updated_at ? new Date(selectedTask.updated_at).toLocaleDateString('id-ID') : '-'}</p>
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                                            <Clock className="h-3 w-3" /> Task ID
-                                        </p>
-                                        <p className="text-sm font-semibold text-slate-800">#{selectedTask?.id}</p>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-3 pt-6 border-t border-slate-100">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                                        <Filter className="h-3 w-3" /> Task Description
-                                    </p>
-                                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-sm text-slate-600 leading-relaxed shadow-inner">
-                                        {selectedTask?.description || "No detailed description provided for this task."}
-                                    </div>
-                                </div>
-
-                                {/* Placeholder for Timesheet Logs Integration */}
-                                <div className="space-y-4 pt-6 border-t border-slate-100">
-                                    <div className="flex items-center justify-between">
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                                            <HistoryIcon className="h-3 w-3" /> Related Timesheets
-                                        </p>
-                                    </div>
-                                    <div className="rounded-xl border border-slate-100 overflow-hidden bg-white">
-                                        <div className="p-8 text-center text-xs text-muted-foreground italic bg-slate-50/30">
-                                            Timesheet history for this task is aggregated from project logs.
+                                        <div className="flex flex-col gap-0.5">
+                                            <p className="text-sm font-bold text-slate-800 break-words">{getUserName(selectedTask?.assigned_to_id || 0)}</p>
+                                            <p className="text-[11px] text-[#2568C1] font-medium break-all">{getUserContext(selectedTask?.assigned_to_id || 0)?.email || "No email record"}</p>
                                         </div>
                                     </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                            <Briefcase className="h-3.5 w-3.5" /> Project
+                                        </p>
+                                        <p className="text-sm font-bold text-slate-800 break-words">{getProjectName(selectedTask?.project_id || 0)}</p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                            <Calendar className="h-3.5 w-3.5" /> Last Update
+                                        </p>
+                                        <p className="text-sm font-bold text-slate-800">
+                                            {selectedTask?.updated_at 
+                                                ? new Date(selectedTask.updated_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) 
+                                                : '-'}
+                                        </p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                            <HistoryIcon className="h-3.5 w-3.5" /> Assignment Status
+                                        </p>
+                                        <div className="pt-0.5">{selectedTask && getStatusBadge(selectedTask.status)}</div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3 pt-8 border-t border-slate-100">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                        <Filter className="h-3.5 w-3.5" /> Task Description
+                                    </p>
+                                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 text-sm text-slate-600 leading-relaxed shadow-inner break-words">
+                                        {selectedTask?.description || "No detailed description provided for this assignment."}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 pt-8 border-t border-slate-100">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                        <Clock className="h-3.5 w-3.5" /> Timesheet Logs
+                                    </p>
+                                    
+                                    {isLoadingTimesheets ? (
+                                        <div className="flex items-center justify-center py-8">
+                                            <Loader2 className="h-5 w-5 animate-spin text-[#2568C1]" />
+                                        </div>
+                                    ) : taskTimesheets.length === 0 ? (
+                                        <div className="text-center py-8 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                                            <p className="text-xs text-slate-400 font-medium">No timesheet records found for this task.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {taskTimesheets.map((log) => (
+                                                <div key={log.id} className="p-4 rounded-xl border border-slate-100 bg-white shadow-sm flex flex-col gap-3">
+                                                    <div className="flex justify-between items-start">
+                                                        <div className="flex items-center gap-2">
+                                                            <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                                                            <span className="text-xs font-semibold text-slate-700">
+                                                                {new Date(log.clock_in).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                                                            </span>
+                                                        </div>
+                                                        <Badge variant="outline" className="text-[10px] font-bold bg-blue-50 text-blue-700 border-blue-100">
+                                                            {formatDuration(log.duration_minutes)}
+                                                        </Badge>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="space-y-1">
+                                                            <p className="text-[9px] uppercase font-bold text-slate-400">Clock In</p>
+                                                            <p className="text-xs font-medium text-slate-600">
+                                                                {new Date(log.clock_in).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                                                            </p>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <p className="text-[9px] uppercase font-bold text-slate-400">Clock Out</p>
+                                                            <p className="text-xs font-medium text-slate-600">
+                                                                {log.clock_out ? new Date(log.clock_out).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '-'}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -582,20 +690,17 @@ export default function TasksPage() {
 
             {/* New Task Dialog */}
             <Dialog open={isNewTaskOpen} onOpenChange={(open) => !isSaving && setIsNewTaskOpen(open)}>
-                <DialogContent className="sm:max-w-md p-0 overflow-hidden border-none shadow-2xl">
-                    <div className="bg-[#f8fafc] border-b border-slate-200 px-6 py-5">
-                        <DialogTitle className="text-xl font-bold text-slate-900">Assign New Task</DialogTitle>
-                        <DialogDescription className="text-slate-500 text-sm">
+                <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-[#e2e8f0]">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
+                        <DialogTitle className="text-xl text-[#0f172a]">Assign New Task</DialogTitle>
+                        <DialogDescription className="text-sm">
                             Configure task details and assign it to an employee.
                         </DialogDescription>
                     </div>
-                    <div className="px-6 py-6 space-y-5">
+                    <div className="px-6 py-5 space-y-4">
                         <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
-                                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#2568C1] text-[10px] text-white">1</span>
-                                Select Project <span className="text-red-500">*</span>
-                            </label>
-                            <Select value={String(form.project_id)} onValueChange={(v) => { resetForm(); setForm({ ...form, project_id: Number(v) }); }}>
+                            <label className="text-sm font-medium">Select Project <span className="text-red-500">*</span></label>
+                            <Select value={form.project_id ? String(form.project_id) : ""} onValueChange={(v) => handleProjectChange(v)}>
                                 <SelectTrigger className="h-10 bg-white border-slate-200 focus:ring-[#2568C1]">
                                     <SelectValue placeholder="Choose a project..." />
                                 </SelectTrigger>
@@ -608,16 +713,13 @@ export default function TasksPage() {
                         </div>
 
                         <div className={cn("space-y-1.5 transition-all duration-300", !form.project_id ? "opacity-30 pointer-events-none grayscale" : "opacity-100")}>
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
-                                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#2568C1] text-[10px] text-white">2</span>
-                                Assign Employee <span className="text-red-500">*</span>
-                            </label>
+                            <label className="text-sm font-medium">Assign Employee <span className="text-red-500">*</span></label>
                             <Select value={String(form.assigned_to_id)} onValueChange={(v) => setForm({ ...form, assigned_to_id: Number(v) })}>
                                 <SelectTrigger className="h-10 bg-white border-slate-200 focus:ring-[#2568C1]">
                                     <SelectValue placeholder="Select team member" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {users.map((u) => (
+                                    {projectMembers.map((u) => (
                                         <SelectItem key={u.id} value={String(u.id)}>{u.full_name || u.name}</SelectItem>
                                     ))}
                                 </SelectContent>
@@ -626,10 +728,7 @@ export default function TasksPage() {
 
                         <div className={cn("space-y-4 transition-all duration-300", !form.assigned_to_id ? "opacity-30 pointer-events-none grayscale" : "opacity-100")}>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
-                                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#2568C1] text-[10px] text-white">3</span>
-                                    Task Information <span className="text-red-500">*</span>
-                                </label>
+                                <label className="text-sm font-medium">Task Information <span className="text-red-500">*</span></label>
                                 <Input
                                     value={form.title}
                                     onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -637,10 +736,10 @@ export default function TasksPage() {
                                     className="h-10 bg-white border-slate-200 focus:ring-[#2568C1]"
                                 />
                             </div>
-                            <div className="space-y-1.5 ml-7">
-                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Description</label>
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-medium">Description</label>
                                 <textarea
-                                    className="w-full min-h-[100px] rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2568C1]/20 transition-all"
+                                    className="w-full min-h-[100px] rounded-lg border border-slate-200 bg-white p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2568C1]/20 transition-all"
                                     placeholder="Describe specific task requirements..."
                                     value={form.description}
                                     onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -648,12 +747,12 @@ export default function TasksPage() {
                             </div>
                         </div>
                     </div>
-                    <div className="px-6 py-4 bg-[#f8fafc] border-t border-slate-200 flex gap-3">
-                        <Button variant="ghost" onClick={() => setIsNewTaskOpen(false)} className="flex-1 text-slate-500">Cancel</Button>
+                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
+                        <Button variant="ghost" onClick={() => setIsNewTaskOpen(false)} disabled={isSaving}>Cancel</Button>
                         <Button
                             onClick={handleSaveTask}
                             disabled={!form.title || !form.project_id || !form.assigned_to_id || isSaving}
-                            className="flex-1 bg-[#2568C1] hover:bg-[#1a4f99] shadow-md"
+                            className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[120px] shadow-sm"
                         >
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm Assignment"}
                         </Button>
@@ -664,13 +763,13 @@ export default function TasksPage() {
             {/* Delete Confirmation Dialog */}
             <Dialog open={isDeleteOpen} onOpenChange={(open) => !isSaving && setIsDeleteOpen(open)}>
                 <DialogContent className="sm:max-w-md">
-                    <div className="flex flex-col items-center gap-4 py-4">
+                    <div className="flex flex-col items-center gap-4 py-4 px-2">
                         <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
                             <AlertTriangle className="h-6 w-6" />
                         </div>
                         <DialogTitle className="text-lg">Delete this task?</DialogTitle>
-                        <DialogDescription className="text-center text-slate-500">
-                            You are about to permanently remove <b className="text-slate-900">"{selectedTask?.title}"</b>. This action will also disconnect any progress associated with this specific task ID.
+                        <DialogDescription className="text-center text-slate-500 max-w-full">
+                            You are about to permanently remove <b className="text-slate-900 break-words line-clamp-2 inline-block max-w-full">"{selectedTask?.title}"</b>. This action will also disconnect any progress associated with this specific task ID.
                         </DialogDescription>
                         <div className="flex gap-3 w-full mt-2">
                             <Button variant="outline" className="flex-1" onClick={() => setIsDeleteOpen(false)} disabled={isSaving}>No, Keep it</Button>

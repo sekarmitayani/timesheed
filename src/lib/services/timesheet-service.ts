@@ -51,4 +51,10 @@ export const timesheetService = {
             method: "GET",
         });
     },
+
+    async getTaskTimesheets(taskId: number | string): Promise<TimesheetLog[]> {
+        return fetchApi(`/tasks/${taskId}/timesheets`, {
+            method: "GET",
+        });
+    },
 };

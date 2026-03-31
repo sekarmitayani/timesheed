@@ -25,6 +25,7 @@ export interface UpdateTaskStatusPayload {
 }
 
 export interface UpdateTaskPayload {
+    project_id?: number;
     title?: string;
     description?: string;
     assigned_to_id?: number;
