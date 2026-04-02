@@ -279,7 +279,7 @@ export default function TasksPage() {
 
     // Filtered + paginated tasks
     const filteredTasks = useMemo(() => {
-        let result = tasks;
+        let result = [...tasks].sort((a, b) => b.id - a.id);
         if (searchQuery) {
             const q = searchQuery.toLowerCase();
             result = result.filter(t =>
@@ -489,15 +489,19 @@ export default function TasksPage() {
                     </div>
                 </CardContent>
 
-                {!isLoading && totalPages > 1 && (
+                {pagination.total > 0 && (
                     <div className="border-t border-[#e2e8f0] bg-white px-4 py-3 flex items-center justify-between">
                         <div className="text-xs text-muted-foreground">
                             Showing <span className="font-medium text-[#0f172a]">{(pagination.page - 1) * pagination.limit + 1}</span> to <span className="font-medium text-[#0f172a]">{Math.min(pagination.page * pagination.limit, pagination.total)}</span> of <span className="font-medium text-[#0f172a]">{pagination.total}</span> tasks
                         </div>
                         <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled={pagination.page <= 1} onClick={() => fetchData(pagination.page - 1)}><ChevronLeft className="h-4 w-4" /></Button>
-                            <div className="text-xs font-medium px-2">Page {pagination.page} of {totalPages}</div>
-                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled={pagination.page >= totalPages} onClick={() => fetchData(pagination.page + 1)}><ChevronRight className="h-4 w-4" /></Button>
+                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled={pagination.page <= 1} onClick={() => fetchData(pagination.page - 1)}>
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <div className="text-xs font-medium px-2">Page {pagination.page} of {totalPages || 1}</div>
+                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled={pagination.page >= totalPages} onClick={() => fetchData(pagination.page + 1)}>
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
                         </div>
                     </div>
                 )}
@@ -768,8 +772,8 @@ export default function TasksPage() {
                             <AlertTriangle className="h-6 w-6" />
                         </div>
                         <DialogTitle className="text-lg">Delete this task?</DialogTitle>
-                        <DialogDescription className="text-center text-slate-500 max-w-full">
-                            You are about to permanently remove <b className="text-slate-900 break-words line-clamp-2 inline-block max-w-full">"{selectedTask?.title}"</b>. This action will also disconnect any progress associated with this specific task ID.
+                        <DialogDescription className="text-center text-slate-500 w-full overflow-hidden">
+                            You are about to permanently remove <span className="block text-slate-900 font-bold truncate mx-auto max-w-[280px] sm:max-w-[350px] mt-1" title={selectedTask?.title}>"{selectedTask?.title}"</span> This action will also disconnect any progress associated with this specific task ID.
                         </DialogDescription>
                         <div className="flex gap-3 w-full mt-2">
                             <Button variant="outline" className="flex-1" onClick={() => setIsDeleteOpen(false)} disabled={isSaving}>No, Keep it</Button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { FolderKanban, Users, AlertTriangle, ListTodo, Activity, CheckCircle2, Clock, Loader2, Package } from "lucide-react";
+import { FolderKanban, Users, AlertTriangle, ListTodo, Activity, CheckCircle2, Clock, Loader2, Package, Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { StatCard, PageHeader } from "@/components/ai/ai-components";
@@ -292,13 +292,18 @@ export default function PMDashboard() {
                                                     </div>
                                                 </div>
                                                 <div className="space-y-1">
-                                                    <p className="text-xs text-slate-500">
+                                                    <p className="text-xs text-slate-500 leading-relaxed">
                                                         <span className="font-bold text-[#0f172a]">{assigneeName}</span> 
                                                         {isDone ? " completed the task " : " updated task "} 
-                                                        <span className="font-medium text-[#0f172a]">{task.title}</span>
+                                                        <span className="font-medium text-[#0f172a] truncate inline-block max-w-[150px] align-bottom" title={task.title}>
+                                                            "{task.title}"
+                                                        </span>
                                                     </p>
-                                                    <div className="text-[10px] text-slate-400 font-medium">
-                                                        {task.updated_at ? new Date(task.updated_at).toLocaleDateString() : 'Recently'}
+                                                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-tight flex items-center gap-1">
+                                                        <Calendar className="h-3 w-3" />
+                                                        {task.updated_at 
+                                                            ? new Date(task.updated_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) 
+                                                            : '-'}
                                                     </div>
                                                 </div>
                                             </div>

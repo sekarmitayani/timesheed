@@ -424,7 +424,7 @@ export default function AdminDashboard() {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs font-medium text-foreground truncate">{r.details}</p>
-                                            <p className="text-[10px] text-muted-foreground">{r.User?.full_name || `User #${r.user_id}`} · {r.Project?.name || `Project #${r.project_id}`}</p>
+                                            <p className="text-[10px] text-muted-foreground">{r.user?.full_name || `User #${r.user_id}`} · {r.project?.name || `Project #${r.project_id}`}</p>
                                         </div>
                                         <Badge variant="outline" className="text-[9px] font-bold rounded-full px-2.5 py-0.5 bg-destructive/10 text-destructive border-none shrink-0">Pending</Badge>
                                     </div>
@@ -463,7 +463,7 @@ export default function AdminDashboard() {
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs font-medium text-foreground truncate">{r.details}</p>
                                             <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                                                <span>{r.User?.full_name || `User #${r.user_id}`}</span>
+                                                <span>{r.user?.full_name || `User #${r.user_id}`}</span>
                                                 <span>·</span>
                                                 <span className="capitalize">{r.type}</span>
                                                 {r.amount > 0 && <><span>·</span><span className="text-primary font-medium">{fmtCurrency(r.amount)}</span></>}

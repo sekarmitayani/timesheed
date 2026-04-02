@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } f
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageHeader } from "@/components/ai/ai-components";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, ArrowLeft, Users, ListTodo, Package, Plus, Pencil, Trash2, Wrench, AlertTriangle, MoreVertical, DollarSign } from "lucide-react";
+import { Loader2, ArrowLeft, Users, ListTodo, Package, Plus, Pencil, Trash2, Wrench, AlertTriangle, MoreVertical, DollarSign, Search, Eye, Calendar, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -73,6 +73,14 @@ export default function ProjectDetailPage() {
     const [resources, setResources] = useState<ResourceRequest[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    /* ── Task Filters ── */
+    const [taskSearch, setTaskSearch] = useState("");
+    const [taskFilterStatus, setTaskFilterStatus] = useState("all");
+
+    /* ── Resource Filters ── */
+    const [resSearch, setResSearch] = useState("");
+    const [resFilterStatus, setResFilterStatus] = useState("all");
+
     /* ── Task Dialog ── */
     const [taskDialogOpen, setTaskDialogOpen] = useState(false);
     const [taskEditing, setTaskEditing] = useState<ApiTask | null>(null);
@@ -80,6 +88,8 @@ export default function ProjectDetailPage() {
     const [isSavingTask, setIsSavingTask] = useState(false);
 
     /* ── Resource Dialog ── */
+    const [resDetailOpen, setResDetailOpen] = useState(false);
+    const [selectedRes, setSelectedRes] = useState<ResourceRequest | null>(null);
     const [resDialogOpen, setResDialogOpen] = useState(false);
     const [resEditing, setResEditing] = useState<ResourceRequest | null>(null);
     const [resForm, setResForm] = useState<CreateResourcePayload>({ project_id: 0, type: "tools", details: "" });
@@ -88,6 +98,16 @@ export default function ProjectDetailPage() {
     /* ── Delete Confirm ── */
     const [deleteTarget, setDeleteTarget] = useState<{ type: "task" | "resource"; id: number; title: string } | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const openResDetail = (r: ResourceRequest) => {
+        setSelectedRes(r);
+        setResDetailOpen(true);
+    };
+
+    const handleDeleteResFromDetail = () => {
+        if (!selectedRes) return;
+        setDeleteTarget({ type: "resource", id: selectedRes.id, title: selectedRes.details });
+    };
 
     /* ── Fetch All ── */
     const fetchAll = useCallback(async () => {
@@ -351,154 +371,238 @@ export default function ProjectDetailPage() {
 
                 {/* TASKS TAB */}
                 <TabsContent value="tasks" className="space-y-4 mt-0 focus:outline-none">
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex flex-col lg:flex-row items-start justify-between gap-4 mb-4">
                         <div className="flex flex-col gap-1">
                             <h2 className="text-base font-semibold text-slate-900">Task List</h2>
                             <p className="text-xs text-slate-500 mt-0.5">List of all active, pending, and completed tasks for this project.</p>
                         </div>
-                        <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm h-9 px-4 shrink-0 mt-1" onClick={openCreateTask}>
-                            <Plus className="h-4 w-4" /> Add Task
-                        </Button>
-                    </div>
-                    {tasks.length === 0 ? (
-                        <Card className="border-dashed border-slate-200 bg-slate-50 shadow-none">
-                            <CardContent className="py-12 flex flex-col items-center justify-center text-center">
-                                <ListTodo className="h-10 w-10 text-slate-300 mb-3" />
-                                <p className="text-sm font-medium text-slate-600">No tasks yet</p>
-                                <p className="text-xs text-slate-400 mt-1">Create a task to start tracking progress.</p>
-                            </CardContent>
-                        </Card>
-                    ) : (
-                        <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden">
-                            <div className="overflow-x-auto">
-                                <Table>
-                                    <TableHeader className="bg-slate-50">
-                                        <TableRow className="border-slate-200 hover:bg-slate-50">
-                                            <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 w-12 text-center">No</TableHead>
-                                            <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11">Task Details</TableHead>
-                                            <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11">Assignee</TableHead>
-                                            <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 text-center">Status</TableHead>
-                                            <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 text-right">Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {tasks.map((t, index) => (
-                                            <TableRow key={t.id} className="border-slate-100 hover:bg-slate-50/50">
-                                                <TableCell className="py-3 text-sm text-slate-500 font-medium text-center">{index + 1}</TableCell>
-                                                <TableCell className="py-3">
-                                                    <div className="font-semibold text-sm text-slate-900">{t.title}</div>
-                                                    {t.description && <div className="text-xs text-slate-500 mt-1 line-clamp-1 max-w-md">{t.description}</div>}
-                                                </TableCell>
-                                                <TableCell className="py-3 text-sm text-slate-600 font-medium">
-                                                    {getMemberName(t.assigned_to_id)}
-                                                </TableCell>
-                                                <TableCell className="py-3 text-center">
-                                                    <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider", taskStatusColors[t.status])}>
-                                                        <div className={cn("w-1.5 h-1.5 rounded-full", taskStatusDotColors[t.status])} />
-                                                        <span className="uppercase">{t.status.replace("_", " ")}</span>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="py-3 font-medium text-right">
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:bg-slate-100 hover:text-slate-900 rounded-lg">
-                                                                <MoreVertical className="h-4 w-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end" className="w-[160px] rounded-xl">
-                                                            <DropdownMenuItem onClick={() => openEditTask(t)} className="text-xs font-medium cursor-pointer">
-                                                                <Pencil className="mr-2 h-3.5 w-3.5 text-blue-500" /> Edit Task
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => setDeleteTarget({ type: "task", id: t.id, title: t.title })} className="text-xs font-medium cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50">
-                                                                <Trash2 className="mr-2 h-3.5 w-3.5" /> Delete Task
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+                        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                            <div className="relative w-full md:w-[250px]">
+                                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    placeholder="Search tasks..."
+                                    className="pl-9 h-10 bg-white border-slate-200 focus-visible:ring-[#2568C1]"
+                                    value={taskSearch}
+                                    onChange={(e) => setTaskSearch(e.target.value)}
+                                />
                             </div>
-                        </Card>
-                    )}
+                            <Select value={taskFilterStatus} onValueChange={setTaskFilterStatus}>
+                                <SelectTrigger className="h-10 w-[140px] bg-white border-slate-200">
+                                    <SelectValue placeholder="All Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Status</SelectItem>
+                                    <SelectItem value="todo">To Do</SelectItem>
+                                    <SelectItem value="in_progress">In Progress</SelectItem>
+                                    <SelectItem value="done">Done</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm h-10 px-4 shrink-0" onClick={openCreateTask}>
+                                <Plus className="h-4 w-4" /> Add Task
+                            </Button>
+                        </div>
+                    </div>
+                    {(() => {
+                        const q = taskSearch.toLowerCase();
+                        const filteredTasks = tasks.filter(t => {
+                            const matchesSearch = t.title.toLowerCase().includes(q) || (t.description?.toLowerCase() || "").includes(q);
+                            const matchesStatus = taskFilterStatus === "all" || t.status === taskFilterStatus;
+                            return matchesSearch && matchesStatus;
+                        });
+
+                        if (tasks.length === 0) {
+                            return (
+                                <Card className="border-dashed border-slate-200 bg-slate-50 shadow-none">
+                                    <CardContent className="py-12 flex flex-col items-center justify-center text-center">
+                                        <ListTodo className="h-10 w-10 text-slate-300 mb-3" />
+                                        <p className="text-sm font-medium text-slate-600">No tasks yet</p>
+                                        <p className="text-xs text-slate-400 mt-1">Create a task to start tracking progress.</p>
+                                    </CardContent>
+                                </Card>
+                            );
+                        }
+
+                        if (filteredTasks.length === 0) {
+                            return (
+                                <Card className="border-dashed border-slate-200 bg-slate-50 shadow-none">
+                                    <CardContent className="py-12 flex flex-col items-center justify-center text-center">
+                                        <Search className="h-10 w-10 text-slate-300 mb-3" />
+                                        <p className="text-sm font-medium text-slate-600">No tasks match your search.</p>
+                                    </CardContent>
+                                </Card>
+                            );
+                        }
+
+                        return (
+                            <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden">
+                                <div className="overflow-x-auto">
+                                    <Table>
+                                        <TableHeader className="bg-slate-50">
+                                            <TableRow className="border-slate-200 hover:bg-slate-50">
+                                                <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 w-12 text-center">No</TableHead>
+                                                <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11">Task Details</TableHead>
+                                                <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11">Assignee</TableHead>
+                                                <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 text-center">Status</TableHead>
+                                                <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 text-right pr-6">Actions</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {filteredTasks.map((t, index) => (
+                                                <TableRow key={t.id} className="border-slate-100 hover:bg-slate-50/50">
+                                                    <TableCell className="py-3 text-sm text-slate-500 font-medium text-center">{index + 1}</TableCell>
+                                                    <TableCell className="py-3">
+                                                        <div className="font-semibold text-sm text-slate-900">{t.title}</div>
+                                                        {t.description && <div className="text-xs text-slate-500 mt-1 line-clamp-1 max-w-md">{t.description}</div>}
+                                                    </TableCell>
+                                                    <TableCell className="py-3 text-sm text-slate-600 font-medium">
+                                                        {getMemberName(t.assigned_to_id)}
+                                                    </TableCell>
+                                                    <TableCell className="py-3 text-center">
+                                                        <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider", taskStatusColors[t.status])}>
+                                                            <div className={cn("w-1.5 h-1.5 rounded-full", taskStatusDotColors[t.status])} />
+                                                            <span className="uppercase">{t.status.replace("_", " ")}</span>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="py-3 font-medium text-right pr-6">
+                                                        <div className="flex items-center justify-end gap-1">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 text-[#64748b] hover:text-[#2568C1] hover:bg-[#2568C1]/10 rounded-full"
+                                                                onClick={() => openEditTask(t)}
+                                                                title="Edit Task"
+                                                            >
+                                                                <Pencil className="h-4 w-4" />
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 text-[#64748b] hover:text-red-600 hover:bg-red-50 rounded-full"
+                                                                onClick={() => setDeleteTarget({ type: "task", id: t.id, title: t.title })}
+                                                                title="Delete Task"
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            </Card>
+                        );
+                    })()}
                 </TabsContent>
 
                 {/* RESOURCES TAB */}
                 <TabsContent value="resources" className="space-y-4 mt-0 focus:outline-none">
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex flex-col lg:flex-row items-start justify-between gap-4 mb-4">
                         <div className="flex flex-col gap-1">
                             <h2 className="text-base font-semibold text-slate-900">Project Resources</h2>
                             <p className="text-xs text-slate-500 mt-0.5">List of all resource requests and operational requirements for this project.</p>
                         </div>
-                        <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm h-9 px-4 shrink-0 mt-1" onClick={openCreateRes}>
-                            <Plus className="h-4 w-4" /> Request Resource
-                        </Button>
-                    </div>
-                    {resources.length === 0 ? (
-                        <Card className="border-dashed border-slate-200 bg-slate-50 shadow-none">
-                            <CardContent className="py-12 flex flex-col items-center justify-center text-center">
-                                <Package className="h-10 w-10 text-slate-300 mb-3" />
-                                <p className="text-sm font-medium text-slate-600">No resource requests</p>
-                                <p className="text-xs text-slate-400 mt-1">Submit requests for manpower or tools.</p>
-                            </CardContent>
-                        </Card>
-                    ) : (
-                        <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden">
-                            <div className="overflow-x-auto">
-                                <Table>
-                                    <TableHeader className="bg-slate-50">
-                                        <TableRow className="border-slate-200 hover:bg-slate-50">
-                                            <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 w-12 text-center">No</TableHead>
-                                            <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 w-12 text-center">Type</TableHead>
-                                            <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11">Details</TableHead>
-                                            <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 text-center">Status</TableHead>
-                                            <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 text-right">Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {resources.map((r, index) => (
-                                            <TableRow key={r.id} className="border-slate-100 hover:bg-slate-50/50">
-                                                <TableCell className="py-3 text-sm text-slate-500 font-medium text-center">{index + 1}</TableCell>
-                                                <TableCell className="py-3">
-                                                    <div className="h-8 w-8 mx-auto rounded-lg bg-slate-100 flex items-center justify-center">
-                                                        {typeIcons[r.type] || <Package className="h-4 w-4 text-slate-400" />}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="py-3">
-                                                    <div className="font-medium text-sm text-slate-900">{r.details}</div>
-                                                    <Badge variant="outline" className="mt-1 text-[9px] uppercase tracking-widest bg-slate-50 text-slate-500 border-slate-200">{r.type}</Badge>
-                                                </TableCell>
-                                                <TableCell className="py-3 text-center">
-                                                    <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider", resStatusColors[r.status])}>
-                                                        <div className={cn("w-1.5 h-1.5 rounded-full", resStatusDotColors[r.status])} />
-                                                        <span className="uppercase">{r.status}</span>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="py-3 font-medium text-right">
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:bg-slate-100 hover:text-slate-900 rounded-lg">
-                                                                <MoreVertical className="h-4 w-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end" className="w-[160px] rounded-xl">
-                                                            <DropdownMenuItem onClick={() => openEditRes(r)} className="text-xs font-medium cursor-pointer">
-                                                                <Pencil className="mr-2 h-3.5 w-3.5 text-blue-500" /> Edit Request
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => setDeleteTarget({ type: "resource", id: r.id, title: r.details })} className="text-xs font-medium cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50">
-                                                                <Trash2 className="mr-2 h-3.5 w-3.5" /> Delete Request
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+                        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                            <div className="relative w-full md:w-[250px]">
+                                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    placeholder="Search resources..."
+                                    className="pl-9 h-10 bg-white border-slate-200 focus-visible:ring-[#2568C1]"
+                                    value={resSearch}
+                                    onChange={(e) => setResSearch(e.target.value)}
+                                />
                             </div>
-                        </Card>
-                    )}
+                            <Select value={resFilterStatus} onValueChange={setResFilterStatus}>
+                                <SelectTrigger className="h-10 w-[140px] bg-white border-slate-200">
+                                    <SelectValue placeholder="All Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Status</SelectItem>
+                                    <SelectItem value="pending">Pending</SelectItem>
+                                    <SelectItem value="approved">Approved</SelectItem>
+                                    <SelectItem value="rejected">Rejected</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm h-10 px-4 shrink-0" onClick={openCreateRes}>
+                                + New Request
+                            </Button>
+                        </div>
+                    </div>
+                    {(() => {
+                        const q = resSearch.toLowerCase();
+                        const filteredResources = resources.filter(r => {
+                            const matchesSearch = r.details.toLowerCase().includes(q) || r.type.toLowerCase().includes(q);
+                            const matchesStatus = resFilterStatus === "all" || r.status === resFilterStatus;
+                            return matchesSearch && matchesStatus;
+                        });
+
+                        if (resources.length === 0) {
+                            return (
+                                <Card className="border-dashed border-slate-200 bg-slate-50 shadow-none">
+                                    <CardContent className="py-12 flex flex-col items-center justify-center text-center">
+                                        <Package className="h-10 w-10 text-slate-300 mb-3" />
+                                        <p className="text-sm font-medium text-slate-600">No resource requests</p>
+                                        <p className="text-xs text-slate-400 mt-1">Submit requests for manpower or tools.</p>
+                                    </CardContent>
+                                </Card>
+                            );
+                        }
+
+                        if (filteredResources.length === 0) {
+                            return (
+                                <Card className="border-dashed border-slate-200 bg-slate-50 shadow-none">
+                                    <CardContent className="py-12 flex flex-col items-center justify-center text-center">
+                                        <Search className="h-10 w-10 text-slate-300 mb-3" />
+                                        <p className="text-sm font-medium text-slate-600">No resources match your search.</p>
+                                    </CardContent>
+                                </Card>
+                            );
+                        }
+
+                        return (
+                            <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden">
+                                <div className="overflow-x-auto">
+                                    <Table>
+                                        <TableHeader className="bg-slate-50">
+                                            <TableRow className="border-slate-200 hover:bg-slate-50">
+                                                <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 w-12 text-center">No</TableHead>
+                                                <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 w-24 text-center">Type</TableHead>
+                                                <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11">Details</TableHead>
+                                                <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11">Cost</TableHead>
+                                                <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 text-center">Status</TableHead>
+                                                <TableHead className="font-bold text-[11px] uppercase tracking-widest text-slate-500 h-11 text-center">Action</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {filteredResources.map((r, index) => (
+                                                <TableRow key={r.id} className="border-slate-100 hover:bg-slate-50/50">
+                                                    <TableCell className="py-3 text-sm text-slate-500 font-medium text-center">{index + 1}</TableCell>
+                                                    <TableCell className="py-3 text-center">
+                                                        <Badge variant="outline" className="text-[10px] uppercase font-bold bg-slate-50 text-slate-600 border-slate-200">{r.type}</Badge>
+                                                    </TableCell>
+                                                    <TableCell className="py-3 font-medium text-sm text-slate-900 max-w-[250px]">
+                                                        <p className="truncate" title={r.details}>{r.details}</p>
+                                                    </TableCell>
+                                                    <TableCell className="py-3 text-sm font-semibold text-slate-700">{r.amount > 0 ? `Rp ${r.amount.toLocaleString("id-ID")}` : "—"}</TableCell>
+                                                    <TableCell className="py-3 text-center">
+                                                        <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider", resStatusColors[r.status])}>
+                                                            <div className={cn("w-1.5 h-1.5 rounded-full", resStatusDotColors[r.status])} />
+                                                            <span className="uppercase">{r.status}</span>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="py-3 text-center">
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-[#64748b] hover:text-[#2568C1] hover:bg-[#2568C1]/10 rounded-full" onClick={() => openResDetail(r)}>
+                                                            <Eye className="h-4 w-4" />
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            </Card>
+                        );
+                    })()}
                 </TabsContent>
             </Tabs>
 
@@ -606,6 +710,79 @@ export default function ProjectDetailPage() {
                             {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
                         </Button>
                     </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            {/* Resource Detail Dialog (Read-only) */}
+            <Dialog open={resDetailOpen} onOpenChange={setResDetailOpen}>
+                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
+                        <DialogTitle className="text-lg font-bold text-slate-900">Resource Request Details</DialogTitle>
+                        <DialogDescription className="text-xs">Detailed information for this resource request.</DialogDescription>
+                    </div>
+                    <div className="px-6 py-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                        {selectedRes && (
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Type</p>
+                                        <Badge variant="outline" className="text-[11px] font-bold uppercase bg-slate-100 text-slate-700 border-none">{selectedRes.type}</Badge>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</p>
+                                        <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider", resStatusColors[selectedRes.status])}>
+                                            <div className={cn("w-1.5 h-1.5 rounded-full", resStatusDotColors[selectedRes.status])} />
+                                            <span className="uppercase">{selectedRes.status}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="space-y-1.5">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Details</p>
+                                    <p className="text-sm text-slate-700 font-medium bg-slate-50 p-4 rounded-xl border border-slate-100 whitespace-pre-wrap leading-relaxed shadow-inner">
+                                        {selectedRes.details}
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Requester</p>
+                                        <p className="text-sm font-semibold text-slate-800">{selectedRes.user?.full_name || `User #${selectedRes.user_id}`}</p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Approved Cost</p>
+                                        <p className="text-sm font-bold text-[#2568C1]">Rp {(selectedRes.amount || 0).toLocaleString("id-ID")}</p>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Created At</p>
+                                        <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
+                                            <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                                            {selectedRes.created_at ? new Date(selectedRes.created_at).toLocaleDateString('en-GB') : '-'}
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1 text-right">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last Update</p>
+                                        <div className="flex items-center gap-2 text-xs text-slate-600 font-medium justify-end">
+                                            <Clock className="h-3.5 w-3.5 text-slate-400" />
+                                            {selectedRes.updated_at ? new Date(selectedRes.updated_at).toLocaleDateString('en-GB') : '-'}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-between gap-3">
+                        <div className="flex gap-2">
+                            {selectedRes?.status === "pending" && (
+                                <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={handleDeleteResFromDetail}>
+                                    <Trash2 className="h-4 w-4 mr-2" /> Delete Request
+                                </Button>
+                            )}
+                        </div>
+                        <Button variant="outline" size="sm" className="px-6" onClick={() => setResDetailOpen(false)}>Close</Button>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>

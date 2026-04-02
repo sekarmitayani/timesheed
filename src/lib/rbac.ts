@@ -52,7 +52,7 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             items: [
                 { label: "My Projects", href: "/pm/projects", icon: FolderKanban },
                 { label: "Approvals", href: "/pm/approvals", icon: Inbox, badge: "AI" },
-                { label: "Requests", href: "/pm/requests", icon: FileSearch },
+                { label: "Resource Request", href: "/pm/requests", icon: Package },
                 { label: "Tasks", href: "/pm/task", icon: ListTodo },
                 { label: "Budget Monitor", href: "/pm/budget", icon: BarChart3 },                { label: "Workload AI", href: "/pm/workload", icon: Brain },
                 { label: "Reports", href: "/pm/reports", icon: ClipboardList },
@@ -79,13 +79,13 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             title: "PROJECTS",
             items: [
                 { label: "Projects", href: "/admin/projects", icon: FolderKanban },
-                { label: "Resources", href: "/admin/resources", icon: Package },
+                { label: "Resource Request", href: "/admin/resources", icon: Package },
             ]
         },
         {
             title: "REPORTS",
             items: [
-                { label: "Payments", href: "/admin/payments", icon: Landmark },
+                { label: "Payroll", href: "/admin/payroll", icon: Landmark },
                 { label: "Audit Log", href: "/admin/audit-log", icon: Activity },
             ]
         }

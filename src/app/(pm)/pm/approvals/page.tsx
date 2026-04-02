@@ -8,15 +8,20 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PageHeader } from "@/components/ai/ai-components";
-import { Inbox, CheckCircle2, XCircle, Loader2, CheckCheck, AlertTriangle } from "lucide-react";
+import { Inbox, CheckCircle2, XCircle, Loader2, CheckCheck, AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { approvalService, ReviewTimesheetPayload } from "@/lib/services/approval-service";
 import { TimesheetLog } from "@/lib/services/timesheet-service";
+import { useMemo } from "react";
 
 export default function ApprovalsPage() {
     const [inbox, setInbox] = useState<TimesheetLog[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
+
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const limit = 10;
 
     // Reject Dialog
     const [rejectOpen, setRejectOpen] = useState(false);
@@ -39,6 +44,13 @@ export default function ApprovalsPage() {
     };
 
     useEffect(() => { fetchInbox(); }, []);
+
+    const paginatedInbox = useMemo(() => {
+        const start = (currentPage - 1) * limit;
+        return inbox.slice(start, start + limit);
+    }, [inbox, currentPage]);
+
+    const totalPages = Math.ceil(inbox.length / limit);
 
     const handleApprove = async (id: number) => {
         setIsProcessing(true);
@@ -147,7 +159,7 @@ export default function ApprovalsPage() {
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    inbox.map(log => (
+                                    paginatedInbox.map(log => (
                                         <TableRow key={log.id} className={`hover:bg-[#f0f4fa]/50 transition-colors ${selectedIds.has(log.id) ? "bg-blue-50/50" : ""}`}>
                                             <TableCell>
                                                 <input type="checkbox" className="rounded" checked={selectedIds.has(log.id)} onChange={() => toggleSelect(log.id)} />
@@ -178,6 +190,23 @@ export default function ApprovalsPage() {
                         </Table>
                     </div>
                 </CardContent>
+
+                {inbox.length > 0 && (
+                    <div className="border-t border-[#e2e8f0] bg-white px-4 py-3 flex items-center justify-between">
+                        <div className="text-xs text-muted-foreground">
+                            Showing <span className="font-medium text-[#0f172a]">{(currentPage - 1) * limit + 1}</span> to <span className="font-medium text-[#0f172a]">{Math.min(currentPage * limit, inbox.length)}</span> of <span className="font-medium text-[#0f172a]">{inbox.length}</span> timesheets
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled={currentPage <= 1} onClick={() => setCurrentPage(currentPage - 1)}>
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <div className="text-xs font-medium px-2">Page {currentPage} of {totalPages || 1}</div>
+                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled={currentPage >= totalPages} onClick={() => setCurrentPage(currentPage + 1)}>
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </Card>
 
             {/* Reject Dialog */}

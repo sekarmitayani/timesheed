@@ -11,8 +11,8 @@ export interface ResourceRequest {
     status: "pending" | "approved" | "rejected";
     created_at: string;
     updated_at: string;
-    Project?: { id: number; name: string };
-    User?: { id: number; full_name: string; email: string };
+    project?: { id: number; name: string };
+    user?: { id: number; full_name: string; email: string };
 }
 
 export interface CreateResourcePayload {

@@ -254,7 +254,7 @@ export default function PaymentsPage() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <PageHeader title="Payment Processing Ledger" description="Authorize and record disbursements for all contract schemes" />
+            <PageHeader title="Payroll Ledger" description="Authorize and record disbursements for all contract schemes" />
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <StatCard title="Outstanding Bills" value={`Rp ${(globalStats.target - globalStats.released) / 1000000}M`} subtitle={`Target: Rp ${(globalStats.target / 1000000).toFixed(1)}M`} icon={WalletCards} glow />
