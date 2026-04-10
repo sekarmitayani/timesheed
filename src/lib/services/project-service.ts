@@ -52,7 +52,7 @@ export const projectService = {
     },
 
     async getProjectMembers(projectId: number | string): Promise<ProjectMember[]> {
-        return fetchApi(`/project/${projectId}/members`, { method: "GET" });
+        return fetchApi(`/getproject/${projectId}/members`, { method: "GET" });
     },
 
     // === ADMIN ONLY ===

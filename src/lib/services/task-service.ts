@@ -9,6 +9,8 @@ export interface ApiTask {
     title: string;
     description: string;
     status: "todo" | "in_progress" | "done";
+    due_date?: string;
+    comment_count?: number;
     created_at: string;
     updated_at: string;
 }
@@ -18,6 +20,7 @@ export interface CreateTaskPayload {
     assigned_to_id?: number; // Ignored if Employee
     title: string;
     description?: string;
+    due_date?: string;
 }
 
 export interface UpdateTaskStatusPayload {
@@ -30,6 +33,35 @@ export interface UpdateTaskPayload {
     description?: string;
     assigned_to_id?: number;
     status?: "todo" | "in_progress" | "done";
+    due_date?: string;
+}
+
+export interface TaskComment {
+    id: number;
+    task_id: number;
+    user_id: number;
+    user?: {
+        id: number;
+        full_name: string;
+        email: string;
+    };
+    comment: string;
+    created_at: string;
+    updated_at?: string;
+}
+
+export interface TaskAuditLog {
+    id: number;
+    user_id: number;
+    action: string;
+    target_table: string;
+    record_id: number;
+    old_value: string;
+    new_value: string;
+    created_at: string;
+    user?: {
+        full_name: string;
+    };
 }
 
 // ---- Service ----
@@ -43,7 +75,7 @@ export const taskService = {
 
     async getProjectTasks(projectId: number | string, myTasks?: boolean): Promise<ApiTask[]> {
         const query = myTasks ? "?my_tasks=true" : "";
-        return fetchApi(`/project/${projectId}/tasks${query}`, {
+        return fetchApi(`/getproject/${projectId}/tasks${query}`, {
             method: "GET",
         });
     },
@@ -65,6 +97,25 @@ export const taskService = {
     async deleteTask(taskId: number | string): Promise<{ message: string }> {
         return fetchApi(`/tasks/${taskId}`, {
             method: "DELETE",
+        });
+    },
+
+    async getTaskComments(taskId: number | string): Promise<TaskComment[]> {
+        return fetchApi(`/tasks/${taskId}/comments`, {
+            method: "GET",
+        });
+    },
+
+    async addTaskComment(taskId: number | string, comment: string): Promise<TaskComment> {
+        return fetchApi(`/tasks/${taskId}/comments`, {
+            method: "POST",
+            body: JSON.stringify({ comment }),
+        });
+    },
+
+    async getTaskLogs(taskId: number | string): Promise<TaskAuditLog[]> {
+        return fetchApi(`/tasks/${taskId}/logs`, {
+            method: "GET",
         });
     },
 };
