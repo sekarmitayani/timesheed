@@ -104,12 +104,21 @@ export default function TasksPage() {
     // Auto-scroll to current time in Day/Week view
     useEffect(() => {
         if ((calView === "day" || calView === "week") && view === "calendar" && calendarScrollRef.current) {
-            const now = new Date();
-            const HOUR_HEIGHT = 64;
-            const scrollTarget = (now.getHours() * 60 + now.getMinutes()) * (HOUR_HEIGHT / 60) - 200;
-            setTimeout(() => {
+            const scroll = () => {
+                const now = new Date();
+                const HOUR_HEIGHT = 64;
+                const HEADER_HEIGHT = calView === "week" ? 52 : 0;
+                const EXTRA_PADDING = 20;
+                const topOffset = HEADER_HEIGHT + EXTRA_PADDING;
+                
+                const scrollTarget = topOffset + (now.getHours() * 60 + now.getMinutes()) * (HOUR_HEIGHT / 60) - 150;
                 calendarScrollRef.current?.scrollTo({ top: Math.max(0, scrollTarget), behavior: "smooth" });
-            }, 100);
+            };
+            
+            // Try immediately, then a few more times to ensure layout is ready
+            scroll();
+            setTimeout(scroll, 50);
+            setTimeout(scroll, 300);
         }
     }, [calView, view]);
 
@@ -444,7 +453,7 @@ export default function TasksPage() {
     };
 
     return (
-        <div className="flex flex-col w-full gap-4 h-full overflow-hidden">
+        <div className="flex flex-col w-full gap-4 h-[calc(100dvh-115px)] lg:h-[calc(100dvh-120px)] overflow-hidden">
             <PageHeader title="My Tasks" description="Manage your assigned objectives">
                 <Button size="sm" className="gap-2 bg-[#4B7BEC] hover:bg-[#3b60c0] font-bold h-9 rounded-lg" onClick={openCreate}>
                     <Plus className="h-4 w-4" /> New Task
@@ -664,8 +673,8 @@ export default function TasksPage() {
                     {view === "calendar" && (
                         <div className="bg-white border border-slate-200 rounded-md overflow-hidden flex flex-col shadow-sm flex-1 min-h-0">
                             {/* Calendar Header */}
-                            <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-white sticky top-0 z-20 shrink-0">
-                                <h3 className="text-lg font-bold text-slate-800 min-w-[200px] tracking-tight">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-3 border-b border-slate-100 bg-white sticky top-0 z-20 shrink-0">
+                                <h3 className="text-lg font-bold text-slate-800 tracking-tight">
                                     {calView === "day" 
                                         ? format(currentMonth, "EEEE, MMMM d, yyyy") 
                                         : calView === "week" 
@@ -673,13 +682,13 @@ export default function TasksPage() {
                                             : format(currentMonth, "MMMM yyyy")
                                     }
                                 </h3>
-                                <div className="flex items-center gap-3">
-                                    <div className="flex items-center bg-slate-50 rounded-md border border-slate-200 p-0.5">
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <div className="flex items-center bg-slate-50 rounded-md border border-slate-200 p-0.5 shrink-0">
                                         <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-500 hover:text-[#4B7BEC] hover:bg-white rounded-md" onClick={() => navigateCalendar("prev")}><ChevronLeft className="h-4 w-4" /></Button>
                                         <Button variant="ghost" size="sm" className="h-7 px-4 text-[10px] font-bold uppercase text-slate-500 hover:text-[#4B7BEC] hover:bg-white rounded-md tracking-widest" onClick={() => setCurrentMonth(new Date())}>Today</Button>
                                         <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-500 hover:text-[#4B7BEC] hover:bg-white rounded-md" onClick={() => navigateCalendar("next")}><ChevronRight className="h-4 w-4" /></Button>
                                     </div>
-                                    <div className="bg-slate-50 border border-slate-200 p-0.5 rounded-md flex">
+                                    <div className="bg-slate-50 border border-slate-200 p-0.5 rounded-md flex shrink-0">
                                         {(["day", "week", "month"] as const).map(v => (
                                             <Button key={v} variant="ghost" size="sm" className={cn("h-7 px-4 text-[10px] font-bold uppercase transition-all rounded-md tracking-widest", calView === v ? "bg-white text-[#4B7BEC] shadow-sm border border-slate-200" : "text-slate-400 hover:text-slate-600 border border-transparent")} onClick={() => setCalView(v)}>{v}</Button>
                                         ))}
@@ -755,11 +764,20 @@ export default function TasksPage() {
                                     const viewDays = calView === "week" ? weekDays : [currentMonth];
                                     const HOUR_HEIGHT = 64;
                                     const HEADER_HEIGHT = calView === "week" ? 52 : 0;
+                                    const EXTRA_PADDING = 20; // Extra space so 00:00 doesn't clip
                                     return (
-                                        <div className="flex" style={{ height: `${HOURS.length * HOUR_HEIGHT + HEADER_HEIGHT}px` }}>
+                                        <div className="flex" style={{ height: `${HOURS.length * HOUR_HEIGHT + HEADER_HEIGHT + EXTRA_PADDING}px` }}>
                                             {/* Time Gutter */}
-                                            <div className="w-[60px] flex-none border-r border-slate-200 bg-slate-50/30 sticky left-0 z-10">
-                                                {calView === "week" && <div style={{ height: `${HEADER_HEIGHT}px` }} className="border-b border-slate-200" />}
+                                            <div className="w-[60px] flex-none border-r border-slate-200 bg-slate-50/30 sticky left-0 z-20">
+                                                {/* Corner sticky cell */}
+                                                <div 
+                                                    style={{ height: `${HEADER_HEIGHT}px` }} 
+                                                    className={cn(
+                                                        "border-b border-slate-200 bg-slate-50/95 backdrop-blur-sm", 
+                                                        calView === "week" && "sticky top-0 z-40"
+                                                    )} 
+                                                />
+                                                <div style={{ height: `${EXTRA_PADDING}px` }} />
                                                 {HOURS.map(h => (
                                                     <div key={h} className="relative" style={{ height: `${HOUR_HEIGHT}px` }}>
                                                         <span className="text-[10px] font-bold text-slate-400 absolute -top-[7px] right-2 left-1 text-right whitespace-nowrap">
@@ -778,7 +796,7 @@ export default function TasksPage() {
                                                             {/* Week Header */}
                                                             {calView === "week" && (
                                                                 <div className={cn(
-                                                                    "flex flex-col items-center justify-center sticky top-0 bg-white/95 backdrop-blur-sm z-10 border-b border-slate-200"
+                                                                    "flex flex-col items-center justify-center sticky top-0 bg-white/95 backdrop-blur-sm z-30 border-b border-slate-200"
                                                                 )} style={{ height: `${HEADER_HEIGHT}px` }}>
                                                                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{format(day, "EEE")}</span>
                                                                     <span className={cn(
@@ -789,6 +807,8 @@ export default function TasksPage() {
                                                                     </span>
                                                                 </div>
                                                             )}
+
+                                                            <div style={{ height: `${EXTRA_PADDING}px` }} />
 
                                                             {/* Hour Grid Lines */}
                                                             {HOURS.map(h => (
@@ -801,7 +821,7 @@ export default function TasksPage() {
                                                             {dayTasks.map(task => {
                                                                 const pColor = getProjectColor(task.project_id);
                                                                 const style = getTaskStyle(task, dayTasks);
-                                                                const topOffset = HEADER_HEIGHT;
+                                                                const topOffset = HEADER_HEIGHT + EXTRA_PADDING;
                                                                 return (
                                                                     <div 
                                                                         key={task.id} 
@@ -829,8 +849,8 @@ export default function TasksPage() {
                                                             {/* Current Time Indicator */}
                                                             {isToday(day) && (
                                                                 <div 
-                                                                    className="absolute left-0 right-0 z-30 pointer-events-none flex items-center" 
-                                                                    style={{ top: `${(getHours(currentTime) * 60 + getMinutes(currentTime)) * (HOUR_HEIGHT / 60) + HEADER_HEIGHT}px` }}
+                                                                    className="absolute left-0 right-0 z-20 pointer-events-none flex items-center" 
+                                                                    style={{ top: `${(getHours(currentTime) * 60 + getMinutes(currentTime)) * (HOUR_HEIGHT / 60) + HEADER_HEIGHT + EXTRA_PADDING}px` }}
                                                                 >
                                                                     <div className="h-2.5 w-2.5 rounded-full bg-red-500 -ml-[5px] shadow-sm ring-2 ring-red-500/20" />
                                                                     <div className="flex-1 h-[2px] bg-red-500 shadow-sm" />

@@ -62,7 +62,8 @@ export default function TimesheetPage() {
     const [logs, setLogs] = useState<TimesheetLog[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [hasActiveSession, setHasActiveSession] = useState(false);
-    const [taskMap, setTaskMap] = useState<Record<number, string>>({});
+    const [taskMap, setTaskMap] = useState<Record<number, ApiTask>>({});
+    const [userMap, setUserMap] = useState<Record<number, string>>({});
 
     // Filter State - Top Bar (Time)
     const [filterType, setFilterType] = useState<string>("all");
@@ -94,17 +95,30 @@ export default function TimesheetPage() {
             setLogs(data.sort((a, b) => new Date(b.clock_in).getTime() - new Date(a.clock_in).getTime()));
             setHasActiveSession(data.some(l => l.clock_in && !l.clock_out));
             
-            // Fetch unique task titles
+            // Fetch unique task objects and users
             const projectIds = Array.from(new Set(data.map(l => l.project_id)));
             
-            const newTaskMap: Record<number, string> = {};
+            const newTaskMap: Record<number, ApiTask> = {};
+            const newUserMap: Record<number, string> = {};
+
+            // Pre-fill userMap with self from logs
+            data.forEach(l => {
+                if (l.user) newUserMap[l.user_id] = l.user.full_name;
+            });
+            
             for (const pid of projectIds) {
                 try {
                     const pTasks = await taskService.getProjectTasks(pid);
-                    pTasks.forEach(t => { newTaskMap[t.id] = t.title; });
+                    pTasks.forEach(t => { newTaskMap[t.id] = t; });
+
+                    const pMembers = await projectService.getProjectMembers(pid);
+                    pMembers.forEach(m => { 
+                        if (m.user) newUserMap[m.user_id] = m.user.full_name; 
+                    });
                 } catch { /* skip */ }
             }
             setTaskMap(newTaskMap);
+            setUserMap(newUserMap);
 
         } catch (e: any) {
             toast.error(e.message || "Failed to load timesheet logs");
@@ -244,9 +258,15 @@ export default function TimesheetPage() {
         });
     };
 
+    const formatDateTime = (dateStr: string | null) => {
+        if (!dateStr) return "-";
+        const d = new Date(dateStr);
+        return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" }) + " • " + formatTime24(dateStr);
+    };
+
     const getTaskTitle = (taskId: number | null) => {
         if (!taskId) return "General Productivity";
-        return taskMap[taskId] || `Task #${taskId}`;
+        return taskMap[taskId]?.title || `Task #${taskId}`;
     };
 
     return (
@@ -284,14 +304,14 @@ export default function TimesheetPage() {
                         <div className="flex flex-wrap items-center gap-1">
                             <Input 
                                 type="date" 
-                                className="h-8 w-[130px] text-[11px] border-[#E2E8F0] rounded-[4px] bg-white shadow-none" 
+                                className="h-8 w-[145px] text-[11px] border-[#E2E8F0] rounded-[4px] bg-white shadow-none px-2" 
                                 value={dateFrom}
                                 onChange={(e) => setDateFrom(e.target.value)}
                             />
-                            <span className="text-muted-foreground text-[10px]">to</span>
+                            <span className="text-muted-foreground text-[10px] mx-1">to</span>
                             <Input 
                                 type="date" 
-                                className="h-8 w-[130px] text-[11px] border-[#E2E8F0] rounded-[4px] bg-white shadow-none" 
+                                className="h-8 w-[145px] text-[11px] border-[#E2E8F0] rounded-[4px] bg-white shadow-none px-2" 
                                 value={dateTo}
                                 onChange={(e) => setDateTo(e.target.value)}
                             />
@@ -469,7 +489,7 @@ export default function TimesheetPage() {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="py-3 font-bold text-xs">
-                                                    {l.duration_minutes > 0 ? (
+                                                    {l.clock_out ? (
                                                         <span className="text-slate-900">{formatDuration(l.duration_minutes)}</span>
                                                     ) : (
                                                         <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100 text-[9px] font-bold animate-pulse">LIVE SESSION</Badge>
@@ -545,28 +565,32 @@ export default function TimesheetPage() {
                                 </div>
                             </div>
 
-                            <ScrollArea className="max-h-[70vh] custom-scrollbar">
+                            <div className="max-h-[70vh] overflow-y-auto custom-scrollbar">
                                 <div className="p-6 space-y-6">
                                     {/* Info Grid */}
-                                    <div className="grid grid-cols-3 gap-4">
+                                    <div className="flex flex-col sm:grid sm:grid-cols-3 gap-4">
                                         <div className="space-y-1 p-3 bg-slate-50 rounded-[6px] border border-slate-100">
                                             <p className="text-[10px] font-bold text-muted-foreground uppercase">Clock In</p>
-                                            <p className="text-sm font-bold text-[#0f172a]">{formatTime24(selectedLog.clock_in)}</p>
+                                            <p className="text-xs font-bold text-[#0f172a]">{formatDateTime(selectedLog.clock_in)}</p>
                                         </div>
                                         <div className="space-y-1 p-3 bg-slate-50 rounded-[6px] border border-slate-100">
                                             <p className="text-[10px] font-bold text-muted-foreground uppercase">Clock Out</p>
-                                            <p className="text-sm font-bold text-[#0f172a]">{formatTime24(selectedLog.clock_out)}</p>
+                                            <p className="text-xs font-bold text-[#0f172a]">{formatDateTime(selectedLog.clock_out)}</p>
                                         </div>
                                         <div className="space-y-1 p-3 bg-[#4B7BEC]/5 rounded-[6px] border border-[#4B7BEC]/10">
                                             <p className="text-[10px] font-bold text-[#4B7BEC] uppercase">Duration</p>
-                                            <p className="text-sm font-bold text-[#4B7BEC]">{formatDuration(selectedLog.duration_minutes)}</p>
+                                            {selectedLog.clock_out ? (
+                                                <p className="text-sm font-bold text-[#4B7BEC]">{formatDuration(selectedLog.duration_minutes)}</p>
+                                            ) : (
+                                                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100 text-[9px] font-bold animate-pulse mt-1">LIVE SESSION</Badge>
+                                            )}
                                         </div>
                                     </div>
 
                                     {/* Meta Information */}
-                                    <div className="grid grid-cols-2 gap-4 border-y border-[#F1F5F9] py-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-4 border-y border-[#F1F5F9] py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                                            <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
                                                 <Briefcase className="h-4 w-4" />
                                             </div>
                                             <div>
@@ -575,14 +599,29 @@ export default function TimesheetPage() {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                                            <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
                                                 <UserCircle className="h-4 w-4" />
                                             </div>
                                             <div>
-                                                <p className="text-[10px] font-bold text-muted-foreground uppercase">Reporter</p>
-                                                <p className="text-xs font-semibold text-[#0f172a]">{selectedLog.user?.full_name || "Self"}</p>
+                                                <p className="text-[10px] font-bold text-muted-foreground uppercase">Task Assigner</p>
+                                                <p className="text-xs font-semibold text-[#0f172a]">
+                                                    {selectedLog.task_id && taskMap[selectedLog.task_id]
+                                                        ? (userMap[taskMap[selectedLog.task_id].created_by_id] || "Unknown") 
+                                                        : (selectedLog.user?.full_name || "Self")}
+                                                </p>
                                             </div>
                                         </div>
+                                        {selectedLog.task_id && taskMap[selectedLog.task_id] && (
+                                            <div className="flex items-center gap-3 sm:col-span-2">
+                                                <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                                                    <Calendar className="h-4 w-4" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Task Created On</p>
+                                                    <p className="text-xs font-semibold text-[#0f172a]">{formatDateTime(taskMap[selectedLog.task_id].created_at)}</p>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Description Section */}
@@ -613,7 +652,7 @@ export default function TimesheetPage() {
                                         </div>
                                     )}
                                 </div>
-                            </ScrollArea>
+                            </div>
 
                             <div className="p-6 border-t border-[#F1F5F9] bg-[#F8FAFC] flex justify-end">
                                 <Button 
@@ -658,7 +697,7 @@ export default function TimesheetPage() {
                                 onChange={e => setClockOutDesc(e.target.value)} 
                                 placeholder="Describe what you have accomplished during this session..." 
                                 disabled={isClocking}
-                                className="w-full min-h-[120px] p-3.5 text-sm border border-[#E2E8F0] rounded-[4px] bg-slate-50/30 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#4B7BEC]/20 transition-all resize-none leading-relaxed"
+                                className="w-full min-h-[120px] p-3.5 text-sm border border-[#E2E8F0] rounded-[4px] bg-slate-50/30 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#4B7BEC]/20 transition-all resize-none leading-relaxed custom-scrollbar"
                             />
                         </div>
                     </div>

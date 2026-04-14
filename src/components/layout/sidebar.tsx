@@ -68,7 +68,7 @@ export function Sidebar() {
                                         {category.title}
                                     </h4>
                                 )}
-                                <div className="space-y-1 w-full">
+                                <div className="space-y-4 w-full">
                                     {category.items.map((item) => {
                                         const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
                                         const Icon = item.icon;
@@ -76,11 +76,11 @@ export function Sidebar() {
                                             <Link key={item.href} href={item.href}>
                                                 <div
                                                     className={cn(
-                                                        "relative flex items-center rounded-xl text-sm font-medium transition-all duration-200",
-                                                        sidebarCollapsed ? "justify-center px-0 py-3 mb-1" : "gap-3 px-3 py-2.5",
+                                                        "relative flex items-center rounded-sm text-sm font-medium transition-colors duration-150",
+                                                        sidebarCollapsed ? "justify-center px-0 py-2.5 mb-1" : "gap-3 px-3 py-2",
                                                         isActive
-                                                            ? "bg-blue-50 text-blue-600 shadow-sm ring-1 ring-blue-100/50"
-                                                            : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                                                            ? "bg-blue-50/80 text-blue-600 border-l-[3px] border-blue-500"
+                                                            : "text-slate-500 hover:text-slate-700 hover:bg-slate-50/60"
                                                     )}
                                                 >
                                                     <Icon className={cn(
@@ -152,7 +152,7 @@ export function Sidebar() {
                                         <h4 className="mb-2 px-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
                                             {category.title}
                                         </h4>
-                                        <div className="space-y-1">
+                                        <div className="space-y-4">
                                             {category.items.map((item) => {
                                                 const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
                                                 const Icon = item.icon;
@@ -160,10 +160,10 @@ export function Sidebar() {
                                                     <Link key={item.href} href={item.href} onClick={closeMobileSidebar}>
                                                         <div
                                                             className={cn(
-                                                                "relative flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                                                                "relative flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-colors duration-150",
                                                                 isActive
-                                                                    ? "bg-blue-50 text-blue-600 shadow-sm ring-1 ring-blue-100/50 font-semibold"
-                                                                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                                                                    ? "bg-blue-50/80 text-blue-600 border-l-[3px] border-blue-500 font-semibold"
+                                                                    : "text-slate-500 hover:text-slate-700 hover:bg-slate-50/60"
                                                             )}
                                                         >
                                                             <Icon className={cn("shrink-0 h-[18px] w-[18px]", isActive ? "text-blue-600" : "text-slate-400")} />

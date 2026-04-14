@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionExpiryDialog } from "@/components/layout/SessionExpiryDialog";
-
-const plusJakarta = Plus_Jakarta_Sans({ variable: "--font-plus-jakarta", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Haerarchy – Enterprise Project Management",
@@ -14,7 +11,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${plusJakarta.variable} antialiased`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:wght@500&display=swap" rel="stylesheet" />
+      </head>
+      <body className={`font-sans antialiased custom-scrollbar overflow-x-hidden`}>
         {children}
         <SessionExpiryDialog />
         <Toaster />

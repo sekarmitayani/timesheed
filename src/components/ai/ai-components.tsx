@@ -171,7 +171,7 @@ export function StatCard({
 // ── Page Header ─────────────────────────────────────────
 export function PageHeader({ title, description, children }: { title: string; description?: string; children?: React.ReactNode }) {
     return (
-        <div className="sticky top-0 z-20 bg-[#F8FAFC]/80 backdrop-blur-md -mx-6 px-6 pt-2 pb-4 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-transparent transition-all">
+        <div className="sticky top-0 z-20 bg-[#F8FAFC]/90 backdrop-blur-md -mx-6 px-6 -mt-2 pb-2 mb-0 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-transparent transition-all">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
                 {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
