@@ -1,27 +1,21 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PageHeader } from "@/components/ai/ai-components";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
-    PlayCircle, 
     StopCircle, 
     Loader2, 
     Clock, 
-    FileText, 
     ChevronRight,
     ChevronLeft,
-    AlertCircle,
     CheckCircle2,
     XCircle,
-    Info,
-    UserCircle,
     Briefcase,
     Filter,
     Calendar,
@@ -36,6 +30,14 @@ import { taskService, ApiTask } from "@/lib/services/task-service";
 import { ApiProject } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+
+// Dynamic Imports for heavy modals
+const ClockOutDialog = dynamic(() => import("./components/ClockOutDialog").then(mod => mod.ClockOutDialog), {
+    loading: () => null
+});
+const TimesheetDetailModal = dynamic(() => import("./components/TimesheetDetailModal").then(mod => mod.TimesheetDetailModal), {
+    loading: () => null
+});
 
 const statusConfig: Record<string, { bg: string; text: string; icon: any; label: string }> = {
     pending: { 
@@ -65,16 +67,14 @@ export default function TimesheetPage() {
     const [taskMap, setTaskMap] = useState<Record<number, ApiTask>>({});
     const [userMap, setUserMap] = useState<Record<number, string>>({});
 
-    // Filter State - Top Bar (Time)
+    // Filter State
     const [filterType, setFilterType] = useState<string>("all");
     const [dateFrom, setDateFrom] = useState<string>("");
     const [dateTo, setDateTo] = useState<string>("");
-
-    // Filter State - Table Bar (Project & Status)
     const [filterProject, setFilterProject] = useState<string>("all");
     const [filterStatus, setFilterStatus] = useState<string>("all");
 
-    // Pagination State
+    // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const LIMIT = 10;
 
@@ -86,6 +86,7 @@ export default function TimesheetPage() {
 
     // Detail Modal
     const [selectedLog, setSelectedLog] = useState<TimesheetLog | null>(null);
+    const [liveElapsed, setLiveElapsed] = useState("");
 
     const fetchLogs = async () => {
         setIsLoading(true);
@@ -95,13 +96,10 @@ export default function TimesheetPage() {
             setLogs(data.sort((a, b) => new Date(b.clock_in).getTime() - new Date(a.clock_in).getTime()));
             setHasActiveSession(data.some(l => l.clock_in && !l.clock_out));
             
-            // Fetch unique task objects and users
             const projectIds = Array.from(new Set(data.map(l => l.project_id)));
-            
             const newTaskMap: Record<number, ApiTask> = {};
             const newUserMap: Record<number, string> = {};
 
-            // Pre-fill userMap with self from logs
             data.forEach(l => {
                 if (l.user) newUserMap[l.user_id] = l.user.full_name;
             });
@@ -141,16 +139,11 @@ export default function TimesheetPage() {
 
     const filteredLogs = useMemo(() => {
         let result = [...logs];
-
-        // 1. Time Filters
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
         if (filterType === "daily") {
-            result = result.filter(log => {
-                const logDate = new Date(log.clock_in);
-                return logDate.toDateString() === today.toDateString();
-            });
+            result = result.filter(log => new Date(log.clock_in).toDateString() === today.toDateString());
         } else if (filterType === "weekly") {
             const weekAgo = new Date(today);
             weekAgo.setDate(today.getDate() - 7);
@@ -172,12 +165,10 @@ export default function TimesheetPage() {
             result = result.filter(log => new Date(log.clock_in) <= to);
         }
 
-        // 2. Project Filter
         if (filterProject !== "all") {
             result = result.filter(log => log.project_id === Number(filterProject));
         }
 
-        // 3. Status Filter
         if (filterStatus !== "all") {
             result = result.filter(log => log.status === filterStatus);
         }
@@ -201,7 +192,6 @@ export default function TimesheetPage() {
             const d = new Date();
             d.setDate(d.getDate() - i);
             const dateStr = d.toISOString().split("T")[0];
-            
             const dayLogs = logs.filter(l => l.clock_in.startsWith(dateStr));
             const totalMinutes = dayLogs.reduce((acc, l) => acc + (l.duration_minutes || 0), 0);
             
@@ -243,6 +233,25 @@ export default function TimesheetPage() {
 
     const activeLog = logs.find(l => l.clock_in && !l.clock_out);
 
+    useEffect(() => {
+        if (!activeLog) {
+            setLiveElapsed("");
+            return;
+        }
+        const tick = () => {
+            const start = new Date(activeLog.clock_in).getTime();
+            const now = Date.now();
+            const diffSec = Math.floor((now - start) / 1000);
+            const h = Math.floor(diffSec / 3600);
+            const m = Math.floor((diffSec % 3600) / 60);
+            const s = diffSec % 60;
+            setLiveElapsed(`${h}h ${m.toString().padStart(2, "0")}m ${s.toString().padStart(2, "0")}s`);
+        };
+        tick();
+        const id = setInterval(tick, 1000);
+        return () => clearInterval(id);
+    }, [activeLog]);
+
     const formatDuration = (mins: number) => {
         const h = Math.floor(mins / 60);
         const m = mins % 60;
@@ -271,17 +280,9 @@ export default function TimesheetPage() {
 
     return (
         <div className="flex flex-col w-full gap-4 h-full overflow-hidden">
-            <PageHeader title="Timesheet Management" description="Monitor and track your work sessions and daily productivity.">
-                <div className="flex gap-2">
-                    {hasActiveSession && (
-                        <Button size="sm" className="gap-2 bg-red-600 hover:bg-red-700 shadow-sm border-none rounded-[4px]" onClick={() => setClockOutOpen(true)}>
-                            <StopCircle className="h-4 w-4" /> Clock Out
-                        </Button>
-                    )}
-                </div>
-            </PageHeader>
+            <PageHeader title="Timesheet Management" description="Monitor and track your work sessions and daily productivity." />
 
-            {/* TOP FILTERS (Time Range) */}
+            {/* TOP FILTERS */}
             <div className="flex flex-wrap items-center justify-between gap-4 bg-white/50 p-2 border border-[#E2E8F0] rounded-[6px] shrink-0">
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="flex flex-wrap items-center gap-2">
@@ -331,7 +332,7 @@ export default function TimesheetPage() {
                 )}
             </div>
 
-            {/* Summary Header - Compact */}
+            {/* Summary Header */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 shrink-0">
                 {dailySummary.map((day, idx) => {
                     const maxMins = Math.max(...dailySummary.map(d => d.minutes), 480);
@@ -348,10 +349,7 @@ export default function TimesheetPage() {
                                         <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-tight">{day.label}</span>
                                         <span className="text-[10px] text-slate-400 font-medium">{day.dateDisplay}</span>
                                     </div>
-                                    <span className={cn(
-                                        "text-xs font-bold",
-                                        day.isToday ? "text-[#4B7BEC]" : "text-[#0f172a]"
-                                    )}>
+                                    <span className={cn("text-xs font-bold", day.isToday ? "text-[#4B7BEC]" : "text-[#0f172a]")}>
                                         {day.hours}h
                                     </span>
                                 </div>
@@ -372,28 +370,75 @@ export default function TimesheetPage() {
 
             {/* Active Session Banner */}
             {activeLog && (
-                <Card className="border-[#4B7BEC]/20 bg-blue-50/30 rounded-[6px] shadow-none shrink-0">
-                    <CardContent className="p-3 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#4B7BEC]/10 text-[#4B7BEC]">
-                            <Clock className="h-4 w-4 animate-pulse" />
+                <Card className="border-[#E2E8F0] bg-white rounded-[6px] shadow-none shrink-0 overflow-hidden">
+                    <CardContent className="p-0">
+                        {/* Top Row: Date + Task Info + Clock Out */}
+                        <div className="flex items-center gap-4 p-4">
+                            {/* Date Block */}
+                            <div className="flex flex-col items-center justify-center bg-[#F8FAFC] border border-[#E2E8F0] rounded-[4px] px-3 py-2 min-w-[60px]">
+                                <span className="text-[10px] font-bold text-[#4B7BEC] uppercase tracking-wide leading-none">
+                                    {new Date(activeLog.clock_in).toLocaleDateString("en-US", { month: "short" })}
+                                </span>
+                                <span className="text-2xl font-bold text-[#0f172a] leading-tight">
+                                    {new Date(activeLog.clock_in).getDate()}
+                                </span>
+                            </div>
+
+                            {/* Task & Project Info */}
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-0.5">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                                    </span>
+                                    <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Active Session</span>
+                                </div>
+                                <p className="text-sm font-bold text-[#0f172a] truncate">
+                                    {getTaskTitle(activeLog.task_id)}
+                                </p>
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                    <Briefcase className="h-3 w-3 text-muted-foreground" />
+                                    <span className="text-[11px] text-muted-foreground font-medium">
+                                        {activeLog.project?.name || `Project #${activeLog.project_id}`}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Clock Out Button */}
+                            <Button
+                                className="gap-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-none border-none rounded-[4px] px-5 h-10 font-bold text-xs"
+                                onClick={() => setClockOutOpen(true)}
+                            >
+                                <StopCircle className="h-4 w-4" /> Clock Out
+                            </Button>
                         </div>
-                        <div className="flex-1">
-                            <p className="text-xs font-bold text-[#0f172a]">Active Session</p>
-                            <p className="text-[10px] text-muted-foreground">
-                                In: {formatTime24(activeLog.clock_in)} • 
-                                <span className="text-[#4B7BEC] font-bold ml-1">{activeLog.project?.name || `#${activeLog.project_id}`}</span>
-                            </p>
+
+                        {/* Separator */}
+                        <div className="border-t border-[#E2E8F0]" />
+
+                        {/* Bottom Row: Clock In & Duration */}
+                        <div className="flex items-center gap-8 px-4 py-3">
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Clock In</span>
+                                <span className="text-sm font-bold text-[#0f172a]">{formatTime24(activeLog.clock_in)}</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Duration</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm font-bold text-[#4B7BEC] tabular-nums">{liveElapsed}</span>
+                                    <span className="relative flex h-1.5 w-1.5">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4B7BEC] opacity-75" />
+                                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#4B7BEC]" />
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <Button size="sm" variant="outline" className="h-8 text-[10px] font-bold border-[#4B7BEC]/20 text-[#4B7BEC] hover:bg-[#4B7BEC]/5 rounded-[4px]" onClick={() => setClockOutOpen(true)}>
-                            End Session
-                        </Button>
                     </CardContent>
                 </Card>
             )}
 
-            {/* Main Content Area */}
+            {/* Main Table Area */}
             <div className="flex-1 min-h-0 flex flex-col gap-3 overflow-hidden">
-                {/* TABLE FILTERS */}
                 <div className="flex flex-wrap items-center gap-3 px-1">
                     <div className="flex items-center gap-2">
                         <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
@@ -539,193 +584,30 @@ export default function TimesheetPage() {
                 </Card>
             </div>
 
-            {/* Timesheet Detail Modal */}
-            <Dialog open={!!selectedLog} onOpenChange={(open) => !open && setSelectedLog(null)}>
-                <DialogContent 
-                    showCloseButton={false}
-                    className="sm:max-w-[500px] p-0 overflow-hidden border-[#E2E8F0] rounded-[8px] gap-0"
-                >
-                    {selectedLog && (
-                        <>
-                            <div className="bg-white border-b border-[#F1F5F9] px-6 py-5">
-                                <div className="flex justify-between items-start">
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-bold text-[#4B7BEC] uppercase tracking-widest">Timesheet Detail</p>
-                                        <DialogTitle className="text-xl font-bold text-[#0f172a]">
-                                            {getTaskTitle(selectedLog.task_id)}
-                                        </DialogTitle>
-                                    </div>
-                                    <Badge className={cn(
-                                        "px-2.5 py-1 rounded-[4px] border-none text-[10px] font-bold uppercase",
-                                        statusConfig[selectedLog.status]?.bg,
-                                        statusConfig[selectedLog.status]?.text
-                                    )}>
-                                        {statusConfig[selectedLog.status]?.label}
-                                    </Badge>
-                                </div>
-                            </div>
-
-                            <div className="max-h-[70vh] overflow-y-auto custom-scrollbar">
-                                <div className="p-6 space-y-6">
-                                    {/* Info Grid */}
-                                    <div className="flex flex-col sm:grid sm:grid-cols-3 gap-4">
-                                        <div className="space-y-1 p-3 bg-slate-50 rounded-[6px] border border-slate-100">
-                                            <p className="text-[10px] font-bold text-muted-foreground uppercase">Clock In</p>
-                                            <p className="text-xs font-bold text-[#0f172a]">{formatDateTime(selectedLog.clock_in)}</p>
-                                        </div>
-                                        <div className="space-y-1 p-3 bg-slate-50 rounded-[6px] border border-slate-100">
-                                            <p className="text-[10px] font-bold text-muted-foreground uppercase">Clock Out</p>
-                                            <p className="text-xs font-bold text-[#0f172a]">{formatDateTime(selectedLog.clock_out)}</p>
-                                        </div>
-                                        <div className="space-y-1 p-3 bg-[#4B7BEC]/5 rounded-[6px] border border-[#4B7BEC]/10">
-                                            <p className="text-[10px] font-bold text-[#4B7BEC] uppercase">Duration</p>
-                                            {selectedLog.clock_out ? (
-                                                <p className="text-sm font-bold text-[#4B7BEC]">{formatDuration(selectedLog.duration_minutes)}</p>
-                                            ) : (
-                                                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100 text-[9px] font-bold animate-pulse mt-1">LIVE SESSION</Badge>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Meta Information */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-4 border-y border-[#F1F5F9] py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
-                                                <Briefcase className="h-4 w-4" />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] font-bold text-muted-foreground uppercase">Project</p>
-                                                <p className="text-xs font-semibold text-[#0f172a]">{selectedLog.project?.name || `Project #${selectedLog.project_id}`}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
-                                                <UserCircle className="h-4 w-4" />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] font-bold text-muted-foreground uppercase">Task Assigner</p>
-                                                <p className="text-xs font-semibold text-[#0f172a]">
-                                                    {selectedLog.task_id && taskMap[selectedLog.task_id]
-                                                        ? (userMap[taskMap[selectedLog.task_id].created_by_id] || "Unknown") 
-                                                        : (selectedLog.user?.full_name || "Self")}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        {selectedLog.task_id && taskMap[selectedLog.task_id] && (
-                                            <div className="flex items-center gap-3 sm:col-span-2">
-                                                <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
-                                                    <Calendar className="h-4 w-4" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Task Created On</p>
-                                                    <p className="text-xs font-semibold text-[#0f172a]">{formatDateTime(taskMap[selectedLog.task_id].created_at)}</p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Description Section */}
-                                    <div className="space-y-4">
-                                        <div className="space-y-2">
-                                            <div className="flex items-center gap-2">
-                                                <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-                                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Task Logger Note</p>
-                                            </div>
-                                            <div className="p-4 bg-white border border-[#E2E8F0] rounded-[6px]">
-                                                <p className="text-sm text-[#0f172a] leading-relaxed italic">
-                                                    "{selectedLog.task_description || "No description provided."}"
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Conditional Rejection Section */}
-                                    {selectedLog.status === "rejected" && (
-                                        <div className="p-4 bg-red-50 border border-red-100 rounded-[6px] space-y-2">
-                                            <div className="flex items-center gap-2 text-red-700">
-                                                <AlertCircle className="h-4 w-4" />
-                                                <p className="text-xs font-bold uppercase tracking-wider">Rejection Note</p>
-                                            </div>
-                                            <p className="text-sm text-red-700 font-medium">
-                                                {selectedLog.rejection_note || "Your timesheet log was rejected. Please contact your manager for more details."}
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="p-6 border-t border-[#F1F5F9] bg-[#F8FAFC] flex justify-end">
-                                <Button 
-                                    onClick={() => setSelectedLog(null)} 
-                                    className="bg-[#0f172a] hover:bg-[#1e293b] text-white rounded-[4px] px-8"
-                                >
-                                    Close
-                                </Button>
-                            </div>
-                        </>
-                    )}
-                </DialogContent>
-            </Dialog>
-
-            {/* Clock Out Dialog */}
-            <Dialog open={clockOutOpen} onOpenChange={open => !isClocking && setClockOutOpen(open)}>
-                <DialogContent 
-                    showCloseButton={false}
-                    className="sm:max-w-[450px] p-0 overflow-hidden border-[#E2E8F0] rounded-[6px] gap-0 shadow-lg"
-                >
-                    <div className="bg-white px-6 py-5 border-b border-[#F1F5F9]">
-                        <div className="flex flex-col gap-1">
-                            <p className="text-[10px] font-bold text-red-600 uppercase tracking-[0.15em]">End Session</p>
-                            <DialogTitle className="text-xl font-bold text-[#0f172a] flex items-center gap-2">
-                                <StopCircle className="h-5 w-5 text-red-600" /> 
-                                Clock Out
-                            </DialogTitle>
-                        </div>
-                        <DialogDescription className="text-muted-foreground text-xs mt-1.5">
-                            Summarize your work accomplishments to complete this session.
-                        </DialogDescription>
-                    </div>
-
-                    <div className="px-6 py-6 space-y-5 bg-white text-[#0f172a]">
-                        <div className="space-y-2.5">
-                            <div className="flex items-center justify-between">
-                                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Session Summary</label>
-                                <span className="text-[10px] text-red-500 font-bold uppercase">* Required</span>
-                            </div>
-                            <textarea 
-                                value={clockOutDesc} 
-                                onChange={e => setClockOutDesc(e.target.value)} 
-                                placeholder="Describe what you have accomplished during this session..." 
-                                disabled={isClocking}
-                                className="w-full min-h-[120px] p-3.5 text-sm border border-[#E2E8F0] rounded-[4px] bg-slate-50/30 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#4B7BEC]/20 transition-all resize-none leading-relaxed custom-scrollbar"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="px-6 py-4 border-t border-[#F1F5F9] bg-[#F8FAFC] flex items-center justify-end gap-3">
-                        <Button 
-                            variant="ghost" 
-                            className="rounded-[4px] h-10 text-xs font-bold text-slate-500 hover:bg-slate-100" 
-                            onClick={() => setClockOutOpen(false)} 
-                            disabled={isClocking}
-                        >
-                            Cancel
-                        </Button>
-                        <Button 
-                            onClick={handleClockOut} 
-                            disabled={isClocking || !clockOutDesc.trim()} 
-                            className="bg-red-600 hover:bg-red-700 min-w-[140px] h-10 rounded-[4px] text-xs font-bold shadow-sm"
-                        >
-                            {isClocking ? (
-                                <>
-                                    <Loader2 className="h-4 w-4 animate-spin mr-2" /> 
-                                    Saving...
-                                </>
-                            ) : "Submit & Clock Out"}
-                        </Button>
-                    </div>
-                </DialogContent>
-            </Dialog>
+            {/* Lazy Loaded Modals */}
+            {clockOutOpen && (
+                <ClockOutDialog 
+                    open={clockOutOpen}
+                    onOpenChange={setClockOutOpen}
+                    isClocking={isClocking}
+                    clockOutDesc={clockOutDesc}
+                    setClockOutDesc={setClockOutDesc}
+                    onClockOut={handleClockOut}
+                />
+            )}
+            
+            {selectedLog && (
+                <TimesheetDetailModal 
+                    selectedLog={selectedLog}
+                    onClose={() => setSelectedLog(null)}
+                    getTaskTitle={getTaskTitle}
+                    statusConfig={statusConfig}
+                    formatDateTime={formatDateTime}
+                    formatDuration={formatDuration}
+                    taskMap={taskMap}
+                    userMap={userMap}
+                />
+            )}
         </div>
     );
 }
