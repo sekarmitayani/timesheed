@@ -30,7 +30,8 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
         {
             title: "WORK SPACE",
             items: [
-                { label: "My Tasks", href: "/employee/tasks", icon: ListTodo },
+                { label: "Tasks", href: "/employee/tasks", icon: ListTodo },
+                { label: "Projects", href: "/employee/projects", icon: FolderKanban },
                 { label: "Timesheet", href: "/employee/timesheet", icon: FileText },
                 { label: "Earnings", href: "/employee/earnings", icon: DollarSign },
                 { label: "History", href: "/employee/history", icon: History },

@@ -68,7 +68,7 @@ export function Sidebar() {
                                         {category.title}
                                     </h4>
                                 )}
-                                <div className="space-y-4 w-full">
+                                <div className="space-y-1 w-full">
                                     {category.items.map((item) => {
                                         const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
                                         const Icon = item.icon;
@@ -76,17 +76,25 @@ export function Sidebar() {
                                             <Link key={item.href} href={item.href}>
                                                 <div
                                                     className={cn(
-                                                        "relative flex items-center rounded-sm text-sm font-medium transition-colors duration-150",
-                                                        sidebarCollapsed ? "justify-center px-0 py-2.5 mb-1" : "gap-3 px-3 py-2",
+                                                        "relative flex items-center text-sm font-medium transition-all duration-200",
+                                                        sidebarCollapsed ? "justify-center px-0 py-2.5 rounded-[6px]" : "gap-3 px-3 py-2.5 rounded-[8px]",
                                                         isActive
-                                                            ? "bg-blue-50/80 text-blue-600 border-l-[3px] border-blue-500"
-                                                            : "text-slate-500 hover:text-slate-700 hover:bg-slate-50/60"
+                                                            ? "bg-[#4B7BEC]/[0.08] text-[#4B7BEC]"
+                                                            : "text-slate-500 hover:text-slate-700 hover:bg-slate-100/60"
                                                     )}
                                                 >
+                                                    {/* Animated active indicator bar */}
+                                                    {isActive && !sidebarCollapsed && (
+                                                        <motion.div
+                                                            layoutId="sidebar-active-indicator"
+                                                            className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[60%] rounded-r-full bg-[#4B7BEC]"
+                                                            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                                                        />
+                                                    )}
                                                     <Icon className={cn(
-                                                        "shrink-0 transition-colors",
+                                                        "shrink-0 transition-colors duration-200",
                                                         sidebarCollapsed ? "h-5 w-5" : "h-[18px] w-[18px]",
-                                                        isActive ? "text-blue-600" : "text-slate-400"
+                                                        isActive ? "text-[#4B7BEC]" : "text-slate-400"
                                                     )} />
                                                     <AnimatePresence mode="wait">
                                                         {!sidebarCollapsed && (
@@ -152,7 +160,7 @@ export function Sidebar() {
                                         <h4 className="mb-2 px-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
                                             {category.title}
                                         </h4>
-                                        <div className="space-y-4">
+                                        <div className="space-y-1">
                                             {category.items.map((item) => {
                                                 const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
                                                 const Icon = item.icon;
@@ -160,13 +168,21 @@ export function Sidebar() {
                                                     <Link key={item.href} href={item.href} onClick={closeMobileSidebar}>
                                                         <div
                                                             className={cn(
-                                                                "relative flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-colors duration-150",
+                                                                "relative flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-sm font-medium transition-all duration-200",
                                                                 isActive
-                                                                    ? "bg-blue-50/80 text-blue-600 border-l-[3px] border-blue-500 font-semibold"
-                                                                    : "text-slate-500 hover:text-slate-700 hover:bg-slate-50/60"
+                                                                    ? "bg-[#4B7BEC]/[0.08] text-[#4B7BEC] font-semibold"
+                                                                    : "text-slate-500 hover:text-slate-700 hover:bg-slate-100/60"
                                                             )}
                                                         >
-                                                            <Icon className={cn("shrink-0 h-[18px] w-[18px]", isActive ? "text-blue-600" : "text-slate-400")} />
+                                                            {/* Animated active indicator bar */}
+                                                            {isActive && (
+                                                                <motion.div
+                                                                    layoutId="sidebar-mobile-active-indicator"
+                                                                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[60%] rounded-r-full bg-[#4B7BEC]"
+                                                                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                                                                />
+                                                            )}
+                                                            <Icon className={cn("shrink-0 h-[18px] w-[18px] transition-colors duration-200", isActive ? "text-[#4B7BEC]" : "text-slate-400")} />
                                                             <span className="whitespace-nowrap">{item.label}</span>
                                                             {item.badge && (
                                                                 <span className="ml-auto text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full shadow-sm">
