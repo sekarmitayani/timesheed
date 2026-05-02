@@ -36,28 +36,28 @@ export function ProjectHeader({ project, members, activeTab, setActiveTab }: Pro
     const visibleMembers = members.slice(0, 3);
     const extraMembers = Math.max(0, members.length - 3);
 
-    const tabs = ["Overview", "Task"];
+    const tabs = ["Overview", "Kanban", "List", "Calendar", "Teams"];
 
     return (
-        <div className="flex flex-col border-b border-[#E2E8F0] bg-white pt-6 px-8 mb-6 shadow-sm rounded-t-xl">
-            <div className="flex items-center gap-5 mb-8">
+        <div className="flex flex-col border-b border-[#E2E8F0] bg-white pt-6 px-4 sm:px-8 mb-6 shadow-sm rounded-t-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-5 mb-8">
                 {/* Dummy Project Logo like Google in the reference */}
-                <div className="h-16 w-16 rounded-full border border-slate-100 shadow-sm flex items-center justify-center bg-white p-2">
+                <div className="h-16 w-16 rounded-full border border-slate-100 shadow-sm flex items-center justify-center bg-white p-2 shrink-0">
                     <div className="w-full h-full rounded-full bg-slate-50 flex items-center justify-center text-xl font-black text-slate-400">
                         {project.name.charAt(0).toUpperCase()}
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                    <h1 className="text-2xl font-bold text-slate-800 tracking-tight">{project.name}</h1>
+                <div className="flex flex-col gap-2 min-w-0">
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight truncate">{project.name}</h1>
                     
-                    <div className="flex items-center gap-3">
-                        <Badge className={cn("px-3 py-1 rounded-full font-semibold border border-transparent shadow-none gap-2", status.bg, status.text)}>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <Badge className={cn("px-3 py-1 rounded-full font-semibold border border-transparent shadow-none gap-2 shrink-0", status.bg, status.text)}>
                             <span className={cn("h-1.5 w-1.5 rounded-full", status.dot)} />
                             {status.label}
                         </Badge>
 
-                        <div className="flex items-center ml-2">
+                        <div className="flex items-center ml-0 sm:ml-2">
                             <div className="flex items-center -space-x-2">
                                 {visibleMembers.map((member) => {
                                     const name = member.user?.full_name || `User ${member.user_id}`;
@@ -82,13 +82,13 @@ export function ProjectHeader({ project, members, activeTab, setActiveTab }: Pro
                 </div>
             </div>
 
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-6 sm:gap-8 overflow-x-auto custom-scrollbar pb-1">
                 {tabs.map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={cn(
-                            "pb-3 text-sm font-semibold transition-all relative",
+                            "pb-3 text-sm font-semibold transition-all relative whitespace-nowrap",
                             activeTab === tab
                                 ? "text-[#4B7BEC]"
                                 : "text-slate-500 hover:text-slate-700"

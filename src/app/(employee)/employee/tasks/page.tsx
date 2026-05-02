@@ -13,7 +13,7 @@ import {
     Plus, Loader2, CheckCircle2, Circle, PlayCircle, 
     ListTodo, LayoutGrid, List, Calendar as CalendarIcon, Clock, 
     ChevronLeft, ChevronRight, CalendarDays, Layers, MessageSquare, 
-    X as XIcon, Avatar as AvatarIcon
+    X as XIcon
 } from "lucide-react";
 import { toast } from "sonner";
 import { taskService, ApiTask, CreateTaskPayload, TaskComment, TaskAuditLog } from "@/lib/services/task-service";
