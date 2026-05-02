@@ -46,7 +46,7 @@ export function TimesheetDetailModal({
                             </DialogTitle>
                         </div>
                         <Badge className={cn(
-                            "px-2.5 py-1 rounded-[4px] border-none text-[10px] font-bold uppercase",
+                            "px-2.5 py-1 rounded-[4px] border-none text-[10px] font-bold uppercase shrink-0",
                             statusConfig[selectedLog.status]?.bg,
                             statusConfig[selectedLog.status]?.text
                         )}>

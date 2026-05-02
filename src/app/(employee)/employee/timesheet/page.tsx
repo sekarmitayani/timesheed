@@ -20,7 +20,8 @@ import {
     Filter,
     Calendar,
     Search,
-    RefreshCcw
+    RefreshCcw,
+    LayoutList
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -76,7 +77,7 @@ export default function TimesheetPage() {
 
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const LIMIT = 10;
+    const [limit, setLimit] = useState(10);
 
     // Clock In/Out Dialogs
     const [clockOutOpen, setClockOutOpen] = useState(false);
@@ -178,13 +179,13 @@ export default function TimesheetPage() {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [filterType, dateFrom, dateTo, filterProject, filterStatus]);
+    }, [filterType, dateFrom, dateTo, filterProject, filterStatus, limit]);
 
     const paginatedLogs = useMemo(() => {
-        return filteredLogs.slice((currentPage - 1) * LIMIT, currentPage * LIMIT);
-    }, [filteredLogs, currentPage]);
+        return filteredLogs.slice((currentPage - 1) * limit, currentPage * limit);
+    }, [filteredLogs, currentPage, limit]);
 
-    const totalPages = Math.ceil(filteredLogs.length / LIMIT);
+    const totalPages = Math.ceil(filteredLogs.length / limit);
 
     const dailySummary = useMemo(() => {
         const days = [];
@@ -373,13 +374,13 @@ export default function TimesheetPage() {
                 <Card className="border-[#E2E8F0] bg-white rounded-[6px] shadow-none shrink-0 overflow-hidden">
                     <CardContent className="p-0">
                         {/* Top Row: Date + Task Info + Clock Out */}
-                        <div className="flex items-center gap-4 p-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4">
                             {/* Date Block */}
-                            <div className="flex flex-col items-center justify-center bg-[#F8FAFC] border border-[#E2E8F0] rounded-[4px] px-3 py-2 min-w-[60px]">
+                            <div className="flex flex-row sm:flex-col items-center justify-center bg-[#F8FAFC] border border-[#E2E8F0] rounded-[4px] px-3 py-2 min-w-[60px] gap-2 sm:gap-0">
                                 <span className="text-[10px] font-bold text-[#4B7BEC] uppercase tracking-wide leading-none">
                                     {new Date(activeLog.clock_in).toLocaleDateString("en-US", { month: "short" })}
                                 </span>
-                                <span className="text-2xl font-bold text-[#0f172a] leading-tight">
+                                <span className="text-xl sm:text-2xl font-bold text-[#0f172a] leading-tight">
                                     {new Date(activeLog.clock_in).getDate()}
                                 </span>
                             </div>
@@ -406,7 +407,7 @@ export default function TimesheetPage() {
 
                             {/* Clock Out Button */}
                             <Button
-                                className="gap-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-none border-none rounded-[4px] px-5 h-10 font-bold text-xs"
+                                className="gap-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-none border-none rounded-[4px] px-5 h-10 font-bold text-xs w-full sm:w-auto"
                                 onClick={() => setClockOutOpen(true)}
                             >
                                 <StopCircle className="h-4 w-4" /> Clock Out
@@ -417,7 +418,7 @@ export default function TimesheetPage() {
                         <div className="border-t border-[#E2E8F0]" />
 
                         {/* Bottom Row: Clock In & Duration */}
-                        <div className="flex items-center gap-8 px-4 py-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 px-4 py-3">
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Clock In</span>
                                 <span className="text-sm font-bold text-[#0f172a]">{formatTime24(activeLog.clock_in)}</span>
@@ -468,6 +469,20 @@ export default function TimesheetPage() {
                         </Select>
                     </div>
 
+                    <div className="flex items-center gap-2">
+                        <LayoutList className="h-3.5 w-3.5 text-muted-foreground" />
+                        <Select value={String(limit)} onValueChange={(v) => setLimit(Number(v))}>
+                            <SelectTrigger className="w-[70px] h-8 text-[11px] bg-white border-[#E2E8F0] rounded-[4px]">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {[10, 20, 50, 100].map(v => (
+                                    <SelectItem key={v} value={String(v)} className="text-[11px]">{v}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
                     <div className="ml-auto flex items-center gap-2 text-[11px] text-muted-foreground font-medium">
                         <Search className="h-3.5 w-3.5" />
                         Showing {filteredLogs.length} records
@@ -475,17 +490,17 @@ export default function TimesheetPage() {
                 </div>
 
                 <Card className="border-[#E2E8F0] shadow-sm rounded-[6px] overflow-hidden bg-white text-[#0f172a] h-full flex flex-col">
-                    <CardContent className="p-0 flex flex-col h-full">
-                        <div className="overflow-auto custom-scrollbar flex-1 relative">
+                    <CardContent className="p-0 flex flex-col h-full overflow-x-auto custom-scrollbar">
+                        <div className="flex-1 relative min-w-[900px]">
                             <Table>
                                 <TableHeader className="bg-[#F8FAFC] sticky top-0 z-10 shadow-[0_1px_0_0_rgba(226,232,240,1)]">
-                                    <TableRow className="hover:bg-transparent border-[#E2E8F0]">
-                                        <TableHead className="w-[140px] text-[10px] font-bold text-muted-foreground uppercase py-3 pl-6 tracking-wider">Date</TableHead>
-                                        <TableHead className="text-[10px] font-bold text-muted-foreground uppercase py-3 tracking-wider">Task & Project</TableHead>
-                                        <TableHead className="text-[10px] font-bold text-muted-foreground uppercase py-3 tracking-wider">Session Time</TableHead>
-                                        <TableHead className="text-[10px] font-bold text-muted-foreground uppercase py-3 tracking-wider">Duration</TableHead>
-                                        <TableHead className="text-[10px] font-bold text-muted-foreground uppercase py-3 tracking-wider">Status</TableHead>
-                                        <TableHead className="w-[60px] pr-6"></TableHead>
+                                    <TableRow className="hover:bg-transparent border-[#E2E8F0] bg-[#F8FAFC]">
+                                        <TableHead className="bg-[#F8FAFC] w-[140px] text-[10px] font-bold text-muted-foreground uppercase py-3 pl-6 tracking-wider">Date</TableHead>
+                                        <TableHead className="bg-[#F8FAFC] text-[10px] font-bold text-muted-foreground uppercase py-3 tracking-wider">Task & Project</TableHead>
+                                        <TableHead className="bg-[#F8FAFC] text-[10px] font-bold text-muted-foreground uppercase py-3 tracking-wider">Session Time</TableHead>
+                                        <TableHead className="bg-[#F8FAFC] text-[10px] font-bold text-muted-foreground uppercase py-3 tracking-wider">Duration</TableHead>
+                                        <TableHead className="bg-[#F8FAFC] text-[10px] font-bold text-muted-foreground uppercase py-3 tracking-wider">Status</TableHead>
+                                        <TableHead className="bg-[#F8FAFC] w-[60px] pr-6"></TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -568,7 +583,7 @@ export default function TimesheetPage() {
                     {!isLoading && totalPages > 0 && (
                         <div className="border-t border-[#e2e8f0] bg-white px-4 py-3 flex items-center justify-between shrink-0">
                             <div className="text-xs text-muted-foreground">
-                                Showing <span className="font-medium text-[#0f172a]">{(currentPage - 1) * LIMIT + 1}</span> to <span className="font-medium text-[#0f172a]">{Math.min(currentPage * LIMIT, filteredLogs.length)}</span> of <span className="font-medium text-[#0f172a]">{filteredLogs.length}</span> records
+                                Showing <span className="font-medium text-[#0f172a]">{(currentPage - 1) * limit + 1}</span> to <span className="font-medium text-[#0f172a]">{Math.min(currentPage * limit, filteredLogs.length)}</span> of <span className="font-medium text-[#0f172a]">{filteredLogs.length}</span> records
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled={currentPage <= 1} onClick={() => setCurrentPage(currentPage - 1)}>
