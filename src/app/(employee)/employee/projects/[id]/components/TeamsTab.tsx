@@ -31,7 +31,7 @@ export function TeamsTab({ members }: TeamsTabProps) {
     };
 
     return (
-        <div className="space-y-6 pb-10">
+        <div className="space-y-6">
             {/* Summary */}
             <Card className="border-[#E2E8F0] shadow-sm rounded-xl">
                 <CardContent className="p-4 flex items-center gap-4">

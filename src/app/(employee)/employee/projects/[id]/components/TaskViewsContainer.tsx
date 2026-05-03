@@ -67,7 +67,16 @@ export function TaskViewsContainer({ activeTab, project, tasks, members, setTask
             ]);
             setTaskLogs(Array.isArray(logsRes) ? logsRes : []);
             setComments(Array.isArray(commentsRes) ? commentsRes : []);
-            setAuditLogs(Array.isArray(auditRes) ? auditRes : []);
+            const enrichedAuditLogs = (Array.isArray(auditRes) ? auditRes : []).map((log) => {
+                if (!log.user) {
+                    const member = members.find((m) => m.user_id === log.user_id);
+                    if (member?.user) {
+                        return { ...log, user: member.user };
+                    }
+                }
+                return log;
+            });
+            setAuditLogs(enrichedAuditLogs);
         } catch (error) {
             console.error("Failed to load task details", error);
         } finally {

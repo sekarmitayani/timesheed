@@ -120,7 +120,7 @@ export function OverviewTab({ project, members, tasks }: OverviewTabProps) {
     const recentTasks = [...tasks].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5);
 
     return (
-        <div className="space-y-6 pb-10">
+        <div className="space-y-6">
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <Card className="border-[#E2E8F0] shadow-sm rounded-xl">

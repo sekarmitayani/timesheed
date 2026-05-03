@@ -49,7 +49,7 @@ export function ListView({ tasks, members, onTaskClick }: ListViewProps) {
     };
 
     return (
-        <div className="flex-1 overflow-y-auto pr-1 pb-10 custom-scrollbar h-[calc(100vh-200px)]">
+        <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar">
             <div className="space-y-10">
                 {(["todo", "in_progress", "done"] as const).map(status => (
                     <div key={status} className="space-y-4">

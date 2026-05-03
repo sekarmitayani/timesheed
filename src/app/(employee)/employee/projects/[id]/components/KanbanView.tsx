@@ -62,7 +62,7 @@ export function KanbanView({ tasks, members, setTasks, onTaskClick }: KanbanView
     };
 
     return (
-        <div className="flex-1 overflow-y-auto pr-1 pb-10 custom-scrollbar h-[calc(100vh-200px)]">
+        <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar">
             <DragDropContext onDragEnd={onDragEnd}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {(["todo", "in_progress", "done"] as const).map(col => {
