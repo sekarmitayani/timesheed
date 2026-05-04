@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/utils";
 
 interface ContractMetadataProps {
   type: string;
@@ -8,9 +7,10 @@ interface ContractMetadataProps {
   rateType: string;
   startDate: string;
   endDate: string | null;
+  projectName?: string | null;
 }
 
-export function ContractMetadata({ type, scheme, rate, rateType, startDate, endDate }: ContractMetadataProps) {
+export function ContractMetadata({ type, scheme, rate, rateType, startDate, endDate, projectName }: ContractMetadataProps) {
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("en-US", { 
       day: 'numeric',
@@ -23,6 +23,10 @@ export function ContractMetadata({ type, scheme, rate, rateType, startDate, endD
     <div className="space-y-4">
       <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Contract Information</h4>
       <div className="grid grid-cols-2 gap-y-4 gap-x-2">
+        <div className="space-y-1">
+          <p className="text-[10px] text-muted-foreground uppercase font-medium">Project</p>
+          <p className="text-xs font-bold text-slate-700 truncate" title={projectName || "-"}>{projectName || "-"}</p>
+        </div>
         <div className="space-y-1">
           <p className="text-[10px] text-muted-foreground uppercase font-medium">Contract Type</p>
           <Badge variant="outline" className="bg-slate-50 border-[#E2E8F0] text-[10px] font-bold uppercase px-2 py-0">

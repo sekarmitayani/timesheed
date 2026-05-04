@@ -1,4 +1,7 @@
-import { Info, CheckCircle2, Clock, Calendar } from "lucide-react";
+import { Info, CheckCircle2, Clock, Calendar, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { MonthlyBreakdown } from "../../types";
 
 interface EarningTrackerProps {
   contractType: string;
@@ -9,18 +12,32 @@ interface EarningTrackerProps {
   scheme: string;
   totalPaid: number;
   liability: number;
+  estimatedEarning?: number;
+  submittedCount?: number;
+  approvedCount?: number;
+  currentYearIndex?: number;
+  thisMonthLiability?: number;
+  monthlyBreakdown?: MonthlyBreakdown[];
 }
 
-export function EarningTracker({ 
-  contractType, 
-  approvedMinutes, 
-  pendingMinutes, 
-  approvedDays, 
-  rate, 
+export function EarningTracker({
+  contractType,
+  approvedMinutes = 0,
+  pendingMinutes = 0,
+  approvedDays = 0,
+  rate,
   scheme,
   totalPaid,
-  liability
+  liability,
+  estimatedEarning = 0,
+  submittedCount = 0,
+  approvedCount = 0,
+  currentYearIndex = 0,
+  thisMonthLiability = 0,
+  monthlyBreakdown = []
 }: EarningTrackerProps) {
+  const [showBreakdown, setShowBreakdown] = useState(false);
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -29,34 +46,33 @@ export function EarningTracker({
     }).format(amount);
   };
 
-  const approvedHours = approvedMinutes / 60;
-  const pendingHours = pendingMinutes / 60;
-  
+  const currentMonthName = new Date().toLocaleString('en-US', { month: 'long' });
+
   let mainValue = "";
   let mainLabel = "";
   let MainIcon = Clock;
-  let estimatedIncome = 0;
 
-  if (contractType === 'timesheet') {
-    mainValue = `${approvedHours.toFixed(1)} Hours`;
-    mainLabel = "Total Approved Hours";
-    MainIcon = Clock;
-    estimatedIncome = approvedHours * rate;
-  } else if (contractType === 'mandays') {
-    mainValue = `${approvedDays} Days`;
-    mainLabel = "Total Approved Days";
+  const approvedHours = approvedMinutes / 60;
+  const submittedHours = (approvedMinutes + pendingMinutes) / 60;
+
+  if (contractType === 'timesheet' || contractType === 'hourly') {
+    mainValue = currentMonthName;
+    mainLabel = "Timesheet Tracking";
     MainIcon = Calendar;
-    estimatedIncome = approvedDays * rate;
-  } else {
-    // monthly or yearly
-    mainValue = formatCurrency(rate);
-    mainLabel = "Fixed Contract Value";
+  } else if (contractType === 'mandays') {
+    mainValue = currentMonthName;
+    mainLabel = "Mandays Tracking";
+    MainIcon = Calendar;
+  } else if (contractType === 'yearly') {
+    mainValue = `Year ${currentYearIndex}`;
+    mainLabel = "Contract Progress";
     MainIcon = CheckCircle2;
-    estimatedIncome = rate;
+  } else {
+    // monthly
+    mainValue = currentMonthName;
+    mainLabel = "Current Billing Month";
+    MainIcon = Calendar;
   }
-
-  const showPotential = (contractType === 'timesheet' || contractType === 'mandays') && pendingMinutes > 0;
-  const potentialEarnings = (pendingHours) * rate;
 
   const isTerminOrB2B = scheme === 'termin' || scheme === 'back_to_back';
 
@@ -64,6 +80,7 @@ export function EarningTracker({
     <div className="space-y-4">
       <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Earning Tracker</h4>
       <div className="space-y-4">
+        {/* Main Stat Card */}
         <div className="p-4 rounded-md bg-blue-50/50 border border-blue-100 flex items-start gap-3">
           <div className="mt-1 p-2 bg-white rounded-md border border-blue-100 shadow-sm">
             <MainIcon className="h-4 w-4 text-[#4B7BEC]" />
@@ -71,45 +88,124 @@ export function EarningTracker({
           <div className="flex-1">
             <p className="text-[10px] text-blue-600 uppercase font-bold mb-1">{mainLabel}</p>
             <p className="text-xl font-bold text-slate-800">{mainValue}</p>
-            
-            <div className="mt-2 pt-2 border-t border-blue-100/50">
-              {isTerminOrB2B ? (
+
+            <div className="mt-3 pt-3 border-t border-blue-100/50 space-y-2">
+              {(contractType === 'timesheet' || contractType === 'hourly' || contractType === 'mandays') && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-[10px] text-blue-600 uppercase font-medium">Amount Paid</p>
-                    <p className="text-sm font-bold text-emerald-600">{formatCurrency(totalPaid)}</p>
+                    <p className="text-[10px] text-blue-600 uppercase font-medium">Approved (Fixed)</p>
+                    <p className="text-xs font-bold text-emerald-600">
+                      {contractType === 'timesheet' || contractType === 'hourly' ? `${approvedHours.toFixed(1)} Hours` : `${approvedCount} Days`}
+                    </p>
+                    <p className="text-[9px] text-emerald-500 font-medium">
+                      {approvedCount} {contractType === 'timesheet' || contractType === 'hourly' ? 'Logs' : 'Days'} Approved
+                    </p>
+                    <p className="text-[9px] text-emerald-600 font-bold">{formatCurrency(totalPaid + liability)}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-blue-600 uppercase font-medium">Remaining</p>
-                    <p className="text-sm font-bold text-slate-700">{formatCurrency(liability)}</p>
+                    <p className="text-[10px] text-blue-600 uppercase font-medium">Pending (Est)</p>
+                    <p className="text-xs font-bold text-slate-600">
+                      {contractType === 'timesheet' || contractType === 'hourly' ? `${(pendingMinutes / 60).toFixed(1)} Hours` : `${submittedCount - approvedCount} Days`}
+                    </p>
+                    <p className="text-[9px] text-slate-400 font-medium">
+                      {submittedCount - approvedCount} {contractType === 'timesheet' || contractType === 'hourly' ? 'Logs' : 'Days'} Pending
+                    </p>
+                    <p className="text-[9px] text-slate-500 font-bold">{formatCurrency(estimatedEarning)}</p>
                   </div>
                 </div>
-              ) : (
-                <>
-                  <p className="text-[10px] text-blue-600 uppercase font-medium">Estimated Income</p>
-                  <p className="text-sm font-bold text-[#4B7BEC]">{formatCurrency(estimatedIncome)}</p>
-                </>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[10px] text-blue-600 uppercase font-medium">This Month Liability</p>
+                  <p className="text-xs font-bold text-[#4B7BEC]">{formatCurrency(thisMonthLiability)}</p>
+                  <p className="text-[9px] text-slate-400 font-medium">For {currentMonthName}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-blue-600 uppercase font-medium">Total Liability</p>
+                  <p className="text-xs font-bold text-slate-700">{formatCurrency(liability)}</p>
+                  <p className="text-[9px] text-slate-400 font-medium">Inc. previous unpaid</p>
+                </div>
+              </div>
+
+              {contractType === 'yearly' && (
+                <div className="pt-2">
+                  <p className="text-[10px] text-blue-600 uppercase font-medium">Accumulated Earnings</p>
+                  <p className="text-sm font-bold text-[#4B7BEC]">{formatCurrency(totalPaid + liability)}</p>
+                  <p className="text-[9px] text-slate-400 font-medium">Fixed income grows every year of contract</p>
+                </div>
               )}
             </div>
           </div>
         </div>
 
-        {showPotential && (
-          <div className="p-3 rounded-md bg-amber-50/50 border border-amber-100 flex items-start gap-2">
-            <Info className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
-            <div>
-              <p className="text-[10px] text-amber-700 font-bold uppercase">Potential Earnings</p>
-              <p className="text-xs font-bold text-amber-700">{formatCurrency(potentialEarnings)}</p>
-              <p className="text-[10px] text-amber-600 mt-0.5">Awaiting PM approval for {contractType === 'timesheet' ? `${pendingHours.toFixed(1)} hours` : 'pending logs'}.</p>
-            </div>
+        {/* Breakdown Toggle (Enabled for all schemes) */}
+        {monthlyBreakdown.length > 0 && (
+          <div className="space-y-2">
+            <button
+              onClick={() => setShowBreakdown(!showBreakdown)}
+              className="w-full flex items-center justify-between p-3 rounded-md border border-[#E2E8F0] bg-white hover:bg-slate-50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-slate-400" />
+                <span className="text-xs font-bold text-slate-700">View Payment Breakdown</span>
+              </div>
+              {showBreakdown ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
+            </button>
+
+            {showBreakdown && (
+              <div className="rounded-md border border-[#E2E8F0] bg-white overflow-hidden animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-[#E2E8F0]">
+                        <th className="px-3 py-2 text-[9px] font-bold text-slate-500 uppercase">Period</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-slate-500 uppercase">Earned</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-slate-500 uppercase">Paid</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-slate-500 uppercase text-right">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {monthlyBreakdown.map((m, idx) => (
+                        <tr key={idx} className="border-b border-[#E2E8F0] last:border-0 hover:bg-slate-50/50">
+                          <td className="px-3 py-2.5">
+                            <p className="text-[10px] font-bold text-slate-700">{m.monthName}</p>
+                            <p className="text-[9px] text-slate-400">{m.year}</p>
+                          </td>
+                          <td className="px-3 py-2.5 text-[10px] font-medium text-slate-600">
+                            {formatCurrency(m.earned)}
+                          </td>
+                          <td className="px-3 py-2.5 text-[10px] font-medium text-emerald-600">
+                            {formatCurrency(m.paid)}
+                          </td>
+                          <td className="px-3 py-2.5 text-right">
+                            <Badge
+                              variant="outline"
+                              className={`text-[8px] uppercase px-1.5 h-4 leading-none font-black ${m.status === 'paid' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                                m.status === 'partially_paid' ? 'bg-amber-50 text-amber-600 border-amber-100' :
+                                  'bg-slate-50 text-slate-400 border-slate-200'
+                                }`}
+                            >
+                              {m.status.replace('_', ' ')}
+                            </Badge>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {(scheme === 'termin' || scheme === 'back_to_back') && (
+        {/* Info Box for Termin/B2B */}
+        {isTerminOrB2B && (
           <div className="flex items-start gap-2 p-3 bg-slate-50 rounded border border-[#E2E8F0]">
             <Info className="h-3.5 w-3.5 text-slate-400 mt-0.5 shrink-0" />
             <p className="text-[10px] font-medium text-slate-500 leading-relaxed">
-              Payment is processed based on terms. Unpaid amounts are held as liability until disbursed.
+              This contract follows a <span className="text-slate-700 font-bold uppercase">{scheme.replace(/_/g, ' ')}</span> payment scheme.
+              Earnings are accrued as <span className="text-slate-700 font-bold">Total Liability</span> until terms are met.
             </p>
           </div>
         )}

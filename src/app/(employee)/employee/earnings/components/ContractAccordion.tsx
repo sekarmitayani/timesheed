@@ -55,13 +55,33 @@ export function ContractAccordion({ contracts }: ContractAccordionProps) {
                         {contract.contract_type}
                       </Badge>
                     </div>
-                    <p className="text-[10px] text-muted-foreground uppercase font-medium flex items-center gap-1">
-                      <Briefcase className="h-3 w-3" /> {contract.payment_scheme.replace(/_/g, " ")}
-                    </p>
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase font-medium">
+                      <span className="flex items-center gap-1">
+                        <Briefcase className="h-3 w-3" /> {contract.payment_scheme.replace(/_/g, " ")}
+                      </span>
+                      {contract.contract_type === 'mandays' && (
+                        <>
+                          <span className="text-slate-300">•</span>
+                          <span className="text-[#4B7BEC] font-bold">{contract.approved_count} Days Approved</span>
+                        </>
+                      )}
+                    </div>
                   </div>
                   
-                  <div className="flex items-center gap-6">
-                    <div className="text-left md:text-right">
+                  <div className="grid grid-cols-2 gap-4 mt-4 w-full md:w-auto md:flex md:flex-nowrap md:items-center md:gap-6 md:mt-0">
+                    {(contract.contract_type === 'timesheet' || contract.contract_type === 'hourly' || contract.contract_type === 'mandays') && (
+                      <>
+                        <div className="text-left md:text-right border-r-0 md:border-r border-[#E2E8F0] md:pr-6">
+                          <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-tight">Est. Pending</p>
+                          <p className="text-xs font-bold text-slate-500">{formatCurrency(contract.estimated_earning || 0)}</p>
+                        </div>
+                        <div className="text-left md:text-right border-r-0 md:border-r border-[#E2E8F0] md:pr-6">
+                          <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-tight">Fixed (Apprv)</p>
+                          <p className="text-xs font-bold text-slate-700">{formatCurrency(contract.total_earned)}</p>
+                        </div>
+                      </>
+                    )}
+                    <div className="text-left md:text-right border-r-0 md:border-r border-[#E2E8F0] md:pr-6">
                       <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-tight">Released</p>
                       <p className="text-xs font-bold text-emerald-600">{formatCurrency(contract.total_paid)}</p>
                     </div>
@@ -82,6 +102,7 @@ export function ContractAccordion({ contracts }: ContractAccordionProps) {
                       rateType={contract.contract_type === 'monthly' ? 'mo' : contract.contract_type === 'mandays' ? 'day' : contract.contract_type === 'yearly' ? 'yr' : 'hr'}
                       startDate={contract.start_date}
                       endDate={contract.end_date}
+                      projectName={contract.project_id ? contract.project_name : "-"}
                     />
                     <EarningTracker 
                       contractType={contract.contract_type}
@@ -92,6 +113,12 @@ export function ContractAccordion({ contracts }: ContractAccordionProps) {
                       scheme={contract.payment_scheme}
                       totalPaid={contract.total_paid}
                       liability={liability}
+                      estimatedEarning={contract.estimated_earning}
+                      submittedCount={contract.submitted_count}
+                      approvedCount={contract.approved_count}
+                      currentYearIndex={contract.current_year_index}
+                      thisMonthLiability={contract.this_month_liability}
+                      monthlyBreakdown={contract.monthly_breakdown}
                     />
                   </div>
                   <div className="border-t border-[#E2E8F0] pt-6">

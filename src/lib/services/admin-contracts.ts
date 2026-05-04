@@ -6,7 +6,7 @@ export interface Contract {
     id: number;
     user_id: number;
     project_id?: number | null;
-    contract_type: "yearly" | "monthly" | "mandays" | "timesheet";
+    contract_type: "yearly" | "monthly" | "mandays" | "timesheet" | "hourly";
     payment_scheme: PaymentScheme;
     rate_amount: number;
     start_date: string;
@@ -23,7 +23,7 @@ export interface Contract {
 export interface CreateContractPayload {
     user_id: number | string;
     project_id?: number | null;
-    contract_type: "yearly" | "monthly" | "mandays" | "timesheet";
+    contract_type: "yearly" | "monthly" | "mandays" | "timesheet" | "hourly";
     payment_scheme: PaymentScheme;
     rate_amount: number;
     start_date: string; // YYYY-MM-DD
@@ -33,7 +33,7 @@ export interface CreateContractPayload {
 
 export interface UpdateContractPayload {
     project_id?: number | null;
-    contract_type?: "yearly" | "monthly" | "mandays" | "timesheet";
+    contract_type?: "yearly" | "monthly" | "mandays" | "timesheet" | "hourly";
     payment_scheme?: PaymentScheme;
     rate_amount?: number;
     start_date?: string;
