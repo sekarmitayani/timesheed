@@ -120,7 +120,7 @@ export function OverviewTab({ project, members, tasks }: OverviewTabProps) {
     const recentTasks = [...tasks].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <Card className="border-[#E2E8F0] shadow-sm rounded-xl">
@@ -169,8 +169,47 @@ export function OverviewTab({ project, members, tasks }: OverviewTabProps) {
                 </Card>
             </div>
 
-            {/* Status Overview + Team Workload - side by side */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Row 1: General Information + Status Overview */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* General Information */}
+                <Card className="border-[#E2E8F0] shadow-sm rounded-xl">
+                    <CardHeader className="pb-4">
+                        <CardTitle className="text-[15px] font-bold text-slate-800">
+                            General Information
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-5">
+                        <div className="space-y-1">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                                Client Name
+                            </span>
+                            <div className="text-sm font-bold text-slate-800">
+                                {project.client_name}
+                            </div>
+                        </div>
+
+                        {project.client_email && (
+                            <div className="space-y-1">
+                                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                                    Client Email
+                                </span>
+                                <div className="text-sm font-bold text-slate-800">
+                                    {project.client_email}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="space-y-1">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                                Created At
+                            </span>
+                            <div className="text-sm font-bold text-slate-800">
+                                {format(new Date(project.created_at), "dd MMMM yyyy, HH:mm")}
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
                 {/* Status Overview */}
                 <Card className="border-[#E2E8F0] shadow-sm rounded-xl">
                     <CardContent className="p-6">
@@ -201,17 +240,20 @@ export function OverviewTab({ project, members, tasks }: OverviewTabProps) {
                         </div>
                     </CardContent>
                 </Card>
+            </div>
 
+            {/* Row 2: Team Workload + Activity */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Team Workload */}
                 <Card className="border-[#E2E8F0] shadow-sm rounded-xl">
-                    <CardContent className="p-6">
+                    <CardContent className="px-6 py-4">
                         <div className="mb-1">
                             <h3 className="text-[15px] font-bold text-slate-800">Team workload</h3>
                             <p className="text-xs text-slate-500 mt-0.5">
                                 Monitor the capacity of your team.
                             </p>
                         </div>
-                        <div className="mt-6">
+                        <div className="mt-4">
                             {/* Table Header */}
                             <div className="flex items-center gap-4 mb-4">
                                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider w-[120px] sm:w-[180px] shrink-0">Assignee</span>
@@ -248,106 +290,40 @@ export function OverviewTab({ project, members, tasks }: OverviewTabProps) {
                         </div>
                     </CardContent>
                 </Card>
-            </div>
 
-            {/* Main Content - 3 column grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left Column */}
-                <div className="flex flex-col gap-6 lg:col-span-1">
-                    {/* General Information */}
-                    <Card className="border-[#E2E8F0] shadow-sm rounded-xl">
-                        <CardHeader className="pb-4">
-                            <CardTitle className="text-[15px] font-bold text-slate-800">
-                                General Information
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex flex-col gap-5">
-                            <div className="space-y-1">
-                                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                                    Client Name
-                                </span>
-                                <div className="text-sm font-bold text-slate-800">
-                                    {project.client_name}
-                                </div>
-                            </div>
-
-                            {project.client_email && (
-                                <div className="space-y-1">
-                                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                                        Client Email
-                                    </span>
-                                    <div className="text-sm font-bold text-slate-800">
-                                        {project.client_email}
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="space-y-1">
-                                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                                    Created At
-                                </span>
-                                <div className="text-sm font-bold text-slate-800">
-                                    {format(new Date(project.created_at), "dd MMMM yyyy, HH:mm")}
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-
-                </div>
-
-                {/* Right Column */}
-                <div className="flex flex-col gap-6 lg:col-span-2">
-                    {/* Description */}
-                    <Card className="border-[#E2E8F0] shadow-sm rounded-xl">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-[15px] font-bold text-slate-800">
-                                Description
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-slate-600 leading-relaxed">
-                                No description provided for this project.
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    {/* Activity */}
-                    <Card className="border-[#E2E8F0] shadow-sm rounded-xl">
-                        <CardHeader className="pb-4">
-                            <CardTitle className="text-[15px] font-bold text-slate-800">
-                                Activity
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="relative pl-3 border-l-2 border-slate-100 space-y-6 ml-2">
-                                {recentTasks.map((task) => {
-                                    const creator = members.find(m => m.user_id === task.created_by_id)?.user?.full_name || `User ${task.created_by_id}`;
-                                    return (
-                                        <div key={task.id} className="relative">
-                                            <div className="absolute -left-[18.5px] top-1.5 h-3.5 w-3.5 rounded-full bg-[#4B7BEC] border-[3px] border-white shadow-sm" />
-                                            <div className="flex flex-col gap-1 pl-2">
-                                                <h4 className="text-sm font-bold text-slate-800">New Task Added: {task.title}</h4>
-                                                <p className="text-xs text-slate-500">
-                                                    <span className="font-semibold text-[#4B7BEC]">{creator}</span> created a new task
-                                                </p>
-                                                <span className="text-[10px] font-medium text-slate-400 mt-0.5">
-                                                    {format(new Date(task.created_at), "dd MMM yyyy, HH:mm")}
-                                                </span>
-                                            </div>
+                {/* Activity */}
+                <Card className="border-[#E2E8F0] shadow-sm rounded-xl">
+                    <CardHeader className="px-6 pt-4 pb-2">
+                        <CardTitle className="text-[15px] font-bold text-slate-800">
+                            Activity
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-6 pb-4 pt-0">
+                        <div className="relative pl-3 border-l-2 border-slate-100 space-y-4 ml-2">
+                            {recentTasks.map((task) => {
+                                const creator = members.find(m => m.user_id === task.created_by_id)?.user?.full_name || `User ${task.created_by_id}`;
+                                return (
+                                    <div key={task.id} className="relative">
+                                        <div className="absolute -left-[18.5px] top-1.5 h-3.5 w-3.5 rounded-full bg-[#4B7BEC] border-[3px] border-white shadow-sm" />
+                                        <div className="flex flex-col gap-1 pl-2">
+                                            <h4 className="text-sm font-bold text-slate-800">New Task Added: {task.title}</h4>
+                                            <p className="text-xs text-slate-500">
+                                                <span className="font-semibold text-[#4B7BEC]">{creator}</span> created a new task
+                                            </p>
+                                            <span className="text-[10px] font-medium text-slate-400 mt-0.5">
+                                                {format(new Date(task.created_at), "dd MMM yyyy, HH:mm")}
+                                            </span>
                                         </div>
-                                    );
-                                })}
-                                {recentTasks.length === 0 && (
-                                    <div className="text-sm text-slate-500 py-4 pl-2">No activity recorded yet.</div>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                                    </div>
+                                );
+                            })}
+                            {recentTasks.length === 0 && (
+                                <div className="text-sm text-slate-500 py-4 pl-2">No activity recorded yet.</div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
-
-
         </div>
     );
 }
