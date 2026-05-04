@@ -16,6 +16,8 @@ export interface Contract {
     updated_at: string;
     // mock properties for our frontend display join
     project_name?: string;
+    total_paid?: number;
+    payment_status?: "pending" | "paid" | "partially_paid";
 }
 
 export interface CreateContractPayload {
