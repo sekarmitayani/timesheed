@@ -69,7 +69,6 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
                 { label: "User Management", href: "/admin/users", icon: UserCog },
                 { label: "Contracts", href: "/admin/contracts", icon: FileKey },
                 { label: "Proxy Login", href: "/admin/proxy-login", icon: Shield },
-                { label: "Settings", href: "/admin/settings", icon: Settings },
             ]
         },
         {
