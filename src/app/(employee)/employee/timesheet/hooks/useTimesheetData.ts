@@ -1,86 +1,114 @@
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { timesheetService, TimesheetLog } from "@/lib/services/timesheet-service";
 import { projectService } from "@/lib/services/project-service";
 import { taskService, ApiTask } from "@/lib/services/task-service";
 import { ApiProject } from "@/lib/types";
 
 export function useTimesheetData() {
-    const [logs, setLogs] = useState<TimesheetLog[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [hasActiveSession, setHasActiveSession] = useState(false);
-    const [taskMap, setTaskMap] = useState<Record<number, ApiTask>>({});
-    const [userMap, setUserMap] = useState<Record<number, string>>({});
+    const queryClient = useQueryClient();
 
-    // Filter State
+    // Filter State (Pure UI)
     const [filterType, setFilterType] = useState<string>("all");
     const [dateFrom, setDateFrom] = useState<string>("");
     const [dateTo, setDateTo] = useState<string>("");
     const [filterProject, setFilterProject] = useState<string>("all");
     const [filterStatus, setFilterStatus] = useState<string>("all");
 
-    // Pagination
+    // Pagination (Pure UI)
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
-    // Clock In/Out Dialogs
+    // Clock In/Out UI Dialogs
     const [clockOutOpen, setClockOutOpen] = useState(false);
-    const [isClocking, setIsClocking] = useState(false);
-    const [projects, setProjects] = useState<ApiProject[]>([]);
     const [clockOutDesc, setClockOutDesc] = useState("");
 
-    // Detail Modal
+    // Detail Modal UI
     const [selectedLog, setSelectedLog] = useState<TimesheetLog | null>(null);
     const [liveElapsed, setLiveElapsed] = useState("");
 
-    const fetchLogs = async () => {
-        setIsLoading(true);
-        try {
-            const res = await timesheetService.getMyLogs();
-            const data = Array.isArray(res) ? res : [];
-            setLogs(data.sort((a, b) => new Date(b.clock_in).getTime() - new Date(a.clock_in).getTime()));
-            setHasActiveSession(data.some(l => l.clock_in && !l.clock_out));
-            
-            const projectIds = Array.from(new Set(data.map(l => l.project_id)));
+    // --- Queries ---
+
+    // 1. Fetch Projects
+    const { data: projectsData } = useQuery({
+        queryKey: ['employee', 'timesheets', 'projects'],
+        queryFn: () => projectService.getProjects(1, 100),
+    });
+    const projects: ApiProject[] = projectsData?.data || [];
+
+    // 2. Fetch Timesheet Logs
+    const { data: rawLogs, isLoading: isLoadingLogs } = useQuery({
+        queryKey: ['employee', 'timesheets', 'logs'],
+        queryFn: () => timesheetService.getMyLogs(),
+    });
+
+    const logs = useMemo(() => {
+        const data = Array.isArray(rawLogs) ? rawLogs : [];
+        return [...data].sort((a, b) => new Date(b.clock_in).getTime() - new Date(a.clock_in).getTime());
+    }, [rawLogs]);
+
+    const hasActiveSession = useMemo(() => logs.some(l => l.clock_in && !l.clock_out), [logs]);
+    const activeLog = useMemo(() => logs.find(l => l.clock_in && !l.clock_out), [logs]);
+
+    // 3. Dependent Mapping Query (Task & User Map)
+    const projectIds = useMemo(() => Array.from(new Set(logs.map(l => l.project_id))), [logs]);
+
+    const { data: mapsData, isLoading: isLoadingMaps } = useQuery({
+        queryKey: ['employee', 'timesheets', 'maps', projectIds],
+        queryFn: async () => {
             const newTaskMap: Record<number, ApiTask> = {};
             const newUserMap: Record<number, string> = {};
 
-            data.forEach(l => {
+            logs.forEach(l => {
                 if (l.user) newUserMap[l.user_id] = l.user.full_name;
             });
-            
-            for (const pid of projectIds) {
+
+            await Promise.all(projectIds.map(async (pid) => {
                 try {
-                    const pTasks = await taskService.getProjectTasks(pid);
+                    const pTasks = await taskService.getProjectTasks(String(pid));
                     pTasks.forEach(t => { newTaskMap[t.id] = t; });
 
-                    const pMembers = await projectService.getProjectMembers(pid);
+                    const pMembers = await projectService.getProjectMembers(String(pid));
                     pMembers.forEach(m => { 
                         if (m.user) newUserMap[m.user_id] = m.user.full_name; 
                     });
                 } catch { /* skip */ }
-            }
-            setTaskMap(newTaskMap);
-            setUserMap(newUserMap);
+            }));
 
-        } catch (e: any) {
-            toast.error(e.message || "Failed to load timesheet logs");
-        } finally {
-            setIsLoading(false);
+            return { taskMap: newTaskMap, userMap: newUserMap };
+        },
+        enabled: projectIds.length > 0,
+    });
+
+    const taskMap = mapsData?.taskMap || {};
+    const userMap = mapsData?.userMap || {};
+
+    const isLoading = isLoadingLogs || (projectIds.length > 0 && isLoadingMaps);
+
+    // --- Mutations ---
+
+    const clockOutMutation = useMutation({
+        mutationFn: (desc: string) => timesheetService.clockOut({ task_description: desc }),
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets', 'logs'] });
+        },
+        onSuccess: (res) => {
+            toast.success(res.message || "Clock Out successful!");
+            setClockOutOpen(false);
+            setClockOutDesc("");
+        },
+        onError: (e: any) => {
+            toast.error(e.message || "Clock Out failed");
         }
+    });
+
+    const handleClockOut = async () => {
+        if (!clockOutDesc.trim()) { toast.error("Description is required"); return; }
+        clockOutMutation.mutate(clockOutDesc);
     };
 
-    const fetchProjects = async () => {
-        try {
-            const res = await projectService.getProjects(1, 100);
-            setProjects(res.data || []);
-        } catch { /* skip */ }
-    };
-
-    useEffect(() => { 
-        fetchLogs(); 
-        fetchProjects();
-    }, []);
+    // --- Computed Logic ---
 
     const filteredLogs = useMemo(() => {
         let result = [...logs];
@@ -152,22 +180,6 @@ export function useTimesheetData() {
         return days;
     }, [logs]);
 
-    const handleClockOut = async () => {
-        if (!clockOutDesc.trim()) { toast.error("Description is required"); return; }
-        setIsClocking(true);
-        try {
-            const res = await timesheetService.clockOut({ task_description: clockOutDesc });
-            toast.success(res.message || "Clock Out successful!");
-            setClockOutOpen(false);
-            setClockOutDesc("");
-            fetchLogs();
-        } catch (e: any) {
-            toast.error(e.message || "Clock Out failed");
-        } finally {
-            setIsClocking(false);
-        }
-    };
-
     const resetFilters = () => {
         setFilterType("all");
         setDateFrom("");
@@ -175,8 +187,6 @@ export function useTimesheetData() {
         setFilterProject("all");
         setFilterStatus("all");
     };
-
-    const activeLog = logs.find(l => l.clock_in && !l.clock_out);
 
     useEffect(() => {
         if (!activeLog) {
@@ -238,7 +248,7 @@ export function useTimesheetData() {
             currentPage,
             limit,
             clockOutOpen,
-            isClocking,
+            isClocking: clockOutMutation.isPending,
             projects,
             clockOutDesc,
             selectedLog,

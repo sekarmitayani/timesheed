@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
-import { toast } from "sonner";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { projectService } from "@/lib/services/project-service";
 import { ApiProject, ProjectMember } from "@/lib/types";
-import { useAuthStore } from "@/store/useAuthStore";
 
 export interface ProjectCardData {
     project: ApiProject;
@@ -10,44 +9,35 @@ export interface ProjectCardData {
 }
 
 export function useProjectsData() {
-    const currentUser = useAuthStore((s) => s.user);
-    const [projectCards, setProjectCards] = useState<ProjectCardData[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    // Filters
+    // Filters (Pure UI State)
     const [searchQuery, setSearchQuery] = useState("");
     const [filterStatus, setFilterStatus] = useState<string>("all");
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                const res = await projectService.getProjects(1, 100);
-                const projectList = res.data || [];
+    // 1. Fetch Project List
+    const { data: projectsData, isLoading: isLoadingProjects } = useQuery({
+        queryKey: ['employee', 'projects'],
+        queryFn: () => projectService.getProjects(1, 100),
+    });
+    const projects = projectsData?.data || [];
 
-                // Fetch members for each project in parallel
-                const cardPromises = projectList.map(async (project) => {
-                    let members: ProjectMember[] = [];
+    // 2. Fetch Members for all projects (Construct Card Data)
+    const { data: projectCards = [], isLoading: isLoadingMembers } = useQuery({
+        queryKey: ['employee', 'projects', 'cards', projects.map(p => p.id)],
+        queryFn: async () => {
+            const cardPromises = projects.map(async (project) => {
+                let members: ProjectMember[] = [];
+                try {
+                    const res = await projectService.getProjectMembers(String(project.id));
+                    members = Array.isArray(res) ? res : [];
+                } catch { /* skip */ }
+                return { project, members } as ProjectCardData;
+            });
+            return await Promise.all(cardPromises);
+        },
+        enabled: projects.length > 0,
+    });
 
-                    try {
-                        members = await projectService.getProjectMembers(String(project.id));
-                        if (!Array.isArray(members)) members = [];
-                    } catch { /* skip */ }
-
-                    return { project, members } as ProjectCardData;
-                });
-
-                const cards = await Promise.all(cardPromises);
-                setProjectCards(cards);
-            } catch (e: any) {
-                toast.error(e.message || "Failed to load projects");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [currentUser]);
+    const isLoading = isLoadingProjects || (projects.length > 0 && isLoadingMembers);
 
     const filteredCards = useMemo(() => {
         let result = [...projectCards];

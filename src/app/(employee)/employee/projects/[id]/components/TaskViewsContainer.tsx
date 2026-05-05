@@ -2,12 +2,13 @@
 
 import { useState, useMemo } from "react";
 import { format } from "date-fns";
-import { ApiTask, taskService, TaskComment, TaskAuditLog } from "@/lib/services/task-service";
-import { timesheetService, TimesheetLog } from "@/lib/services/timesheet-service";
+import { ApiTask, taskService, TaskAuditLog } from "@/lib/services/task-service";
+import { timesheetService } from "@/lib/services/timesheet-service";
 import { ApiProject, ProjectMember, User } from "@/lib/types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
 import { Circle, PlayCircle, CheckCircle2 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { KanbanView } from "./KanbanView";
 import { ListView } from "./ListView";
@@ -19,7 +20,6 @@ interface TaskViewsContainerProps {
     project: ApiProject;
     tasks: ApiTask[];
     members: ProjectMember[];
-    setTasks: React.Dispatch<React.SetStateAction<ApiTask[]>>;
 }
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode; border: string; badge: string }> = {
@@ -28,95 +28,98 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; i
     done: { label: "Done", color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200", badge: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
 };
 
-export function TaskViewsContainer({ activeTab, project, tasks, members, setTasks }: TaskViewsContainerProps) {
+export function TaskViewsContainer({ activeTab, project, tasks, members }: TaskViewsContainerProps) {
+    const queryClient = useQueryClient();
     const currentUser = useAuthStore((s) => s.user);
 
     // Dialog state
     const [selectedTask, setSelectedTask] = useState<ApiTask | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [taskLogs, setTaskLogs] = useState<TimesheetLog[]>([]);
-    const [isLoadingLogs, setIsLoadingLogs] = useState(false);
-    const [comments, setComments] = useState<TaskComment[]>([]);
-    const [auditLogs, setAuditLogs] = useState<TaskAuditLog[]>([]);
     const [commentText, setCommentText] = useState("");
-    const [isSendingComment, setIsSendingComment] = useState(false);
-    const [isLoadingActivities, setIsLoadingActivities] = useState(false);
-    const [isClockingIn, setIsClockingIn] = useState(false);
 
-    const selectedReporter = useMemo(() => {
-        if (!selectedTask) return null;
+    const taskId = selectedTask?.id;
+
+    // --- Queries (Task Detail) ---
+    const { data: taskLogs = [], isLoading: isLoadingLogs } = useQuery({
+        queryKey: ['task', taskId, 'logs'],
+        queryFn: () => timesheetService.getTaskTimesheets(taskId!),
+        enabled: !!taskId && dialogOpen,
+    });
+
+    const { data: comments = [] } = useQuery({
+        queryKey: ['task', taskId, 'comments'],
+        queryFn: () => taskService.getTaskComments(taskId!),
+        enabled: !!taskId && dialogOpen,
+    });
+
+    const { data: auditLogsRaw = [], isLoading: isLoadingActivities } = useQuery({
+        queryKey: ['task', taskId, 'audit'],
+        queryFn: () => taskService.getTaskLogs(taskId!),
+        enabled: !!taskId && dialogOpen,
+    });
+
+    const { auditLogs, reporter } = useMemo(() => {
+        if (!selectedTask) return { auditLogs: [], reporter: null };
+        
+        const enrichedAuditLogs = auditLogsRaw.map((log: TaskAuditLog) => {
+            const member = members.find((m) => m.user_id === log.user_id);
+            return {
+                ...log,
+                user: member?.user || (log.user_id === Number(currentUser?.id) ? { full_name: currentUser?.full_name || "You" } : log.user)
+            };
+        });
+
         const member = members.find(m => m.user_id === selectedTask.created_by_id);
-        if (member?.user) return member.user as unknown as User;
-        if (selectedTask.created_by_id === Number(currentUser?.id)) return currentUser;
-        return null;
-    }, [selectedTask, members, currentUser]);
+        const resolvedReporter = member?.user || (selectedTask.created_by_id === Number(currentUser?.id) ? currentUser : null);
 
-    const getProjectName = () => project.name;
+        return { auditLogs: enrichedAuditLogs, reporter: resolvedReporter as User | null };
+    }, [selectedTask, auditLogsRaw, members, currentUser]);
 
-    const handleTaskClick = async (task: ApiTask) => {
+    // --- Mutations ---
+    const commentMutation = useMutation({
+        mutationFn: (text: string) => taskService.addTaskComment(taskId!, text),
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['task', taskId, 'comments'] });
+            setCommentText("");
+        },
+        onSuccess: () => {
+            toast.success("Comment added");
+        }
+    });
+
+    const clockInMutation = useMutation({
+        mutationFn: async () => {
+            if (selectedTask!.status !== "in_progress") {
+                await taskService.updateTaskStatus(selectedTask!.id, { status: "in_progress" });
+            }
+            return timesheetService.clockIn({ project_id: selectedTask!.project_id, task_id: selectedTask!.id });
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['project', String(project.id), 'tasks'] });
+            setDialogOpen(false);
+        },
+        onSuccess: () => {
+            toast.success("Clocked in successfully");
+        }
+    });
+
+    const handleTaskClick = (task: ApiTask) => {
         setSelectedTask(task);
         setDialogOpen(true);
-        
-        setIsLoadingLogs(true);
-        setIsLoadingActivities(true);
-        try {
-            const [logsRes, commentsRes, auditRes] = await Promise.all([
-                timesheetService.getTaskTimesheets(task.id).catch(() => []),
-                taskService.getTaskComments(task.id).catch(() => []),
-                taskService.getTaskLogs(task.id).catch(() => [])
-            ]);
-            setTaskLogs(Array.isArray(logsRes) ? logsRes : []);
-            setComments(Array.isArray(commentsRes) ? commentsRes : []);
-            const enrichedAuditLogs = (Array.isArray(auditRes) ? auditRes : []).map((log) => {
-                if (!log.user) {
-                    const member = members.find((m) => m.user_id === log.user_id);
-                    if (member?.user) {
-                        return { ...log, user: member.user };
-                    }
-                }
-                return log;
-            });
-            setAuditLogs(enrichedAuditLogs);
-        } catch (error) {
-            console.error("Failed to load task details", error);
-        } finally {
-            setIsLoadingLogs(false);
-            setIsLoadingActivities(false);
-        }
     };
 
     const handleSendComment = async () => {
-        if (!selectedTask || !commentText.trim()) return;
-        setIsSendingComment(true);
-        try {
-            const newComment = await taskService.addTaskComment(selectedTask.id, commentText);
-            setComments([newComment, ...comments]);
-            setCommentText("");
-        } catch (e: any) {
-            toast.error("Failed to send comment");
-        } finally {
-            setIsSendingComment(false);
-        }
+        if (commentText.trim()) commentMutation.mutate(commentText);
     };
 
     const handleClockIn = async () => {
-        if (!selectedTask) return;
-        setIsClockingIn(true);
-        try {
-            await timesheetService.clockIn({ project_id: selectedTask.project_id, task_id: selectedTask.id });
-            toast.success("Clocked in successfully");
-            setDialogOpen(false);
-        } catch (e: any) {
-            toast.error(e.message || "Failed to clock in");
-        } finally {
-            setIsClockingIn(false);
-        }
+        clockInMutation.mutate();
     };
 
     return (
         <div className="flex flex-col w-full h-full min-h-0">
             {activeTab === "Kanban" && (
-                <KanbanView tasks={tasks} members={members} setTasks={setTasks} onTaskClick={handleTaskClick} />
+                <KanbanView projectId={String(project.id)} tasks={tasks} members={members} onTaskClick={handleTaskClick} />
             )}
             {activeTab === "List" && (
                 <ListView tasks={tasks} members={members} onTaskClick={handleTaskClick} />
@@ -129,23 +132,23 @@ export function TaskViewsContainer({ activeTab, project, tasks, members, setTask
                 isOpen={dialogOpen}
                 onClose={setDialogOpen}
                 selectedTask={selectedTask}
-                taskLogs={taskLogs}
+                taskLogs={taskLogs as any}
                 isLoadingLogs={isLoadingLogs}
                 canManageTask={false}
                 onEdit={() => {}}
                 onDelete={() => {}}
                 statusConfig={statusConfig}
-                comments={comments}
-                auditLogs={auditLogs}
-                reporter={selectedReporter}
+                comments={comments as any}
+                auditLogs={auditLogs as any}
+                reporter={reporter}
                 commentText={commentText}
                 setCommentText={setCommentText}
                 onSendComment={handleSendComment}
-                isSendingComment={isSendingComment}
+                isSendingComment={commentMutation.isPending}
                 isLoadingActivities={isLoadingActivities}
                 onClockIn={handleClockIn}
-                isClockingIn={isClockingIn}
-                getProjectName={getProjectName}
+                isClockingIn={clockInMutation.isPending}
+                getProjectName={() => project.name}
                 currentUser={currentUser}
                 formatDateTime={(dateStr) => dateStr ? format(new Date(dateStr), "dd MMM yyyy, HH:mm") : "-"}
             />

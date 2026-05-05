@@ -34,7 +34,6 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
                 { label: "Projects", href: "/employee/projects", icon: FolderKanban },
                 { label: "Timesheet", href: "/employee/timesheet", icon: FileText },
                 { label: "Earnings", href: "/employee/earnings", icon: DollarSign },
-                { label: "History", href: "/employee/history", icon: History },
             ]
         }
     ],

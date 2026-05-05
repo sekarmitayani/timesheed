@@ -1,80 +1,84 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/useAuthStore";
 import { taskService, ApiTask, TaskAuditLog } from "@/lib/services/task-service";
-import { timesheetService, TimesheetLog } from "@/lib/services/timesheet-service";
+import { timesheetService } from "@/lib/services/timesheet-service";
 import { projectService } from "@/lib/services/project-service";
 import { ApiProject } from "@/lib/types";
-import { toast } from "sonner";
 
 export function useDashboardData() {
     const user = useAuthStore((s) => s.user);
-    const [isLoading, setIsLoading] = useState(true);
-    const [projects, setProjects] = useState<ApiProject[]>([]);
-    const [tasks, setTasks] = useState<ApiTask[]>([]);
-    const [timesheets, setTimesheets] = useState<TimesheetLog[]>([]);
-    const [auditLogs, setAuditLogs] = useState<TaskAuditLog[]>([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                // Fetch projects first
-                const projectsRes = await projectService.getProjects(1, 100);
-                const projectList = projectsRes.data || [];
-                setProjects(projectList);
+    // 1. Fetch Projects
+    const { data: projectsData, isLoading: isLoadingProjects } = useQuery({
+        queryKey: ['employee', 'projects'],
+        queryFn: () => projectService.getProjects(1, 100),
+    });
+    const projects: ApiProject[] = projectsData?.data || [];
+    const hasProjects = projects.length > 0;
 
-                // Fetch tasks for all projects where I am assigned
-                const tasksPromises = projectList.map(p => taskService.getProjectTasks(String(p.id), true).catch(() => []));
-                const membersPromises = projectList.map(p => projectService.getProjectMembers(String(p.id)).catch(() => []));
-                
-                const [tasksResults, membersResults] = await Promise.all([
-                    Promise.all(tasksPromises),
-                    Promise.all(membersPromises)
-                ]);
+    // 2. Fetch Tasks & Members for all projects
+    const { data: tasksData, isLoading: isLoadingTasks } = useQuery({
+        queryKey: ['employee', 'tasks', projects.map((p: ApiProject) => p.id)],
+        queryFn: async () => {
+            const tasksPromises = projects.map((p: ApiProject) => taskService.getProjectTasks(String(p.id), true).catch(() => []));
+            const results = await Promise.all(tasksPromises);
+            return results.flat() as ApiTask[];
+        },
+        enabled: hasProjects,
+    });
+    const tasks: ApiTask[] = tasksData || [];
 
-                const allTasks = tasksResults.flat();
-                setTasks(allTasks);
+    const { data: membersData, isLoading: isLoadingMembers } = useQuery({
+        queryKey: ['employee', 'members', projects.map((p: ApiProject) => p.id)],
+        queryFn: async () => {
+            const membersPromises = projects.map((p: ApiProject) => projectService.getProjectMembers(String(p.id)).catch(() => []));
+            const results = await Promise.all(membersPromises);
+            return results.flat();
+        },
+        enabled: hasProjects,
+    });
+    const allMembers: any[] = membersData || [];
 
-                // Flatten members to use as a user cache
-                const allMembers = membersResults.flat();
+    // 3. Fetch Timesheets
+    const { data: timesheetsData, isLoading: isLoadingTimesheets } = useQuery({
+        queryKey: ['employee', 'timesheets'],
+        queryFn: () => timesheetService.getMyLogs(),
+    });
+    const timesheets = timesheetsData || [];
 
-                // Fetch my timesheet logs
-                const logs = await timesheetService.getMyLogs();
-                setTimesheets(logs);
+    // 4. Fetch Audit Logs for top priority tasks
+    const topTasks = useMemo(() => {
+        return [...tasks]
+            .sort((a, b) => new Date(b.updated_at || "").getTime() - new Date(a.updated_at || "").getTime())
+            .slice(0, 10);
+    }, [tasks]);
 
-                // Fetch audit logs for priority tasks to show activity
-                const topTasks = [...allTasks]
-                    .sort((a, b) => new Date(b.updated_at || "").getTime() - new Date(a.updated_at || "").getTime())
-                    .slice(0, 10);
-                
-                const auditPromises = topTasks.map(t => taskService.getTaskLogs(t.id).catch(() => []));
-                const auditResults = await Promise.all(auditPromises);
-                
-                // Enrich audits with user names from the members cache
-                const flattenedAudits = auditResults.flat().map((log: TaskAuditLog) => {
-                    if (!log.user) {
-                        const member = allMembers.find(m => m.user_id === log.user_id);
-                        if (member?.user) {
-                            return { ...log, user: { full_name: member.user.full_name } };
-                        }
+    const { data: auditLogsData, isLoading: isLoadingAudit } = useQuery({
+        queryKey: ['employee', 'auditLogs', topTasks.map((t: ApiTask) => t.id)],
+        queryFn: async () => {
+            if (topTasks.length === 0) return [];
+            const auditPromises = topTasks.map((t: ApiTask) => taskService.getTaskLogs(t.id).catch(() => []));
+            const results = await Promise.all(auditPromises);
+            
+            const flattened = results.flat().map((log: TaskAuditLog) => {
+                if (!log.user) {
+                    const member = allMembers.find((m: any) => m.user_id === log.user_id);
+                    if (member?.user) {
+                        return { ...log, user: { full_name: member.user.full_name } };
                     }
-                    return log;
-                });
+                }
+                return log;
+            });
+            return flattened as TaskAuditLog[];
+        },
+        enabled: topTasks.length > 0 && !!allMembers.length,
+    });
+    const auditLogs = auditLogsData || [];
 
-                setAuditLogs(flattenedAudits as TaskAuditLog[]);
+    const isLoading = isLoadingProjects || isLoadingTasks || isLoadingMembers || isLoadingTimesheets || isLoadingAudit;
 
-            } catch (error) {
-                console.error("Dashboard fetch error:", error);
-                toast.error("Failed to load real dashboard data");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    const todoCount = useMemo(() => tasks.filter((t) => t.status === "todo").length, [tasks]);
+    const todoCount = useMemo(() => tasks.filter((t: ApiTask) => t.status === "todo").length, [tasks]);
 
     return {
         state: {

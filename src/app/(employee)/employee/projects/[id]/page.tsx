@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loader2, ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { projectService } from "@/lib/services/project-service";
-import { taskService, ApiTask } from "@/lib/services/task-service";
+import { taskService } from "@/lib/services/task-service";
 import { ApiProject, ProjectMember } from "@/lib/types";
 
 import { ProjectHeader } from "./components/ProjectHeader";
@@ -19,37 +19,30 @@ export default function ProjectDetailPage() {
     const router = useRouter();
     const projectId = params.id as string;
 
-    const [project, setProject] = useState<ApiProject | null>(null);
-    const [members, setMembers] = useState<ProjectMember[]>([]);
-    const [tasks, setTasks] = useState<ApiTask[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("Overview");
 
-    useEffect(() => {
-        if (!projectId) return;
+    // 1. Project Detail Query
+    const { data: project, isLoading: isLoadingProject } = useQuery({
+        queryKey: ['project', projectId],
+        queryFn: () => projectService.getProjectById(projectId),
+        enabled: !!projectId,
+    });
 
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                const [projRes, memRes, taskRes] = await Promise.all([
-                    projectService.getProjectById(projectId),
-                    projectService.getProjectMembers(projectId).catch(() => []),
-                    taskService.getProjectTasks(projectId, true).catch(() => []),
-                ]);
+    // 2. Members Query
+    const { data: members = [], isLoading: isLoadingMembers } = useQuery({
+        queryKey: ['project', projectId, 'members'],
+        queryFn: () => projectService.getProjectMembers(projectId),
+        enabled: !!projectId,
+    });
 
-                setProject(projRes);
-                setMembers(Array.isArray(memRes) ? memRes : []);
-                setTasks(Array.isArray(taskRes) ? taskRes : []);
-            } catch (error: any) {
-                toast.error("Failed to load project details");
-                router.push("/employee/projects");
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    // 3. Tasks Query
+    const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({
+        queryKey: ['project', projectId, 'tasks'],
+        queryFn: () => taskService.getProjectTasks(projectId, true),
+        enabled: !!projectId,
+    });
 
-        fetchData();
-    }, [projectId, router]);
+    const isLoading = isLoadingProject || isLoadingMembers || isLoadingTasks;
 
     if (isLoading) {
         return (
@@ -67,7 +60,6 @@ export default function ProjectDetailPage() {
         <div className={`flex flex-col w-full overflow-hidden ${isCalendarActive ? "h-[calc(100vh-40px)]" : "h-[calc(100vh-100px)]"}`}>
             {isCalendarActive ? (
                 <>
-                    {/* Calendar: header outside scroll so CalendarView gets its own scroll context */}
                     <div className="shrink-0 w-full px-2">
                         <div className="flex items-center mb-4 px-1">
                             <Button 
@@ -92,7 +84,6 @@ export default function ProjectDetailPage() {
                             project={project}
                             tasks={tasks}
                             members={members}
-                            setTasks={setTasks}
                         />
                     </div>
                 </>
@@ -131,7 +122,6 @@ export default function ProjectDetailPage() {
                                 project={project}
                                 tasks={tasks}
                                 members={members}
-                                setTasks={setTasks}
                             />
                         )}
 
@@ -144,4 +134,3 @@ export default function ProjectDetailPage() {
         </div>
     );
 }
-

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionExpiryDialog } from "@/components/layout/SessionExpiryDialog";
+import QueryProvider from "@/components/providers/query-provider";
 
 export const metadata: Metadata = {
   title: "Haerarchy – Enterprise Project Management",
@@ -17,10 +18,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:wght@500&display=swap" rel="stylesheet" />
       </head>
       <body className={`font-sans antialiased custom-scrollbar overflow-x-hidden`}>
-        {children}
+        <QueryProvider>
+          {children}
+        </QueryProvider>
         <SessionExpiryDialog />
         <Toaster />
       </body>
     </html>
   );
 }
+

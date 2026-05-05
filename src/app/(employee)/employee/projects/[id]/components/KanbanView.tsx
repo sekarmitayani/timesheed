@@ -11,11 +11,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Circle, PlayCircle, CheckCircle2, Clock, Calendar as CalendarIcon, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface KanbanViewProps {
+    projectId: string;
     tasks: ApiTask[];
     members: ProjectMember[];
-    setTasks: React.Dispatch<React.SetStateAction<ApiTask[]>>;
     onTaskClick: (task: ApiTask) => void;
 }
 
@@ -25,7 +26,9 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; i
     done: { label: "Done", color: "text-emerald-600", bg: "bg-emerald-50", icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
 };
 
-export function KanbanView({ tasks, members, setTasks, onTaskClick }: KanbanViewProps) {
+export function KanbanView({ projectId, tasks, members, onTaskClick }: KanbanViewProps) {
+    const queryClient = useQueryClient();
+
     const grouped = useMemo(() => {
         const g: Record<string, ApiTask[]> = { todo: [], in_progress: [], done: [] };
         tasks.forEach(t => {
@@ -41,24 +44,38 @@ export function KanbanView({ tasks, members, setTasks, onTaskClick }: KanbanView
         return `User #${task.created_by_id}`;
     };
 
-    const onDragEnd = async (result: DropResult) => {
-        const { destination, source, draggableId } = result;
-        if (!destination) return;
-        if (destination.droppableId === source.droppableId) return;
-
-        const taskId = Number(draggableId);
-        const newStatus = destination.droppableId as "todo" | "in_progress" | "done";
-        
-        // Optimistic UI update
-        const updatedTasks = tasks.map(t => t.id === taskId ? { ...t, status: newStatus } : t);
-        setTasks(updatedTasks);
-
-        try {
-            await taskService.updateTaskStatus(taskId, { status: newStatus });
-            toast.success("Task status updated");
-        } catch (e: any) {
+    const updateStatusMutation = useMutation({
+        mutationFn: ({ taskId, status }: { taskId: number, status: string }) => 
+            taskService.updateTaskStatus(taskId, { status: status as any }),
+        onMutate: async ({ taskId, status }) => {
+            await queryClient.cancelQueries({ queryKey: ['project', projectId, 'tasks'] });
+            const previousTasks = queryClient.getQueryData(['project', projectId, 'tasks']);
+            
+            queryClient.setQueryData(['project', projectId, 'tasks'], (old: ApiTask[] | undefined) => {
+                if (!old) return [];
+                return old.map(t => t.id === taskId ? { ...t, status: status as any } : t);
+            });
+            
+            return { previousTasks };
+        },
+        onError: (err, variables, context) => {
+            if (context?.previousTasks) {
+                queryClient.setQueryData(['project', projectId, 'tasks'], context.previousTasks);
+            }
             toast.error("Failed to update task status");
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['project', projectId, 'tasks'] });
+        },
+        onSuccess: () => {
+            toast.success("Task status updated");
         }
+    });
+
+    const onDragEnd = (result: DropResult) => {
+        const { destination, source, draggableId } = result;
+        if (!destination || destination.droppableId === source.droppableId) return;
+        updateStatusMutation.mutate({ taskId: Number(draggableId), status: destination.droppableId });
     };
 
     return (
@@ -67,7 +84,7 @@ export function KanbanView({ tasks, members, setTasks, onTaskClick }: KanbanView
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {(["todo", "in_progress", "done"] as const).map(col => {
                         const cfg = statusConfig[col];
-                        const items = grouped[col];
+                        const items = grouped[col] || [];
                         return (
                             <div key={col} className="flex flex-col space-y-4 bg-slate-50/80 p-4 rounded-md border border-slate-100 min-h-[600px]">
                                 <div className="flex items-center justify-between px-1">
