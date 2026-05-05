@@ -1,0 +1,125 @@
+"use client";
+
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Building2, Users, ChevronRight, DollarSign, Eye, Trash2, AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { AdminProjectCardData } from "../hooks/useAdminProjectsData";
+import { useRouter } from "next/navigation";
+
+export const statusConfig: Record<string, { label: string; bg: string; text: string; accent: string }> = {
+    active: { label: "Active", bg: "bg-emerald-50/50", text: "text-emerald-700", accent: "bg-emerald-500" },
+    completed: { label: "Completed", bg: "bg-blue-50/50", text: "text-blue-700", accent: "bg-blue-500" },
+    "on-hold": { label: "On Hold", bg: "bg-amber-50/50", text: "text-amber-700", accent: "bg-amber-500" },
+    cancelled: { label: "Cancelled", bg: "bg-red-50/50", text: "text-red-700", accent: "bg-red-500" },
+};
+
+const getInitials = (name: string) => {
+    return (name || "?")
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+};
+
+const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
+};
+
+interface AdminProjectCardProps {
+    data: AdminProjectCardData;
+    onDelete: (p: any) => void;
+}
+
+export function AdminProjectCard({ data, onDelete }: AdminProjectCardProps) {
+    const router = useRouter();
+    const { project, members } = data;
+    const status = statusConfig[project.status] || statusConfig.active;
+    
+    const visibleMembers = members.slice(0, 3);
+    const extraCount = Math.max(0, members.length - 3);
+
+    const isOverThreshold = project.actual_cost && project.budget_cost_threshold && project.actual_cost > project.budget_cost_threshold;
+
+    return (
+        <Card
+            onClick={() => router.push(`/admin/projects/${project.id}`)}
+            className="group border-[#E2E8F0] bg-white rounded-[8px] shadow-sm overflow-hidden transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/50 cursor-pointer"
+        >
+            <CardContent className="p-0">
+                {/* Top accent bar */}
+                <div className={cn("h-[3px] w-full", status.accent)} />
+
+                {/* Top Row: Project Info */}
+                <div className="flex items-start gap-3 p-4 pb-3">
+                    <div className="flex-1 min-w-0">
+                        <h3 className="text-[15px] font-bold text-[#0f172a] truncate mb-1 group-hover:text-[#4B7BEC] transition-colors">
+                            {project.name}
+                        </h3>
+                        <div className="flex items-center gap-1.5">
+                            <Building2 className="h-3 w-3 text-slate-400 shrink-0" />
+                            <span className="text-[11px] text-muted-foreground font-medium truncate">
+                                {project.client_name}
+                            </span>
+                        </div>
+                    </div>
+                    <Badge className={cn("px-2 py-0.5 rounded-full border-none text-[10px] font-bold shrink-0", status.bg, status.text)}>
+                        {status.label}
+                    </Badge>
+                </div>
+
+                {/* Financial Summary */}
+                <div className="px-4 py-3 bg-slate-50/50 border-y border-slate-100 grid grid-cols-2 gap-y-3">
+                    <div className="flex flex-col gap-0.5">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Revenue</span>
+                        <span className="text-xs font-bold text-slate-700">{formatCurrency(project.budget_revenue || 0)}</span>
+                    </div>
+                    <div className="flex flex-col gap-0.5 items-end">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Actual Cost</span>
+                        <div className="flex items-center gap-1">
+                            <span className={cn("text-xs font-bold", isOverThreshold ? "text-red-600" : "text-slate-700")}>
+                                {formatCurrency(project.actual_cost || 0)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Bottom Row: Members & Actions */}
+                <div className="flex items-center justify-between p-4 pt-3">
+                    <div className="flex items-center -space-x-2">
+                        {visibleMembers.map((member) => (
+                            <Avatar key={member.id} className="h-7 w-7 border-2 border-white shadow-sm">
+                                <AvatarFallback className="text-[9px] font-bold bg-slate-100 text-slate-600">
+                                    {getInitials(member.user?.full_name)}
+                                </AvatarFallback>
+                            </Avatar>
+                        ))}
+                        {extraCount > 0 && (
+                            <div className="h-7 w-7 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center z-10">
+                                <span className="text-[9px] font-bold text-slate-500">+{extraCount}</span>
+                            </div>
+                        )}
+                        {members.length === 0 && (
+                            <span className="text-[10px] text-slate-400 font-medium italic">No members</span>
+                        )}
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full"
+                            onClick={(e) => { e.stopPropagation(); onDelete(project); }}
+                            title="Delete Project"
+                        >
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
