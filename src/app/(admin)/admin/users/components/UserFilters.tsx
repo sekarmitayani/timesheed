@@ -24,20 +24,19 @@ export function UserFilters({
     limit, setLimit, setPage
 }: UserFiltersProps) {
     return (
-        <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-3 w-full">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-1">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                 <div className="relative w-full sm:w-[250px] shrink-0">
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search Users..."
-                        className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#2568C1]"
+                        className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
                 </div>
 
-                <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 w-full sm:w-auto">
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
                         <SelectTrigger className="h-10 w-full sm:w-[130px] bg-white">
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
@@ -84,7 +83,6 @@ export function UserFilters({
                             <SelectItem value="100">100</SelectItem>
                         </SelectContent>
                     </Select>
-                </div>
             </div>
         </div>
     );

@@ -25,18 +25,17 @@ export function UsersTable({
     const totalPages = Math.ceil(pagination.total / pagination.limit);
 
     return (
-        <Card className="border-[#e2e8f0] shadow-sm overflow-hidden">
-            <CardContent className="p-0">
-                <div className="overflow-x-auto">
+        <div className="bg-white border border-[#e2e8f0] rounded-lg shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
                     <Table>
                         <TableHeader>
-                            <TableRow className="hover:bg-transparent">
+                            <TableRow className="hover:bg-transparent bg-slate-50/50">
                                 <TableHead className="pl-6 w-12 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
                                 <TableHead className="w-[280px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">User</TableHead>
                                 <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Role & Access</TableHead>
                                 <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Type</TableHead>
                                 <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Status</TableHead>
-                                <TableHead className="w-[140px] pr-10 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actions</TableHead>
+                                <TableHead className="w-[140px] pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -125,7 +124,6 @@ export function UsersTable({
                         </TableBody>
                     </Table>
                 </div>
-            </CardContent>
 
             {!isLoading && totalPages > 0 && (
                 <div className="border-t border-[#e2e8f0] bg-white px-4 py-3 flex items-center justify-between">
@@ -158,6 +156,6 @@ export function UsersTable({
                     </div>
                 </div>
             )}
-        </Card>
+        </div>
     );
 }

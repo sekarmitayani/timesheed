@@ -18,18 +18,18 @@ export function AdminProjectFilters({
     filteredCount
 }: AdminProjectFiltersProps) {
     return (
-        <div className="flex flex-wrap items-center gap-3 shrink-0">
-            <div className="relative flex-1 min-w-[200px] max-w-[360px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <div className="flex flex-wrap items-center gap-3 shrink-0 pt-1 pl-1">
+            <div className="relative w-full sm:w-[250px] shrink-0">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                     placeholder="Search by project or client..."
+                    className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="pl-9 h-9 text-xs border-[#E2E8F0] rounded-[6px] bg-white shadow-none focus-visible:ring-[#2568C1]"
                 />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[150px] h-9 text-xs border-[#E2E8F0] rounded-[6px] bg-white shadow-none">
+                <SelectTrigger className="w-[150px] h-10 text-xs border-[#E2E8F0] rounded-[6px] bg-white shadow-none">
                     <SelectValue placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent>
