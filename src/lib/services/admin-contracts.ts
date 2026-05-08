@@ -74,7 +74,46 @@ export interface ContractSummary {
     status: "Pending" | "PartiallyPaid" | "Paid";
 }
 
+export interface MonthlyBreakdownItem {
+    month: number;
+    year: number;
+    period_name: string;
+    earned: number;
+    paid: number;
+    status: "pending" | "paid" | "partially_paid";
+}
+
+export interface GetPaymentsResponse {
+    message: string;
+    data: ContractPayment[];
+    monthly_breakdown?: MonthlyBreakdownItem[];
+    contract_summary?: ContractSummary;
+}
+
+export interface PayrollSummaryItem {
+    id: number;
+    user_id: number;
+    full_name: string;
+    contract_type: "yearly" | "monthly" | "mandays" | "timesheet" | "hourly";
+    payment_scheme: PaymentScheme;
+    base_rate: number;
+    calculated_target: number;
+    total_paid: number;
+    payment_status: "pending" | "paid" | "partially_paid";
+    project_name: string;
+}
+
 export const adminContractService = {
+    /**
+     * Get global payroll summary
+     */
+    async getPayrollSummary(month?: number, year?: number): Promise<{ message: string; data: PayrollSummaryItem[] }> {
+        const query = month && year ? `?month=${month}&year=${year}` : "";
+        return fetchApi(`/admin/payroll/summary${query}`, {
+            method: "GET",
+        });
+    },
+
     /**
      * Get all contracts for a specific user
      */
@@ -119,7 +158,7 @@ export const adminContractService = {
      * Add a payment to a contract
      */
     async addPayment(contractId: number | string, payload: CreatePaymentPayload): Promise<{ message: string; data: ContractPayment; contract_summary: ContractSummary }> {
-        return fetchApi(`/contracts/${contractId}/payment`, {
+        return fetchApi(`/admin/contracts/${contractId}/payments`, {
             method: "POST",
             body: JSON.stringify(payload),
         });
@@ -128,8 +167,8 @@ export const adminContractService = {
     /**
      * Get all payments for a contract
      */
-    async getPayments(contractId: number | string): Promise<ContractPayment[]> {
-        return fetchApi(`/contracts/${contractId}/payments`, {
+    async getPayments(contractId: number | string): Promise<GetPaymentsResponse> {
+        return fetchApi(`/admin/contracts/${contractId}/payments`, {
             method: "GET",
         });
     },
@@ -138,7 +177,7 @@ export const adminContractService = {
      * Edit a specific payment
      */
     async updatePayment(paymentId: number | string, payload: UpdatePaymentPayload): Promise<{ message: string; data: ContractPayment }> {
-        return fetchApi(`/contract-payments/${paymentId}`, {
+        return fetchApi(`/admin/payments/${paymentId}`, {
             method: "PUT",
             body: JSON.stringify(payload),
         });
@@ -148,7 +187,7 @@ export const adminContractService = {
      * Delete a specific payment
      */
     async deletePayment(paymentId: number | string): Promise<{ message: string }> {
-        return fetchApi(`/contract-payments/${paymentId}`, {
+        return fetchApi(`/admin/payments/${paymentId}`, {
             method: "DELETE",
         });
     },
