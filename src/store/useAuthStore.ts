@@ -113,7 +113,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     },
     exitImpersonation: async () => {
         try {
-            await fetchApi("/admin/proxy-logout", { method: "POST" });
+            const adminToken = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+            const headers: Record<string, string> = {};
+            if (adminToken) {
+                headers["Authorization"] = `Bearer ${adminToken}`;
+            }
+
+            await fetchApi("/admin/proxy-logout", { 
+                method: "POST",
+                headers 
+            });
         } catch (e) {
             console.error("Proxy logout failed:", e);
         }

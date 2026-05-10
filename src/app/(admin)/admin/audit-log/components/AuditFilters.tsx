@@ -60,7 +60,7 @@ export function AuditFilters({
                         <SelectItem value="LOGIN">LOGIN</SelectItem>
                         <SelectItem value="LOGOUT">LOGOUT</SelectItem>
                         <SelectItem value="LOGIN_AS_PROXY">PROXY LOGIN</SelectItem>
-                        <SelectItem value="PROXY_LOGOUT">PROXY LOGOUT</SelectItem>
+                        <SelectItem value="LOGOUT_PROXY">PROXY LOGOUT</SelectItem>
                     </SelectContent>
                 </Select>
 

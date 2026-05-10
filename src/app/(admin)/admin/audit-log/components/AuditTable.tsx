@@ -34,7 +34,7 @@ const actionDotColors: Record<string, string> = {
     LOGIN: "bg-slate-500",
     LOGOUT: "bg-orange-500",
     LOGIN_AS_PROXY: "bg-indigo-500",
-    PROXY_LOGOUT: "bg-purple-500",
+    LOGOUT_PROXY: "bg-purple-500",
 };
 
 export function AuditTable({
