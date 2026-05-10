@@ -50,7 +50,7 @@ export function RecentActivityCard({ auditLogs, tasks, projects, currentUser, cl
                             const config = getActionConfig(log.action);
                             const task = tasks.find(t => t.id === log.record_id);
                             const project = task ? projects.find(p => p.id === task.project_id) : null;
-                            const userName = log.user?.full_name || (log.user_id === currentUser?.id ? "You" : `User #${log.user_id}`);
+                            const userName = log.user?.full_name || (String(log.user_id) === String(currentUser?.id) ? "You" : `User #${log.user_id}`);
                             
                             return (
                                 <div key={log.id} className="relative flex items-start gap-3">

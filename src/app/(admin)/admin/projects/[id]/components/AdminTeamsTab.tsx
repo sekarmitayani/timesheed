@@ -61,7 +61,7 @@ export function AdminTeamsTab({
                         <CardContent className="p-5 flex items-center gap-4">
                             <Avatar className="h-11 w-11 border border-slate-100 shadow-sm">
                                 <AvatarFallback className="text-xs font-bold bg-slate-50 text-slate-600">
-                                    {getInitials(member.user?.full_name)}
+                                    {getInitials(member.user?.full_name || "")}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">

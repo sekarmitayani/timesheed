@@ -98,9 +98,9 @@ export function useAdminProjectDetailData(projectId: string) {
             const paymentsResults = await Promise.all(paymentPromises);
 
             paymentsResults.forEach(res => {
-                if (!res) return;
+                if (!res || !res.pays.data) return;
                 const member = members.find((m: any) => m.user_id === res.contract.user_id);
-                res.pays.forEach(p => {
+                res.pays.data.forEach((p: any) => {
                     let d = p.paid_at || p.created_at || "";
                     if (d.includes("T")) d = d.split("T")[0];
                     allCosts.push({
@@ -332,7 +332,7 @@ export function useAdminProjectDetailData(projectId: string) {
         actions: {
             setActiveTab, setTeamSearch, setCostFilterType, setCostFilterStart, setCostFilterEnd, setResSearch, setResFilterStatus, setResFilterType,
             setEditOpen, setAssignOpen, setResDetailOpen, setResCreateOpen, setDeleteConfirmOpen, setZeroConfirmOpen, setResEditMode,
-            setEditForm, setResCreateForm, setResEditForm, setSelectedRes,
+            setEditForm, setAssignForm, setResCreateForm, setResEditForm, setSelectedRes,
             openEditProject, openAssignMember, openResDetail,
             handleSaveEditProject, handleAssignSave, handleRemoveMember: (id: number) => removeMemberMutation.mutate(id),
             handleCreateRes: () => createResourceMutation.mutate({ project_id: Number(projectId), type: resCreateForm.type, details: resCreateForm.details }),

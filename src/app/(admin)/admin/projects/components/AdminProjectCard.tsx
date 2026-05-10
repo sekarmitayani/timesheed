@@ -93,7 +93,7 @@ export function AdminProjectCard({ data, onDelete }: AdminProjectCardProps) {
                         {visibleMembers.map((member) => (
                             <Avatar key={member.id} className="h-7 w-7 border-2 border-white shadow-sm">
                                 <AvatarFallback className="text-[9px] font-bold bg-slate-100 text-slate-600">
-                                    {getInitials(member.user?.full_name)}
+                                    {getInitials(member.user?.full_name || "")}
                                 </AvatarFallback>
                             </Avatar>
                         ))}
