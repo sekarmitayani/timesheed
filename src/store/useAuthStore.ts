@@ -111,7 +111,13 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
         set({ user: apiUser, isAuthenticated: true, isImpersonating: true });
     },
-    exitImpersonation: () => {
+    exitImpersonation: async () => {
+        try {
+            await fetchApi("/admin/proxy-logout", { method: "POST" });
+        } catch (e) {
+            console.error("Proxy logout failed:", e);
+        }
+
         if (typeof window !== "undefined") {
             const adminToken = localStorage.getItem("admin_token");
             const adminUser = localStorage.getItem("admin_user");
@@ -128,7 +134,13 @@ export const useAuthStore = create<AuthState>((set) => ({
             }
         }
     },
-    logout: () => {
+    logout: async () => {
+        try {
+            await fetchApi("/auth/logout", { method: "POST" });
+        } catch (e) {
+            console.error("Logout failed:", e);
+        }
+
         if (typeof window !== "undefined") {
             localStorage.removeItem("token");
             localStorage.removeItem("user");
