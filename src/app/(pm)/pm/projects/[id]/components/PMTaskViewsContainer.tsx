@@ -145,18 +145,6 @@ export function PMTaskViewsContainer({
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
-
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="h-10 w-[140px] text-xs bg-white border-slate-200 rounded-[6px] shadow-none">
-                            <SelectValue placeholder="All Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">All Status</SelectItem>
-                            <SelectItem value="todo">To Do</SelectItem>
-                            <SelectItem value="in_progress">In Progress</SelectItem>
-                            <SelectItem value="done">Done</SelectItem>
-                        </SelectContent>
-                    </Select>
                 </div>
 
                 <Button size="sm" className="h-10 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] font-bold px-4 rounded-[6px]" onClick={onCreate}>
@@ -170,7 +158,7 @@ export function PMTaskViewsContainer({
                     <PMTaskKanbanView projectId={String(project.id)} tasks={tasks} members={members} onTaskClick={handleTaskClick} onEdit={onEdit} onDelete={onDelete} />
                 )}
                 {activeTab === "List" && (
-                    <PMTaskListView tasks={filteredTasks} members={members} onTaskClick={handleTaskClick} onEdit={onEdit} onDelete={onDelete} statusConfig={statusConfig} currentUser={currentUser} />
+                    <PMTaskListView tasks={filteredTasks} members={members} onTaskClick={handleTaskClick} statusConfig={statusConfig} currentUser={currentUser} />
                 )}
                 {activeTab === "Calendar" && (
                     <PMTaskCalendarView tasks={tasks} onTaskClick={handleTaskClick} />

@@ -73,8 +73,8 @@ export default function AdminProjectDetailPage() {
             </div>
 
             {/* Content Area (Scrollable) */}
-            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 pb-6">
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 pb-6 pt-1">
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 mt-2">
                     {state.activeTab === "Overview" && (
                         <AdminOverviewTab
                             project={state.project}

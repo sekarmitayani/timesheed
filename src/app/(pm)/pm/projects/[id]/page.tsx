@@ -69,10 +69,10 @@ export default function PMProjectDetailPage() {
 
             {/* Main Content Area */}
             <div className={cn(
-                "flex-1 min-h-0",
+                "flex-1 min-h-0 pt-1",
                 isFixedView ? "overflow-hidden flex flex-col" : "overflow-y-auto custom-scrollbar pb-6"
             )}>
-                <div className={cn("animate-in fade-in slide-in-from-bottom-2 duration-500", isFixedView && "flex-1 flex flex-col min-h-0")}>
+                <div className={cn("animate-in fade-in slide-in-from-bottom-2 duration-500 mt-2", isFixedView && "flex-1 flex flex-col min-h-0")}>
                     {state.activeTab === "Overview" && (
                         <PMOverviewTab
                             project={state.project}

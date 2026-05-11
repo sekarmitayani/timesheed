@@ -78,19 +78,21 @@ export default function ProjectDetailPage() {
                             setActiveTab={setActiveTab} 
                         />
                     </div>
-                    <div className="flex-1 min-h-0 w-full px-2 pb-4">
-                        <TaskViewsContainer
-                            activeTab={activeTab}
-                            project={project}
-                            tasks={tasks}
-                            members={members}
-                        />
+                    <div className="flex-1 min-h-0 w-full px-2 pb-4 pt-1">
+                        <div className="h-full flex flex-col mt-2">
+                            <TaskViewsContainer
+                                activeTab={activeTab}
+                                project={project}
+                                tasks={tasks}
+                                members={members}
+                            />
+                        </div>
                     </div>
                 </>
             ) : (
-                <div className="flex-1 overflow-y-auto custom-scrollbar pb-10">
+                <div className="flex-1 overflow-y-auto custom-scrollbar pb-10 pt-1">
                     <div className="w-full px-2">
-                        <div className="flex items-center mb-4 px-1">
+                        <div className="flex items-center mb-4 px-1 mt-1">
                             <Button 
                                 variant="ghost" 
                                 className="h-8 gap-2 text-slate-500 hover:text-slate-800 px-2"
@@ -108,26 +110,28 @@ export default function ProjectDetailPage() {
                             setActiveTab={setActiveTab} 
                         />
 
-                        {activeTab === "Overview" && (
-                            <OverviewTab 
-                                project={project} 
-                                members={members} 
-                                tasks={tasks} 
-                            />
-                        )}
+                        <div className="mt-2">
+                            {activeTab === "Overview" && (
+                                <OverviewTab 
+                                    project={project} 
+                                    members={members} 
+                                    tasks={tasks} 
+                                />
+                            )}
 
-                        {["Kanban", "List"].includes(activeTab) && (
-                            <TaskViewsContainer
-                                activeTab={activeTab}
-                                project={project}
-                                tasks={tasks}
-                                members={members}
-                            />
-                        )}
+                            {["Kanban", "List"].includes(activeTab) && (
+                                <TaskViewsContainer
+                                    activeTab={activeTab}
+                                    project={project}
+                                    tasks={tasks}
+                                    members={members}
+                                />
+                            )}
 
-                        {activeTab === "Teams" && (
-                            <TeamsTab members={members} />
-                        )}
+                            {activeTab === "Teams" && (
+                                <TeamsTab members={members} />
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

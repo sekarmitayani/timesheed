@@ -28,15 +28,22 @@ export function PMTaskListView({
         return g;
     }, [tasks]);
 
-    const getMemberName = (userId: number) => {
-        const member = members.find(m => m.user_id === userId || m.user?.id === userId);
+    const getReporterName = (task: ApiTask) => {
+        const member = members.find(m => m.user_id === task.created_by_id);
         if (member?.user) return member.user.full_name;
-        if (userId === Number(currentUser?.id)) return currentUser?.full_name || "You";
-        return `User #${userId}`;
+        if (task.created_by_id === Number(currentUser?.id)) return currentUser?.full_name || "Self";
+        return `User #${task.created_by_id}`;
+    };
+
+    const getAssigneeName = (task: ApiTask) => {
+        const member = members.find(m => m.user_id === task.assigned_to_id);
+        if (member?.user) return member.user.full_name;
+        if (task.assigned_to_id === Number(currentUser?.id)) return currentUser?.full_name || "Self";
+        return "Unassigned";
     };
 
     return (
-        <div className="flex-1 overflow-y-auto pr-1 pb-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar pb-10">
             <div className="space-y-10">
                 {(["todo", "in_progress", "done"] as const).map(status => (
                     <div key={status} className="space-y-4">
@@ -63,7 +70,7 @@ export function PMTaskListView({
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {!grouped[status] || grouped[status].length === 0 ? (
+                                    {grouped[status].length === 0 ? (
                                         <TableRow>
                                             <TableCell colSpan={5} className="h-20 text-center text-slate-300 text-[10px] font-bold uppercase tracking-widest">
                                                 No tasks in this stage
@@ -71,8 +78,8 @@ export function PMTaskListView({
                                         </TableRow>
                                     ) : (
                                         grouped[status].map(task => {
-                                            const reporterName = getMemberName(task.created_by_id);
-                                            const assigneeName = getMemberName(task.assigned_to_id);
+                                            const reporterName = getReporterName(task);
+                                            const assigneeName = getAssigneeName(task);
                                             return (
                                                 <TableRow key={task.id} className="cursor-pointer hover:bg-slate-50/80 group border-b border-slate-50 last:border-0" onClick={() => onTaskClick(task)}>
                                                     <TableCell className="px-6 py-4">
@@ -93,7 +100,7 @@ export function PMTaskListView({
                                                     </TableCell>
                                                     <TableCell className="px-4 py-4">
                                                         <div className="flex items-center gap-2">
-                                                            <Avatar className="h-6 w-6 rounded-full border border-[#4B7BEC]/10">
+                                                            <Avatar className="h-6 w-6 rounded-full border border-[#4B7BEC]/10 shadow-sm">
                                                                 <AvatarFallback className="text-[8px] font-bold bg-blue-50 text-[#4B7BEC]">
                                                                     {assigneeName.charAt(0).toUpperCase()}
                                                                 </AvatarFallback>

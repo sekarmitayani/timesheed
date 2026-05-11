@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { projectService } from "@/lib/services/project-service";
-import { taskService, CreateTaskPayload, UpdateTaskPayload } from "@/lib/services/task-service";
-import { resourceService, CreateResourcePayload, EditResourcePayload } from "@/lib/services/resource-service";
-import { ApiProject, ProjectMember, ApiTask, ResourceRequest } from "@/lib/types";
+import { taskService, CreateTaskPayload, UpdateTaskPayload, ApiTask } from "@/lib/services/task-service";
+import { resourceService, CreateResourcePayload, EditResourcePayload, ResourceRequest } from "@/lib/services/resource-service";
+import { ApiProject, ProjectMember } from "@/lib/types";
 import { toast } from "sonner";
 
 export function usePMProjectDetailData(projectId: string) {

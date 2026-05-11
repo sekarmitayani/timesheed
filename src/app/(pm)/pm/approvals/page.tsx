@@ -1,236 +1,122 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PageHeader } from "@/components/ai/ai-components";
-import { Inbox, CheckCircle2, XCircle, Loader2, CheckCheck, AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
-import { toast } from "sonner";
-import { approvalService, ReviewTimesheetPayload } from "@/lib/services/approval-service";
-import { TimesheetLog } from "@/lib/services/timesheet-service";
-import { useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { CheckCheck, AlertTriangle, Loader2 } from "lucide-react";
+import { useApprovalsData } from "./hooks/useApprovalsData";
+import { ApprovalsFilters } from "./components/ApprovalsFilters";
+import { ApprovalsTable } from "./components/ApprovalsTable";
+import { TimesheetDetailModal } from "../../../(employee)/employee/timesheet/components/TimesheetDetailModal";
+
+const statusConfig: Record<string, { bg: string; text: string; label: string; icon?: any }> = {
+    pending: { bg: "bg-amber-50", text: "text-amber-700", label: "Pending" },
+    approved: { bg: "bg-emerald-50", text: "text-emerald-700", label: "Approved" },
+    rejected: { bg: "bg-red-50", text: "text-red-700", label: "Rejected" },
+};
 
 export default function ApprovalsPage() {
-    const [inbox, setInbox] = useState<TimesheetLog[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isProcessing, setIsProcessing] = useState(false);
-
-    // Pagination
-    const [currentPage, setCurrentPage] = useState(1);
-    const limit = 10;
-
-    // Reject Dialog
-    const [rejectOpen, setRejectOpen] = useState(false);
-    const [rejectTarget, setRejectTarget] = useState<TimesheetLog | null>(null);
-    const [rejectNote, setRejectNote] = useState("");
-
-    // Bulk Selection
-    const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-
-    const fetchInbox = async () => {
-        setIsLoading(true);
-        try {
-            const res = await approvalService.getInbox();
-            setInbox(Array.isArray(res) ? res : []);
-        } catch (e: any) {
-            toast.error(e.message || "Failed to load approval inbox");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => { fetchInbox(); }, []);
-
-    const paginatedInbox = useMemo(() => {
-        const start = (currentPage - 1) * limit;
-        return inbox.slice(start, start + limit);
-    }, [inbox, currentPage]);
-
-    const totalPages = Math.ceil(inbox.length / limit);
-
-    const handleApprove = async (id: number) => {
-        setIsProcessing(true);
-        try {
-            await approvalService.reviewTimesheet(id, { status: "approved" });
-            toast.success("Timesheet approved");
-            fetchInbox();
-        } catch (e: any) {
-            toast.error(e.message || "Failed to approve");
-        } finally {
-            setIsProcessing(false);
-        }
-    };
-
-    const openReject = (log: TimesheetLog) => {
-        setRejectTarget(log);
-        setRejectNote("");
-        setRejectOpen(true);
-    };
-
-    const handleReject = async () => {
-        if (!rejectTarget) return;
-        if (!rejectNote.trim()) { toast.error("Rejection note is required"); return; }
-        setIsProcessing(true);
-        try {
-            await approvalService.reviewTimesheet(rejectTarget.id, { status: "rejected", rejection_note: rejectNote });
-            toast.success("Timesheet rejected");
-            setRejectOpen(false);
-            fetchInbox();
-        } catch (e: any) {
-            toast.error(e.message || "Failed to reject");
-        } finally {
-            setIsProcessing(false);
-        }
-    };
-
-    const toggleSelect = (id: number) => {
-        setSelectedIds(prev => {
-            const next = new Set(prev);
-            if (next.has(id)) next.delete(id); else next.add(id);
-            return next;
-        });
-    };
-
-    const toggleSelectAll = () => {
-        if (selectedIds.size === inbox.length) setSelectedIds(new Set());
-        else setSelectedIds(new Set(inbox.map(l => l.id)));
-    };
-
-    const handleBulkApprove = async () => {
-        if (selectedIds.size === 0) { toast.error("Select at least one timesheet"); return; }
-        setIsProcessing(true);
-        try {
-            const res = await approvalService.bulkAction({
-                timesheet_ids: Array.from(selectedIds),
-                status: "approved",
-            });
-            toast.success(`${res.rows_affected} timesheets approved`);
-            setSelectedIds(new Set());
-            fetchInbox();
-        } catch (e: any) {
-            toast.error(e.message || "Bulk action failed");
-        } finally {
-            setIsProcessing(false);
-        }
-    };
+    const { state, actions } = useApprovalsData();
 
     return (
-        <div className="space-y-6">
-            <PageHeader title="Approvals Inbox" description={`${inbox.length} pending review${inbox.length !== 1 ? "s" : ""}`}>
-                {selectedIds.size > 0 && (
-                    <Button size="sm" className="gap-2 bg-emerald-600 hover:bg-emerald-700 shadow-md" onClick={handleBulkApprove} disabled={isProcessing}>
-                        <CheckCheck className="h-4 w-4" /> Approve {selectedIds.size} Selected
+        <div className="flex flex-col w-full gap-6 h-full overflow-hidden">
+            <PageHeader 
+                title="Approvals Inbox" 
+                description={`${state.totalCount} records matching filters`}
+            >
+                {state.selectedIds.size > 0 && (
+                    <Button 
+                        size="sm" 
+                        className="gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 shadow-md shadow-emerald-500/10 rounded-[6px]" 
+                        onClick={actions.handleBulkApprove} 
+                        disabled={state.isProcessing}
+                    >
+                        <CheckCheck className="h-4 w-4" /> Approve {state.selectedIds.size} Selected
                     </Button>
                 )}
             </PageHeader>
 
-            <Card className="border-[#e2e8f0] shadow-sm overflow-hidden">
-                <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                        <Table>
-                            <TableHeader>
-                                <TableRow className="hover:bg-transparent">
-                                    <TableHead className="w-[50px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">
-                                        <input type="checkbox" className="rounded" checked={inbox.length > 0 && selectedIds.size === inbox.length} onChange={toggleSelectAll} />
-                                    </TableHead>
-                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Employee</TableHead>
-                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Project</TableHead>
-                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Clock In</TableHead>
-                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Clock Out</TableHead>
-                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Duration</TableHead>
-                                    <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Description</TableHead>
-                                    <TableHead className="text-right pr-6 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {isLoading ? (
-                                    <TableRow><TableCell colSpan={8} className="h-48 text-center"><Loader2 className="h-6 w-6 animate-spin text-[#2568C1] mx-auto" /></TableCell></TableRow>
-                                ) : inbox.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={8} className="h-32 text-center">
-                                            <div className="flex flex-col items-center text-muted-foreground">
-                                                <Inbox className="h-8 w-8 mb-2 opacity-40" />
-                                                <p className="text-sm">All caught up! No pending timesheets.</p>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    paginatedInbox.map(log => (
-                                        <TableRow key={log.id} className={`hover:bg-[#f0f4fa]/50 transition-colors ${selectedIds.has(log.id) ? "bg-blue-50/50" : ""}`}>
-                                            <TableCell>
-                                                <input type="checkbox" className="rounded" checked={selectedIds.has(log.id)} onChange={() => toggleSelect(log.id)} />
-                                            </TableCell>
-                                            <TableCell>
-                                                <span className="text-sm font-medium">{log.user?.full_name || `User #${log.user_id}`}</span>
-                                                {log.user?.email && <div className="text-[10px] text-muted-foreground">{log.user.email}</div>}
-                                            </TableCell>
-                                            <TableCell><span className="text-xs">{log.project?.name || `Project #${log.project_id}`}</span></TableCell>
-                                            <TableCell className="text-xs">{new Date(log.clock_in).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" })}</TableCell>
-                                            <TableCell className="text-xs">{log.clock_out ? new Date(log.clock_out).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" }) : "—"}</TableCell>
-                                            <TableCell className="text-xs font-medium">{log.duration_minutes > 0 ? `${Math.floor(log.duration_minutes / 60)}h ${log.duration_minutes % 60}m` : "—"}</TableCell>
-                                            <TableCell className="text-xs text-muted-foreground max-w-[180px] truncate">{log.task_description || "—"}</TableCell>
-                                            <TableCell className="text-right pr-4">
-                                                <div className="flex justify-end gap-1">
-                                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-600 hover:bg-emerald-50 rounded-full" onClick={() => handleApprove(log.id)} disabled={isProcessing} title="Approve">
-                                                        <CheckCircle2 className="h-4 w-4" />
-                                                    </Button>
-                                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:bg-red-50 rounded-full" onClick={() => openReject(log)} disabled={isProcessing} title="Reject">
-                                                        <XCircle className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </CardContent>
+            <ApprovalsFilters 
+                search={state.search}
+                setSearch={actions.setSearch}
+                filterProject={state.filterProject}
+                setFilterProject={actions.setFilterProject}
+                filterStatus={state.filterStatus}
+                setFilterStatus={actions.setFilterStatus}
+                dateFrom={state.dateFrom}
+                setDateFrom={actions.setDateFrom}
+                dateTo={state.dateTo}
+                setDateTo={actions.setDateTo}
+                projects={state.projects}
+                resetFilters={actions.resetFilters}
+                limit={state.limit}
+                setLimit={actions.setLimit}
+                setPage={actions.setPage}
+            />
 
-                {inbox.length > 0 && (
-                    <div className="border-t border-[#e2e8f0] bg-white px-4 py-3 flex items-center justify-between">
-                        <div className="text-xs text-muted-foreground">
-                            Showing <span className="font-medium text-[#0f172a]">{(currentPage - 1) * limit + 1}</span> to <span className="font-medium text-[#0f172a]">{Math.min(currentPage * limit, inbox.length)}</span> of <span className="font-medium text-[#0f172a]">{inbox.length}</span> timesheets
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled={currentPage <= 1} onClick={() => setCurrentPage(currentPage - 1)}>
-                                <ChevronLeft className="h-4 w-4" />
-                            </Button>
-                            <div className="text-xs font-medium px-2">Page {currentPage} of {totalPages || 1}</div>
-                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled={currentPage >= totalPages} onClick={() => setCurrentPage(currentPage + 1)}>
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
-                )}
-            </Card>
+            <ApprovalsTable 
+                inbox={state.inbox}
+                isLoading={state.isLoading}
+                isProcessing={state.isProcessing}
+                page={state.page}
+                limit={state.limit}
+                totalPages={state.totalPages}
+                totalFiltered={state.totalCount}
+                selectedIds={state.selectedIds}
+                onApprove={actions.handleApprove}
+                onReject={(l) => {
+                    actions.setSelectedLog(l);
+                    actions.setRejectOpen(true);
+                }}
+                onSelect={actions.toggleSelect}
+                onSelectAll={actions.toggleSelectAll}
+                onRowClick={actions.setSelectedLog}
+                setPage={actions.setPage}
+            />
+
+            {/* Timesheet Detail Modal (Reused from Employee) */}
+            {state.selectedLog && !state.rejectOpen && (
+                <TimesheetDetailModal 
+                    selectedLog={state.selectedLog}
+                    onClose={() => actions.setSelectedLog(null)}
+                    getTaskTitle={(tid) => state.selectedLog?.task?.title || `Task #${tid}`}
+                    statusConfig={statusConfig}
+                    formatDateTime={(d) => d ? new Date(d).toLocaleString("en-GB", { dateStyle: "short", timeStyle: "short" }) : "-"}
+                    formatDuration={(m) => `${Math.floor(m / 60)}h ${m % 60}m`}
+                    taskMap={{}} // Not strictly needed for basic detail
+                    userMap={{}} // Not strictly needed for basic detail
+                />
+            )}
 
             {/* Reject Dialog */}
-            <Dialog open={rejectOpen} onOpenChange={open => !isProcessing && setRejectOpen(open)}>
+            <Dialog open={state.rejectOpen} onOpenChange={open => !state.isProcessing && actions.setRejectOpen(open)}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <div className="mx-auto w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4"><AlertTriangle className="h-6 w-6 text-red-600" /></div>
-                        <DialogTitle className="text-center">Reject Timesheet</DialogTitle>
-                        <DialogDescription className="text-center text-xs">
-                            Rejecting log from <b>{rejectTarget?.user?.full_name || `User #${rejectTarget?.user_id}`}</b>
+                        <DialogTitle className="text-center text-lg font-bold">Reject Timesheet</DialogTitle>
+                        <DialogDescription className="text-center text-xs text-slate-500">
+                            Rejecting log from <b className="text-slate-900">{state.selectedLog?.user?.full_name || `User #${state.selectedLog?.user_id}`}</b>
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-3 pt-2">
                         <div className="space-y-1.5">
-                            <label className="text-sm font-medium">Rejection Note <span className="text-red-500">*</span></label>
-                            <Input value={rejectNote} onChange={e => setRejectNote(e.target.value)} placeholder="Explain why this timesheet is being rejected..." disabled={isProcessing} />
+                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Rejection Note *</label>
+                            <Input 
+                                value={state.rejectNote} 
+                                onChange={e => actions.setRejectNote(e.target.value)} 
+                                placeholder="Explain why this timesheet is being rejected..." 
+                                disabled={state.isProcessing}
+                                className="h-10 text-sm"
+                            />
                         </div>
                     </div>
-                    <DialogFooter className="sm:justify-center gap-2 pt-4">
-                        <Button variant="outline" onClick={() => setRejectOpen(false)} disabled={isProcessing}>Cancel</Button>
-                        <Button variant="destructive" onClick={handleReject} disabled={isProcessing} className="min-w-[100px]">
-                            {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Reject"}
+                    <div className="flex gap-3 mt-6">
+                        <Button variant="outline" className="flex-1" onClick={() => actions.setRejectOpen(false)} disabled={state.isProcessing}>Cancel</Button>
+                        <Button variant="destructive" onClick={actions.handleReject} disabled={state.isProcessing} className="flex-1 font-bold">
+                            {state.isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm Reject"}
                         </Button>
-                    </DialogFooter>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>

@@ -28,7 +28,7 @@ export function PMTeamsTab({
                     </div>
                     <p className="text-xs text-slate-500">View team roles and project assignments.</p>
                 </div>
-                <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="flex items-center gap-2 w-full sm:w-auto mr-4">
                     <div className="relative flex-1 sm:w-[240px]">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                         <Input 

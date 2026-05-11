@@ -15,8 +15,8 @@ export interface BulkActionPayload {
 
 // ---- Service ----
 export const approvalService = {
-    async getInbox(): Promise<TimesheetLog[]> {
-        return fetchApi("/approvals/inbox", {
+    async getInbox(status: string = "pending"): Promise<TimesheetLog[]> {
+        return fetchApi(`/approvals/inbox?status=${status}`, {
             method: "GET",
         });
     },
