@@ -20,7 +20,7 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
     const pm = members.find(m => m.role_in_project === "Project Manager")?.user?.full_name || "Not Assigned";
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[

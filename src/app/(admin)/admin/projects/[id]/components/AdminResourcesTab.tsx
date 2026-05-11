@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Search, Eye, Plus, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -77,66 +76,64 @@ export function AdminResourcesTab({
                 </div>
             </div>
 
-            <Card className="border-[#E2E8F0] shadow-sm rounded-xl overflow-hidden">
-                <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                        <Table>
-                            <TableHeader className="bg-slate-50/50">
-                                <TableRow className="border-b border-slate-100 h-11">
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500 w-12 text-center">No</TableHead>
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500 w-28 text-center">Type</TableHead>
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500">Details</TableHead>
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500">Requester</TableHead>
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500">Amount</TableHead>
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500 text-center">Status</TableHead>
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500 text-center w-20">Action</TableHead>
+            <div className="bg-white border border-[#e2e8f0] rounded-lg shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="hover:bg-transparent bg-slate-50/50">
+                                <TableHead className="pl-6 w-[60px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
+                                <TableHead className="w-[120px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Type</TableHead>
+                                <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Details</TableHead>
+                                <TableHead className="w-[200px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Requester</TableHead>
+                                <TableHead className="w-[150px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Amount</TableHead>
+                                <TableHead className="w-[120px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Status</TableHead>
+                                <TableHead className="w-24 pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Action</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {resources.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={7} className="h-32 text-slate-400 text-center">
+                                        <div className="flex flex-col items-center justify-center gap-2 opacity-40">
+                                            <Package className="h-8 w-8 text-slate-400" />
+                                            <p className="text-sm font-medium text-slate-500">No resource requests found.</p>
+                                        </div>
+                                    </TableCell>
                                 </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {resources.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={7} className="h-32 text-center">
-                                            <div className="flex flex-col items-center justify-center gap-2 opacity-40">
-                                                <Package className="h-8 w-8 text-slate-400" />
-                                                <p className="text-sm font-medium text-slate-500">No resource requests found.</p>
+                            ) : (
+                                resources.map((r, index) => (
+                                    <TableRow key={r.id} className="hover:bg-[#f0f4fa]/50 transition-colors border-b border-slate-100 last:border-0">
+                                        <TableCell className="pl-6 text-sm text-muted-foreground font-medium">{index + 1}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="outline" className="text-[10px] font-bold uppercase bg-slate-50 text-slate-500 border-none shadow-none px-2.5 py-0.5 rounded-full">{r.type}</Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-sm font-semibold text-slate-700 truncate block max-w-[250px]" title={r.details}>{r.details}</span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-[11px] text-slate-500 font-medium">{r.user?.full_name || `User #${r.user_id}`}</span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-sm font-bold text-slate-800 tracking-tight">{r.amount > 0 ? `Rp ${r.amount.toLocaleString("id-ID")}` : "—"}</span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tighter", resStatusColors[r.status])}>
+                                                <div className={cn("w-1 h-1 rounded-full", resStatusDotColors[r.status])} />
+                                                {r.status}
                                             </div>
                                         </TableCell>
+                                        <TableCell className="pr-6 text-right">
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#2568C1] hover:bg-blue-50 rounded-full" onClick={() => onViewDetail(r)}>
+                                                <Eye className="h-4 w-4" />
+                                            </Button>
+                                        </TableCell>
                                     </TableRow>
-                                ) : (
-                                    resources.map((r, index) => (
-                                        <TableRow key={r.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                                            <TableCell className="py-4 text-xs text-slate-500 font-bold text-center">{index + 1}</TableCell>
-                                            <TableCell className="py-4 text-center">
-                                                <Badge variant="outline" className="text-[10px] font-bold uppercase bg-slate-50 text-slate-500 border-slate-200 shadow-none px-2.5 py-0.5 rounded-full">{r.type}</Badge>
-                                            </TableCell>
-                                            <TableCell className="py-4 font-bold text-sm text-slate-800 max-w-[200px]">
-                                                <p className="truncate" title={r.details}>{r.details}</p>
-                                            </TableCell>
-                                            <TableCell className="py-4 text-xs text-slate-600 font-bold">
-                                                {r.user?.full_name || `User #${r.user_id}`}
-                                            </TableCell>
-                                            <TableCell className="py-4 text-xs font-black text-slate-900">
-                                                {r.amount > 0 ? `Rp ${r.amount.toLocaleString("id-ID")}` : "—"}
-                                            </TableCell>
-                                            <TableCell className="py-4 text-center">
-                                                <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tighter", resStatusColors[r.status])}>
-                                                    <div className={cn("w-1 h-1 rounded-full", resStatusDotColors[r.status])} />
-                                                    {r.status}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="py-4 text-center">
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#2568C1] hover:bg-blue-50 rounded-full" onClick={() => onViewDetail(r)}>
-                                                    <Eye className="h-4 w-4" />
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </CardContent>
-            </Card>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+            </div>
         </div>
     );
 }

@@ -37,8 +37,8 @@ export function AdminProjectHeader({ project, members, activeTab, setActiveTab }
     const tabs = ["Overview", "Teams", "Costs", "Resources"];
 
     return (
-        <div className="flex flex-col border-b border-[#E2E8F0] bg-white pt-6 px-4 sm:px-8 mb-6 shadow-sm rounded-t-xl">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-5 mb-8">
+        <div className="flex flex-col border-b border-[#E2E8F0] bg-white pt-4 px-4 sm:px-8 mb-4 shadow-sm rounded-t-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-5 mb-5">
                 <div className="h-16 w-16 rounded-full border border-slate-100 shadow-sm flex items-center justify-center bg-white p-2 shrink-0">
                     <div className="w-full h-full rounded-full bg-slate-50 flex items-center justify-center text-xl font-black text-slate-400">
                         {project.name.charAt(0).toUpperCase()}

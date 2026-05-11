@@ -10,6 +10,7 @@ import { AdminTeamsTab } from "./components/AdminTeamsTab";
 import { AdminCostsTab } from "./components/AdminCostsTab";
 import { AdminResourcesTab } from "./components/AdminResourcesTab";
 import { AdminProjectDialogs } from "./components/AdminProjectDialogs";
+import { cn } from "@/lib/utils";
 
 export default function AdminProjectDetailPage() {
     const params = useParams();
@@ -41,10 +42,10 @@ export default function AdminProjectDetailPage() {
     }
 
     return (
-        <div className="flex flex-col w-full min-h-screen bg-[#F8FAFC] pb-12">
-            <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6">
-                {/* Back Navigation & Main Actions */}
-                <div className="flex items-center justify-between py-4">
+        <div className="flex flex-col w-full gap-6 h-full overflow-hidden">
+            {/* Header Section */}
+            <div className="shrink-0 flex flex-col gap-4">
+                <div className="flex items-center justify-between">
                     <Button
                         variant="ghost"
                         className="h-9 gap-2 text-slate-500 hover:text-[#2568C1] hover:bg-blue-50 px-2 font-bold"
@@ -63,16 +64,17 @@ export default function AdminProjectDetailPage() {
                     </Button>
                 </div>
 
-                {/* Modern Header Component */}
                 <AdminProjectHeader
                     project={state.project}
                     members={state.members}
                     activeTab={state.activeTab}
                     setActiveTab={actions.setActiveTab}
                 />
+            </div>
 
-                {/* Tab Content Area */}
-                <div className="mt-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+            {/* Content Area (Scrollable) */}
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 pb-6">
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                     {state.activeTab === "Overview" && (
                         <AdminOverviewTab
                             project={state.project}

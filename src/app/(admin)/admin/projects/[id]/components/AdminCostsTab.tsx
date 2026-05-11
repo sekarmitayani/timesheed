@@ -4,7 +4,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { CostEntry } from "../hooks/useAdminProjectDetailData";
 
 interface AdminCostsTabProps {
@@ -44,48 +43,67 @@ export function AdminCostsTab({
                 </div>
             </div>
 
-            <Card className="border-[#E2E8F0] shadow-sm rounded-xl overflow-hidden">
-                <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                        <Table>
-                            <TableHeader className="bg-slate-50/50">
-                                <TableRow className="border-b border-slate-100 h-11">
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500 w-12 text-center">No</TableHead>
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500 w-28">Date</TableHead>
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500 w-32 text-center">Type</TableHead>
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500">Description</TableHead>
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500 min-w-[150px]">User</TableHead>
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-widest text-slate-500 text-right min-w-[120px] pr-6">Amount</TableHead>
+            <div className="bg-white border border-[#e2e8f0] rounded-lg shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="hover:bg-transparent bg-slate-50/50">
+                                <TableHead className="pl-6 w-[60px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
+                                <TableHead className="w-[180px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Date</TableHead>
+                                <TableHead className="w-[120px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Type</TableHead>
+                                <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Description</TableHead>
+                                <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">User</TableHead>
+                                <TableHead className="w-40 pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Amount</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {costs.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="h-32 text-slate-400 text-center">
+                                        No records found for the selected filters.
+                                    </TableCell>
                                 </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {costs.length === 0 ? (
-                                    <TableRow><TableCell colSpan={6} className="h-32 text-center text-slate-400 font-medium text-sm">No records found for the selected filters.</TableCell></TableRow>
-                                ) : (
-                                    <>
-                                        {costs.map((c, index) => (
-                                            <TableRow key={c.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                                                <TableCell className="py-4 text-xs text-slate-500 font-bold text-center">{index + 1}</TableCell>
-                                                <TableCell className="py-4 text-xs text-slate-600 font-bold">{c.date}</TableCell>
-                                                <TableCell className="py-4 text-center">
-                                                    <Badge variant="outline" className={`uppercase text-[9px] font-black px-2 py-0.5 tracking-tighter w-fit rounded-full border-none shadow-none ${c.type === 'Gaji' ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700'}`}>{c.type}</Badge>
-                                                </TableCell>
-                                                <TableCell className="py-4 font-bold text-sm text-slate-800">{c.name}</TableCell>
-                                                <TableCell className="py-4 text-xs text-slate-500 font-bold">{c.user}</TableCell>
-                                                <TableCell className="py-4 text-sm font-black text-slate-900 text-right pr-6">Rp {c.amount.toLocaleString("id-ID")}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                        <TableRow className="bg-slate-50/80">
-                                            <TableCell colSpan={5} className="py-5 font-black text-right text-slate-400 uppercase tracking-widest text-[10px]">Grand Total Overview</TableCell>
-                                            <TableCell className="py-5 font-black text-[#2568C1] text-right text-base pr-6">Rp {total.toLocaleString("id-ID")}</TableCell>
+                            ) : (
+                                <>
+                                    {costs.map((c, index) => (
+                                        <TableRow key={c.id} className="hover:bg-[#f0f4fa]/50 transition-colors border-b border-slate-100 last:border-0">
+                                            <TableCell className="pl-6 text-sm text-muted-foreground font-medium">
+                                                {index + 1}
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="text-sm font-semibold text-slate-700">{c.date}</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="outline" className={`capitalize text-[10px] font-bold px-2.5 py-0.5 tracking-wider w-fit rounded-full border-none 
+                                                    ${c.type === 'Gaji' ? "bg-blue-50 text-blue-700" : "bg-teal-50 text-teal-700"}`}>
+                                                    {c.type}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="text-sm font-semibold text-slate-700">{c.name}</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="text-[11px] text-slate-500 font-medium">{c.user}</span>
+                                            </TableCell>
+                                            <TableCell className="pr-6 text-right">
+                                                <span className="text-sm font-bold text-slate-800 tracking-tight">Rp {c.amount.toLocaleString("id-ID")}</span>
+                                            </TableCell>
                                         </TableRow>
-                                    </>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </CardContent>
-            </Card>
+                                    ))}
+                                    <TableRow className="bg-slate-50/50 border-t border-slate-100">
+                                        <TableCell colSpan={5} className="pl-6 py-4 font-bold text-right text-slate-500 uppercase tracking-widest text-[10px]">
+                                            Grand Total Overview
+                                        </TableCell>
+                                        <TableCell className="py-4 pr-6 font-black text-[#2568C1] text-right text-base">
+                                            Rp {total.toLocaleString("id-ID")}
+                                        </TableCell>
+                                    </TableRow>
+                                </>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+            </div>
         </div>
     );
 }
