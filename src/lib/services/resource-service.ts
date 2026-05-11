@@ -15,6 +15,18 @@ export interface ResourceRequest {
     user?: { id: number; full_name: string; email: string };
 }
 
+export interface PaginationMeta {
+    page: number;
+    limit: number;
+    total_rows: number;
+    total_pages: number;
+}
+
+export interface ResourceListResponse {
+    data: ResourceRequest[];
+    pagination: PaginationMeta;
+}
+
 export interface CreateResourcePayload {
     project_id: number;
     type: string;
@@ -35,6 +47,14 @@ export interface EditResourcePayload {
     confirm_zero?: boolean;
 }
 
+export interface GetResourcesParams {
+    page?: number;
+    limit?: number;
+    project_id?: string | number;
+    status?: string;
+    type?: string;
+}
+
 // ---- Service ----
 export const resourceService = {
     async createResourceRequest(payload: CreateResourcePayload): Promise<ResourceRequest> {
@@ -44,8 +64,15 @@ export const resourceService = {
         });
     },
 
-    async getResourceRequests(projectId?: number): Promise<ResourceRequest[]> {
-        const query = projectId ? `?project_id=${projectId}` : "";
+    async getResourceRequests(params: GetResourcesParams = {}): Promise<ResourceListResponse> {
+        const queryParams = new URLSearchParams();
+        if (params.page) queryParams.append("page", params.page.toString());
+        if (params.limit) queryParams.append("limit", params.limit.toString());
+        if (params.project_id && params.project_id !== "all") queryParams.append("project_id", params.project_id.toString());
+        if (params.status && params.status !== "all") queryParams.append("status", params.status);
+        if (params.type && params.type !== "all") queryParams.append("type", params.type);
+
+        const query = queryParams.toString() ? `?${queryParams.toString()}` : "";
         return fetchApi(`/resources${query}`, {
             method: "GET",
         });

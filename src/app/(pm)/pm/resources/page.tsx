@@ -2,14 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ai/ai-components";
-import { useAdminResourcesData } from "./hooks/useAdminResourcesData";
+import { usePMResourcesData } from "./hooks/usePMResourcesData";
 import { ResourceFilters } from "./components/ResourceFilters";
 import { ResourcesTable } from "./components/ResourcesTable";
 import { ResourceFormDialog } from "./components/ResourceFormDialog";
 import { ResourceDetailsDialog } from "./components/ResourceDetailsDialog";
 import { ConfirmDeleteDialog } from "./components/ConfirmDeleteDialog";
 
-export default function AdminResourcesPage() {
+export default function PMResourcesPage() {
     const {
         // State
         page, setPage,
@@ -21,10 +21,7 @@ export default function AdminResourcesPage() {
         createOpen, setCreateOpen,
         detailOpen, setDetailOpen,
         deleteOpen, setDeleteOpen,
-        detailMode, setDetailMode,
         selectedRequest,
-        approveAmount, setApproveAmount,
-        editForm, setEditForm,
         createForm, setCreateForm,
 
         // Data
@@ -40,17 +37,17 @@ export default function AdminResourcesPage() {
         
         // Actions
         createRequest,
-        processApproval,
-        editRequest,
         deleteRequest,
         isProcessing
-    } = useAdminResourcesData();
+    } = usePMResourcesData();
+
+    const pendingCount = filteredRequests.filter(r => r.status === "pending").length;
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             <PageHeader 
                 title="Resource Request" 
-                description={`${filteredRequests.filter(r => r.status === "pending").length} requests need your review`}
+                description={`${pendingCount} requests currently pending approval`}
             >
                 <Button 
                     size="sm" 
@@ -100,16 +97,7 @@ export default function AdminResourcesPage() {
                 open={detailOpen}
                 onOpenChange={setDetailOpen}
                 request={selectedRequest}
-                mode={detailMode}
-                setMode={setDetailMode}
                 isProcessing={isProcessing}
-                approveAmount={approveAmount}
-                setApproveAmount={setApproveAmount}
-                editForm={editForm}
-                setEditForm={setEditForm}
-                onApprove={(id, payload) => processApproval({ id, payload })}
-                onReject={(id, payload) => processApproval({ id, payload })}
-                onEdit={(id, payload) => editRequest({ id, payload })}
                 onDelete={() => setDeleteOpen(true)}
             />
 

@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { resourceService, ResourceRequest, ApprovalActionPayload, EditResourcePayload } from "@/lib/services/resource-service";
+import { resourceService, ResourceRequest, CreateResourcePayload } from "@/lib/services/resource-service";
 import { projectService } from "@/lib/services/project-service";
 import { toast } from "sonner";
 
-export function useAdminResourcesData() {
+export function usePMResourcesData() {
     const queryClient = useQueryClient();
 
     // --- UI State (Filters & Pagination) ---
@@ -19,17 +19,15 @@ export function useAdminResourcesData() {
     const [createOpen, setCreateOpen] = useState(false);
     const [detailOpen, setDetailOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
-    const [detailMode, setDetailMode] = useState<"view" | "approve" | "reject" | "edit">("view");
+    const [detailMode, setDetailMode] = useState<"view">("view");
 
     // --- Active Data ---
     const [selectedRequest, setSelectedRequest] = useState<ResourceRequest | null>(null);
-    const [approveAmount, setApproveAmount] = useState<number>(0);
-    const [editForm, setEditForm] = useState<EditResourcePayload>({});
-    const [createForm, setCreateForm] = useState({ project_id: "", type: "manpower", details: "" });
+    const [createForm, setCreateForm] = useState<CreateResourcePayload>({ project_id: 0, type: "tools", details: "" });
 
     // --- Queries ---
     const { data: resourceRes, isLoading: isLoadingRequests } = useQuery({
-        queryKey: ["admin", "resources", page, limit, filterProject, filterStatus, filterType],
+        queryKey: ["pm", "resources", page, limit, filterProject, filterStatus, filterType],
         queryFn: () => resourceService.getResourceRequests({
             page,
             limit,
@@ -42,7 +40,7 @@ export function useAdminResourcesData() {
     const pagination = resourceRes?.pagination;
 
     const { data: projectsData, isLoading: isLoadingProjects } = useQuery({
-        queryKey: ["admin", "projects", "all"],
+        queryKey: ["pm", "projects", "all"],
         queryFn: () => projectService.getProjects(1, 200),
         staleTime: 10 * 60 * 1000,
     });
@@ -61,8 +59,7 @@ export function useAdminResourcesData() {
         const q = searchQuery.toLowerCase();
         return requests.filter(r => 
             (r.details?.toLowerCase() || "").includes(q) ||
-            (r.project?.name?.toLowerCase() || "").includes(q) ||
-            (r.user?.full_name?.toLowerCase() || "").includes(q)
+            (r.project?.name?.toLowerCase() || "").includes(q)
         );
     }, [requests, searchQuery]);
 
@@ -71,55 +68,30 @@ export function useAdminResourcesData() {
     const totalFiltered = pagination?.total_rows || 0;
 
     // --- Handlers & Helpers ---
-    const openDetail = (r: ResourceRequest, mode: "view" | "approve" | "reject" | "edit" = "view") => {
+    const openDetail = (r: ResourceRequest) => {
         setSelectedRequest(r);
-        setDetailMode(mode);
-        setApproveAmount(r.amount || 0);
-        setEditForm({ type: r.type, details: r.details, amount: r.amount, status: r.status });
+        setDetailMode("view");
         setDetailOpen(true);
     };
 
     // --- Mutations ---
     const createMutation = useMutation({
-        mutationFn: (payload: { project_id: number; type: string; details: string }) => 
+        mutationFn: (payload: CreateResourcePayload) => 
             resourceService.createResourceRequest(payload),
         onSuccess: () => {
-            toast.success("Resource request created!");
-            queryClient.invalidateQueries({ queryKey: ["admin", "resources"] });
+            toast.success("Resource request submitted successfully!");
+            queryClient.invalidateQueries({ queryKey: ["pm", "resources"] });
             setCreateOpen(false);
-            setCreateForm({ project_id: "", type: "manpower", details: "" });
+            setCreateForm({ project_id: 0, type: "tools", details: "" });
         },
-        onError: (err: any) => toast.error(err.message || "Failed to create request"),
-    });
-
-    const approvalMutation = useMutation({
-        mutationFn: ({ id, payload }: { id: number; payload: ApprovalActionPayload }) =>
-            resourceService.approvalAction(id, payload),
-        onSuccess: (_, variables) => {
-            const status = variables.payload.status;
-            toast.success(status === "approved" ? "Request approved!" : "Request rejected");
-            queryClient.invalidateQueries({ queryKey: ["admin", "resources"] });
-            setDetailOpen(false);
-        },
-        onError: (err: any) => toast.error(err.message || "Failed to process approval"),
-    });
-
-    const editMutation = useMutation({
-        mutationFn: ({ id, payload }: { id: number; payload: EditResourcePayload }) =>
-            resourceService.editResource(id, payload),
-        onSuccess: () => {
-            toast.success("Request updated");
-            queryClient.invalidateQueries({ queryKey: ["admin", "resources"] });
-            setDetailOpen(false);
-        },
-        onError: (err: any) => toast.error(err.message || "Failed to update"),
+        onError: (err: any) => toast.error(err.message || "Failed to submit request"),
     });
 
     const deleteMutation = useMutation({
         mutationFn: (id: number) => resourceService.deleteResourceRequest(id),
         onSuccess: () => {
             toast.success("Request deleted successfully");
-            queryClient.invalidateQueries({ queryKey: ["admin", "resources"] });
+            queryClient.invalidateQueries({ queryKey: ["pm", "resources"] });
             setDeleteOpen(false);
             setDetailOpen(false);
         },
@@ -137,10 +109,8 @@ export function useAdminResourcesData() {
         createOpen, setCreateOpen,
         detailOpen, setDetailOpen,
         deleteOpen, setDeleteOpen,
-        detailMode, setDetailMode,
+        detailMode,
         selectedRequest, setSelectedRequest,
-        approveAmount, setApproveAmount,
-        editForm, setEditForm,
         createForm, setCreateForm,
 
         // Data
@@ -157,9 +127,7 @@ export function useAdminResourcesData() {
         
         // Actions
         createRequest: createMutation.mutate,
-        processApproval: approvalMutation.mutate,
-        editRequest: editMutation.mutate,
         deleteRequest: deleteMutation.mutate,
-        isProcessing: createMutation.isPending || approvalMutation.isPending || editMutation.isPending || deleteMutation.isPending
+        isProcessing: createMutation.isPending || deleteMutation.isPending
     };
 }
