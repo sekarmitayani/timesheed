@@ -71,11 +71,12 @@ export function useAdminProjectDetailData(projectId: string) {
         enabled: !!projectId,
     });
 
-    const { data: resources = [], isLoading: isLoadingResources } = useQuery({
+    const { data: resourcesResponse, isLoading: isLoadingResources } = useQuery({
         queryKey: ['admin', 'project', projectId, 'resources'],
-        queryFn: () => resourceService.getResourceRequests(Number(projectId)),
+        queryFn: () => resourceService.getResourceRequests({ project_id: projectId }),
         enabled: !!projectId,
     });
+    const resources = Array.isArray(resourcesResponse?.data) ? resourcesResponse.data : (Array.isArray(resourcesResponse) ? resourcesResponse : []);
 
     const { data: allUsersResponse } = useQuery({
         queryKey: ['admin', 'users', 'all'],

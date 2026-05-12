@@ -54,11 +54,12 @@ export function usePMProjectDetailData(projectId: string) {
         enabled: !!projectId,
     });
 
-    const { data: resources = [], isLoading: isLoadingResources } = useQuery({
+    const { data: resourcesResponse, isLoading: isLoadingResources } = useQuery({
         queryKey: ['pm', 'project', projectId, 'resources'],
-        queryFn: () => resourceService.getResourceRequests(Number(projectId)),
+        queryFn: () => resourceService.getResourceRequests({ project_id: projectId }),
         enabled: !!projectId,
     });
+    const resources = Array.isArray(resourcesResponse?.data) ? resourcesResponse.data : (Array.isArray(resourcesResponse) ? resourcesResponse : []);
 
     const isLoading = isLoadingProject || isLoadingMembers || isLoadingTasks || isLoadingResources;
 
@@ -166,8 +167,22 @@ export function usePMProjectDetailData(projectId: string) {
 
     const handleSaveTask = () => {
         if (!taskForm.title.trim()) { toast.error("Title is required"); return; }
+        if (!taskForm.assigned_to_id) { toast.error("Assignee is required"); return; }
+
         const payload: any = { ...taskForm };
         if (!taskEditing) delete payload.status;
+
+        // Sanitize due_date if it exists in the form (future-proofing)
+        if (payload.due_date === "" || !payload.due_date) {
+            delete payload.due_date;
+        } else {
+            try {
+                payload.due_date = new Date(payload.due_date).toISOString();
+            } catch (e) {
+                delete payload.due_date;
+            }
+        }
+
         saveTaskMutation.mutate(payload);
     };
 
