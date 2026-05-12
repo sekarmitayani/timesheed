@@ -120,8 +120,8 @@ export function usePMTasksData() {
         enabled: !!taskId && detailOpen,
     });
     
-    const { auditLogs, reporter } = useMemo(() => {
-        if (!auditLogsRaw || !selectedTask) return { auditLogs: [], reporter: null };
+    const { auditLogs, reporter, assignee } = useMemo(() => {
+        if (!auditLogsRaw || !selectedTask) return { auditLogs: [], reporter: null, assignee: null };
         const pMembers = allMembers[selectedTask.project_id] || [];
         const resolvedAuds = auditLogsRaw.map((log: TaskAuditLog) => {
             const actor = pMembers.find(m => m.user_id === log.user_id);
@@ -133,7 +133,13 @@ export function usePMTasksData() {
         const foundReporter = pMembers.find(m => m.user_id === selectedTask.created_by_id);
         let resolvedReporter: User | null = null;
         if (foundReporter?.user) resolvedReporter = { ...foundReporter.user, id: String(foundReporter.user.id) } as User;
-        return { auditLogs: resolvedAuds, reporter: resolvedReporter };
+
+        const foundAssignee = pMembers.find(m => m.user_id === selectedTask.assigned_to_id);
+        let resolvedAssignee: User | null = null;
+        if (foundAssignee?.user) resolvedAssignee = { ...foundAssignee.user, id: String(foundAssignee.user.id) } as User;
+        else if (selectedTask.assigned_to_id === Number(currentUser?.id)) resolvedAssignee = currentUser as unknown as User;
+
+        return { auditLogs: resolvedAuds, reporter: resolvedReporter, assignee: resolvedAssignee };
     }, [auditLogsRaw, selectedTask, allMembers, currentUser]);
 
     // --- Mutations ---
@@ -244,13 +250,34 @@ export function usePMTasksData() {
     };
 
     const handleSave = async () => {
-        if (!form.project_id || !form.title || !form.assigned_to_id) { toast.error("Missing required fields"); return; }
-        saveTaskMutation.mutate({ ...form, project_id: Number(form.project_id), assigned_to_id: Number(form.assigned_to_id) });
+        if (!form.project_id || !form.title || !form.assigned_to_id) { 
+            toast.error("Missing required fields (Project, Title, and Assignee are required)"); 
+            return; 
+        }
+
+        const payload: any = {
+            ...form,
+            project_id: Number(form.project_id),
+            assigned_to_id: Number(form.assigned_to_id)
+        };
+
+        // Sanitize due_date: backend (Go) fails to bind empty strings to *time.Time
+        if (!payload.due_date || payload.due_date === "") {
+            delete payload.due_date;
+        } else {
+            try {
+                payload.due_date = new Date(payload.due_date).toISOString();
+            } catch (e) {
+                delete payload.due_date;
+            }
+        }
+
+        saveTaskMutation.mutate(payload);
     };
 
     return {
-        state: { currentUser, isEmployee, projects, selectedProjectId, tasks, isLoadingProjects, isLoadingTasks, view, calView, members, allMembers, dialogOpen, editingTask, isSaving: saveTaskMutation.isPending, form, detailOpen, selectedTask, taskLogs, isLoadingLogs, comments, auditLogs, reporter, commentText, isSendingComment: commentMutation.isPending, isLoadingActivities, dayTasksOpen, selectedDate, deleteOpen, taskToDelete, isDeleting: deleteTaskMutation.isPending, currentMonth, currentTime, calendarScrollRef },
+        state: { currentUser, isEmployee, projects, selectedProjectId, tasks, isLoadingProjects, isLoadingTasks, view, calView, members, allMembers, dialogOpen, editingTask, isSaving: saveTaskMutation.isPending, form, detailOpen, selectedTask, taskLogs, isLoadingLogs, comments, auditLogs, reporter, assignee, commentText, isSendingComment: commentMutation.isPending, isLoadingActivities, dayTasksOpen, selectedDate, deleteOpen, taskToDelete, isDeleting: deleteTaskMutation.isPending, currentMonth, currentTime, calendarScrollRef },
         computed: { canManageTask: true, grouped, calendarDays, weekDays },
-        actions: { setSelectedProjectId, setView, setCalView, setDialogOpen, setForm, setDetailOpen, setCommentText, setDayTasksOpen, setDeleteOpen, setCurrentMonth, onDragEnd, openCreate, openEdit, handleSave, openDelete: (t: ApiTask) => { setTaskToDelete(t); setDeleteOpen(true); }, handleDelete: () => taskToDelete && deleteTaskMutation.mutate(taskToDelete.id), handleTaskClick: (t: ApiTask) => { setSelectedTask(t); setDetailOpen(true); }, handleSendComment: () => commentText.trim() && commentMutation.mutate(commentText), handleDayClick: (d: Date) => { setSelectedDate(d); setDayTasksOpen(true); }, getTasksForDay, getProjectName, getProjectColor, navigateCalendar }
+        actions: { setSelectedProjectId, setView, setCalView, setDialogOpen, setForm, setDetailOpen, setCommentText, setDayTasksOpen, setDeleteOpen, setCurrentMonth, onDragEnd, openCreate, openEdit, handleSave, openDelete: (t: ApiTask) => { setTaskToDelete(t); setDeleteOpen(true); }, handleDelete: async () => { if (taskToDelete) deleteTaskMutation.mutate(taskToDelete.id); }, handleTaskClick: (t: ApiTask) => { setSelectedTask(t); setDetailOpen(true); }, handleSendComment: async () => { if (commentText.trim()) commentMutation.mutate(commentText); }, handleDayClick: (d: Date) => { setSelectedDate(d); setDayTasksOpen(true); }, getTasksForDay, getProjectName, getProjectColor, navigateCalendar }
     };
 }

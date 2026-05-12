@@ -31,6 +31,7 @@ interface TaskDetailDialogProps {
     comments: TaskComment[];
     auditLogs: TaskAuditLog[];
     reporter: User | null;
+    assignee: User | null;
     commentText: string;
     setCommentText: (text: string) => void;
     onSendComment: () => Promise<void>;
@@ -56,6 +57,7 @@ export function TaskDetailDialog({
     comments,
     auditLogs,
     reporter,
+    assignee,
     commentText,
     setCommentText,
     onSendComment,
@@ -257,11 +259,11 @@ export function TaskDetailDialog({
                                     <label className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 flex items-center gap-2"><User2 className="h-3 w-3" /> Assignee</label>
                                     <div className="flex items-center gap-3 bg-white p-3 rounded-md border border-slate-100 shadow-sm">
                                         <Avatar size="sm" className="rounded-md border border-slate-100">
-                                            <AvatarFallback className="rounded-md font-bold text-xs bg-blue-50 text-blue-600">{currentUser?.full_name?.charAt(0)}</AvatarFallback>
+                                            <AvatarFallback className="rounded-md font-bold text-xs bg-blue-50 text-blue-600">{assignee?.full_name?.charAt(0) || "?"}</AvatarFallback>
                                         </Avatar>
                                         <div className="min-w-0">
-                                            <p className="text-sm font-bold text-slate-800 truncate">{currentUser?.full_name || "Self"}</p>
-                                            <p className="text-[10px] font-medium text-slate-400 truncate">{currentUser?.email || "No email"}</p>
+                                            <p className="text-sm font-bold text-slate-800 truncate">{assignee?.full_name || "Unassigned"}</p>
+                                            <p className="text-[10px] font-medium text-slate-400 truncate">{assignee?.email || "No email"}</p>
                                         </div>
                                     </div>
                                 </div>

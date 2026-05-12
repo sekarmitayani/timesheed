@@ -115,6 +115,7 @@ export default function PMTasksPage() {
                     comments={state.comments}
                     auditLogs={state.auditLogs}
                     reporter={state.reporter}
+                    assignee={state.assignee}
                     commentText={state.commentText}
                     setCommentText={actions.setCommentText}
                     onSendComment={actions.handleSendComment}

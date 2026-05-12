@@ -120,9 +120,9 @@ export function useTasksData() {
         enabled: !!taskId && detailOpen,
     });
     
-    // Process audit logs and reporter
-    const { auditLogs, reporter } = useMemo(() => {
-        if (!auditLogsRaw || !selectedTask) return { auditLogs: [], reporter: null };
+    // Process audit logs, reporter, and assignee
+    const { auditLogs, reporter, assignee } = useMemo(() => {
+        if (!auditLogsRaw || !selectedTask) return { auditLogs: [], reporter: null, assignee: null };
         
         const pMembers = allMembers[selectedTask.project_id] || [];
         const resolvedAuds = auditLogsRaw.map((log: TaskAuditLog) => {
@@ -141,7 +141,15 @@ export function useTasksData() {
             resolvedReporter = currentUser as User;
         }
 
-        return { auditLogs: resolvedAuds, reporter: resolvedReporter };
+        const foundAssignee = pMembers.find(m => m.user_id === selectedTask.assigned_to_id);
+        let resolvedAssignee: User | null = null;
+        if (foundAssignee && foundAssignee.user) {
+            resolvedAssignee = { ...foundAssignee.user, id: String(foundAssignee.user.id) } as User;
+        } else if (selectedTask.assigned_to_id === Number(currentUser?.id)) {
+            resolvedAssignee = currentUser as User;
+        }
+
+        return { auditLogs: resolvedAuds, reporter: resolvedReporter, assignee: resolvedAssignee };
     }, [auditLogsRaw, selectedTask, allMembers, currentUser]);
 
     // --- Mutations ---
@@ -389,7 +397,7 @@ export function useTasksData() {
             isLoadingProjects, isLoadingTasks, view, calView, members, allMembers, 
             dialogOpen, editingTask, isSaving: saveTaskMutation.isPending, 
             form, detailOpen, selectedTask, taskLogs, isLoadingLogs, 
-            isClockingIn: clockInMutation.isPending, comments, auditLogs, reporter, 
+            isClockingIn: clockInMutation.isPending, comments, auditLogs, reporter, assignee,
             commentText, isSendingComment: commentMutation.isPending, 
             isLoadingActivities, dayTasksOpen, selectedDate, deleteOpen, 
             taskToDelete, isDeleting: deleteTaskMutation.isPending, 

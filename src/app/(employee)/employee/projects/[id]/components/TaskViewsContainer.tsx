@@ -58,8 +58,8 @@ export function TaskViewsContainer({ activeTab, project, tasks, members }: TaskV
         enabled: !!taskId && dialogOpen,
     });
 
-    const { auditLogs, reporter } = useMemo(() => {
-        if (!selectedTask) return { auditLogs: [], reporter: null };
+    const { auditLogs, reporter, assignee } = useMemo(() => {
+        if (!selectedTask) return { auditLogs: [], reporter: null, assignee: null };
         
         const enrichedAuditLogs = auditLogsRaw.map((log: TaskAuditLog) => {
             const member = members.find((m) => m.user_id === log.user_id);
@@ -72,7 +72,10 @@ export function TaskViewsContainer({ activeTab, project, tasks, members }: TaskV
         const member = members.find(m => m.user_id === selectedTask.created_by_id);
         const resolvedReporter = member?.user || (selectedTask.created_by_id === Number(currentUser?.id) ? currentUser : null);
 
-        return { auditLogs: enrichedAuditLogs, reporter: resolvedReporter as User | null };
+        const assigneeMember = members.find(m => m.user_id === selectedTask.assigned_to_id);
+        const resolvedAssignee = assigneeMember?.user || (selectedTask.assigned_to_id === Number(currentUser?.id) ? currentUser : null);
+
+        return { auditLogs: enrichedAuditLogs, reporter: resolvedReporter as User | null, assignee: resolvedAssignee as User | null };
     }, [selectedTask, auditLogsRaw, members, currentUser]);
 
     // --- Mutations ---
@@ -141,6 +144,7 @@ export function TaskViewsContainer({ activeTab, project, tasks, members }: TaskV
                 comments={comments as any}
                 auditLogs={auditLogs as any}
                 reporter={reporter}
+                assignee={assignee}
                 commentText={commentText}
                 setCommentText={setCommentText}
                 onSendComment={handleSendComment}
