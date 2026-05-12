@@ -288,11 +288,14 @@ export function useTasksData() {
         return selectedTask.created_by_id === Number(currentUser.id);
     }, [selectedTask, currentUser]);
 
-    const grouped = useMemo(() => ({
-        todo: tasks.filter(t => t.status === "todo"),
-        in_progress: tasks.filter(t => t.status === "in_progress"),
-        done: tasks.filter(t => t.status === "done"),
-    }), [tasks]);
+    const grouped = useMemo(() => {
+        const sortDesc = (a: ApiTask, b: ApiTask) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        return {
+            todo: tasks.filter(t => t.status === "todo").sort(sortDesc),
+            in_progress: tasks.filter(t => t.status === "in_progress").sort(sortDesc),
+            done: tasks.filter(t => t.status === "done").sort(sortDesc),
+        };
+    }, [tasks]);
 
     const calendarDays = useMemo(() => {
         const monthStart = startOfMonth(currentMonth);
