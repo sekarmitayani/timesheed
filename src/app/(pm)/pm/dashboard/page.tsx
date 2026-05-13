@@ -7,6 +7,7 @@ import { PMQuickStatsRow } from "./components/PMQuickStatsRow";
 import { ActiveProjectsTracker } from "./components/ActiveProjectsTracker";
 import { TimesheetApprovalInbox } from "./components/TimesheetApprovalInbox";
 import { RecentActivitiesFeed } from "./components/RecentActivitiesFeed";
+import { RecentResourceActivities } from "./components/RecentResourceActivities";
 
 export default function PMDashboard() {
     const { data, isLoading, isError } = usePMDashboardData();
@@ -45,19 +46,31 @@ export default function PMDashboard() {
             <PMQuickStatsRow stats={data.stats} />
 
             {/* Row 2: Operation Cards */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <ActiveProjectsTracker 
-                    projects={data.activeProjects} 
-                    tasks={data.tasks} 
-                />
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <div className="lg:col-span-3 flex flex-col">
+                    <ActiveProjectsTracker 
+                        projects={data.activeProjects} 
+                        tasks={data.tasks} 
+                    />
+                </div>
                 
-                <TimesheetApprovalInbox 
-                    pendingTimesheets={data.pendingTimesheets} 
-                />
+                <div className="lg:col-span-2 flex flex-col">
+                    <TimesheetApprovalInbox 
+                        pendingTimesheets={data.pendingTimesheets} 
+                    />
+                </div>
+            </div>
 
+            {/* Row 3: Activity Cards (Bottom 2x2 Grid) */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <RecentActivitiesFeed 
                     recentTasks={data.recentTasks} 
                     teamStats={data.teamStats} 
+                    projects={data.activeProjects}
+                />
+                
+                <RecentResourceActivities 
+                    activities={data.recentResources}
                 />
             </div>
         </div>
