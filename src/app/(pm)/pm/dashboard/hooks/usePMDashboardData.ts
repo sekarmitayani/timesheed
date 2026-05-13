@@ -19,6 +19,7 @@ export interface PMDashboardData {
     tasks: ApiTask[];
     teamStats: TeamMemberStats[];
     pendingResources: ResourceRequest[];
+    recentResources: ResourceRequest[];
     pendingTimesheets: TimesheetLog[];
     stats: {
         activeProjectsCount: number;
@@ -49,7 +50,7 @@ export function usePMDashboardData() {
             const membersPromises = active.map(p => projectService.getProjectMembers(p.id).catch(() => []));
             
             // 3. Fetch Resource Requests
-            const resourcesPromise = resourceService.getResourceRequests().catch(() => []);
+            const resourcesPromise = resourceService.getResourceRequests({ limit: 50 }).catch(() => ({ data: [] }));
 
             // 4. Fetch Pending Timesheets (Inbox)
             const inboxPromise = approvalService.getInbox("pending").catch(() => []);
@@ -89,7 +90,12 @@ export function usePMDashboardData() {
             });
 
             const teamArr = Array.from(memberMap.values()).sort((a, b) => b.activeTasks - a.activeTasks);
-            const pendingReqs = Array.isArray(resourcesResult) ? resourcesResult.filter(r => r.status === "pending") : [];
+            
+            // Fix: resourceService returns { data, pagination }
+            const allResources = (resourcesResult as any).data || [];
+            const pendingReqs = allResources.filter((r: ResourceRequest) => r.status === "pending");
+            
+            // Fix: approvalService inbox parsing
             const inboxData = Array.isArray(inboxResult) ? inboxResult : (inboxResult?.data || []);
 
             // Task calculations
@@ -102,7 +108,13 @@ export function usePMDashboardData() {
                     return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
                 }
                 return b.id - a.id;
-            }).slice(0, 6);
+            }).slice(0, 5);
+
+            const recentResources = [...allResources].sort((a, b) => {
+                const dateA = new Date(a.updated_at || a.created_at || 0).getTime();
+                const dateB = new Date(b.updated_at || b.created_at || 0).getTime();
+                return dateB - dateA;
+            }).slice(0, 5);
 
             return {
                 activeProjects: active,
@@ -110,6 +122,7 @@ export function usePMDashboardData() {
                 tasks: flattenedTasks,
                 teamStats: teamArr,
                 pendingResources: pendingReqs,
+                recentResources,
                 pendingTimesheets: inboxData,
                 stats: {
                     activeProjectsCount: active.length,
