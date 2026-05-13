@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, ArrowRight, UserCircle2, Clock } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { TimesheetLog } from "@/lib/services/timesheet-service";
 
@@ -24,13 +25,13 @@ export function TimesheetApprovalInbox({ pendingTimesheets }: TimesheetApprovalI
     };
 
     return (
-        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col">
-            <CardHeader className="pb-2.5 border-b border-slate-50 flex flex-row items-center justify-between">
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-full">
+            <CardHeader className="pb-1 border-b border-slate-50 flex flex-row items-center justify-between">
                 <div>
-                    <CardTitle className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <Clock className="h-3.5 w-3.5 text-amber-500" /> Timesheet Approval Inbox
+                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-amber-500" /> Timesheet Approval Inbox
                     </CardTitle>
-                    <p className="text-[9px] text-slate-400 font-medium ml-5.5 -mt-0.5">Pending team timesheets awaiting review</p>
+                    <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Pending team timesheets awaiting review</p>
                 </div>
                 <Button 
                     variant="ghost" 
@@ -41,23 +42,25 @@ export function TimesheetApprovalInbox({ pendingTimesheets }: TimesheetApprovalI
                     View All <ArrowRight className="h-3 w-3" />
                 </Button>
             </CardHeader>
-            <CardContent className="p-3 flex-1">
+            <CardContent className="px-3 pt-0 pb-2.5 flex-1">
                 {pendingTimesheets.length === 0 ? (
                     <div className="py-8 text-center">
                         <CheckCircle2 className="h-8 w-8 text-emerald-400 mx-auto mb-2 opacity-50" />
                         <p className="text-xs text-slate-400 font-medium">All caught up! No pending timesheets.</p>
                     </div>
                 ) : (
-                    <div className="space-y-2">
+                    <div className="divide-y divide-slate-50">
                         {displayTimesheets.map((ts) => (
                             <div 
                                 key={ts.id} 
-                                className="flex items-center gap-3 p-2.5 rounded-lg bg-slate-50/50 border border-slate-100/50 hover:bg-slate-50 hover:border-blue-100/50 transition-all cursor-pointer group"
+                                className="flex items-center gap-3 py-2.5 transition-all cursor-pointer group hover:bg-slate-50/30"
                                 onClick={() => router.push("/pm/approvals?status=pending")}
                             >
-                                <div className="h-8 w-8 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
-                                    <UserCircle2 className="h-4 w-4 text-amber-600" />
-                                </div>
+                                <Avatar className="h-8 w-8 border border-slate-100 shrink-0">
+                                    <AvatarFallback className="text-[10px] font-bold text-[#4B7BEC] bg-blue-50">
+                                        {ts.user?.full_name?.split(" ").slice(0, 2).map(n => n?.[0]).join("") || "U"}
+                                    </AvatarFallback>
+                                </Avatar>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between gap-2">
                                         <p className="text-xs font-bold text-slate-800 truncate group-hover:text-[#4B7BEC] transition-colors">
