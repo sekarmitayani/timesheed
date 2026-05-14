@@ -70,10 +70,32 @@ export function TaskListView({
                                                 
                                             return (
                                                 <TableRow key={task.id} className="cursor-pointer hover:bg-slate-50/80 group border-b border-slate-50 last:border-0" onClick={() => handleTaskClick(task)}>
-                                                    <TableCell className="px-6 py-4"><span className="text-sm font-bold text-slate-700 group-hover:text-[#4B7BEC] line-clamp-1">{task.title}</span></TableCell>
-                                                    <TableCell className="px-4 py-4"><span className="text-xs font-medium text-slate-400 line-clamp-1">{task.description || "—"}</span></TableCell>
-                                                    <TableCell className="px-4 py-4"><div className="flex items-center gap-2"><Avatar className="h-6 w-6 rounded-full"><AvatarFallback className="text-[8px] font-bold bg-slate-100 text-slate-500">{reporterName.charAt(0)}</AvatarFallback></Avatar><span className="text-[11px] font-bold text-slate-600 truncate max-w-[100px]">{reporterName}</span></div></TableCell>
-                                                    <TableCell className="px-4 py-4"><div className="flex items-center gap-2"><Avatar className="h-6 w-6 rounded-full border border-[#4B7BEC]/10"><AvatarFallback className="text-[8px] font-bold bg-blue-50 text-[#4B7BEC]">{assigneeName.charAt(0)}</AvatarFallback></Avatar><span className="text-[11px] font-bold text-slate-600 truncate max-w-[100px]">{assigneeName}</span></div></TableCell>
+                                                    <TableCell className="px-6 py-4 max-w-[200px]"><span className="text-sm font-bold text-slate-700 group-hover:text-[#4B7BEC] block truncate">{task.title}</span></TableCell>
+                                                    <TableCell className="px-4 py-4 max-w-[250px]"><span className="text-xs font-medium text-slate-400 block truncate">{task.description || "—"}</span></TableCell>
+                                                    <TableCell className="px-4 py-4">
+                                                        <div className="flex items-center gap-2">
+                                                            <Avatar className="h-6 w-6 rounded-full">
+                                                                <AvatarFallback className="text-[8px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                                                    {reporterName.charAt(0)}
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                            <span className="text-[11px] font-bold text-slate-600 truncate max-w-[100px]">
+                                                                {reporterName}
+                                                            </span>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="px-4 py-4">
+                                                        <div className="flex items-center gap-2">
+                                                            <Avatar className="h-6 w-6 rounded-full border border-[#4B7BEC]/10">
+                                                                <AvatarFallback className="text-[8px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                                                    {assigneeName.charAt(0)}
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                            <span className="text-[11px] font-bold text-slate-600 truncate max-w-[100px]">
+                                                                {assigneeName}
+                                                            </span>
+                                                        </div>
+                                                    </TableCell>
                                                     <TableCell className="px-4 py-4"><span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">{task.due_date ? format(new Date(task.due_date), "MMM d, yyyy") : "—"}</span></TableCell>
                                                     <TableCell className="px-6 py-4 text-right"><Badge className="bg-[#4B7BEC]/5 text-[#4B7BEC] border-none text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-tighter whitespace-nowrap">{getProjectName(task.project_id)}</Badge></TableCell>
                                                 </TableRow>

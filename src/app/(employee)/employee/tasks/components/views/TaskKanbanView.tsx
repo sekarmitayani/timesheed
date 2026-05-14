@@ -71,12 +71,20 @@ export function TaskKanbanView({
                                                                         {/* Reporter → Assignee */}
                                                                         <div className="flex items-center gap-1.5 text-[10px]">
                                                                             <div className="flex items-center gap-1 min-w-0">
-                                                                                <Avatar className="h-4 w-4 rounded-[4px] shrink-0"><AvatarFallback className="text-[7px] font-bold bg-slate-100 text-slate-500 rounded-[4px]">{reporterName.charAt(0)}</AvatarFallback></Avatar>
+                                                                                <Avatar className="h-4 w-4 rounded-[4px] shrink-0">
+                                                                                    <AvatarFallback className="text-[7px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white rounded-[4px]">
+                                                                                        {reporterName.charAt(0)}
+                                                                                    </AvatarFallback>
+                                                                                </Avatar>
                                                                                 <span className="font-semibold text-slate-500 truncate max-w-[80px]">{reporterName}</span>
                                                                             </div>
                                                                             <ArrowRight className="h-2.5 w-2.5 text-slate-300 shrink-0" />
                                                                             <div className="flex items-center gap-1 min-w-0">
-                                                                                <Avatar className="h-4 w-4 rounded-[4px] shrink-0"><AvatarFallback className="text-[7px] font-bold bg-blue-50 text-[#4B7BEC] rounded-[4px]">{assigneeName.charAt(0)}</AvatarFallback></Avatar>
+                                                                                <Avatar className="h-4 w-4 rounded-[4px] shrink-0">
+                                                                                    <AvatarFallback className="text-[7px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white rounded-[4px]">
+                                                                                        {assigneeName.charAt(0)}
+                                                                                    </AvatarFallback>
+                                                                                </Avatar>
                                                                                 <span className="font-bold text-slate-700 truncate max-w-[100px]">{assigneeName}</span>
                                                                             </div>
                                                                         </div>

@@ -71,6 +71,8 @@ export function TaskDetailDialog({
 }: TaskDetailDialogProps) {
     if (!selectedTask) return null;
 
+    const isAssignedToMe = selectedTask && currentUser && String(selectedTask.assigned_to_id) === String(currentUser.id);
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent showCloseButton={false} className="sm:max-w-[1100px] p-0 gap-0 overflow-hidden border-none shadow-2xl rounded-md max-h-[90vh] flex flex-col bg-white">
@@ -147,7 +149,7 @@ export function TaskDetailDialog({
                                                 comments.map(comm => (
                                                     <div key={comm.id} className="flex gap-3">
                                                         <Avatar size="sm" className="rounded-md border border-slate-100">
-                                                            <AvatarFallback className="text-[10px] font-bold rounded-md bg-blue-100 text-blue-600">
+                                                            <AvatarFallback className="text-[10px] font-bold rounded-md bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                                                 {comm.user?.full_name?.charAt(0)}
                                                             </AvatarFallback>
                                                         </Avatar>
@@ -246,11 +248,12 @@ export function TaskDetailDialog({
                         <div className="p-8 pt-6 pb-12 space-y-8 h-full">
                             <div className="space-y-3">
                                 <Button 
-                                    className="w-full h-11 gap-2 bg-[#4B7BEC] hover:bg-[#3b60c0] font-bold rounded-md uppercase tracking-widest text-[11px] shadow-lg shadow-blue-100/30" 
+                                    className="w-full h-11 gap-2 bg-[#4B7BEC] hover:bg-[#3b60c0] font-bold rounded-md uppercase tracking-widest text-[11px] shadow-lg shadow-blue-100/30 disabled:opacity-50 disabled:cursor-not-allowed" 
                                     onClick={onClockIn} 
-                                    disabled={isClockingIn}
+                                    disabled={isClockingIn || !isAssignedToMe}
                                 >
-                                    {isClockingIn ? <Loader2 className="h-4 w-4 animate-spin" /> : <Clock className="h-4 w-4" />} Clock In
+                                    {isClockingIn ? <Loader2 className="h-4 w-4 animate-spin" /> : <Clock className="h-4 w-4" />} 
+                                    {!isAssignedToMe ? "Not Assigned to You" : "Clock In"}
                                 </Button>
                             </div>
                             <Separator className="bg-slate-100" />
@@ -259,7 +262,7 @@ export function TaskDetailDialog({
                                     <label className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 flex items-center gap-2"><User2 className="h-3 w-3" /> Assignee</label>
                                     <div className="flex items-center gap-3 bg-white p-3 rounded-md border border-slate-100 shadow-sm">
                                         <Avatar size="sm" className="rounded-md border border-slate-100">
-                                            <AvatarFallback className="rounded-md font-bold text-xs bg-blue-50 text-blue-600">{assignee?.full_name?.charAt(0) || "?"}</AvatarFallback>
+                                            <AvatarFallback className="rounded-md font-bold text-xs bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">{assignee?.full_name?.charAt(0) || "?"}</AvatarFallback>
                                         </Avatar>
                                         <div className="min-w-0">
                                             <p className="text-sm font-bold text-slate-800 truncate">{assignee?.full_name || "Unassigned"}</p>
@@ -271,7 +274,7 @@ export function TaskDetailDialog({
                                     <label className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 flex items-center gap-2"><Briefcase className="h-3 w-3" /> Reporter</label>
                                     <div className="flex items-center gap-3 bg-white p-3 rounded-md border border-slate-100 shadow-sm">
                                         <Avatar size="sm" className="rounded-md border border-slate-100">
-                                            <AvatarFallback className="rounded-md font-bold text-xs bg-slate-100 text-slate-600">{reporter?.full_name?.charAt(0) || "?"}</AvatarFallback>
+                                            <AvatarFallback className="rounded-md font-bold text-xs bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">{reporter?.full_name?.charAt(0) || "?"}</AvatarFallback>
                                         </Avatar>
                                         <div className="min-w-0">
                                             <p className="text-sm font-bold text-slate-800 truncate">{reporter?.full_name || "System"}</p>
