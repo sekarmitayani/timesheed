@@ -53,7 +53,12 @@ export default function TimesheetPage() {
                 dateTo={state.dateTo}
                 setDateTo={actions.setDateTo}
                 filterProject={state.filterProject}
+                setFilterProject={actions.setFilterProject}
                 filterStatus={state.filterStatus}
+                setFilterStatus={actions.setFilterStatus}
+                limit={state.limit}
+                setLimit={actions.setLimit}
+                projects={state.projects}
                 resetFilters={actions.resetFilters}
             />
 
@@ -74,17 +79,10 @@ export default function TimesheetPage() {
                 currentPage={state.currentPage}
                 totalPages={computed.totalPages}
                 limit={state.limit}
-                projects={state.projects}
-                filterProject={state.filterProject}
-                filterStatus={state.filterStatus}
                 statusConfig={statusConfig}
                 
-                setFilterProject={actions.setFilterProject}
-                setFilterStatus={actions.setFilterStatus}
-                setLimit={actions.setLimit}
                 setCurrentPage={actions.setCurrentPage}
                 setSelectedLog={actions.setSelectedLog}
-                resetFilters={actions.resetFilters}
                 
                 getTaskTitle={actions.getTaskTitle}
                 formatTime24={actions.formatTime24}
