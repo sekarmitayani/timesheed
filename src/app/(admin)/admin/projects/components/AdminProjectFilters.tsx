@@ -29,7 +29,7 @@ export function AdminProjectFilters({
                 />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[150px] h-10 text-xs border-[#E2E8F0] rounded-[6px] bg-white shadow-none">
+                <SelectTrigger className="w-full sm:w-[150px] h-10 bg-white border-slate-200">
                     <SelectValue placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent>

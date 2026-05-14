@@ -165,6 +165,23 @@ export function useAdminProjectsData() {
         if (statusFilter !== "All") {
             result = result.filter(c => c.project.status === statusFilter.toLowerCase());
         }
+
+        const statusOrder: Record<string, number> = {
+            "active": 1,
+            "completed": 2,
+            "on-hold": 3,
+            "cancelled": 4
+        };
+
+        result.sort((a, b) => {
+            const statusA = statusOrder[a.project.status] || 99;
+            const statusB = statusOrder[b.project.status] || 99;
+            if (statusA !== statusB) {
+                return statusA - statusB;
+            }
+            return new Date(b.project.created_at).getTime() - new Date(a.project.created_at).getTime();
+        });
+
         return result;
     }, [projectCards, search, statusFilter]);
 
