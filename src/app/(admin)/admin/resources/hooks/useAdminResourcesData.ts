@@ -125,32 +125,30 @@ export function useAdminResourcesData() {
         },
         onError: (err: any) => toast.error(err.message || "Failed to delete request"),
     });
+return {
+    // State
+    page, setPage,
+    limit, setLimit,
+    filterProject, setFilterProject,
+    filterStatus, setFilterStatus,
+    filterType, setFilterType,
+    createOpen, setCreateOpen,
+    detailOpen, setDetailOpen,
+    deleteOpen, setDeleteOpen,
+    detailMode, setDetailMode,
+    selectedRequest, setSelectedRequest,
+    approveAmount, setApproveAmount,
+    editForm, setEditForm,
+    createForm, setCreateForm,
 
-    return {
-        // State
-        page, setPage,
-        limit, setLimit,
-        searchQuery, setSearchQuery,
-        filterProject, setFilterProject,
-        filterStatus, setFilterStatus,
-        filterType, setFilterType,
-        createOpen, setCreateOpen,
-        detailOpen, setDetailOpen,
-        deleteOpen, setDeleteOpen,
-        detailMode, setDetailMode,
-        selectedRequest, setSelectedRequest,
-        approveAmount, setApproveAmount,
-        editForm, setEditForm,
-        createForm, setCreateForm,
+    // Data
+    requests,
+    allProjects,
+    isLoading,
+    paginatedRequests,
+    totalPages,
+    totalFiltered,
 
-        // Data
-        requests,
-        allProjects,
-        isLoading,
-        filteredRequests,
-        paginatedRequests,
-        totalPages,
-        totalFiltered,
 
         // Handlers
         openDetail,

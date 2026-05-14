@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, DollarSign, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, DollarSign, ChevronLeft, ChevronRight, WalletCards } from "lucide-react";
 import { PayrollSummaryItem } from "@/lib/services/admin-contracts";
 
 interface PayrollTableProps {
@@ -133,7 +133,7 @@ export function PayrollTable({
                                                 className="h-8 text-xs bg-[#2568C1] hover:bg-[#1e56a6] w-auto px-4 gap-1 shadow-sm rounded-lg border-none" 
                                                 onClick={() => onExecute(c)}
                                             >
-                                                <DollarSign className="h-3 w-3" /> Execute
+                                                <WalletCards className="h-3 w-3" /> Execute
                                             </Button>
                                         </TableCell>
                                     </TableRow>
