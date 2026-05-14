@@ -4,11 +4,11 @@ import { useMemo } from "react";
 import { format, differenceInDays } from "date-fns";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { ApiTask, taskService } from "@/lib/services/task-service";
-import { ProjectMember } from "@/lib/types";
+import { ProjectMember, User } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Circle, PlayCircle, CheckCircle2, Clock, Calendar as CalendarIcon, MessageSquare, ArrowRight } from "lucide-react";
+import { Circle, PlayCircle, CheckCircle2, Clock, Calendar as CalendarIcon, MessageSquare, ArrowRight, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +18,7 @@ interface KanbanViewProps {
     tasks: ApiTask[];
     members: ProjectMember[];
     onTaskClick: (task: ApiTask) => void;
+    currentUser: User | null;
 }
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
@@ -30,7 +31,7 @@ function resolveName(task: ApiTask, userId: number, members: ProjectMember[]) {
     return members.find(m => m.user_id === userId)?.user?.full_name || `User #${userId}`;
 }
 
-export function KanbanView({ projectId, tasks, members, onTaskClick }: KanbanViewProps) {
+export function KanbanView({ projectId, tasks, members, onTaskClick, currentUser }: KanbanViewProps) {
     const queryClient = useQueryClient();
 
     const grouped = useMemo(() => {
@@ -48,9 +49,9 @@ export function KanbanView({ projectId, tasks, members, onTaskClick }: KanbanVie
         mutationFn: ({ taskId, status }: { taskId: number, status: string }) => 
             taskService.updateTaskStatus(taskId, { status: status as any }),
         onMutate: async ({ taskId, status }) => {
-            await queryClient.cancelQueries({ queryKey: ['project', projectId, 'tasks'] });
-            const previousTasks = queryClient.getQueryData(['project', projectId, 'tasks']);
-            queryClient.setQueryData(['project', projectId, 'tasks'], (old: ApiTask[] | undefined) => {
+            await queryClient.cancelQueries({ queryKey: ['employee', 'project', projectId, 'tasks'] });
+            const previousTasks = queryClient.getQueryData(['employee', 'project', projectId, 'tasks']);
+            queryClient.setQueryData(['employee', 'project', projectId, 'tasks'], (old: ApiTask[] | undefined) => {
                 if (!old) return [];
                 return old.map(t => t.id === taskId ? { ...t, status: status as any } : t);
             });
@@ -58,12 +59,12 @@ export function KanbanView({ projectId, tasks, members, onTaskClick }: KanbanVie
         },
         onError: (err, variables, context) => {
             if (context?.previousTasks) {
-                queryClient.setQueryData(['project', projectId, 'tasks'], context.previousTasks);
+                queryClient.setQueryData(['employee', 'project', projectId, 'tasks'], context.previousTasks);
             }
             toast.error("Failed to update task status");
         },
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['project', projectId, 'tasks'] });
+            queryClient.invalidateQueries({ queryKey: ['employee', 'project', projectId, 'tasks'] });
         },
         onSuccess: () => {
             toast.success("Task status updated");
@@ -73,6 +74,15 @@ export function KanbanView({ projectId, tasks, members, onTaskClick }: KanbanVie
     const onDragEnd = (result: DropResult) => {
         const { destination, source, draggableId } = result;
         if (!destination || destination.droppableId === source.droppableId) return;
+        
+        const task = tasks.find(t => String(t.id) === draggableId);
+        const isAssignedToMe = task && currentUser && String(task.assigned_to_id) === String(currentUser.id);
+        
+        if (!isAssignedToMe) {
+            toast.error("You can only move tasks assigned to you");
+            return;
+        }
+
         updateStatusMutation.mutate({ taskId: Number(draggableId), status: destination.droppableId });
     };
 
@@ -99,24 +109,46 @@ export function KanbanView({ projectId, tasks, members, onTaskClick }: KanbanVie
                                                 const daysLeft = task.due_date ? differenceInDays(new Date(task.due_date), new Date()) : null;
                                                 const reporterName = resolveName(task, task.created_by_id, members);
                                                 const assigneeName = resolveName(task, task.assigned_to_id, members);
+                                                const isAssignedToMe = currentUser && String(task.assigned_to_id) === String(currentUser.id);
+
                                                 return (
-                                                    <Draggable key={task.id} draggableId={String(task.id)} index={index}>
+                                                    <Draggable key={task.id} draggableId={String(task.id)} index={index} isDragDisabled={!isAssignedToMe}>
                                                         {(provided, snapshot) => (
                                                             <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={provided.draggableProps.style}>
-                                                                <Card className={cn("group bg-white border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer rounded-md overflow-hidden", snapshot.isDragging && "ring-2 ring-[#4B7BEC] shadow-xl rotate-1")} onClick={() => onTaskClick(task)}>
-                                                                    <CardContent className="px-4 py-2.5 space-y-1.5">
+                                                                <Card 
+                                                                    className={cn(
+                                                                        "group bg-white border-slate-200 shadow-sm hover:shadow-md transition-all rounded-md overflow-hidden", 
+                                                                        snapshot.isDragging && "ring-2 ring-[#2568C1] shadow-xl rotate-1", 
+                                                                        !isAssignedToMe ? "opacity-75 grayscale-[0.3] cursor-not-allowed" : "cursor-pointer"
+                                                                    )} 
+                                                                    onClick={() => onTaskClick(task)}
+                                                                >
+                                                                    <CardContent className="px-4 py-2.5 space-y-1.5 relative">
+                                                                        {!isAssignedToMe && (
+                                                                            <div className="absolute top-2 right-2">
+                                                                                <Lock className="h-3 w-3 text-slate-300" />
+                                                                            </div>
+                                                                        )}
                                                                         {/* Title */}
-                                                                        <h4 className="text-[13px] font-bold text-slate-800 leading-snug group-hover:text-[#4B7BEC] transition-colors line-clamp-2">{task.title}</h4>
+                                                                        <h4 className="text-[13px] font-bold text-slate-800 leading-snug group-hover:text-[#2568C1] transition-colors line-clamp-2 pr-4">{task.title}</h4>
                                                                         {/* Reporter → Assignee */}
                                                                         <div className="flex items-center gap-1.5 text-[10px]">
                                                                             <div className="flex items-center gap-1 min-w-0">
-                                                                                <Avatar className="h-4 w-4 rounded-[4px] shrink-0"><AvatarFallback className="text-[7px] font-bold bg-slate-100 text-slate-500 rounded-[4px]">{reporterName.charAt(0)}</AvatarFallback></Avatar>
+                                                                                <Avatar className="h-4 w-4 rounded-[4px] shrink-0">
+                                                                                    <AvatarFallback className="text-[7px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white rounded-[4px]">
+                                                                                        {reporterName.charAt(0)}
+                                                                                    </AvatarFallback>
+                                                                                </Avatar>
                                                                                 <span className="font-semibold text-slate-500 truncate max-w-[80px]">{reporterName}</span>
                                                                             </div>
                                                                             <ArrowRight className="h-2.5 w-2.5 text-slate-300 shrink-0" />
                                                                             <div className="flex items-center gap-1 min-w-0">
-                                                                                <Avatar className="h-4 w-4 rounded-[4px] shrink-0"><AvatarFallback className="text-[7px] font-bold bg-blue-50 text-[#4B7BEC] rounded-[4px]">{assigneeName.charAt(0)}</AvatarFallback></Avatar>
-                                                                                <span className="font-bold text-slate-700 truncate max-w-[100px]">{assigneeName}</span>
+                                                                                <Avatar className="h-4 w-4 rounded-[4px] shrink-0">
+                                                                                    <AvatarFallback className="text-[7px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white rounded-[4px]">
+                                                                                        {assigneeName.charAt(0)}
+                                                                                    </AvatarFallback>
+                                                                                </Avatar>
+                                                                                <span className={cn("truncate max-w-[100px]", isAssignedToMe ? "font-black text-[#2568C1]" : "font-bold text-slate-700")}>{assigneeName}</span>
                                                                             </div>
                                                                         </div>
                                                                         {/* Footer: Due + Created + Badge */}
@@ -126,7 +158,7 @@ export function KanbanView({ projectId, tasks, members, onTaskClick }: KanbanVie
                                                                                     <CalendarIcon className="h-3 w-3 text-slate-400" />
                                                                                     <span className="text-[10px] font-bold text-slate-500">Due: <span className="text-slate-700">{task.due_date ? format(new Date(task.due_date), "MMM d") : "No date"}</span></span>
                                                                                 </div>
-                                                                                <div className="flex items-center gap-1 px-1.5 py-0.5 bg-slate-50 rounded-md text-slate-400 group-hover:text-[#4B7BEC] transition-all">
+                                                                                <div className="flex items-center gap-1 px-1.5 py-0.5 bg-slate-50 rounded-md text-slate-400 group-hover:text-[#2568C1] transition-all">
                                                                                     <MessageSquare className="h-3 w-3" />
                                                                                     <span className="text-[10px] font-black">{task.comment_count || 0}</span>
                                                                                 </div>
@@ -137,7 +169,7 @@ export function KanbanView({ projectId, tasks, members, onTaskClick }: KanbanVie
                                                                                     <span className="text-[10px] font-medium text-slate-400">Created at {format(new Date(task.created_at), "MMM d, HH:mm")}</span>
                                                                                 </div>
                                                                                 {daysLeft !== null && (
-                                                                                    <Badge className={cn("text-[9px] font-black px-1.5 py-0 rounded-[4px] h-4 border-none", daysLeft <= 2 ? "bg-red-50 text-red-600" : "bg-blue-50 text-[#4B7BEC]")}>
+                                                                                    <Badge className={cn("text-[9px] font-black px-1.5 py-0 rounded-[4px] h-4 border-none", daysLeft <= 2 ? "bg-red-50 text-red-600" : "bg-blue-50 text-[#2568C1]")}>
                                                                                         {daysLeft < 0 ? "Overdue" : daysLeft === 0 ? "Today" : `${daysLeft}d left`}
                                                                                     </Badge>
                                                                                 )}

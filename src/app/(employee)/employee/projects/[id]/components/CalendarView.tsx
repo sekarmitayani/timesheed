@@ -7,13 +7,15 @@ import {
     addWeeks, subWeeks, addDays, subDays, getHours, getMinutes, isToday 
 } from "date-fns";
 import { ApiTask } from "@/lib/services/task-service";
+import { User } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CalendarViewProps {
     tasks: ApiTask[];
     onTaskClick: (task: ApiTask) => void;
+    currentUser: User | null;
 }
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -22,12 +24,12 @@ const WEEK_HEADER_HEIGHT = 52;
 const EXTRA_PADDING = 20;
 
 const PROJECT_COLORS = [
-    { bg: "bg-blue-50", text: "text-blue-700", borderL: "border-l-blue-400", dot: "bg-blue-400" },
+    { bg: "bg-blue-50", text: "text-blue-700", borderL: "border-l-[#2568C1]", dot: "bg-[#2568C1]" },
     { bg: "bg-violet-50", text: "text-violet-700", borderL: "border-l-violet-400", dot: "bg-violet-400" },
     { bg: "bg-emerald-50", text: "text-emerald-700", borderL: "border-l-emerald-400", dot: "bg-emerald-400" },
 ];
 
-export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
+export function CalendarView({ tasks, onTaskClick, currentUser }: CalendarViewProps) {
     const [calView, setCalView] = useState<"day" | "week" | "month">("month");
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -95,7 +97,7 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
 
     return (
         <div className="bg-white border border-slate-200 rounded-md overflow-hidden flex flex-col shadow-sm flex-1 min-h-0">
-            {/* Calendar toolbar — always sticky at top of card */}
+            {/* Calendar toolbar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-3 border-b border-slate-100 bg-white shrink-0 z-20">
                 <h3 className="text-lg font-bold text-slate-800 tracking-tight">
                     {calView === "day"
@@ -106,9 +108,9 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
                 </h3>
                 <div className="flex flex-wrap items-center gap-3">
                     <div className="flex items-center bg-slate-50 rounded-md border border-slate-200 p-0.5 shrink-0">
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-500 hover:text-[#4B7BEC] hover:bg-white rounded-md" onClick={() => navigateCalendar("prev")}><ChevronLeft className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="sm" className="h-7 px-4 text-[10px] font-bold uppercase text-slate-500 hover:text-[#4B7BEC] hover:bg-white rounded-md tracking-widest" onClick={() => setCurrentMonth(new Date())}>Today</Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-500 hover:text-[#4B7BEC] hover:bg-white rounded-md" onClick={() => navigateCalendar("next")}><ChevronRight className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-500 hover:text-[#2568C1] hover:bg-white rounded-md" onClick={() => navigateCalendar("prev")}><ChevronLeft className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="sm" className="h-7 px-4 text-[10px] font-bold uppercase text-slate-500 hover:text-[#2568C1] hover:bg-white rounded-md tracking-widest" onClick={() => setCurrentMonth(new Date())}>Today</Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-500 hover:text-[#2568C1] hover:bg-white rounded-md" onClick={() => navigateCalendar("next")}><ChevronRight className="h-4 w-4" /></Button>
                     </div>
                     <div className="bg-slate-50 border border-slate-200 p-0.5 rounded-md flex shrink-0">
                         {(["day", "week", "month"] as const).map(v => (
@@ -119,7 +121,7 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
                                 className={cn(
                                     "h-7 px-4 text-[10px] font-bold uppercase transition-all rounded-md tracking-widest",
                                     calView === v
-                                        ? "bg-white text-[#4B7BEC] shadow-sm border border-slate-200"
+                                        ? "bg-white text-[#2568C1] shadow-sm border border-slate-200"
                                         : "text-slate-400 hover:text-slate-600 border border-transparent"
                                 )}
                                 onClick={() => setCalView(v)}
@@ -147,18 +149,29 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
                                 return (
                                     <div key={idx} className={cn("min-h-[130px] p-1.5 bg-white transition-colors cursor-pointer border-b border-slate-100", !isSameMonth(day, currentMonth) ? "bg-slate-50/40" : "hover:bg-blue-50/20")}>
                                         <div className="flex items-center justify-center mb-1">
-                                            <span className={cn("text-[11px] font-bold w-6 h-6 flex items-center justify-center rounded-full", isToday(day) ? "bg-[#4B7BEC] text-white shadow-md shadow-blue-200" : isSameMonth(day, currentMonth) ? "text-slate-700" : "text-slate-300")}>{format(day, "d")}</span>
+                                            <span className={cn("text-[11px] font-bold w-6 h-6 flex items-center justify-center rounded-full", isToday(day) ? "bg-[#2568C1] text-white shadow-md shadow-blue-200" : isSameMonth(day, currentMonth) ? "text-slate-700" : "text-slate-300")}>{format(day, "d")}</span>
                                         </div>
                                         <div className="space-y-0.5">
                                             {dayTasks.slice(0, 3).map(task => { 
                                                 const pColor = getProjectColor(); 
+                                                const isAssignedToMe = currentUser && String(task.assigned_to_id) === String(currentUser.id);
                                                 return (
-                                                    <div key={task.id} onClick={(e) => { e.stopPropagation(); onTaskClick(task); }} className={cn("flex items-center gap-1 px-1.5 py-1 rounded-[4px] text-[9px] font-bold truncate transition-all hover:shadow-sm", pColor.bg, pColor.text)}>
-                                                        <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", pColor.dot)} /><span>{task.title}</span>
+                                                    <div 
+                                                        key={task.id} 
+                                                        onClick={(e) => { e.stopPropagation(); onTaskClick(task); }} 
+                                                        className={cn(
+                                                            "flex items-center gap-1 px-1.5 py-1 rounded-[4px] text-[9px] font-bold truncate transition-all hover:shadow-sm", 
+                                                            pColor.bg, pColor.text,
+                                                            !isAssignedToMe ? "opacity-60 grayscale-[0.2] cursor-not-allowed" : "cursor-pointer"
+                                                        )}
+                                                    >
+                                                        <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", pColor.dot)} />
+                                                        {!isAssignedToMe && <Lock className="h-2 w-2 mr-0.5 opacity-50 shrink-0" />}
+                                                        <span className="truncate">{task.title}</span>
                                                     </div>
                                                 ); 
                                             })}
-                                            {dayTasks.length > 3 && <p className="text-[9px] font-bold text-[#4B7BEC] pl-1 mt-0.5 hover:underline cursor-pointer">+{dayTasks.length - 3} more</p>}
+                                            {dayTasks.length > 3 && <p className="text-[9px] font-bold text-[#2568C1] pl-1 mt-0.5 hover:underline cursor-pointer">+{dayTasks.length - 3} more</p>}
                                         </div>
                                     </div>
                                 );
@@ -172,7 +185,7 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
                     const viewDays = calView === "week" ? weekDays : [currentMonth];
                     return (
                         <div className="flex min-w-[800px]" style={{ height: `${HOURS.length * HOUR_HEIGHT + HEADER_HEIGHT + EXTRA_PADDING}px` }}>
-                            {/* Time gutter (left column with hour labels) */}
+                            {/* Time gutter */}
                             <div className="w-[60px] flex-none border-r border-slate-200 bg-slate-50/30 sticky left-0 z-20">
                                 <div
                                     style={{ height: `${HEADER_HEIGHT}px` }}
@@ -194,38 +207,37 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
                                     const dayTasks = getTasksForDay(day);
                                     return (
                                         <div key={dIdx} className="flex-1 relative min-w-0">
-                                            {/* Sticky day header (week view only) */}
                                             {calView === "week" && (
                                                 <div
                                                     className="flex flex-col items-center justify-center sticky top-0 bg-white/95 backdrop-blur-sm z-30 border-b border-slate-200"
                                                     style={{ height: `${HEADER_HEIGHT}px` }}
                                                 >
                                                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{format(day, "EEE")}</span>
-                                                    <span className={cn("text-sm font-bold mt-0.5 w-7 h-7 flex items-center justify-center rounded-full", isToday(day) ? "bg-[#4B7BEC] text-white shadow-md shadow-blue-200" : "text-slate-700")}>{format(day, "d")}</span>
+                                                    <span className={cn("text-sm font-bold mt-0.5 w-7 h-7 flex items-center justify-center rounded-full", isToday(day) ? "bg-[#2568C1] text-white shadow-md shadow-blue-200" : "text-slate-700")}>{format(day, "d")}</span>
                                                 </div>
                                             )}
 
-                                            {/* Extra padding */}
                                             <div style={{ height: `${EXTRA_PADDING}px` }} />
 
-                                            {/* Hour grid lines */}
                                             {HOURS.map(h => (
                                                 <div key={h} className="border-b border-slate-50" style={{ height: `${HOUR_HEIGHT}px` }}>
                                                     <div className="h-1/2 border-b border-slate-50/50" />
                                                 </div>
                                             ))}
 
-                                            {/* Task cards */}
                                             {dayTasks.map(task => {
                                                 const pColor = getProjectColor();
                                                 const style = getTaskStyle(task, dayTasks);
+                                                const isAssignedToMe = currentUser && String(task.assigned_to_id) === String(currentUser.id);
+                                                
                                                 return (
                                                     <div
                                                         key={task.id}
                                                         onClick={(e) => { e.stopPropagation(); onTaskClick(task); }}
                                                         className={cn(
-                                                            "absolute p-2 rounded-[4px] border-l-[3px] shadow-sm cursor-pointer z-10 transition-all hover:z-20 hover:shadow-md group/task overflow-hidden",
-                                                            pColor.bg, pColor.text, pColor.borderL
+                                                            "absolute p-2 rounded-[4px] border-l-[3px] shadow-sm z-10 transition-all hover:z-20 hover:shadow-md group/task overflow-hidden",
+                                                            pColor.bg, pColor.text, pColor.borderL,
+                                                            !isAssignedToMe ? "opacity-60 grayscale-[0.2] cursor-not-allowed" : "cursor-pointer"
                                                         )}
                                                         style={{
                                                             top: `calc(${style.top} + ${HEADER_HEIGHT + EXTRA_PADDING}px)`,
@@ -236,14 +248,16 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
                                                         }}
                                                     >
                                                         <div className="flex flex-col gap-0.5 overflow-hidden">
-                                                            <span className="text-[10px] font-bold leading-tight truncate group-hover/task:text-[#4B7BEC]">{task.title}</span>
+                                                            <div className="flex items-center gap-1 min-w-0">
+                                                                {!isAssignedToMe && <Lock className="h-2 w-2 opacity-50 shrink-0" />}
+                                                                <span className={cn("text-[10px] font-bold leading-tight truncate", isAssignedToMe && "group-hover/task:text-[#2568C1]")}>{task.title}</span>
+                                                            </div>
                                                             <span className="text-[8px] font-bold opacity-60 truncate">{format(new Date(task.created_at), "HH:mm")}</span>
                                                         </div>
                                                     </div>
                                                 );
                                             })}
 
-                                            {/* Current time red line indicator */}
                                             {isToday(day) && (
                                                 <div
                                                     className="absolute left-0 right-0 z-20 pointer-events-none flex items-center"

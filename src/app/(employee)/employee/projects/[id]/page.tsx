@@ -1,140 +1,114 @@
 "use client";
 
-import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loader2, ArrowLeft } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { projectService } from "@/lib/services/project-service";
-import { taskService } from "@/lib/services/task-service";
-import { ApiProject, ProjectMember } from "@/lib/types";
-
+import { useEmployeeProjectDetailData } from "./hooks/useEmployeeProjectDetailData";
 import { ProjectHeader } from "./components/ProjectHeader";
 import { OverviewTab } from "./components/OverviewTab";
-import { TaskViewsContainer } from "./components/TaskViewsContainer";
 import { TeamsTab } from "./components/TeamsTab";
+import { TaskViewsContainer } from "./components/TaskViewsContainer";
+import { cn } from "@/lib/utils";
 
-export default function ProjectDetailPage() {
+export default function EmployeeProjectDetailPage() {
     const params = useParams();
     const router = useRouter();
     const projectId = params.id as string;
 
-    const [activeTab, setActiveTab] = useState("Overview");
+    const { state, actions } = useEmployeeProjectDetailData(projectId);
 
-    // 1. Project Detail Query
-    const { data: project, isLoading: isLoadingProject } = useQuery({
-        queryKey: ['project', projectId],
-        queryFn: () => projectService.getProjectById(projectId),
-        enabled: !!projectId,
-    });
-
-    // 2. Members Query
-    const { data: members = [], isLoading: isLoadingMembers } = useQuery({
-        queryKey: ['project', projectId, 'members'],
-        queryFn: () => projectService.getProjectMembers(projectId),
-        enabled: !!projectId,
-    });
-
-    // 3. Tasks Query
-    const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({
-        queryKey: ['project', projectId, 'tasks'],
-        queryFn: () => taskService.getProjectTasks(projectId, true),
-        enabled: !!projectId,
-    });
-
-    const isLoading = isLoadingProject || isLoadingMembers || isLoadingTasks;
-
-    if (isLoading) {
+    if (state.isLoading) {
         return (
-            <div className="flex h-full items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-[#4B7BEC] opacity-40" />
+            <div className="flex h-screen items-center justify-center bg-[#F8FAFC]">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="h-10 w-10 animate-spin text-[#2568C1] opacity-40" />
+                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Loading Project Data...</p>
+                </div>
             </div>
         );
     }
 
-    if (!project) return null;
+    if (!state.project) {
+        return (
+            <div className="flex h-screen flex-col items-center justify-center gap-4 bg-[#F8FAFC]">
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Project Not Found</p>
+                <Button variant="outline" onClick={() => router.push("/employee/projects")} className="font-bold">
+                    <ArrowLeft className="h-4 w-4 mr-2" /> Back to My Projects
+                </Button>
+            </div>
+        );
+    }
 
-    const isCalendarActive = activeTab === "Calendar";
+    const isFixedView = ["Kanban", "Calendar"].includes(state.activeTab);
 
     return (
-        <div className={`flex flex-col w-full overflow-hidden ${isCalendarActive ? "h-[calc(100vh-40px)]" : "h-[calc(100vh-100px)]"}`}>
-            {isCalendarActive ? (
-                <>
-                    <div className="shrink-0 w-full px-2">
-                        <div className="flex items-center mb-4 px-1">
-                            <Button 
-                                variant="ghost" 
-                                className="h-8 gap-2 text-slate-500 hover:text-slate-800 px-2"
-                                onClick={() => router.push("/employee/projects")}
-                            >
-                                <ArrowLeft className="h-4 w-4" />
-                                <span className="text-sm font-semibold">Back to Projects</span>
-                            </Button>
-                        </div>
-                        <ProjectHeader 
-                            project={project} 
-                            members={members} 
-                            activeTab={activeTab} 
-                            setActiveTab={setActiveTab} 
-                        />
-                    </div>
-                    <div className="flex-1 min-h-0 w-full px-2 pb-4 pt-1">
-                        <div className="h-full flex flex-col mt-2">
-                            <TaskViewsContainer
-                                activeTab={activeTab}
-                                project={project}
-                                tasks={tasks}
-                                members={members}
-                            />
-                        </div>
-                    </div>
-                </>
-            ) : (
-                <div className="flex-1 overflow-y-auto custom-scrollbar pb-10 pt-1">
-                    <div className="w-full px-2">
-                        <div className="flex items-center mb-4 px-1 mt-1">
-                            <Button 
-                                variant="ghost" 
-                                className="h-8 gap-2 text-slate-500 hover:text-slate-800 px-2"
-                                onClick={() => router.push("/employee/projects")}
-                            >
-                                <ArrowLeft className="h-4 w-4" />
-                                <span className="text-sm font-semibold">Back to Projects</span>
-                            </Button>
-                        </div>
-
-                        <ProjectHeader 
-                            project={project} 
-                            members={members} 
-                            activeTab={activeTab} 
-                            setActiveTab={setActiveTab} 
-                        />
-
-                        <div className="mt-2">
-                            {activeTab === "Overview" && (
-                                <OverviewTab 
-                                    project={project} 
-                                    members={members} 
-                                    tasks={tasks} 
-                                />
-                            )}
-
-                            {["Kanban", "List"].includes(activeTab) && (
-                                <TaskViewsContainer
-                                    activeTab={activeTab}
-                                    project={project}
-                                    tasks={tasks}
-                                    members={members}
-                                />
-                            )}
-
-                            {activeTab === "Teams" && (
-                                <TeamsTab members={members} />
-                            )}
-                        </div>
-                    </div>
+        <div className="flex flex-col w-full gap-6 h-full overflow-hidden">
+            {/* Header Section */}
+            <div className="shrink-0 flex flex-col gap-4">
+                {/* Back Navigation */}
+                <div className="flex items-center justify-between">
+                    <Button
+                        variant="ghost"
+                        className="h-9 gap-2 text-slate-500 hover:text-[#2568C1] hover:bg-blue-50 px-2 font-bold"
+                        onClick={() => router.push("/employee/projects")}
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                        <span className="text-xs uppercase tracking-widest">Back to Projects</span>
+                    </Button>
                 </div>
-            )}
+
+                <ProjectHeader
+                    project={state.project}
+                    members={state.members}
+                    activeTab={state.activeTab}
+                    setActiveTab={actions.setActiveTab}
+                />
+            </div>
+
+            {/* Main Content Area */}
+            <div className={cn(
+                "flex-1 min-h-0 pt-1",
+                isFixedView ? "overflow-hidden flex flex-col" : "overflow-y-auto custom-scrollbar pb-6"
+            )}>
+                <div className={cn("animate-in fade-in slide-in-from-bottom-2 duration-500 mt-2", isFixedView && "flex-1 flex flex-col min-h-0")}>
+                    {state.activeTab === "Overview" && (
+                        <OverviewTab
+                            project={state.project}
+                            members={state.members}
+                            tasks={state.tasks as any[]}
+                        />
+                    )}
+
+                    {state.activeTab === "Teams" && (
+                        <TeamsTab
+                            members={state.filteredMembers}
+                            totalCount={state.members.length}
+                            search={state.taskSearch}
+                            setSearch={actions.setTaskSearch}
+                        />
+                    )}
+
+                    {["Kanban", "List", "Calendar"].includes(state.activeTab) && (
+                        <TaskViewsContainer
+                            activeTab={state.activeTab}
+                            project={state.project}
+                            tasks={state.tasks}
+                            members={state.members}
+                            filteredTasks={state.filteredTasks}
+                            search={state.taskSearch}
+                            setSearch={actions.setTaskSearch}
+                            statusFilter={state.taskFilterStatus}
+                            setStatusFilter={actions.setTaskFilterStatus}
+                            assigneeFilter={state.taskFilterAssignee}
+                            setAssigneeFilter={actions.setTaskFilterAssignee}
+                            onTaskClick={actions.handleTaskClick}
+                            // Employee Task Detail specific props
+                            taskDetailState={state}
+                            taskDetailActions={actions}
+                        />
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

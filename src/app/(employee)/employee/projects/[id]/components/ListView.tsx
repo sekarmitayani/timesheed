@@ -3,17 +3,17 @@
 import { useMemo } from "react";
 import { format } from "date-fns";
 import { ApiTask } from "@/lib/services/task-service";
-import { ProjectMember } from "@/lib/types";
-import { useAuthStore } from "@/store/useAuthStore";
+import { ProjectMember, User } from "@/lib/types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Circle, PlayCircle, CheckCircle2 } from "lucide-react";
+import { Circle, PlayCircle, CheckCircle2, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ListViewProps {
     tasks: ApiTask[];
     members: ProjectMember[];
     onTaskClick: (task: ApiTask) => void;
+    currentUser: User | null;
 }
 
 const statusConfig: Record<string, { label: string; bg: string; icon: React.ReactNode }> = {
@@ -22,9 +22,7 @@ const statusConfig: Record<string, { label: string; bg: string; icon: React.Reac
     done: { label: "Done", bg: "bg-emerald-50", icon: <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> },
 };
 
-export function ListView({ tasks, members, onTaskClick }: ListViewProps) {
-    const currentUser = useAuthStore((s) => s.user);
-
+export function ListView({ tasks, members, onTaskClick, currentUser }: ListViewProps) {
     const grouped = useMemo(() => {
         const g: Record<string, ApiTask[]> = { todo: [], in_progress: [], done: [] };
         tasks.forEach(t => {
@@ -75,20 +73,44 @@ export function ListView({ tasks, members, onTaskClick }: ListViewProps) {
                                         grouped[status].map(task => {
                                             const reporterName = getReporterName(task);
                                             const assigneeName = getAssigneeName(task);
+                                            const isAssignedToMe = currentUser && String(task.assigned_to_id) === String(currentUser.id);
+
                                             return (
-                                                <TableRow key={task.id} className="cursor-pointer hover:bg-slate-50/80 group border-b border-slate-50 last:border-0" onClick={() => onTaskClick(task)}>
-                                                    <TableCell className="px-6 py-4"><span className="text-sm font-bold text-slate-700 group-hover:text-[#4B7BEC] line-clamp-1">{task.title}</span></TableCell>
+                                                <TableRow 
+                                                    key={task.id} 
+                                                    className={cn(
+                                                        "group border-b border-slate-50 last:border-0", 
+                                                        !isAssignedToMe ? "opacity-60 grayscale-[0.2] cursor-not-allowed" : "cursor-pointer hover:bg-slate-50/80"
+                                                    )} 
+                                                    onClick={() => onTaskClick(task)}
+                                                >
+                                                    <TableCell className="px-6 py-4">
+                                                        <div className="flex items-center gap-2">
+                                                            {!isAssignedToMe && <Lock className="h-3 w-3 text-slate-300 shrink-0" />}
+                                                            <span className={cn("text-sm font-bold line-clamp-1 transition-colors", isAssignedToMe ? "text-slate-700 group-hover:text-[#2568C1]" : "text-slate-500")}>
+                                                                {task.title}
+                                                            </span>
+                                                        </div>
+                                                    </TableCell>
                                                     <TableCell className="px-4 py-4"><span className="text-xs font-medium text-slate-400 line-clamp-1">{task.description || "—"}</span></TableCell>
                                                     <TableCell className="px-4 py-4">
                                                         <div className="flex items-center gap-2">
-                                                            <Avatar className="h-6 w-6 rounded-full"><AvatarFallback className="text-[8px] font-bold bg-slate-100 text-slate-500">{reporterName.charAt(0)}</AvatarFallback></Avatar>
+                                                            <Avatar className="h-6 w-6 rounded-full">
+                                                                <AvatarFallback className="text-[8px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                                                    {reporterName.charAt(0)}
+                                                                </AvatarFallback>
+                                                            </Avatar>
                                                             <span className="text-[11px] font-bold text-slate-600 truncate max-w-[100px]">{reporterName}</span>
                                                         </div>
                                                     </TableCell>
                                                     <TableCell className="px-4 py-4">
                                                         <div className="flex items-center gap-2">
-                                                            <Avatar className="h-6 w-6 rounded-full border border-[#4B7BEC]/10"><AvatarFallback className="text-[8px] font-bold bg-blue-50 text-[#4B7BEC]">{assigneeName.charAt(0)}</AvatarFallback></Avatar>
-                                                            <span className="text-[11px] font-bold text-slate-600 truncate max-w-[100px]">{assigneeName}</span>
+                                                            <Avatar className="h-6 w-6 rounded-full border border-[#2568C1]/10">
+                                                                <AvatarFallback className="text-[8px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                                                    {assigneeName.charAt(0)}
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                            <span className={cn("text-[11px] font-bold truncate max-w-[100px]", isAssignedToMe ? "text-[#2568C1] font-black" : "text-slate-600")}>{assigneeName}</span>
                                                         </div>
                                                     </TableCell>
                                                     <TableCell className="px-4 py-4"><span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">{task.due_date ? format(new Date(task.due_date), "MMM d, yyyy") : "—"}</span></TableCell>

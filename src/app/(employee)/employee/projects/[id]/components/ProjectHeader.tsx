@@ -3,9 +3,7 @@
 import { ApiProject, ProjectMember } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { UserPlus } from "lucide-react";
 
 interface ProjectHeaderProps {
     project: ApiProject;
@@ -15,7 +13,7 @@ interface ProjectHeaderProps {
 }
 
 const statusConfig: Record<string, { label: string; bg: string; text: string; dot: string }> = {
-    active: { label: "In Progress", bg: "bg-blue-50/50", text: "text-[#4B7BEC]", dot: "bg-[#4B7BEC]" },
+    active: { label: "Active", bg: "bg-blue-50/50", text: "text-[#2568C1]", dot: "bg-[#2568C1]" },
     completed: { label: "Completed", bg: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500" },
     "on-hold": { label: "On Hold", bg: "bg-amber-50", text: "text-amber-600", dot: "bg-amber-500" },
     cancelled: { label: "Cancelled", bg: "bg-red-50", text: "text-red-600", dot: "bg-red-500" },
@@ -25,7 +23,7 @@ export function ProjectHeader({ project, members, activeTab, setActiveTab }: Pro
     const status = statusConfig[project.status] || statusConfig.active;
 
     const getInitials = (name: string) => {
-        return name
+        return (name || "?")
             .split(" ")
             .map((n) => n[0])
             .join("")
@@ -39,9 +37,8 @@ export function ProjectHeader({ project, members, activeTab, setActiveTab }: Pro
     const tabs = ["Overview", "Kanban", "List", "Calendar", "Teams"];
 
     return (
-        <div className="flex flex-col border-b border-[#E2E8F0] bg-white pt-6 px-4 sm:px-8 mb-6 shadow-sm rounded-t-xl">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-5 mb-8">
-                {/* Dummy Project Logo like Google in the reference */}
+        <div className="flex flex-col border-b border-[#E2E8F0] bg-white pt-4 px-4 sm:px-8 mb-4 shadow-sm rounded-t-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-5 mb-5">
                 <div className="h-16 w-16 rounded-full border border-slate-100 shadow-sm flex items-center justify-center bg-white p-2 shrink-0">
                     <div className="w-full h-full rounded-full bg-slate-50 flex items-center justify-center text-xl font-black text-slate-400">
                         {project.name.charAt(0).toUpperCase()}
@@ -63,7 +60,7 @@ export function ProjectHeader({ project, members, activeTab, setActiveTab }: Pro
                                     const name = member.user?.full_name || `User ${member.user_id}`;
                                     return (
                                         <Avatar key={member.id} className="h-8 w-8 border-2 border-white shadow-sm">
-                                            <AvatarFallback className="text-[10px] font-bold bg-slate-100 text-slate-600">
+                                            <AvatarFallback className="text-[10px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                                 {getInitials(name)}
                                             </AvatarFallback>
                                         </Avatar>
@@ -71,7 +68,7 @@ export function ProjectHeader({ project, members, activeTab, setActiveTab }: Pro
                                 })}
                                 {extraMembers > 0 && (
                                     <div className="h-8 w-8 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center z-10">
-                                        <span className="text-[10px] font-bold text-[#4B7BEC]">
+                                        <span className="text-[10px] font-bold text-[#2568C1]">
                                             +{extraMembers}
                                         </span>
                                     </div>
@@ -90,13 +87,13 @@ export function ProjectHeader({ project, members, activeTab, setActiveTab }: Pro
                         className={cn(
                             "pb-3 text-sm font-semibold transition-all relative whitespace-nowrap",
                             activeTab === tab
-                                ? "text-[#4B7BEC]"
+                                ? "text-[#2568C1]"
                                 : "text-slate-500 hover:text-slate-700"
                         )}
                     >
                         {tab}
                         {activeTab === tab && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4B7BEC] rounded-t-full" />
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2568C1] rounded-t-full" />
                         )}
                     </button>
                 ))}
