@@ -1,4 +1,3 @@
-import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -6,12 +5,9 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
-import { Search } from "lucide-react";
 import { ApiProject } from "@/lib/types";
 
 interface ResourceFiltersProps {
-    searchQuery: string;
-    setSearchQuery: (val: string) => void;
     filterProject: string;
     setFilterProject: (val: string) => void;
     filterType: string;
@@ -24,7 +20,6 @@ interface ResourceFiltersProps {
 }
 
 export function ResourceFilters({
-    searchQuery, setSearchQuery,
     filterProject, setFilterProject,
     filterType, setFilterType,
     filterStatus, setFilterStatus,
@@ -34,15 +29,6 @@ export function ResourceFilters({
     return (
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between pt-1">
             <div className="flex flex-wrap items-center gap-3 w-full">
-                <div className="relative w-full sm:w-[250px] shrink-0">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        placeholder="Search requester or details..."
-                        className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                </div>
                 <Select value={filterProject} onValueChange={setFilterProject}>
                     <SelectTrigger className="h-10 w-[180px] bg-white border-slate-200">
                         <SelectValue placeholder="All Projects" />

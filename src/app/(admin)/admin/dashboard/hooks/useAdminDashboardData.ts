@@ -58,7 +58,7 @@ export function useAdminDashboardData() {
         queryFn: () => resourceService.getResourceRequests(),
         staleTime: 5 * 60 * 1000,
     });
-    const allResources = Array.isArray(resources) ? resources : [];
+    const allResources = resources?.data || [];
 
     // 4. Fetch Payroll Summary
     const { data: payrollData, isLoading: isLoadingPayroll } = useQuery({
@@ -178,8 +178,7 @@ export function useAdminDashboardData() {
         }
 
         return Array.from(projectFinMap.values())
-            .sort((a, b) => b.totalContractValue - a.totalContractValue)
-            .slice(0, 6);
+            .sort((a, b) => b.totalContractValue - a.totalContractValue);
     }, [payrollItems, projects]);
 
     const pendingResourceList = useMemo(() => {

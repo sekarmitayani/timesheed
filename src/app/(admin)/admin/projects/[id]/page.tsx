@@ -90,6 +90,7 @@ export default function AdminProjectDetailPage() {
                             onAssign={actions.openAssignMember}
                             onRemove={actions.handleRemoveMember}
                             isSaving={state.isSaving}
+                            projectId={parseInt(projectId)}
                         />
                     )}
 

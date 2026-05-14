@@ -14,7 +14,6 @@ export default function AdminResourcesPage() {
         // State
         page, setPage,
         limit, setLimit,
-        searchQuery, setSearchQuery,
         filterProject, setFilterProject,
         filterStatus, setFilterStatus,
         filterType, setFilterType,
@@ -30,7 +29,6 @@ export default function AdminResourcesPage() {
         // Data
         allProjects,
         isLoading,
-        filteredRequests,
         paginatedRequests,
         totalPages,
         totalFiltered,
@@ -50,7 +48,7 @@ export default function AdminResourcesPage() {
         <div className="space-y-6 animate-in fade-in duration-500">
             <PageHeader 
                 title="Resource Request" 
-                description={`${filteredRequests.filter(r => r.status === "pending").length} requests need your review`}
+                description="Manage and review project resource requests."
             >
                 <Button 
                     size="sm" 
@@ -62,8 +60,6 @@ export default function AdminResourcesPage() {
             </PageHeader>
 
             <ResourceFilters 
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
                 filterProject={filterProject}
                 setFilterProject={setFilterProject}
                 filterType={filterType}
