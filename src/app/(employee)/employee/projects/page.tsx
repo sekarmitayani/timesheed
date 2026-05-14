@@ -10,7 +10,7 @@ export default function EmployeeProjectsPage() {
     const { state, computed, actions } = useProjectsData();
 
     return (
-        <div className="flex flex-col w-full gap-4 h-full overflow-hidden">
+        <div className="flex flex-col w-full gap-6 h-full overflow-hidden">
             <PageHeader
                 title="My Projects"
                 description="Projects you're currently assigned to."
@@ -28,7 +28,7 @@ export default function EmployeeProjectsPage() {
             {/* Content */}
             {state.isLoading ? (
                 <div className="flex-1 flex items-center justify-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-[#4B7BEC] opacity-40" />
+                    <Loader2 className="h-8 w-8 animate-spin text-[#2568C1] opacity-40" />
                 </div>
             ) : computed.filteredCards.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center">
@@ -39,10 +39,7 @@ export default function EmployeeProjectsPage() {
                         <p className="text-sm font-medium text-slate-500">
                             {state.searchQuery || state.filterStatus !== "all"
                                 ? "No projects match your filters."
-                                : "No projects assigned yet."}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                            Contact your project manager to get started.
+                                : "No projects assigned to you yet."}
                         </p>
                     </div>
                 </div>
