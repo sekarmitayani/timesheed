@@ -29,6 +29,8 @@ export function usePMTasksData() {
     const [selectedProjectId, setSelectedProjectId] = useState<string>("all");
     const [view, setView] = useState<string>("kanban");
     const [calView, setCalView] = useState<"day" | "week" | "month">("month");
+    const [taskSearch, setTaskSearch] = useState("");
+    const [assigneeFilter, setAssigneeFilter] = useState("all");
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingTask, setEditingTask] = useState<ApiTask | null>(null);
     const [form, setForm] = useState<CreateTaskPayload & { status?: string }>({
@@ -201,14 +203,33 @@ export function usePMTasksData() {
         return () => clearInterval(timer);
     }, []);
 
+    const uniqueMembers = useMemo(() => {
+        const map = new Map<number, ProjectMember>();
+        Object.values(allMembers).forEach(membersArr => {
+            membersArr.forEach(m => {
+                if (!map.has(m.user_id)) map.set(m.user_id, m);
+            });
+        });
+        return Array.from(map.values());
+    }, [allMembers]);
+
+    const filteredTasks = useMemo(() => {
+        const q = taskSearch.toLowerCase();
+        return tasks.filter(t => {
+            const matchesSearch = t.title.toLowerCase().includes(q) || (t.description?.toLowerCase() || "").includes(q);
+            const matchesAssignee = assigneeFilter === "all" || String(t.assigned_to_id) === assigneeFilter;
+            return matchesSearch && matchesAssignee;
+        });
+    }, [tasks, taskSearch, assigneeFilter]);
+
     const grouped = useMemo(() => {
         const sortDesc = (a: ApiTask, b: ApiTask) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         return {
-            todo: tasks.filter(t => t.status === "todo").sort(sortDesc),
-            in_progress: tasks.filter(t => t.status === "in_progress").sort(sortDesc),
-            done: tasks.filter(t => t.status === "done").sort(sortDesc),
+            todo: filteredTasks.filter(t => t.status === "todo").sort(sortDesc),
+            in_progress: filteredTasks.filter(t => t.status === "in_progress").sort(sortDesc),
+            done: filteredTasks.filter(t => t.status === "done").sort(sortDesc),
         };
-    }, [tasks]);
+    }, [filteredTasks]);
 
     const calendarDays = useMemo(() => {
         const monthStart = startOfMonth(currentMonth);
@@ -221,7 +242,7 @@ export function usePMTasksData() {
         return eachDayOfInterval({ start, end: endOfWeek(start) });
     }, [currentMonth]);
 
-    const getTasksForDay = (day: Date) => tasks.filter(t => isSameDay(day, t.due_date ? new Date(t.due_date) : new Date(t.created_at)));
+    const getTasksForDay = (day: Date) => filteredTasks.filter(t => isSameDay(day, t.due_date ? new Date(t.due_date) : new Date(t.created_at)));
     const getProjectName = (pid: number) => projects.find(p => p.id === pid)?.name || "Unknown Project";
     const getProjectColor = (projectId: number) => {
         const idx = projects.findIndex(p => p.id === projectId);
@@ -279,8 +300,8 @@ export function usePMTasksData() {
     };
 
     return {
-        state: { currentUser, isEmployee, projects, selectedProjectId, tasks, isLoadingProjects, isLoadingTasks, view, calView, members, allMembers, dialogOpen, editingTask, isSaving: saveTaskMutation.isPending, form, detailOpen, selectedTask, taskLogs, isLoadingLogs, comments, auditLogs, reporter, assignee, commentText, isSendingComment: commentMutation.isPending, isLoadingActivities, dayTasksOpen, selectedDate, deleteOpen, taskToDelete, isDeleting: deleteTaskMutation.isPending, currentMonth, currentTime, calendarScrollRef },
+        state: { currentUser, isEmployee, projects, selectedProjectId, tasks, isLoadingProjects, isLoadingTasks, view, calView, members, allMembers, uniqueMembers, taskSearch, assigneeFilter, dialogOpen, editingTask, isSaving: saveTaskMutation.isPending, form, detailOpen, selectedTask, taskLogs, isLoadingLogs, comments, auditLogs, reporter, assignee, commentText, isSendingComment: commentMutation.isPending, isLoadingActivities, dayTasksOpen, selectedDate, deleteOpen, taskToDelete, isDeleting: deleteTaskMutation.isPending, currentMonth, currentTime, calendarScrollRef },
         computed: { canManageTask: true, grouped, calendarDays, weekDays },
-        actions: { setSelectedProjectId, setView, setCalView, setDialogOpen, setForm, setDetailOpen, setCommentText, setDayTasksOpen, setDeleteOpen, setCurrentMonth, onDragEnd, openCreate, openEdit, handleSave, openDelete: (t: ApiTask) => { setTaskToDelete(t); setDeleteOpen(true); }, handleDelete: async () => { if (taskToDelete) deleteTaskMutation.mutate(taskToDelete.id); }, handleTaskClick: (t: ApiTask) => { setSelectedTask(t); setDetailOpen(true); }, handleSendComment: async () => { if (commentText.trim()) commentMutation.mutate(commentText); }, handleDayClick: (d: Date) => { setSelectedDate(d); setDayTasksOpen(true); }, getTasksForDay, getProjectName, getProjectColor, navigateCalendar }
+        actions: { setSelectedProjectId, setView, setCalView, setTaskSearch, setAssigneeFilter, setDialogOpen, setForm, setDetailOpen, setCommentText, setDayTasksOpen, setDeleteOpen, setCurrentMonth, onDragEnd, openCreate, openEdit, handleSave, openDelete: (t: ApiTask) => { setTaskToDelete(t); setDeleteOpen(true); }, handleDelete: async () => { if (taskToDelete) deleteTaskMutation.mutate(taskToDelete.id); }, handleTaskClick: (t: ApiTask) => { setSelectedTask(t); setDetailOpen(true); }, handleSendComment: async () => { if (commentText.trim()) commentMutation.mutate(commentText); }, handleDayClick: (d: Date) => { setSelectedDate(d); setDayTasksOpen(true); }, getTasksForDay, getProjectName, getProjectColor, navigateCalendar }
     };
 }

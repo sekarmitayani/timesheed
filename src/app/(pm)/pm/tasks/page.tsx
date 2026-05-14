@@ -44,6 +44,11 @@ export default function PMTasksPage() {
                 projects={state.projects}
                 selectedProjectId={state.selectedProjectId}
                 setSelectedProjectId={actions.setSelectedProjectId}
+                search={state.taskSearch}
+                setSearch={actions.setTaskSearch}
+                assigneeFilter={state.assigneeFilter}
+                setAssigneeFilter={actions.setAssigneeFilter}
+                members={state.uniqueMembers}
                 view={state.view}
                 setView={actions.setView}
             />
