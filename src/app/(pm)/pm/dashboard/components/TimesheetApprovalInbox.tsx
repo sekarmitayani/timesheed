@@ -57,7 +57,7 @@ export function TimesheetApprovalInbox({ pendingTimesheets }: TimesheetApprovalI
                                 onClick={() => router.push("/pm/approvals?status=pending")}
                             >
                                 <Avatar className="h-8 w-8 border border-slate-100 shrink-0">
-                                    <AvatarFallback className="text-[10px] font-bold text-[#4B7BEC] bg-blue-50">
+                                    <AvatarFallback className="text-[10px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                         {ts.user?.full_name?.split(" ").slice(0, 2).map(n => n?.[0]).join("") || "U"}
                                     </AvatarFallback>
                                 </Avatar>

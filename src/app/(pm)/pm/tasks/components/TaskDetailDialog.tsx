@@ -147,7 +147,7 @@ export function TaskDetailDialog({
                                                 comments.map(comm => (
                                                     <div key={comm.id} className="flex gap-3">
                                                         <Avatar size="sm" className="rounded-md border border-slate-100">
-                                                            <AvatarFallback className="text-[10px] font-bold rounded-md bg-blue-100 text-blue-600">
+                                                            <AvatarFallback className="text-[10px] font-bold rounded-md bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                                                 {comm.user?.full_name?.charAt(0)}
                                                             </AvatarFallback>
                                                         </Avatar>

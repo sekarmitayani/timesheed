@@ -92,7 +92,7 @@ export function AdminProjectCard({ data, onDelete }: AdminProjectCardProps) {
                     <div className="flex items-center -space-x-2">
                         {visibleMembers.map((member) => (
                             <Avatar key={member.id} className="h-7 w-7 border-2 border-white shadow-sm">
-                                <AvatarFallback className="text-[9px] font-bold bg-slate-100 text-slate-600">
+                                <AvatarFallback className="text-[9px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                     {getInitials(member.user?.full_name || "")}
                                 </AvatarFallback>
                             </Avatar>

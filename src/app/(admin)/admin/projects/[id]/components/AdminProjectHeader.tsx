@@ -60,7 +60,7 @@ export function AdminProjectHeader({ project, members, activeTab, setActiveTab }
                                     const name = member.user?.full_name || `User ${member.user_id}`;
                                     return (
                                         <Avatar key={member.id} className="h-8 w-8 border-2 border-white shadow-sm">
-                                            <AvatarFallback className="text-[10px] font-bold bg-slate-100 text-slate-600">
+                                            <AvatarFallback className="text-[10px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                                 {getInitials(name)}
                                             </AvatarFallback>
                                         </Avatar>

@@ -2,7 +2,7 @@
 
 import { ApiProject, ProjectMember } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, Crown, CalendarDays, Clock, UserCheck } from "lucide-react";
+import { Banknote, Crown, CalendarDays, Clock, UserCheck } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -32,7 +32,7 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
                     <Card key={i} className="border-[#E2E8F0] shadow-sm rounded-xl overflow-hidden">
                         <CardContent className="p-4 sm:p-5 flex items-start gap-4">
                             <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0", item.icon)}>
-                                <DollarSign className="h-5 w-5" />
+                                <Banknote className="h-5 w-5" />
                             </div>
                             <div className="min-w-0">
                                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{item.label}</p>
@@ -110,7 +110,7 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
                                 </span>
                             </div>
                             <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center shrink-0", margin >= 0 ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600")}>
-                                <DollarSign className="h-6 w-6" />
+                                <Banknote className="h-6 w-6" />
                             </div>
                         </div>
 

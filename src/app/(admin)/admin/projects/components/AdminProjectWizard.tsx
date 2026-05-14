@@ -142,11 +142,15 @@ export function AdminProjectWizard({
                             {selectedPmId && (() => {
                                 const pm = pmUsers.find(u => String(u.id) === selectedPmId);
                                 return pm ? (
-                                    <div className="flex items-center gap-3 p-3 rounded-lg bg-emerald-50/50 border border-emerald-100">
-                                        <Avatar className="h-9 w-9"><AvatarFallback className="text-xs font-bold bg-emerald-100 text-emerald-700">{(pm.full_name || "?").substring(0, 2).toUpperCase()}</AvatarFallback></Avatar>
+                                    <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50/50 border border-blue-100">
+                                        <Avatar className="h-9 w-9">
+                                            <AvatarFallback className="text-xs font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                                {(pm.full_name || "?").substring(0, 2).toUpperCase()}
+                                            </AvatarFallback>
+                                        </Avatar>
                                         <div>
-                                            <div className="text-sm font-bold text-emerald-900">{pm.full_name}</div>
-                                            <div className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Project Manager</div>
+                                            <div className="text-sm font-bold text-[#2568C1]">{pm.full_name}</div>
+                                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Project Manager</div>
                                         </div>
                                     </div>
                                 ) : null;
@@ -192,7 +196,11 @@ export function AdminProjectWizard({
                                     {pendingEmployees.map((emp, i) => (
                                         <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-white">
                                             <div className="flex items-center gap-3">
-                                                <Avatar className="h-8 w-8"><AvatarFallback className="text-[10px] font-bold">{(emp.user.full_name || "?").substring(0, 2)}</AvatarFallback></Avatar>
+                                                <Avatar className="h-8 w-8">
+                                                    <AvatarFallback className="text-[10px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                                        {(emp.user.full_name || "?").substring(0, 2).toUpperCase()}
+                                                    </AvatarFallback>
+                                                </Avatar>
                                                 <div>
                                                     <div className="text-sm font-bold text-slate-800">{emp.user.full_name || emp.user.name}</div>
                                                     <div className="text-[10px] font-medium text-slate-400">{emp.role_in_project}</div>

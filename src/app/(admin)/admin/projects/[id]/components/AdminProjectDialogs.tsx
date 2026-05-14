@@ -8,7 +8,7 @@ import { CurrencyInput } from "@/components/ui/currency-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, Trash2, Edit, Save, DollarSign, Calendar, Clock, AlertTriangle } from "lucide-react";
+import { Loader2, Trash2, Edit, Save, WalletCards, Calendar, Clock, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AdminProjectDialogsProps {
@@ -320,7 +320,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
             <Dialog open={deleteConfirmOpen} onOpenChange={actions.setDeleteConfirmOpen}>
                 <DialogContent className="sm:max-w-[400px]">
                     <div className="pt-4 text-center">
-                        <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4"><Trash2 className="h-6 w-6" /></div>
+                        <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4"><WalletCards className="h-6 w-6" /></div>
                         <DialogTitle className="text-xl font-bold text-slate-900">Confirm Delete</DialogTitle>
                         <DialogDescription className="mt-2 text-slate-500">Are you sure you want to delete this resource request? This action cannot be undone.</DialogDescription>
                     </div>
@@ -337,7 +337,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
             <Dialog open={zeroConfirmOpen} onOpenChange={actions.setZeroConfirmOpen}>
                 <DialogContent className="sm:max-w-[420px]">
                     <div className="pt-4 text-center">
-                        <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4"><DollarSign className="h-6 w-6" /></div>
+                        <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4"><WalletCards className="h-6 w-6" /></div>
                         <DialogTitle className="text-xl font-bold text-slate-900">Confirm Zero Amount</DialogTitle>
                         <DialogDescription className="mt-2 text-slate-500">You are setting the amount to 0 for a non-manpower resource. Proceed?</DialogDescription>
                     </div>

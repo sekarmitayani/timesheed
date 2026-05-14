@@ -91,7 +91,7 @@ export function PMTaskListView({
                                                     <TableCell className="px-4 py-4">
                                                         <div className="flex items-center gap-2">
                                                             <Avatar className="h-6 w-6 rounded-full">
-                                                                <AvatarFallback className="text-[8px] font-bold bg-slate-100 text-slate-500">
+                                                                <AvatarFallback className="text-[8px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                                                     {reporterName.charAt(0).toUpperCase()}
                                                                 </AvatarFallback>
                                                             </Avatar>
@@ -101,7 +101,7 @@ export function PMTaskListView({
                                                     <TableCell className="px-4 py-4">
                                                         <div className="flex items-center gap-2">
                                                             <Avatar className="h-6 w-6 rounded-full border border-[#4B7BEC]/10 shadow-sm">
-                                                                <AvatarFallback className="text-[8px] font-bold bg-blue-50 text-[#4B7BEC]">
+                                                                <AvatarFallback className="text-[8px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                                                     {assigneeName.charAt(0).toUpperCase()}
                                                                 </AvatarFallback>
                                                             </Avatar>

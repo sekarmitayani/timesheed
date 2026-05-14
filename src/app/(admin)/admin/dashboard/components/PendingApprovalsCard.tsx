@@ -15,35 +15,49 @@ export function PendingApprovalsCard({ requests }: PendingApprovalsCardProps) {
     const router = useRouter();
 
     return (
-        <Card className="border-[#e2e8f0]">
-            <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4 text-destructive" /> Pending Approvals
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-full">
+            <CardHeader className="pb-1 border-b border-slate-50 flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4 text-amber-500" /> Pending Approvals
                     </CardTitle>
-                    <Button variant="ghost" size="sm" className="text-xs text-primary gap-1" onClick={() => router.push("/admin/resources")}>
-                        View All <ArrowRight className="h-3 w-3" />
-                    </Button>
+                    <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Resource requests awaiting administrative action</p>
                 </div>
+                <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-7 text-[9px] font-bold text-[#4B7BEC] gap-1 hover:bg-blue-50 px-2" 
+                    onClick={() => router.push("/admin/resources")}
+                >
+                    View All <ArrowRight className="h-3 w-3" />
+                </Button>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 pt-0 pb-2.5 flex-1">
                 {requests.length === 0 ? (
-                    <div className="py-6 text-center">
-                        <CheckCircle2 className="h-8 w-8 text-emerald-400 mx-auto mb-2" />
-                        <p className="text-sm text-slate-500">All caught up! No pending approvals.</p>
+                    <div className="py-8 text-center">
+                        <CheckCircle2 className="h-8 w-8 text-emerald-400 mx-auto mb-2 opacity-50" />
+                        <p className="text-xs text-slate-400 font-medium">All caught up! No pending approvals.</p>
                     </div>
                 ) : (
-                    <div className="space-y-2">
+                    <div className="divide-y divide-slate-50">
                         {requests.map(r => (
-                            <div key={r.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/60 transition-colors cursor-pointer" onClick={() => router.push("/admin/resources")}>
-                                <div className="h-8 w-8 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center justify-center shrink-0">
-                                    {r.type === "manpower" ? <Users className="h-3.5 w-3.5 text-destructive" /> : <Wrench className="h-3.5 w-3.5 text-destructive" />}
+                            <div 
+                                key={r.id} 
+                                className="flex items-center gap-3 py-2.5 px-2 transition-all cursor-pointer group hover:bg-slate-50/30" 
+                                onClick={() => router.push("/admin/resources")}
+                            >
+                                <div className="h-8 w-8 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
+                                    {r.type === "manpower" ? <Users className="h-4 w-4 text-amber-600" /> : <Wrench className="h-4 w-4 text-amber-600" />}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-xs font-medium text-foreground truncate">{r.details}</p>
-                                    <p className="text-[10px] text-muted-foreground">{r.user?.full_name || `User #${r.user_id}`} · {r.project?.name || `Project #${r.project_id}`}</p>
+                                    <p className="text-xs font-bold text-slate-800 truncate group-hover:text-[#4B7BEC] transition-colors">{r.details}</p>
+                                    <p className="text-[9px] text-slate-400 font-medium uppercase tracking-tight mt-0.5 truncate">
+                                        {r.user?.full_name || `User #${r.user_id}`} · {r.project?.name || `Project #${r.project_id}`}
+                                    </p>
                                 </div>
-                                <Badge variant="outline" className="text-[9px] font-bold rounded-full px-2.5 py-0.5 bg-destructive/10 text-destructive border-none shrink-0">Pending</Badge>
+                                <Badge variant="outline" className="text-[8px] font-black uppercase tracking-tighter rounded-full px-2 py-0 bg-amber-50 text-amber-600 border-none shrink-0">
+                                    Pending
+                                </Badge>
                             </div>
                         ))}
                     </div>

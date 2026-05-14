@@ -149,7 +149,11 @@ export function AdminProjectMembersDialog({
                          members.map(m => (
                             <div key={m.id} className="flex items-center justify-between p-3 rounded-xl border border-slate-100 hover:border-slate-200 bg-white transition-all group">
                                 <div className="flex items-center gap-3">
-                                    <Avatar className="h-9 w-9 border border-slate-100 shadow-sm"><AvatarFallback className="text-[10px] font-bold bg-slate-50 text-slate-600">{getInitials(m.user?.full_name)}</AvatarFallback></Avatar>
+                                    <Avatar className="h-9 w-9 border border-slate-100 shadow-sm">
+                                        <AvatarFallback className="text-[10px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                            {getInitials(m.user?.full_name)}
+                                        </AvatarFallback>
+                                    </Avatar>
                                     <div>
                                         <div className="text-sm font-bold text-slate-800">{m.user?.full_name || `User #${m.user_id}`}</div>
                                         <div className="text-[10px] font-medium text-slate-400">{m.user?.email}</div>
