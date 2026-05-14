@@ -1,6 +1,5 @@
 "use client";
 
-import { PageHeader } from "@/components/ai/ai-components";
 import { Loader2 } from "lucide-react";
 import { useAdminDashboardData } from "./hooks/useAdminDashboardData";
 import { QuickStatsRow } from "./components/QuickStatsRow";
@@ -8,8 +7,11 @@ import { ProjectDistributionCard } from "./components/ProjectDistributionCard";
 import { PaymentStatusCard } from "./components/PaymentStatusCard";
 import { PendingApprovalsCard } from "./components/PendingApprovalsCard";
 import { RecentActivityCard } from "./components/RecentActivityCard";
+import { useAuthStore } from "@/store/useAuthStore";
+import { AdminDashboardHeader } from "./components/AdminDashboardHeader";
 
 export default function AdminDashboard() {
+    const user = useAuthStore((s) => s.user);
     const {
         isLoading,
         stats,
@@ -21,7 +23,7 @@ export default function AdminDashboard() {
     if (isLoading) {
         return (
             <div className="space-y-6">
-                <PageHeader title="Dashboard" description="Loading overview data..." />
+                <AdminDashboardHeader userName={user?.full_name || "Admin"} pendingCount={0} />
                 <div className="flex items-center justify-center py-32">
                     <div className="text-center space-y-4">
                         <Loader2 className="h-10 w-10 animate-spin text-[#4B7BEC] mx-auto" />
@@ -34,7 +36,7 @@ export default function AdminDashboard() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <PageHeader title="Dashboard" description="Business overview and operations" />
+            <AdminDashboardHeader userName={user?.full_name || "Admin"} pendingCount={stats.pendingResources} />
 
             {/* Row 1: KPI Stats */}
             <QuickStatsRow stats={stats} />

@@ -1,21 +1,23 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { PageHeader } from "@/components/ai/ai-components";
 import { usePMDashboardData } from "./hooks/usePMDashboardData";
 import { PMQuickStatsRow } from "./components/PMQuickStatsRow";
 import { ActiveProjectsTracker } from "./components/ActiveProjectsTracker";
 import { TimesheetApprovalInbox } from "./components/TimesheetApprovalInbox";
 import { RecentActivitiesFeed } from "./components/RecentActivitiesFeed";
 import { RecentResourceActivities } from "./components/RecentResourceActivities";
+import { useAuthStore } from "@/store/useAuthStore";
+import { PMDashboardHeader } from "./components/PMDashboardHeader";
 
 export default function PMDashboard() {
+    const user = useAuthStore((s) => s.user);
     const { data, isLoading, isError } = usePMDashboardData();
 
     if (isLoading) {
         return (
             <div className="space-y-6">
-                <PageHeader title="Project Dashboard" description="Loading your operational overview..." />
+                <PMDashboardHeader userName={user?.full_name || "Manager"} activeProjectsCount={0} />
                 <div className="flex flex-col items-center justify-center py-32">
                     <Loader2 className="h-10 w-10 animate-spin text-[#4B7BEC] mb-4" />
                     <p className="text-sm font-medium text-slate-500">Syncing live dashboard data...</p>
@@ -27,7 +29,7 @@ export default function PMDashboard() {
     if (isError || !data) {
         return (
             <div className="space-y-6">
-                <PageHeader title="Project Dashboard" description="Operational overview." />
+                <PMDashboardHeader userName={user?.full_name || "Manager"} activeProjectsCount={0} />
                 <div className="p-8 border border-red-100 bg-red-50 rounded-xl text-center">
                     <p className="text-sm font-bold text-red-600">Failed to load dashboard data. Please try again later.</p>
                 </div>
@@ -37,10 +39,7 @@ export default function PMDashboard() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <PageHeader 
-                title="Project Dashboard" 
-                description="Live overview of your projects and team operational performance." 
-            />
+            <PMDashboardHeader userName={user?.full_name || "Manager"} activeProjectsCount={data.stats.activeProjectsCount} />
 
             {/* Row 1: KPI Stats */}
             <PMQuickStatsRow stats={data.stats} />
