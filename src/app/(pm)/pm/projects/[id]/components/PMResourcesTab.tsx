@@ -1,6 +1,6 @@
 "use client";
 
-import { ResourceRequest } from "@/lib/types";
+import { ResourceRequest } from "@/lib/services/resource-service";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -31,23 +31,25 @@ export function PMResourcesTab({
 }: PMResourcesTabProps) {
     return (
         <div className="space-y-6">
-            <div className="flex flex-col lg:flex-row justify-between gap-4">
+            <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4 mb-2">
                 <div className="flex flex-col gap-1">
                     <h2 className="text-[15px] font-bold text-slate-800">Project Resources</h2>
                     <p className="text-xs text-slate-500">Track and manage resource requests for this project.</p>
                 </div>
-                <div className="flex flex-wrap gap-2 items-center">
-                    <div className="relative w-full md:w-[220px]">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                    <div className="relative w-full sm:w-[250px] shrink-0">
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search requests..."
-                            className="pl-9 h-9 text-xs border-[#E2E8F0] rounded-[6px] bg-white shadow-none focus-visible:ring-[#2568C1]"
+                            className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#2568C1]"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
                     <Select value={filterStatus} onValueChange={setFilterStatus}>
-                        <SelectTrigger className="h-9 w-[130px] text-xs bg-white border-slate-200 rounded-[6px] shadow-none"><SelectValue placeholder="Status" /></SelectTrigger>
+                        <SelectTrigger className="w-[180px] h-10 bg-white border-slate-200">
+                            <SelectValue placeholder="All Status" />
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Status</SelectItem>
                             <SelectItem value="pending">Pending</SelectItem>
@@ -55,7 +57,7 @@ export function PMResourcesTab({
                             <SelectItem value="rejected">Rejected</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Button size="sm" className="h-9 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] font-bold px-4 rounded-[6px]" onClick={onCreate}>
+                    <Button size="sm" className="h-10 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] font-bold px-4 shrink-0 w-full sm:w-auto" onClick={onCreate}>
                         <Plus className="h-4 w-4" /> New Request
                     </Button>
                 </div>

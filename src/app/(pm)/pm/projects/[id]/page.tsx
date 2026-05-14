@@ -77,7 +77,7 @@ export default function PMProjectDetailPage() {
                         <PMOverviewTab
                             project={state.project}
                             members={state.members}
-                            stats={state.stats}
+                            tasks={state.tasks as any[]}
                         />
                     )}
 
@@ -100,6 +100,8 @@ export default function PMProjectDetailPage() {
                             setSearch={actions.setTaskSearch}
                             statusFilter={state.taskFilterStatus}
                             setStatusFilter={actions.setTaskFilterStatus}
+                            assigneeFilter={state.taskFilterAssignee}
+                            setAssigneeFilter={actions.setTaskFilterAssignee}
                             onCreate={actions.openCreateTask}
                             onEdit={actions.openEditTask}
                             onDelete={(t) => actions.setDeleteTarget({ type: "task", id: t.id, title: t.title })}

@@ -15,6 +15,7 @@ export function usePMProjectDetailData(projectId: string) {
     // Filters
     const [taskSearch, setTaskSearch] = useState("");
     const [taskFilterStatus, setTaskFilterStatus] = useState("all");
+    const [taskFilterAssignee, setTaskFilterAssignee] = useState("all");
     const [resSearch, setResSearch] = useState("");
     const [resFilterStatus, setResFilterStatus] = useState("all");
 
@@ -121,9 +122,10 @@ export function usePMProjectDetailData(projectId: string) {
         return (tasks as ApiTask[]).filter(t => {
             const matchesSearch = t.title.toLowerCase().includes(q) || (t.description?.toLowerCase() || "").includes(q);
             const matchesStatus = taskFilterStatus === "all" || t.status === taskFilterStatus;
-            return matchesSearch && matchesStatus;
+            const matchesAssignee = taskFilterAssignee === "all" || String(t.assigned_to_id) === taskFilterAssignee;
+            return matchesSearch && matchesStatus && matchesAssignee;
         });
-    }, [tasks, taskSearch, taskFilterStatus]);
+    }, [tasks, taskSearch, taskFilterStatus, taskFilterAssignee]);
 
     const filteredResources = useMemo(() => {
         const q = resSearch.toLowerCase();
@@ -203,14 +205,14 @@ export function usePMProjectDetailData(projectId: string) {
     return {
         state: {
             project, members, tasks, resources, isLoading,
-            activeTab, taskSearch, taskFilterStatus, resSearch, resFilterStatus,
+            activeTab, taskSearch, taskFilterStatus, taskFilterAssignee, resSearch, resFilterStatus,
             taskDialogOpen, taskEditing, resDialogOpen, resEditing, resDetailOpen, selectedRes, deleteTarget,
             taskForm, resForm, filteredTasks, filteredResources, stats,
             isSaving: saveTaskMutation.isPending || saveResMutation.isPending,
             isDeleting: deleteTaskMutation.isPending || deleteResMutation.isPending
         },
         actions: {
-            setActiveTab, setTaskSearch, setTaskFilterStatus, setResSearch, setResFilterStatus,
+            setActiveTab, setTaskSearch, setTaskFilterStatus, setTaskFilterAssignee, setResSearch, setResFilterStatus,
             setTaskDialogOpen, setResDialogOpen, setResDetailOpen, setSelectedRes, setDeleteTarget,
             setTaskForm, setResForm,
             openCreateTask, openEditTask, openCreateRes, openEditRes,

@@ -7,7 +7,7 @@ import { timesheetService } from "@/lib/services/timesheet-service";
 import { ApiProject, ProjectMember, User } from "@/lib/types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
-import { Circle, PlayCircle, CheckCircle2, Search, Plus } from "lucide-react";
+import { Circle, PlayCircle, CheckCircle2, Search, Plus, User2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { PMTaskKanbanView } from "./PMTaskKanbanView";
@@ -28,6 +28,8 @@ interface PMTaskViewsContainerProps {
     setSearch: (v: string) => void;
     statusFilter: string;
     setStatusFilter: (v: string) => void;
+    assigneeFilter: string;
+    setAssigneeFilter: (v: string) => void;
     onCreate: () => void;
     onEdit: (t: ApiTask) => void;
     onDelete: (t: ApiTask) => void;
@@ -42,6 +44,7 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; i
 export function PMTaskViewsContainer({ 
     activeTab, project, tasks, members, filteredTasks,
     search, setSearch, statusFilter, setStatusFilter,
+    assigneeFilter, setAssigneeFilter,
     onCreate, onEdit, onDelete
 }: PMTaskViewsContainerProps) {
     const queryClient = useQueryClient();
@@ -137,20 +140,35 @@ export function PMTaskViewsContainer({
     return (
         <div className="flex flex-col w-full h-full min-h-0">
             {/* Toolbar - Search/Filter/Add */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-5 shrink-0 px-1">
-                <div className="flex flex-wrap items-center gap-2">
-                    <div className="relative w-full sm:w-[250px]">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between shrink-0 mb-5 px-1">
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto flex-1">
+                    <div className="relative w-full sm:w-[250px] shrink-0">
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search tasks..."
-                            className="pl-9 h-10 text-xs border-[#E2E8F0] rounded-[6px] bg-white shadow-none focus-visible:ring-[#2568C1]"
+                            className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#2568C1]"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
+                    <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
+                        <SelectTrigger className="w-[180px] h-10 bg-white border-slate-200">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <span className="truncate"><SelectValue placeholder="All Assignees" /></span>
+                            </div>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Assignees</SelectItem>
+                            {members.map(m => (
+                                <SelectItem key={m.user_id} value={String(m.user_id)}>
+                                    {m.user?.full_name || `User #${m.user_id}`}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
 
-                <Button size="sm" className="h-10 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] font-bold px-4 rounded-[6px]" onClick={onCreate}>
+                <Button size="sm" className="h-10 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] font-bold px-4 rounded-[6px] shrink-0 w-full sm:w-auto" onClick={onCreate}>
                     <Plus className="h-4 w-4" /> Add Task
                 </Button>
             </div>
