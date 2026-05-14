@@ -1,12 +1,34 @@
 "use client";
 
+import { useState } from "react";
 import { ProjectMember } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Users, Search, UserPlus, Trash2, Crown } from "lucide-react";
+import { 
+    Dialog, 
+    DialogContent, 
+    DialogHeader, 
+    DialogTitle,
+    DialogDescription
+} from "@/components/ui/dialog";
+import { 
+    Users, 
+    Search, 
+    UserPlus, 
+    Trash2, 
+    Crown, 
+    Mail, 
+    Phone, 
+    Briefcase,
+    Loader2,
+    Calendar,
+    WalletCards
+} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { adminContractService } from "@/lib/services/admin-contracts";
 
 interface AdminTeamsTabProps {
     members: ProjectMember[];
@@ -15,12 +37,29 @@ interface AdminTeamsTabProps {
     onAssign: () => void;
     onRemove: (id: number) => void;
     isSaving: boolean;
+    projectId: number;
 }
 
 export function AdminTeamsTab({
-    members, search, setSearch, onAssign, onRemove, isSaving
+    members, search, setSearch, onAssign, onRemove, isSaving, projectId
 }: AdminTeamsTabProps) {
+    const [selectedMember, setSelectedMember] = useState<ProjectMember | null>(null);
+    const [isDetailOpen, setIsDetailOpen] = useState(false);
+
     const getInitials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
+
+    const { data: userContracts, isLoading: isLoadingContracts } = useQuery({
+        queryKey: ["user-contracts", selectedMember?.user_id],
+        queryFn: () => adminContractService.getUserContracts(selectedMember!.user_id),
+        enabled: !!selectedMember,
+    });
+
+    const projectContract = userContracts?.find(c => c.project_id === projectId);
+
+    const handleCardClick = (member: ProjectMember) => {
+        setSelectedMember(member);
+        setIsDetailOpen(true);
+    };
 
     return (
         <div className="space-y-6">
@@ -56,11 +95,12 @@ export function AdminTeamsTab({
                 {members.map((member) => (
                     <Card
                         key={member.id}
-                        className="border-[#E2E8F0] shadow-sm rounded-xl hover:border-[#4B7BEC]/30 hover:shadow-md transition-all group"
+                        className="border-[#E2E8F0] shadow-sm rounded-xl hover:border-[#4B7BEC]/30 hover:shadow-md transition-all group cursor-pointer"
+                        onClick={() => handleCardClick(member)}
                     >
                         <CardContent className="p-5 flex items-center gap-4">
                             <Avatar className="h-11 w-11 border border-slate-100 shadow-sm">
-                                <AvatarFallback className="text-xs font-bold bg-slate-50 text-slate-600">
+                                <AvatarFallback className="text-xs font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                     {getInitials(member.user?.full_name || "")}
                                 </AvatarFallback>
                             </Avatar>
@@ -80,7 +120,7 @@ export function AdminTeamsTab({
                                 variant="ghost" 
                                 size="icon" 
                                 className="h-8 w-8 text-slate-300 opacity-0 group-hover:opacity-100 hover:text-red-600 hover:bg-red-50 rounded-full transition-all"
-                                onClick={() => onRemove(member.id)}
+                                onClick={(e) => { e.stopPropagation(); onRemove(member.id); }}
                                 disabled={isSaving}
                             >
                                 <Trash2 className="h-4 w-4" />
@@ -96,6 +136,103 @@ export function AdminTeamsTab({
                     </div>
                 )}
             </div>
+
+            <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+                <DialogContent className="sm:max-w-[425px] p-6 bg-white rounded-xl shadow-xl border border-slate-100">
+                    <DialogHeader className="flex flex-row items-start gap-4 space-y-0 pb-4 border-b border-slate-100">
+                        <Avatar className="h-16 w-16 border-2 border-slate-50 shadow-sm">
+                            <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                {getInitials(selectedMember?.user?.full_name || "")}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col pt-1">
+                            <DialogTitle className="text-lg font-bold text-slate-800">
+                                {selectedMember?.user?.full_name}
+                            </DialogTitle>
+                            <DialogDescription className="text-xs font-bold text-[#4B7BEC] uppercase tracking-widest mt-1">
+                                {selectedMember?.role_in_project}
+                            </DialogDescription>
+                        </div>
+                    </DialogHeader>
+
+                    <div className="space-y-3 py-2">
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Mail className="h-4 w-4 text-slate-400" />
+                                <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.email || "No email"}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Phone className="h-4 w-4 text-slate-400" />
+                                <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.phone_number || "No phone"}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Calendar className="h-4 w-4 text-slate-400" />
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Assigned On</span>
+                                    <span className="text-xs font-semibold text-slate-700">
+                                        {selectedMember?.joined_at 
+                                            ? new Date(selectedMember.joined_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) 
+                                            : "N/A"}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 p-3 rounded-lg border border-slate-100 bg-blue-50/30">
+                            <WalletCards className="h-4 w-4 text-[#4B7BEC] mt-0.5" />
+                            <div className="flex flex-col flex-1 gap-2">
+                                <span className="text-[10px] font-bold text-[#4B7BEC] uppercase tracking-widest">Contract & Rate</span>
+                                {isLoadingContracts ? (
+                                    <div className="flex items-center gap-2 py-1">
+                                        <Loader2 className="h-3 w-3 animate-spin text-[#2568C1]" />
+                                        <span className="text-xs text-slate-400">Loading details...</span>
+                                    </div>
+                                ) : (() => {
+                                    const pContract = userContracts?.find(c => c.project_id === projectId);
+                                    const bContract = userContracts?.find(c => !c.project_id);
+                                    const activeC = pContract || bContract;
+                                    
+                                    if (!activeC) return <span className="text-xs font-medium text-slate-500 italic">No contract details found.</span>;
+
+                                    return (
+                                        <div className="flex flex-col gap-1.5">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm font-bold text-slate-800">
+                                                    Rp {activeC.rate_amount.toLocaleString("id-ID")}
+                                                </span>
+                                                <Badge variant="outline" className={`text-[8px] font-black uppercase tracking-tighter rounded-full border-none px-2 py-0 ${pContract ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-500"}`}>
+                                                    {pContract ? "Project Custom Rate" : "Base Rate"}
+                                                </Badge>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Badge variant="outline" className="text-[9px] font-bold uppercase bg-white text-slate-600 border-slate-200">
+                                                    {activeC.contract_type}
+                                                </Badge>
+                                                <span className="text-slate-300 text-[10px]">•</span>
+                                                <span className="text-[10px] font-semibold text-slate-500 capitalize">
+                                                    {activeC.payment_scheme.replace(/_/g, ' ')}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-4 flex justify-end">
+                        <Button variant="outline" className="h-9 px-6 rounded-lg text-xs font-bold border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700" onClick={() => setIsDetailOpen(false)}>
+                            Close
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

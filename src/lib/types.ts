@@ -68,6 +68,7 @@ export interface ProjectMember {
     user_id: number;
     role_in_project: string;
     created_at?: string;
+    joined_at?: string;
     user?: {
         id: number;
         email: string;

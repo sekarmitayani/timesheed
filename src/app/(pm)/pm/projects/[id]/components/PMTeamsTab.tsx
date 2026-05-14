@@ -1,11 +1,27 @@
 "use client";
 
+import { useState } from "react";
 import { ProjectMember } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Users, Search, Crown } from "lucide-react";
+import { 
+    Dialog, 
+    DialogContent, 
+    DialogHeader, 
+    DialogTitle,
+    DialogDescription
+} from "@/components/ui/dialog";
+import { 
+    Users, 
+    Search, 
+    Crown, 
+    Mail, 
+    Phone, 
+    Calendar
+} from "lucide-react";
 
 interface PMTeamsTabProps {
     members: ProjectMember[];
@@ -16,7 +32,15 @@ interface PMTeamsTabProps {
 export function PMTeamsTab({
     members, search, setSearch
 }: PMTeamsTabProps) {
+    const [selectedMember, setSelectedMember] = useState<ProjectMember | null>(null);
+    const [isDetailOpen, setIsDetailOpen] = useState(false);
+
     const getInitials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
+
+    const handleCardClick = (member: ProjectMember) => {
+        setSelectedMember(member);
+        setIsDetailOpen(true);
+    };
 
     return (
         <div className="space-y-6">
@@ -45,11 +69,12 @@ export function PMTeamsTab({
                 {members.map((member) => (
                     <Card
                         key={member.id}
-                        className="border-[#E2E8F0] shadow-sm rounded-xl hover:border-[#4B7BEC]/30 hover:shadow-md transition-all group"
+                        className="border-[#E2E8F0] shadow-sm rounded-xl hover:border-[#4B7BEC]/30 hover:shadow-md transition-all group cursor-pointer"
+                        onClick={() => handleCardClick(member)}
                     >
                         <CardContent className="p-5 flex items-center gap-4">
                             <Avatar className="h-11 w-11 border border-slate-100 shadow-sm">
-                                <AvatarFallback className="text-xs font-bold bg-slate-50 text-slate-600">
+                                <AvatarFallback className="text-xs font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                     {getInitials(member.user?.full_name || "")}
                                 </AvatarFallback>
                             </Avatar>
@@ -76,6 +101,58 @@ export function PMTeamsTab({
                     </div>
                 )}
             </div>
+
+            <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+                <DialogContent className="sm:max-w-[425px] p-6 bg-white rounded-xl shadow-xl border border-slate-100">
+                    <DialogHeader className="flex flex-row items-start gap-4 space-y-0 pb-4 border-b border-slate-100">
+                        <Avatar className="h-16 w-16 border-2 border-slate-50 shadow-sm">
+                            <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                {getInitials(selectedMember?.user?.full_name || "")}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col pt-1">
+                            <DialogTitle className="text-lg font-bold text-slate-800">
+                                {selectedMember?.user?.full_name}
+                            </DialogTitle>
+                            <DialogDescription className="text-xs font-bold text-[#4B7BEC] uppercase tracking-widest mt-1">
+                                {selectedMember?.role_in_project}
+                            </DialogDescription>
+                        </div>
+                    </DialogHeader>
+
+                    <div className="space-y-3 py-2">
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Mail className="h-4 w-4 text-slate-400" />
+                                <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.email || "No email"}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Phone className="h-4 w-4 text-slate-400" />
+                                <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.phone_number || "No phone"}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Calendar className="h-4 w-4 text-slate-400" />
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Assigned On</span>
+                                    <span className="text-xs font-semibold text-slate-700">{selectedMember?.joined_at ? new Date(selectedMember.joined_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : "Unknown"}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-4 flex justify-end">
+                        <Button variant="outline" className="h-9 px-6 rounded-lg text-xs font-bold border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700" onClick={() => setIsDetailOpen(false)}>
+                            Close
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
