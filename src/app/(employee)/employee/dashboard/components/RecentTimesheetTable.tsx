@@ -39,11 +39,14 @@ export function RecentTimesheetTable({ timesheets, tasks, projects, className }:
     };
 
     return (
-        <Card className={cn("bg-white border-slate-100 shadow-sm flex flex-col", className)}>
-            <CardHeader className="px-5 py-1 flex flex-row items-center justify-between">
-                <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500" /> Recent Completed Tasks
-                </CardTitle>
+        <Card className={cn("bg-white border-slate-100 shadow-sm flex flex-col gap-0 py-0", className)}>
+            <CardHeader className="px-6 pt-6 pb-5 border-b border-slate-50 flex flex-col items-start justify-between">
+                <div>
+                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500" /> Recent Completed Tasks
+                    </CardTitle>
+                    <p className="text-[10px] text-slate-400 font-medium ml-6 mt-0.5">Recently logged and completed work sessions</p>
+                </div>
             </CardHeader>
             <CardContent className="p-0 flex-1 overflow-hidden">
                 <Table>

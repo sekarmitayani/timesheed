@@ -1,4 +1,4 @@
-import { TrendingUp, Wallet, DollarSign } from "lucide-react";
+import { TrendingUp, Wallet } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface EarningsKpisProps {
@@ -53,7 +53,7 @@ export function EarningsKpis({ currentMonthReleased, totalLiability, totalEarned
       <Card className={cardClass}>
         <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">
             <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#4B7BEC] shrink-0">
-                <DollarSign className="h-6 w-6" />
+                <Wallet className="h-6 w-6" />
             </div>
             <div className="min-w-0">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Total Released</p>

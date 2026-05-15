@@ -1,6 +1,6 @@
 import { Role } from "./types";
 import {
-    LayoutDashboard, Clock, ListTodo, FileText, Target, DollarSign,
+    LayoutDashboard, Clock, ListTodo, FileText, Target, Wallet,
     History, UserCircle, FolderKanban, Inbox, Users, BarChart3,
     Brain, Settings, Shield, CreditCard, FileSearch, Activity,
     Building2, PieChart, TrendingUp, Scale, Gauge, ClipboardList,
@@ -33,7 +33,7 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
                 { label: "Tasks", href: "/employee/tasks", icon: ListTodo },
                 { label: "Projects", href: "/employee/projects", icon: FolderKanban },
                 { label: "Timesheet", href: "/employee/timesheet", icon: FileText },
-                { label: "Earnings", href: "/employee/earnings", icon: DollarSign },
+                { label: "Earnings", href: "/employee/earnings", icon: Wallet },
             ]
         }
     ],

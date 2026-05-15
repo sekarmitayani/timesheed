@@ -36,10 +36,13 @@ export function WeeklyHoursChart({ timesheets, className }: WeeklyHoursChartProp
 
     return (
         <Card className={cn("bg-white border-slate-100 shadow-sm flex flex-col", className)}>
-            <CardHeader className="px-5 py-1 border-b border-slate-50 shrink-0">
-                <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-[#4B7BEC]" /> Weekly Hours (Last 7 Days)
-                </CardTitle>
+            <CardHeader className="pb-2 border-b border-slate-50 flex flex-col items-start justify-between">
+                <div>
+                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-[#4B7BEC]" /> Weekly Hours (Last 7 Days)
+                    </CardTitle>
+                    <p className="text-[10px] text-slate-400 font-medium ml-6 mt-0.5">Daily breakdown of your logged work hours</p>
+                </div>
             </CardHeader>
             <CardContent className="flex-1 px-5 pb-5 pt-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">

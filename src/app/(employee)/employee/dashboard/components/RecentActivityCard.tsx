@@ -36,10 +36,13 @@ export function RecentActivityCard({ auditLogs, tasks, projects, currentUser, cl
 
     return (
         <Card className={cn("bg-white border-slate-100 shadow-sm overflow-hidden", className)}>
-            <CardHeader className="px-5 py-1 border-b border-slate-50">
-                <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                    <History className="h-4 w-4 text-emerald-500" /> Recent Activity
-                </CardTitle>
+            <CardHeader className="pb-2 border-b border-slate-50 flex flex-col items-start justify-between">
+                <div>
+                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <History className="h-4 w-4 text-emerald-500" /> Recent Activity
+                    </CardTitle>
+                    <p className="text-[10px] text-slate-400 font-medium ml-6 mt-0.5">Latest actions across your assigned tasks</p>
+                </div>
             </CardHeader>
             <CardContent className="p-0">
                 <div className="relative px-5 py-2">

@@ -2,11 +2,10 @@ import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
-  DollarSign,
+  Wallet,
   ChevronLeft,
   ChevronRight,
   Search,
-  Calendar as CalendarIcon,
   Clock,
   CreditCard,
   FileText
@@ -43,6 +42,8 @@ interface PaymentHistoryProps {
 }
 
 export function PaymentHistory({ payments }: PaymentHistoryProps) {
+  const [search, setSearch] = useState("");
+  const [contractTypeFilter, setContractTypeFilter] = useState("all");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,9 +83,19 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
       const pDate = new Date(p.date).getTime();
       if (startDate && pDate < new Date(startDate).getTime()) return false;
       if (endDate && pDate > new Date(endDate).getTime()) return false;
+      
+      if (contractTypeFilter !== "all" && p.contractType.toLowerCase() !== contractTypeFilter.toLowerCase()) return false;
+
+      if (search) {
+        const query = search.toLowerCase();
+        const matchesProject = p.projectName.toLowerCase().includes(query);
+        const matchesDesc = p.description?.toLowerCase().includes(query);
+        if (!matchesProject && !matchesDesc) return false;
+      }
+
       return true;
     });
-  }, [payments, startDate, endDate]);
+  }, [payments, startDate, endDate, contractTypeFilter, search]);
 
   // 2. Pagination Logic
   const totalPages = Math.ceil(filteredPayments.length / pageSize);
@@ -100,66 +111,86 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
   };
 
   return (
-    <Card className="border-[#E2E8F0] shadow-none rounded-md">
-      <CardHeader className="px-5 pt-2 pb-0 space-y-0">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-          <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2 m-0 leading-none">
-            <DollarSign className="h-4 w-4 text-[#4B7BEC]" /> Payment History
-          </CardTitle>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-muted-foreground font-medium">Rows:</span>
-              <Select
-                value={String(pageSize)}
-                onValueChange={(v) => { setPageSize(Number(v)); setCurrentPage(1); }}
-              >
-                <SelectTrigger className="h-7 w-16 text-[10px] border-[#E2E8F0] bg-slate-50">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="h-4 w-px bg-[#E2E8F0] hidden sm:block" />
-
-            <div className="flex items-center gap-2 bg-slate-50 p-1 rounded-md border border-[#E2E8F0]">
-              <CalendarIcon className="h-3 w-3 text-muted-foreground ml-1" />
-              <input
-                type="date"
-                className="bg-transparent text-[10px] outline-none border-none focus:ring-0 w-28 h-6"
-                value={startDate}
-                onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1); }}
-              />
-              <span className="text-[10px] text-muted-foreground">to</span>
-              <input
-                type="date"
-                className="bg-transparent text-[10px] outline-none border-none focus:ring-0 w-28 h-6"
-                value={endDate}
-                onChange={(e) => { setEndDate(e.target.value); setCurrentPage(1); }}
-              />
-              {(startDate || endDate) && (
-                <button
-                  onClick={() => { setStartDate(""); setEndDate(""); setCurrentPage(1); }}
-                  className="text-[10px] text-red-500 font-bold px-2 hover:bg-red-50 rounded"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-          </div>
+    <Card className="border-[#E2E8F0] shadow-none rounded-xl overflow-hidden flex flex-col gap-0 py-0">
+      <CardHeader className="px-6 pt-6 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <Wallet className="h-4 w-4 text-[#4B7BEC]" /> Payment History
+            </CardTitle>
+            <p className="text-[10px] text-slate-400 font-medium ml-6 mt-0.5">Track all your processed payments and transactions</p>
         </div>
       </CardHeader>
+      
+      <div className="px-6 pb-5 border-b border-[#E2E8F0] bg-white">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="flex flex-wrap items-center gap-3 w-full">
+                <div className="relative w-full sm:w-[250px] shrink-0">
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                        placeholder="Search project or description..." 
+                        className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#2568C1]" 
+                        value={search} 
+                        onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }} 
+                    />
+                </div>
+                
+                <Select value={contractTypeFilter} onValueChange={(v) => { setContractTypeFilter(v); setCurrentPage(1); }}>
+                    <SelectTrigger className="w-[140px] h-10 bg-white border-slate-200">
+                        <SelectValue placeholder="Contract Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Types</SelectItem>
+                        <SelectItem value="project">Project</SelectItem>
+                        <SelectItem value="base">Base</SelectItem>
+                    </SelectContent>
+                </Select>
+
+                <div className="flex items-center gap-2 bg-white h-10 px-3 rounded-md border border-slate-200">
+                  <input
+                    type="date"
+                    className="bg-transparent text-sm outline-none border-none focus:ring-0 w-32"
+                    value={startDate}
+                    onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1); }}
+                  />
+                  <span className="text-sm text-muted-foreground">to</span>
+                  <input
+                    type="date"
+                    className="bg-transparent text-sm outline-none border-none focus:ring-0 w-32"
+                    value={endDate}
+                    onChange={(e) => { setEndDate(e.target.value); setCurrentPage(1); }}
+                  />
+                  {(startDate || endDate) && (
+                    <button
+                      onClick={() => { setStartDate(""); setEndDate(""); setCurrentPage(1); }}
+                      className="text-xs text-red-500 font-bold px-2 hover:bg-red-50 rounded"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+
+                <Select value={String(pageSize)} onValueChange={(v) => { setPageSize(Number(v)); setCurrentPage(1); }}>
+                    <SelectTrigger className="h-10 w-[80px] bg-white border-slate-200 shrink-0 text-xs">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="20">20</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                </Select>
+
+                <div className="flex-1" />
+            </div>
+        </div>
+      </div>
+
       <CardContent className="p-0">
         <div className="overflow-x-auto custom-scrollbar">
           <Table>
-            <TableHeader className="bg-[#F8FAFC] sticky top-0 z-10 shadow-[0_1px_0_0_rgba(226,232,240,1)]">
-              <TableRow className="hover:bg-transparent border-[#E2E8F0] bg-[#F8FAFC]">
+            <TableHeader className="bg-[#F8FAFC] sticky top-0 z-10 border-b border-[#E2E8F0]">
+              <TableRow className="hover:bg-transparent border-none bg-[#F8FAFC]">
                 <TableHead className="bg-[#F8FAFC] w-[140px] text-[10px] font-bold text-muted-foreground uppercase py-2.5 pl-6 tracking-wider">Date</TableHead>
                 <TableHead className="bg-[#F8FAFC] text-[10px] font-bold text-muted-foreground uppercase py-2.5 tracking-wider">Project & Type</TableHead>
                 <TableHead className="bg-[#F8FAFC] text-[10px] font-bold text-muted-foreground uppercase py-2.5 tracking-wider">Amount</TableHead>
@@ -222,7 +253,7 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
         </div>
 
         {/* Pagination Footer */}
-        <div className="border-t border-[#e2e8f0] bg-white px-4 py-3 flex items-center justify-between shrink-0">
+        <div className="border-t border-[#e2e8f0] bg-white px-6 py-4 flex items-center justify-between shrink-0">
           <div className="text-xs text-muted-foreground">
             Showing <span className="font-medium text-[#0f172a]">{(currentPage - 1) * pageSize + 1}</span> to <span className="font-medium text-[#0f172a]">{Math.min(currentPage * pageSize, filteredPayments.length)}</span> of <span className="font-medium text-[#0f172a]">{filteredPayments.length}</span> records
           </div>
@@ -279,7 +310,7 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <p className="text-[10px] text-muted-foreground uppercase font-bold flex items-center gap-1">
-                    <DollarSign className="h-3 w-3 text-[#4B7BEC]" /> Amount
+                    <Wallet className="h-3 w-3 text-[#4B7BEC]" /> Amount
                   </p>
                   <p className="text-sm font-bold text-[#4B7BEC]">{formatCurrency(selectedPayment.amount)}</p>
                 </div>
