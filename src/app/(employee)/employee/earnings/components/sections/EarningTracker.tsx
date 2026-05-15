@@ -5,9 +5,10 @@ import { MonthlyBreakdown } from "../../types";
 
 interface EarningTrackerProps {
   contractType: string;
-  approvedMinutes: number;
-  pendingMinutes: number;
-  approvedDays: number;
+  allTimeDuration?: number;
+  monthDuration?: number;
+  allTimeDays?: number;
+  monthDays?: number;
   rate: number;
   scheme: string;
   totalPaid: number;
@@ -22,9 +23,10 @@ interface EarningTrackerProps {
 
 export function EarningTracker({
   contractType,
-  approvedMinutes = 0,
-  pendingMinutes = 0,
-  approvedDays = 0,
+  allTimeDuration = 0,
+  monthDuration = 0,
+  allTimeDays = 0,
+  monthDays = 0,
   rate,
   scheme,
   totalPaid,
@@ -51,9 +53,6 @@ export function EarningTracker({
   let mainValue = "";
   let mainLabel = "";
   let MainIcon = Clock;
-
-  const approvedHours = approvedMinutes / 60;
-  const submittedHours = (approvedMinutes + pendingMinutes) / 60;
 
   if (contractType === 'timesheet' || contractType === 'hourly') {
     mainValue = currentMonthName;
@@ -95,22 +94,22 @@ export function EarningTracker({
                   <div>
                     <p className="text-[10px] text-blue-600 uppercase font-medium">Approved (Fixed)</p>
                     <p className="text-xs font-bold text-emerald-600">
-                      {contractType === 'timesheet' || contractType === 'hourly' ? `${approvedHours.toFixed(1)} Hours` : `${approvedCount} Days`}
+                      {contractType === 'timesheet' || contractType === 'hourly' ? `${allTimeDuration.toFixed(1)} Hours` : `${allTimeDays} Days`}
                     </p>
                     <p className="text-[9px] text-emerald-500 font-medium">
-                      {approvedCount} {contractType === 'timesheet' || contractType === 'hourly' ? 'Logs' : 'Days'} Approved
+                      {approvedCount || (contractType === 'mandays' ? allTimeDays : 0)} {contractType === 'timesheet' || contractType === 'hourly' ? 'Logs' : 'Days'} Approved
                     </p>
                     <p className="text-[9px] text-emerald-600 font-bold">{formatCurrency(totalPaid + liability)}</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-blue-600 uppercase font-medium">Pending (Est)</p>
                     <p className="text-xs font-bold text-slate-600">
-                      {contractType === 'timesheet' || contractType === 'hourly' ? `${(pendingMinutes / 60).toFixed(1)} Hours` : `${submittedCount - approvedCount} Days`}
+                      {/* Backend should ideally provide pending stats */}
+                      {estimatedEarning > 0 ? formatCurrency(estimatedEarning) : "0"}
                     </p>
                     <p className="text-[9px] text-slate-400 font-medium">
-                      {submittedCount - approvedCount} {contractType === 'timesheet' || contractType === 'hourly' ? 'Logs' : 'Days'} Pending
+                      {(submittedCount || 0) - (approvedCount || 0)} Pending
                     </p>
-                    <p className="text-[9px] text-slate-500 font-bold">{formatCurrency(estimatedEarning)}</p>
                   </div>
                 </div>
               )}
@@ -169,7 +168,7 @@ export function EarningTracker({
                       {monthlyBreakdown.map((m, idx) => (
                         <tr key={idx} className="border-b border-[#E2E8F0] last:border-0 hover:bg-slate-50/50">
                           <td className="px-3 py-2.5">
-                            <p className="text-[10px] font-bold text-slate-700">{m.monthName}</p>
+                            <p className="text-[10px] font-bold text-slate-700">{m.period_name}</p>
                             <p className="text-[9px] text-slate-400">{m.year}</p>
                           </td>
                           <td className="px-3 py-2.5 text-[10px] font-medium text-slate-600">

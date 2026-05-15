@@ -38,7 +38,7 @@ export function ContractAccordion({ contracts }: ContractAccordionProps) {
 
       <Accordion type="single" collapsible className="space-y-3">
         {contracts.map((contract, index) => {
-          const liability = Math.max(0, contract.total_earned - contract.total_paid);
+          const liability = contract.total_liability ?? Math.max(0, contract.total_earned - contract.total_paid);
 
           return (
             <AccordionItem 
@@ -62,7 +62,7 @@ export function ContractAccordion({ contracts }: ContractAccordionProps) {
                       {contract.contract_type === 'mandays' && (
                         <>
                           <span className="text-slate-300">•</span>
-                          <span className="text-[#4B7BEC] font-bold">{contract.approved_count} Days Approved</span>
+                          <span className="text-[#4B7BEC] font-bold">{contract.approved_count || contract.all_time_days || 0} Days Approved</span>
                         </>
                       )}
                     </div>
@@ -106,9 +106,10 @@ export function ContractAccordion({ contracts }: ContractAccordionProps) {
                     />
                     <EarningTracker 
                       contractType={contract.contract_type}
-                      approvedMinutes={contract.approvedMinutes}
-                      pendingMinutes={contract.pendingMinutes}
-                      approvedDays={contract.approvedDays}
+                      allTimeDuration={contract.all_time_duration}
+                      monthDuration={contract.month_duration}
+                      allTimeDays={contract.all_time_days}
+                      monthDays={contract.month_days}
                       rate={contract.rate_amount}
                       scheme={contract.payment_scheme}
                       totalPaid={contract.total_paid}

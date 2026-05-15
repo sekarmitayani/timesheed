@@ -56,18 +56,18 @@ export function ContractOverview({ contracts }: ContractOverviewProps) {
 
                 {/* Specific Stats */}
                 <div className="mt-2 pt-2 border-t border-slate-50 flex gap-4">
-                  {contract.contract_type === 'timesheet' && (
+                  {(contract.contract_type === 'timesheet' || contract.contract_type === 'hourly') && (
                     <>
                       <div className="flex items-center gap-1.5">
                         <Clock className="h-3 w-3 text-slate-400" />
                         <span className="text-[10px] font-medium text-slate-500">
-                          {((contract.approvedMinutes + contract.pendingMinutes) / 60).toFixed(1)}h Submitted
+                          {((contract.submitted_count || 0) > 0 ? (contract.submitted_count || 0) : (contract.all_time_duration || 0)).toFixed(1)}h Submitted
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="h-3 w-3 text-emerald-400" />
                         <span className="text-[10px] font-medium text-emerald-600">
-                          {(contract.approvedMinutes / 60).toFixed(1)}h Approved
+                          {(contract.all_time_duration || 0).toFixed(1)}h Approved
                         </span>
                       </div>
                     </>
@@ -83,7 +83,7 @@ export function ContractOverview({ contracts }: ContractOverviewProps) {
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="h-3 w-3 text-emerald-400" />
                         <span className="text-[10px] font-medium text-emerald-600">
-                          {contract.approved_count} Days Approved
+                          {contract.all_time_days || contract.approved_count} Days Approved
                         </span>
                       </div>
                     </>
