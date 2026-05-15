@@ -25,7 +25,7 @@ interface PaymentHistoryTableProps {
   paymentStatus?: "pending" | "paid" | "partially_paid";
 }
 
-export function PaymentHistoryTable({ payments, paymentStatus = "pending" }: PaymentHistoryTableProps) {
+export function PaymentHistoryTable({ payments = [], paymentStatus = "pending" }: PaymentHistoryTableProps) {
   const [selectedPayment, setSelectedPayment] = useState<PaymentLog | null>(null);
 
   const formatCurrency = (amount: number) => {
