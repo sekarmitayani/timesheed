@@ -105,7 +105,7 @@ export function ContractsTable({
                                             <div className="flex gap-3 items-center">
                                                 <Avatar className="h-9 w-9 border border-[#e2e8f0] shadow-sm">
                                                     <AvatarFallback className="text-xs font-semibold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
-                                                        {(uContext?.name || "U").substring(0, 2).toUpperCase()}
+                                                        {(uContext?.full_name || uContext?.name || "U").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase()}
                                                     </AvatarFallback>
                                                 </Avatar>
                                                 <div className="flex flex-col">

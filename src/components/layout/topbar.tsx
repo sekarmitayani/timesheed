@@ -84,7 +84,7 @@ export function Topbar() {
     };
 
     return (
-        <>
+        <div className="sticky top-0 z-50 flex flex-col w-full">
             {/* Proxy Session Banner */}
             <AnimatePresence>
                 {isImpersonating && (
@@ -93,7 +93,7 @@ export function Topbar() {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="sticky top-0 z-50 bg-amber-500 text-white shadow-lg"
+                        className="bg-amber-500 text-white shadow-lg relative z-50"
                     >
                         <div className="flex items-center justify-between px-6 py-2.5">
                             <div className="flex items-center gap-2.5">
@@ -119,7 +119,7 @@ export function Topbar() {
                 )}
             </AnimatePresence>
 
-            <header className="sticky top-0 z-30 flex h-14 sm:h-16 items-center justify-between border-b border-border bg-white/80 backdrop-blur-xl px-3 sm:px-6">
+            <header className="flex h-14 sm:h-16 items-center justify-between border-b border-border bg-white/80 backdrop-blur-xl px-3 sm:px-6 relative z-40">
                 {/* Left: Mobile Hamburger + Search */}
                 <div className="flex items-center gap-2 sm:gap-3 flex-1">
                     <Button variant="ghost" size="icon" className="h-9 w-9 lg:hidden" onClick={toggleMobileSidebar}>
@@ -237,12 +237,12 @@ export function Topbar() {
                             <Button variant="ghost" size="sm" className="gap-2 ml-1">
                                 <Avatar className="h-7 w-7">
                                     <AvatarFallback className={cn(
-                                        "text-xs text-white",
+                                        "text-xs font-semibold text-white",
                                         isImpersonating
                                             ? "bg-amber-500"
-                                            : "bg-blue-600"
+                                            : "bg-gradient-to-br from-[#2568C1] to-[#1a4f99]"
                                     )}>
-                                        {user.name.split(" ").map((n) => n[0]).join("")}
+                                        {user.name.split(" ").slice(0, 2).map((n) => n[0]).join("").toUpperCase()}
                                     </AvatarFallback>
                                 </Avatar>
                                 <span className="hidden md:inline text-xs font-medium">{user.name}</span>
@@ -263,7 +263,7 @@ export function Topbar() {
                                 </>
                             )}
                             <DropdownMenuItem className="gap-2">
-                                <UserIcon className="h-3 w-3" /> Profile
+                                <UserIcon className="h-3 w-3 text-blue-600" /> Profile
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="gap-2 text-red-500" onClick={handleLogout}>
@@ -273,6 +273,6 @@ export function Topbar() {
                     </DropdownMenu>
                 </div>
             </header>
-        </>
+        </div>
     );
 }

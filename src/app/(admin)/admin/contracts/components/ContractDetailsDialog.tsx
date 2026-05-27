@@ -72,7 +72,7 @@ export function ContractDetailsDialog({
                         <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10 border border-slate-100 shadow-sm">
                                 <AvatarFallback className="bg-gradient-to-br from-slate-100 to-slate-200 text-slate-600 font-bold">
-                                    {(user?.name || "U").substring(0, 2).toUpperCase()}
+                                    {(user?.full_name || user?.name || "U").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase()}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col">

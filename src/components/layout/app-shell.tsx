@@ -85,7 +85,7 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
             </motion.div>
 
             {/* Mobile content area */}
-            <div className="flex flex-col min-h-screen lg:hidden w-full overflow-x-hidden">
+            <div className="flex flex-col min-h-screen lg:hidden w-full">
                 <Topbar />
                 <main className="flex-1 p-3 sm:p-4">
                     <motion.div
