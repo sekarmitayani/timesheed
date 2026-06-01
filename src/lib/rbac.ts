@@ -97,15 +97,13 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
                 { label: "Profitability", href: "/management/profitability", icon: TrendingUp },
                 { label: "Cost Breakdown", href: "/management/cost-breakdown", icon: PieChart },
                 { label: "Liability Monitor", href: "/management/liability", icon: Scale },
-                { label: "Utilization", href: "/management/resources", icon: Gauge },
-                { label: "Workload Overview", href: "/management/workload", icon: Zap },
+                { label: "Resources", href: "/management/resources", icon: Package },
             ]
         },
         {
             title: "REPORTS",
             items: [
                 { label: "Reports & Export", href: "/management/reports", icon: Building2 },
-                { label: "Audit & Compliance", href: "/management/audit", icon: ClipboardList },
             ]
         }
     ],
