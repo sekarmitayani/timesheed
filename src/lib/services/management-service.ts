@@ -1,4 +1,5 @@
 import { fetchApi } from "../api";
+import { ResourceListResponse } from "./resource-service";
 
 // ---- Response Types ----
 
@@ -150,6 +151,14 @@ export interface CostLogsResponse {
     };
 }
 
+// ---- Resources ----
+export interface ManagementResourceStats {
+    total_amount_spent: number;
+    total_approved: number;
+    total_pending: number;
+    total_rejected: number;
+}
+
 export const managementService = {
     /**
      * GET /api/management/profitability/monthly
@@ -224,5 +233,29 @@ export const managementService = {
         if (search) params.append("search", search);
         if (category && category !== "all") params.append("category", category);
         return fetchApi(`/management/cost-breakdown/logs?${params.toString()}`, { method: "GET" });
+    },
+
+    // ---- Resources ----
+    async getManagementResourceStats(): Promise<ManagementResourceStats> {
+        return fetchApi(`/management/resources/stats`, { method: "GET" });
+    },
+
+    async getManagementResources(params: {
+        page?: number;
+        limit?: number;
+        project_id?: string;
+        status?: string;
+        type?: string;
+        search?: string;
+    } = {}): Promise<ResourceListResponse> {
+        const query = new URLSearchParams();
+        if (params.page) query.append("page", String(params.page));
+        if (params.limit) query.append("limit", String(params.limit));
+        if (params.project_id && params.project_id !== "all") query.append("project_id", params.project_id);
+        if (params.status && params.status !== "all") query.append("status", params.status);
+        if (params.type && params.type !== "all") query.append("type", params.type);
+        if (params.search) query.append("search", params.search);
+
+        return fetchApi(`/management/resources?${query.toString()}`, { method: "GET" });
     },
 };
