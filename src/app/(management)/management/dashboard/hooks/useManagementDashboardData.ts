@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery, useQueries } from "@tanstack/react-query";
-import { dashboardService, FinancialHealthResponse, LiabilityResponse, WorkingHoursResponse, CostBreakdownItem } from "@/lib/services/dashboard-service";
+import { managementService, FinancialHealthResponse, LiabilityResponse, WorkingHoursResponse, CostBreakdownItem } from "@/lib/services/management-service";
 import { projectService } from "@/lib/services/project-service";
 import { ApiProject } from "@/lib/types";
 
@@ -46,28 +46,28 @@ export function useManagementDashboardData() {
     // 1. Financial Health
     const { data: financialRaw, isLoading: isLoadingFinancial } = useQuery({
         queryKey: ["management", "financial"],
-        queryFn: () => dashboardService.getFinancialHealth(),
+        queryFn: () => managementService.getFinancialHealth(),
         staleTime: STALE_TIME,
     });
 
     // 1b. Financial Comparison (MoM)
     const { data: comparisonRaw, isLoading: isLoadingComparison } = useQuery({
         queryKey: ["management", "financial", "comparison"],
-        queryFn: () => dashboardService.getFinancialComparison(),
+        queryFn: () => managementService.getFinancialComparison(),
         staleTime: STALE_TIME,
     });
 
     // 2. Liability Monitor
     const { data: liabilityRaw, isLoading: isLoadingLiability } = useQuery({
         queryKey: ["management", "liability"],
-        queryFn: () => dashboardService.getLiabilityMonitor(),
+        queryFn: () => managementService.getLiabilityMonitor(),
         staleTime: STALE_TIME,
     });
 
     // 3. Working Hours (overall)
     const { data: workingHoursRaw, isLoading: isLoadingWorkingHours } = useQuery({
         queryKey: ["management", "working-hours"],
-        queryFn: () => dashboardService.getWorkingHoursReport(),
+        queryFn: () => managementService.getWorkingHoursReport(),
         staleTime: STALE_TIME,
     });
 
@@ -87,7 +87,7 @@ export function useManagementDashboardData() {
     const projectHoursQueries = useQueries({
         queries: activeProjects.map((project) => ({
             queryKey: ["management", "working-hours", "project", project.id],
-            queryFn: () => dashboardService.getWorkingHoursReport(project.id),
+            queryFn: () => managementService.getWorkingHoursReport(project.id),
             staleTime: STALE_TIME,
             enabled: activeProjects.length > 0,
         })),

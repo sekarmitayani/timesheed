@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { DollarSign, TrendingUp, TrendingDown, Receipt, Landmark, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
+import { Wallet, TrendingUp, TrendingDown, Receipt, Landmark, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
 import { KpiStats } from "../hooks/useManagementDashboardData";
 
 interface KpiStatsRowProps {
@@ -66,7 +66,7 @@ export function KpiStatsRow({ stats }: KpiStatsRowProps) {
             value: fmtCurrencyShort(stats.totalRevenue),
             change: stats.revenueChange,
             invertColor: false,
-            icon: DollarSign,
+            icon: Wallet,
             iconBg: "bg-blue-50",
             iconColor: "text-[#4B7BEC]",
         },
