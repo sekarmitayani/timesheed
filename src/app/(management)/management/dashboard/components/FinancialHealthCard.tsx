@@ -2,7 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart as PieIcon } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell } from "recharts";
+import { DebouncedResponsiveContainer } from "@/components/charts/DebouncedResponsiveContainer";
 import { FinancialHealthData } from "../hooks/useManagementDashboardData";
 
 interface FinancialHealthCardProps {
@@ -56,7 +57,7 @@ export function FinancialHealthCard({ data }: FinancialHealthCardProps) {
                         {/* Left: Donut Chart + Legend */}
                         <div className="flex flex-col items-center gap-3 md:gap-4 md:w-[260px] shrink-0">
                             <div className="relative w-[160px] h-[160px] sm:w-[200px] sm:h-[200px]">
-                                <ResponsiveContainer width="100%" height="100%">
+                                <DebouncedResponsiveContainer width="100%" height="100%">
                                     <PieChart>
                                         <Pie
                                             data={chartData}
@@ -73,7 +74,7 @@ export function FinancialHealthCard({ data }: FinancialHealthCardProps) {
                                             ))}
                                         </Pie>
                                     </PieChart>
-                                </ResponsiveContainer>
+                                </DebouncedResponsiveContainer>
                                 {/* Center label */}
                                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">

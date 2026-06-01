@@ -1,7 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import { DebouncedResponsiveContainer } from "@/components/charts/DebouncedResponsiveContainer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TrendingUp } from "lucide-react";
 import { MonthlyProfitChartData } from "../hooks/useProfitabilityData";
@@ -47,7 +48,7 @@ export function MonthlyProfitChart({ data, months, setMonths }: MonthlyProfitCha
     }));
 
     return (
-        <Card className="bg-white border border-slate-100 shadow-sm rounded-xl overflow-hidden">
+        <Card className="bg-white border border-slate-100 shadow-sm rounded-xl overflow-hidden min-w-0">
             <CardHeader className="pb-1 flex flex-row items-center justify-between border-b border-slate-50">
                 <div>
                     <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
@@ -68,9 +69,9 @@ export function MonthlyProfitChart({ data, months, setMonths }: MonthlyProfitCha
                     </Select>
                 )}
             </CardHeader>
-            <CardContent className="pt-3 pb-2 px-2 sm:px-6">
-                <div className="h-[250px] sm:h-[300px] md:h-[350px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
+            <CardContent className="pt-3 pb-2 px-2 sm:px-6 min-w-0">
+                <div className="h-[250px] sm:h-[300px] md:h-[350px] w-full min-w-0" style={{ contain: "layout style paint" }}>
+                    <DebouncedResponsiveContainer width="99%" height="100%">
                         <BarChart
                             data={chartData}
                             margin={{ top: 5, right: 0, left: -20, bottom: 0 }}
@@ -110,11 +111,11 @@ export function MonthlyProfitChart({ data, months, setMonths }: MonthlyProfitCha
                                 iconSize={10}
                                 wrapperStyle={{ paddingBottom: "20px", fontSize: "10px", fontWeight: 700, color: "#64748b" }}
                             />
-                            <Bar dataKey="revenue" name="REVENUE" fill="#e2e8f0" radius={[2, 2, 0, 0]} />
-                            <Bar dataKey="expenses" name="EXPENSES" fill="#cbd5e1" radius={[2, 2, 0, 0]} />
-                            <Bar dataKey="net_profit" name="NET PROFIT" fill="#0033cc" radius={[2, 2, 0, 0]} />
+                            <Bar dataKey="revenue" name="REVENUE" fill="#e2e8f0" radius={[2, 2, 0, 0]} isAnimationActive={false} />
+                            <Bar dataKey="expenses" name="EXPENSES" fill="#cbd5e1" radius={[2, 2, 0, 0]} isAnimationActive={false} />
+                            <Bar dataKey="net_profit" name="NET PROFIT" fill="#0033cc" radius={[2, 2, 0, 0]} isAnimationActive={false} />
                         </BarChart>
-                    </ResponsiveContainer>
+                    </DebouncedResponsiveContainer>
                 </div>
             </CardContent>
         </Card>

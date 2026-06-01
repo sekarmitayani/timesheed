@@ -54,7 +54,7 @@ export function CostLogsFilters({
                     <SelectTrigger className="h-9 w-full sm:w-[70px] bg-white text-xs border-slate-200">
                         <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="min-w-[70px]">
                         <SelectItem value="10">10</SelectItem>
                         <SelectItem value="20">20</SelectItem>
                         <SelectItem value="50">50</SelectItem>

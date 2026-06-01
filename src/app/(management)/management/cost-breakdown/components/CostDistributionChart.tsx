@@ -1,7 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import { DebouncedResponsiveContainer } from "@/components/charts/DebouncedResponsiveContainer";
 import { CostDistributionItem } from "@/lib/services/management-service";
 
 import { PieChart as PieChartIcon } from "lucide-react";
@@ -23,7 +24,7 @@ export function CostDistributionChart({ data, isLoading, totalExpenses }: CostDi
     };
 
     return (
-        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-[400px]">
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-[400px] min-w-0">
             <CardHeader className="pb-1 border-b border-slate-50 flex flex-row items-center justify-between">
                 <div>
                     <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
@@ -32,7 +33,7 @@ export function CostDistributionChart({ data, isLoading, totalExpenses }: CostDi
                     <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Cost breakdown by categories</p>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-center p-6">
+            <CardContent className="flex-1 flex flex-col justify-center p-6 min-w-0">
                 {isLoading ? (
                     <div className="flex-1 flex items-center justify-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4B7BEC]"></div>
@@ -43,8 +44,12 @@ export function CostDistributionChart({ data, isLoading, totalExpenses }: CostDi
                     </div>
                 ) : (
                     <div className="flex flex-col h-full relative">
-                        <div className="h-[200px] relative w-full mb-6">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <div className="h-[200px] relative w-full mb-6 min-w-0" style={{ contain: "layout style paint" }}>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</span>
+                                <span className="text-lg font-black text-slate-800">{fmtCurrencyShort(totalExpenses)}</span>
+                            </div>
+                            <DebouncedResponsiveContainer width="99%" height="100%">
                                 <PieChart>
                                     <Pie
                                         data={data}
@@ -54,7 +59,9 @@ export function CostDistributionChart({ data, isLoading, totalExpenses }: CostDi
                                         outerRadius={85}
                                         paddingAngle={2}
                                         dataKey="value"
+                                        nameKey="category"
                                         stroke="none"
+                                        isAnimationActive={false}
                                     >
                                         {data.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -68,11 +75,7 @@ export function CostDistributionChart({ data, isLoading, totalExpenses }: CostDi
                                         contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)", fontSize: "12px", fontWeight: "bold" }}
                                     />
                                 </PieChart>
-                            </ResponsiveContainer>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</span>
-                                <span className="text-lg font-black text-slate-800">{fmtCurrencyShort(totalExpenses)}</span>
-                            </div>
+                            </DebouncedResponsiveContainer>
                         </div>
 
                         <div className="grid grid-cols-2 gap-y-3 gap-x-4 mt-auto">

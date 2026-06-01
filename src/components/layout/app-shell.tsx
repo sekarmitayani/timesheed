@@ -65,11 +65,9 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
 
             <Sidebar />
 
-            <motion.div
-                initial={false}
-                animate={{ marginLeft: sidebarCollapsed ? 72 : 260 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-                className="hidden lg:flex flex-col min-h-screen"
+            <div
+                className="hidden lg:flex flex-col min-h-screen transition-[padding-left] duration-200 ease-in-out will-change-[padding-left]"
+                style={{ paddingLeft: sidebarCollapsed ? 72 : 260 }}
             >
                 <Topbar />
                 <main className="flex-1 p-4 sm:p-6">
@@ -82,7 +80,7 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
                         {children}
                     </motion.div>
                 </main>
-            </motion.div>
+            </div>
 
             {/* Mobile content area */}
             <div className="flex flex-col min-h-screen lg:hidden w-full">

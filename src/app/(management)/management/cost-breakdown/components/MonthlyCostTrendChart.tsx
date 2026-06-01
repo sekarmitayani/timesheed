@@ -1,7 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { DebouncedResponsiveContainer } from "@/components/charts/DebouncedResponsiveContainer";
 import { CostTrendItem } from "@/lib/services/management-service";
 import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,7 @@ export function MonthlyCostTrendChart({ data, isLoading }: MonthlyCostTrendChart
     };
 
     return (
-        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-[400px]">
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-[400px] min-w-0">
             <CardHeader className="pb-1 border-b border-slate-50 flex flex-row items-center justify-between">
                 <div>
                     <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
@@ -38,7 +39,7 @@ export function MonthlyCostTrendChart({ data, isLoading }: MonthlyCostTrendChart
                     <MoreVertical className="h-4 w-4" />
                 </Button>
             </CardHeader>
-            <CardContent className="flex-1 p-6">
+            <CardContent className="flex-1 p-6 min-w-0" style={{ contain: "layout style paint" }}>
                 {isLoading ? (
                     <div className="h-full flex items-center justify-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4B7BEC]"></div>
@@ -48,7 +49,7 @@ export function MonthlyCostTrendChart({ data, isLoading }: MonthlyCostTrendChart
                         No trend data available
                     </div>
                 ) : (
-                    <ResponsiveContainer width="100%" height="100%">
+                    <DebouncedResponsiveContainer width="99%" height="100%">
                         <BarChart
                             data={data}
                             margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
@@ -77,9 +78,10 @@ export function MonthlyCostTrendChart({ data, isLoading }: MonthlyCostTrendChart
                                 dataKey="cost" 
                                 fill="#0f45a6" 
                                 radius={[4, 4, 0, 0]} 
+                                isAnimationActive={false}
                             />
                         </BarChart>
-                    </ResponsiveContainer>
+                    </DebouncedResponsiveContainer>
                 )}
             </CardContent>
         </Card>
