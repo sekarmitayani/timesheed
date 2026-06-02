@@ -1,45 +1,53 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { PageHeader, StatCard, RiskBadge } from "@/components/ai/ai-components";
-import { mockProjects, mockPayments } from "@/lib/mock-data";
-import { DollarSign, AlertTriangle, Calendar } from "lucide-react";
 
-export default function LiabilityPage() {
-    const pendingPayments = mockPayments.filter((p) => p.status !== "released");
-    const totalLiability = pendingPayments.reduce((s, p) => s + p.amount, 0);
-    const projectLiabilities = mockProjects.filter((p) => p.status === "active").map((p) => ({
-        name: p.name,
-        remaining: p.budget - p.spent,
-        pctSpent: (p.spent / p.budget) * 100,
-    }));
+import { useState } from "react";
+import { PageHeader } from "@/components/ai/ai-components";
+import { useLiabilityMonitor } from "./hooks/useLiabilityData";
+import { LiabilityStats } from "./components/LiabilityStats";
+import { LiabilityAccordion } from "./components/LiabilityAccordion";
+import { LiabilityDetailModal } from "./components/LiabilityDetailModal";
+import { Loader2 } from "lucide-react";
+
+export default function LiabilityMonitorPage() {
+    const { data, isLoading } = useLiabilityMonitor();
+    
+    const [selectedContractId, setSelectedContractId] = useState<number | null>(null);
 
     return (
-        <div className="space-y-6">
-            <PageHeader title="Liability Monitor" description="Track outstanding financial obligations" />
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <StatCard title="Total Liability" value={`Rp ${(totalLiability / 1000000).toFixed(0)}M`} icon={DollarSign} glow />
-                <StatCard title="Pending Payments" value={pendingPayments.length} subtitle="awaiting release" icon={Calendar} />
-                <StatCard title="At-Risk Budgets" value={projectLiabilities.filter((p) => p.pctSpent > 80).length} subtitle="projects >80% spent" icon={AlertTriangle} />
-            </div>
-            <Card>
-                <CardHeader><CardTitle className="text-sm">Project Budget Remaining</CardTitle></CardHeader>
-                <CardContent className="space-y-4">
-                    {projectLiabilities.map((p) => (
-                        <div key={p.name} className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium">{p.name}</span>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs text-muted-foreground">Rp {(p.remaining / 1000000).toFixed(0)}M remaining</span>
-                                    {p.pctSpent > 80 && <RiskBadge level={p.pctSpent > 90 ? "high" : "medium"} />}
-                                </div>
-                            </div>
-                            <Progress value={p.pctSpent} className="h-2" />
-                        </div>
-                    ))}
-                </CardContent>
-            </Card>
+        <div className="space-y-6 animate-in fade-in duration-500">
+            <PageHeader
+                title="Liability Monitor"
+                description="Monitor unpaid liabilities, current month releases, and all-time released funds per project."
+            />
+
+            {isLoading ? (
+                <div className="flex flex-col items-center justify-center h-64 text-slate-500">
+                    <Loader2 className="w-8 h-8 animate-spin mb-4 text-primary" />
+                    <p>Calculating financial liabilities...</p>
+                </div>
+            ) : data ? (
+                <>
+                    <LiabilityStats
+                        totalLiability={data.total_liability}
+                        totalReleasedAllTime={data.total_released_all_time}
+                        totalReleasedCurrentMonth={data.total_released_current_month}
+                    />
+
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-slate-900">Project & Contract Details</h3>
+                        <LiabilityAccordion 
+                            groups={data.groups} 
+                            onViewDetail={(id) => setSelectedContractId(id)}
+                        />
+                    </div>
+                </>
+            ) : null}
+
+            <LiabilityDetailModal 
+                contractId={selectedContractId}
+                open={!!selectedContractId}
+                onOpenChange={(open) => !open && setSelectedContractId(null)}
+            />
         </div>
     );
 }

@@ -16,20 +16,75 @@ export interface FinancialHealthResponse {
     cost_breakdown: CostBreakdownItem[];
 }
 
-export interface LiabilityDetail {
+export interface LiabilityMember {
     user_id: number;
     full_name: string;
+    email: string;
+    phone: string;
+    role: string;
     contract_id: number;
-    expected_pay: number;
-    paid_amount: number;
-    unpaid_amount: number;
+    contract_type: string;
     payment_scheme: string;
+    rate_amount: number;
+    contract_start: string;
+    total_released: number;
+    total_liability: number;
+}
+
+export interface LiabilityGroup {
+    project_id: number | null;
+    project_name: string;
+    released: number;
+    liability: number;
+    members: LiabilityMember[];
+}
+
+export interface LiabilityMonitorResponse {
+    total_liability: number;
+    total_released_all_time: number;
+    total_released_current_month: number;
+    groups: LiabilityGroup[];
+}
+
+export interface PeriodBreakdown {
+    month: number;
+    year: number;
+    period_name: string;
+    earned: number;
+    paid: number;
     status: string;
 }
 
-export interface LiabilityResponse {
-    total_liability: number;
-    items: LiabilityDetail[];
+export interface PaymentLog {
+    id: number;
+    contract_id: number;
+    name: string;
+    amount: number;
+    paid_at: string;
+    description: string;
+    created_at: string;
+}
+
+export interface LiabilityContractDetailResponse {
+    id: number;
+    user_id: number;
+    project_id: number | null;
+    contract_type: string;
+    payment_scheme: string;
+    rate_amount: number;
+    start_date: string;
+    end_date: string | null;
+    is_active: boolean;
+    project_name: string;
+    user_name: string;
+    user_email: string;
+    user_phone: string;
+    calculated_target: number;
+    total_paid: number;
+    remaining: number;
+    status: string;
+    monthly_breakdown: PeriodBreakdown[];
+    payment_log: PaymentLog[];
 }
 
 export interface WorkingHoursResponse {
@@ -200,8 +255,16 @@ export const managementService = {
      * GET /api/management/liability
      * Returns total liability and per-contract breakdown.
      */
-    async getLiabilityMonitor(): Promise<LiabilityResponse> {
+    async getLiabilityMonitor(): Promise<LiabilityMonitorResponse> {
         return fetchApi("/management/liability", { method: "GET" });
+    },
+
+    /**
+     * GET /api/management/liability/contracts/:id
+     * Returns detailed liability breakdown for a single contract.
+     */
+    async getLiabilityContractDetail(contractId: number): Promise<LiabilityContractDetailResponse> {
+        return fetchApi(`/management/liability/contracts/${contractId}`, { method: "GET" });
     },
 
     /**
