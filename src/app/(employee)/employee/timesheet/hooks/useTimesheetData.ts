@@ -10,7 +10,6 @@ export function useTimesheetData() {
     const queryClient = useQueryClient();
 
     // Filter State (Pure UI)
-    const [filterType, setFilterType] = useState<string>("all");
     const [dateFrom, setDateFrom] = useState<string>("");
     const [dateTo, setDateTo] = useState<string>("");
     const [filterProject, setFilterProject] = useState<string>("all");
@@ -112,20 +111,6 @@ export function useTimesheetData() {
 
     const filteredLogs = useMemo(() => {
         let result = [...logs];
-        const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-        if (filterType === "daily") {
-            result = result.filter(log => new Date(log.clock_in).toDateString() === today.toDateString());
-        } else if (filterType === "weekly") {
-            const weekAgo = new Date(today);
-            weekAgo.setDate(today.getDate() - 7);
-            result = result.filter(log => new Date(log.clock_in) >= weekAgo);
-        } else if (filterType === "monthly") {
-            const monthAgo = new Date(today);
-            monthAgo.setMonth(today.getMonth() - 1);
-            result = result.filter(log => new Date(log.clock_in) >= monthAgo);
-        }
 
         if (dateFrom) {
             const from = new Date(dateFrom);
@@ -147,11 +132,11 @@ export function useTimesheetData() {
         }
 
         return result;
-    }, [logs, filterType, dateFrom, dateTo, filterProject, filterStatus]);
+    }, [logs, dateFrom, dateTo, filterProject, filterStatus]);
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [filterType, dateFrom, dateTo, filterProject, filterStatus, limit]);
+    }, [dateFrom, dateTo, filterProject, filterStatus, limit]);
 
     const paginatedLogs = useMemo(() => {
         return filteredLogs.slice((currentPage - 1) * limit, currentPage * limit);
@@ -181,7 +166,6 @@ export function useTimesheetData() {
     }, [logs]);
 
     const resetFilters = () => {
-        setFilterType("all");
         setDateFrom("");
         setDateTo("");
         setFilterProject("all");
@@ -240,7 +224,6 @@ export function useTimesheetData() {
             hasActiveSession,
             taskMap,
             userMap,
-            filterType,
             dateFrom,
             dateTo,
             filterProject,
@@ -262,7 +245,6 @@ export function useTimesheetData() {
             activeLog,
         },
         actions: {
-            setFilterType,
             setDateFrom,
             setDateTo,
             setFilterProject,

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search } from "lucide-react";
 import { ApiProject } from "@/lib/types";
+import { CustomDateRangePicker } from "./CustomDateRangePicker";
 
 interface ApprovalsFiltersProps {
     search: string;
@@ -51,7 +52,7 @@ export function ApprovalsFilters({
 
     return (
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-1">
-            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto pl-1">
                 {/* Search */}
                 <div className="relative w-full sm:w-[250px] shrink-0">
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -88,21 +89,15 @@ export function ApprovalsFilters({
                 </Select>
 
                 {/* Date Range */}
-                <div className="flex items-center gap-1">
-                    <Input 
-                        type="date" 
-                        className="h-10 w-[135px] text-xs bg-white border-slate-200" 
-                        value={dateFrom}
-                        onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
-                    />
-                    <span className="text-slate-400 text-xs px-1">to</span>
-                    <Input 
-                        type="date" 
-                        className="h-10 w-[135px] text-xs bg-white border-slate-200" 
-                        value={dateTo}
-                        onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
-                    />
-                </div>
+                <CustomDateRangePicker 
+                    dateFrom={dateFrom} 
+                    dateTo={dateTo} 
+                    onDateChange={(from, to) => {
+                        setDateFrom(from);
+                        setDateTo(to);
+                        setPage(1);
+                    }} 
+                />
 
                 {/* Limit Selector */}
                 <Select value={String(limit)} onValueChange={handleLimitChange}>

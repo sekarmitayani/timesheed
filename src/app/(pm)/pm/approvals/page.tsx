@@ -80,7 +80,7 @@ export default function ApprovalsPage() {
                 <TimesheetDetailModal 
                     selectedLog={state.selectedLog}
                     onClose={() => actions.setSelectedLog(null)}
-                    getTaskTitle={(tid) => state.selectedLog?.task?.title || `Task #${tid}`}
+                    getTaskTitle={(tid) => state.selectedLog?.task_description || `Task #${tid}`}
                     statusConfig={statusConfig}
                     formatDateTime={(d) => d ? new Date(d).toLocaleString("en-GB", { dateStyle: "short", timeStyle: "short" }) : "-"}
                     formatDuration={(m) => `${Math.floor(m / 60)}h ${m % 60}m`}

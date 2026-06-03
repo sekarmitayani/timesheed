@@ -46,8 +46,6 @@ export default function TimesheetPage() {
             <PageHeader title="Timesheet Management" description="Monitor and track your work sessions and daily productivity." />
 
             <TimesheetFilters 
-                filterType={state.filterType}
-                setFilterType={actions.setFilterType}
                 dateFrom={state.dateFrom}
                 setDateFrom={actions.setDateFrom}
                 dateTo={state.dateTo}

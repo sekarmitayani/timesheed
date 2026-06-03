@@ -44,7 +44,8 @@ export function TimesheetTable({
                 <Table>
                     <TableHeader>
                         <TableRow className="hover:bg-transparent bg-slate-50/50">
-                            <TableHead className="pl-6 w-[160px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Date</TableHead>
+                            <TableHead className="w-[50px] pl-6 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 text-center">#</TableHead>
+                            <TableHead className="w-[160px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Date</TableHead>
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Task & Project</TableHead>
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Session Time</TableHead>
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Duration</TableHead>
@@ -55,7 +56,7 @@ export function TimesheetTable({
                     <TableBody>
                         {isLoading ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="h-48 text-center">
+                                <TableCell colSpan={7} className="h-48 text-center">
                                     <div className="flex flex-col items-center justify-center text-slate-400">
                                         <Loader2 className="h-8 w-8 animate-spin text-[#2568C1] mb-4" />
                                         <p>Loading timesheet logs...</p>
@@ -64,18 +65,21 @@ export function TimesheetTable({
                             </TableRow>
                         ) : paginatedLogs.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="h-32 text-slate-400 text-center">
+                                <TableCell colSpan={7} className="h-32 text-slate-400 text-center">
                                     No timesheet sessions matching your filters.
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            paginatedLogs.map(l => (
+                            paginatedLogs.map((l, idx) => (
                                 <TableRow 
                                     key={l.id} 
                                     className="hover:bg-[#f0f4fa]/50 transition-colors cursor-pointer border-b border-slate-100 last:border-0 group"
                                     onClick={() => setSelectedLog(l)}
                                 >
-                                    <TableCell className="py-3 pl-6">
+                                    <TableCell className="pl-6 text-center text-[11px] text-slate-400 font-medium">
+                                        {(currentPage - 1) * limit + idx + 1}
+                                    </TableCell>
+                                    <TableCell className="py-3">
                                         <div className="flex flex-col">
                                             <span className="text-sm font-semibold text-slate-700">{new Date(l.clock_in).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}</span>
                                             <span className="text-[11px] text-slate-400 uppercase font-medium tracking-tight">{new Date(l.clock_in).toLocaleDateString("en-US", { weekday: "long" })}</span>

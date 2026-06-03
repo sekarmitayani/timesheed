@@ -10,6 +10,7 @@ import {
   CreditCard,
   FileText
 } from "lucide-react";
+import { CustomDateRangePicker } from "@/app/(pm)/pm/approvals/components/CustomDateRangePicker";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -81,8 +82,11 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
   const filteredPayments = useMemo(() => {
     return payments.filter(p => {
       const pDate = new Date(p.date).getTime();
-      if (startDate && pDate < new Date(startDate).getTime()) return false;
-      if (endDate && pDate > new Date(endDate).getTime()) return false;
+      const start = startDate ? new Date(startDate).setHours(0, 0, 0, 0) : null;
+      const end = endDate ? new Date(endDate).setHours(23, 59, 59, 999) : null;
+      
+      if (start && pDate < start) return false;
+      if (end && pDate > end) return false;
       
       if (contractTypeFilter !== "all" && p.contractType.toLowerCase() !== contractTypeFilter.toLowerCase()) return false;
 
@@ -145,29 +149,15 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
                     </SelectContent>
                 </Select>
 
-                <div className="flex items-center gap-2 bg-white h-10 px-3 rounded-md border border-slate-200">
-                  <input
-                    type="date"
-                    className="bg-transparent text-sm outline-none border-none focus:ring-0 w-32"
-                    value={startDate}
-                    onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1); }}
-                  />
-                  <span className="text-sm text-muted-foreground">to</span>
-                  <input
-                    type="date"
-                    className="bg-transparent text-sm outline-none border-none focus:ring-0 w-32"
-                    value={endDate}
-                    onChange={(e) => { setEndDate(e.target.value); setCurrentPage(1); }}
-                  />
-                  {(startDate || endDate) && (
-                    <button
-                      onClick={() => { setStartDate(""); setEndDate(""); setCurrentPage(1); }}
-                      className="text-xs text-red-500 font-bold px-2 hover:bg-red-50 rounded"
-                    >
-                      Clear
-                    </button>
-                  )}
-                </div>
+                <CustomDateRangePicker 
+                  dateFrom={startDate}
+                  dateTo={endDate}
+                  onDateChange={(from, to) => {
+                    setStartDate(from);
+                    setEndDate(to);
+                    setCurrentPage(1);
+                  }}
+                />
 
                 <Select value={String(pageSize)} onValueChange={(v) => { setPageSize(Number(v)); setCurrentPage(1); }}>
                     <SelectTrigger className="h-10 w-[80px] bg-white border-slate-200 shrink-0 text-xs">
