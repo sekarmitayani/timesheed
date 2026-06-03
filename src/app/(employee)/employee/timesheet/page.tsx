@@ -42,7 +42,7 @@ export default function TimesheetPage() {
     const { state, computed, actions } = useTimesheetData();
 
     return (
-        <div className="flex flex-col w-full gap-4 h-full overflow-hidden">
+        <div className="space-y-6 animate-in fade-in duration-500">
             <PageHeader title="Timesheet Management" description="Monitor and track your work sessions and daily productivity." />
 
             <TimesheetFilters 

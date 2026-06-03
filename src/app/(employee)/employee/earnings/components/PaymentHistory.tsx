@@ -118,10 +118,10 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
     <Card className="border-[#E2E8F0] shadow-none rounded-xl overflow-hidden flex flex-col gap-0 py-0">
       <CardHeader className="px-6 pt-6 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                <Wallet className="h-4 w-4 text-[#4B7BEC]" /> Payment History
+            <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                Payment History
             </CardTitle>
-            <p className="text-[10px] text-slate-400 font-medium ml-6 mt-0.5">Track all your processed payments and transactions</p>
+            <p className="text-[10px] text-slate-400 font-medium mt-0.5">Track all your processed payments and transactions</p>
         </div>
       </CardHeader>
       

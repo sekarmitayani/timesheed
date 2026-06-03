@@ -31,8 +31,7 @@ export function ContractAccordion({ contracts }: ContractAccordionProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-2">
-        <FileText className="h-4 w-4 text-[#4B7BEC]" />
+      <div className="mb-2">
         <h2 className="text-base font-bold text-slate-800">Project & Contract Details</h2>
       </div>
 
