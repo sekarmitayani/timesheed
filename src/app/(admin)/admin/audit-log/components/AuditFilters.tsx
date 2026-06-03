@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search } from "lucide-react";
+import { CustomDateRangePicker } from "@/app/(pm)/pm/approvals/components/CustomDateRangePicker";
 
 interface AuditFiltersProps {
     search: string;
@@ -9,6 +10,10 @@ interface AuditFiltersProps {
     setFilterAction: (v: string) => void;
     filterModule: string;
     setFilterModule: (v: string) => void;
+    dateFrom: string;
+    setDateFrom: (v: string) => void;
+    dateTo: string;
+    setDateTo: (v: string) => void;
     limit: number;
     setLimit: (v: number) => void;
     setPage: (v: number) => void;
@@ -18,6 +23,8 @@ export function AuditFilters({
     search, setSearch,
     filterAction, setFilterAction,
     filterModule, setFilterModule,
+    dateFrom, setDateFrom,
+    dateTo, setDateTo,
     limit, setLimit, setPage
 }: AuditFiltersProps) {
     const handleActionChange = (v: string) => {
@@ -37,7 +44,7 @@ export function AuditFilters({
 
     return (
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-1">
-            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto pl-1">
                 <div className="relative w-full sm:w-[250px] shrink-0">
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -79,6 +86,16 @@ export function AuditFilters({
                         <SelectItem value="resource_requests">Resources</SelectItem>
                     </SelectContent>
                 </Select>
+
+                <CustomDateRangePicker 
+                    dateFrom={dateFrom} 
+                    dateTo={dateTo} 
+                    onDateChange={(from, to) => {
+                        setDateFrom(from);
+                        setDateTo(to);
+                        setPage(1);
+                    }} 
+                />
 
                 <Select value={String(limit)} onValueChange={handleLimitChange}>
                     <SelectTrigger className="h-10 w-[80px] bg-white border-slate-200 shrink-0 text-xs">

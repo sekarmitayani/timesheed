@@ -16,6 +16,8 @@ export default function AdminAuditLogPage() {
         search, setSearch,
         filterAction, setFilterAction,
         filterModule, setFilterModule,
+        dateFrom, setDateFrom,
+        dateTo, setDateTo,
         totalPages,
         pagination,
         detailOpen, setDetailOpen,
@@ -39,6 +41,10 @@ export default function AdminAuditLogPage() {
                 setFilterAction={setFilterAction}
                 filterModule={filterModule}
                 setFilterModule={setFilterModule}
+                dateFrom={dateFrom}
+                setDateFrom={setDateFrom}
+                dateTo={dateTo}
+                setDateTo={setDateTo}
                 limit={limit}
                 setLimit={setLimit}
                 setPage={setPage}

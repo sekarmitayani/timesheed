@@ -9,6 +9,8 @@ export function useAuditLogData() {
     const [search, setSearch] = useState("");
     const [filterAction, setFilterAction] = useState("all");
     const [filterModule, setFilterModule] = useState("all");
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
 
     // --- Modal State ---
     const [detailOpen, setDetailOpen] = useState(false);
@@ -16,12 +18,14 @@ export function useAuditLogData() {
 
     // --- Queries ---
     const { data, isLoading, error } = useQuery({
-        queryKey: ['admin', 'audit-logs', page, limit, filterAction, filterModule, search],
+        queryKey: ['admin', 'audit-logs', page, limit, filterAction, filterModule, search, dateFrom, dateTo],
         queryFn: async () => {
             return await auditService.getGlobalAuditLogs(page, limit, {
                 action: filterAction,
                 module: filterModule,
-                search: search
+                search: search,
+                start_date: dateFrom,
+                end_date: dateTo
             });
         },
         staleTime: 60 * 1000, // 1 minute cache
@@ -52,6 +56,10 @@ export function useAuditLogData() {
         setFilterAction,
         filterModule,
         setFilterModule,
+        dateFrom,
+        setDateFrom,
+        dateTo,
+        setDateTo,
         pagination: { ...meta, total: meta.total_data },
         totalPages,
         detailOpen,

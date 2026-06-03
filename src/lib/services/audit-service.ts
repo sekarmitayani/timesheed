@@ -43,12 +43,16 @@ export const auditService = {
             action?: string;
             module?: string;
             search?: string;
+            start_date?: string;
+            end_date?: string;
         } = {}
     ): Promise<AuditLogResponse> {
         let query = `?page=${page}&limit=${limit}`;
         if (filters.action && filters.action !== "all") query += `&action=${filters.action}`;
         if (filters.module && filters.module !== "all") query += `&target_table=${filters.module}`;
         if (filters.search) query += `&user_id=${encodeURIComponent(filters.search)}`;
+        if (filters.start_date) query += `&start_date=${filters.start_date}`;
+        if (filters.end_date) query += `&end_date=${filters.end_date}`;
 
         return fetchApi(`/admin/audit-logs${query}`, {
             method: "GET",
