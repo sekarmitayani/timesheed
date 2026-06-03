@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery, useQueries } from "@tanstack/react-query";
-import { managementService, FinancialHealthResponse, LiabilityResponse, WorkingHoursResponse, CostBreakdownItem } from "@/lib/services/management-service";
+import { managementService, FinancialHealthResponse, LiabilityMonitorResponse, WorkingHoursResponse, CostBreakdownItem } from "@/lib/services/management-service";
 import { projectService } from "@/lib/services/project-service";
 import { ApiProject } from "@/lib/types";
 

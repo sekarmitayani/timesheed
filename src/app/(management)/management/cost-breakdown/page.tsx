@@ -16,7 +16,7 @@ import {
 
 export default function CostBreakdownPage() {
     // Header Filters
-    const [daysFilter, setDaysFilter] = useState("180");
+    const [daysFilter, setDaysFilter] = useState("30");
     const [categoryFilter, setCategoryFilter] = useState("all");
 
     // Table Filters

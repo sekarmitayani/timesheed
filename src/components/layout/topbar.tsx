@@ -262,7 +262,7 @@ export function Topbar() {
                                     <DropdownMenuSeparator />
                                 </>
                             )}
-                            <DropdownMenuItem className="gap-2">
+                            <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => router.push("/profile")}>
                                 <UserIcon className="h-3 w-3 text-blue-600" /> Profile
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
