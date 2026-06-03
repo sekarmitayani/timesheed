@@ -14,7 +14,7 @@ export default function AdminProjectsPage() {
     const { state, actions } = useAdminProjectsData();
 
     return (
-        <div className="flex flex-col w-full gap-6 h-full overflow-hidden">
+        <div className="space-y-6">
             <PageHeader 
                 title="Project Management" 
                 description={`Managing ${state.pagination.total} total network projects`}
@@ -39,11 +39,11 @@ export default function AdminProjectsPage() {
 
             {/* Content */}
             {state.isLoading ? (
-                <div className="flex-1 flex items-center justify-center">
+                <div className="flex items-center justify-center py-20">
                     <Loader2 className="h-8 w-8 animate-spin text-[#2568C1] opacity-40" />
                 </div>
             ) : state.cards.length === 0 ? (
-                <div className="flex-1 flex items-center justify-center">
+                <div className="flex items-center justify-center py-20">
                     <div className="flex flex-col items-center gap-3 opacity-60">
                         <div className="bg-slate-100 p-5 rounded-full">
                             <FolderKanban className="h-10 w-10 text-slate-400" />
@@ -56,16 +56,14 @@ export default function AdminProjectsPage() {
                     </div>
                 </div>
             ) : (
-                <div className="flex-1 overflow-y-auto custom-scrollbar pb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                        {state.cards.map((card) => (
-                            <AdminProjectCard 
-                                key={card.project.id} 
-                                data={card} 
-                                onDelete={(p) => { actions.setProjectToDelete(p); actions.setDeleteOpen(true); }}
-                            />
-                        ))}
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pb-6">
+                    {state.cards.map((card) => (
+                        <AdminProjectCard 
+                            key={card.project.id} 
+                            data={card} 
+                            onDelete={(p) => { actions.setProjectToDelete(p); actions.setDeleteOpen(true); }}
+                        />
+                    ))}
                 </div>
             )}
 
