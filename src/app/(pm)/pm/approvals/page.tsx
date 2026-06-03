@@ -20,7 +20,7 @@ export default function ApprovalsPage() {
     const { state, actions } = useApprovalsData();
 
     return (
-        <div className="flex flex-col w-full gap-6 h-full overflow-hidden">
+        <div className="space-y-6 animate-in fade-in duration-500">
             <PageHeader 
                 title="Approvals Inbox" 
                 description={`${state.totalCount} records matching filters`}
