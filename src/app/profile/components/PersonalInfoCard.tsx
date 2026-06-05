@@ -61,11 +61,8 @@ export function PersonalInfoCard({ profile, onSave, isSaving }: PersonalInfoCard
 
     return (
         <Card className="bg-white border-slate-200 shadow-sm rounded-xl overflow-hidden flex flex-col">
-            <CardHeader className="py-2 px-4 flex flex-row items-center justify-between border-b border-slate-100">
-                <CardTitle className="text-sm font-bold text-slate-800 flex items-center">
-                    <div className="p-1.5 bg-[#4B7BEC]/10 text-[#4B7BEC] rounded-md mr-2">
-                        <UserIcon className="h-3.5 w-3.5" />
-                    </div>
+            <CardHeader className="py-2.5 px-4 flex flex-row items-center justify-between border-b border-slate-100">
+                <CardTitle className="text-sm font-bold text-slate-800">
                     Personal Information
                 </CardTitle>
                 {!isEditing ? (
@@ -78,13 +75,13 @@ export function PersonalInfoCard({ profile, onSave, isSaving }: PersonalInfoCard
                         <Button variant="ghost" size="sm" onClick={handleCancel} disabled={isSaving} className="h-6 text-[10px] text-slate-500">
                             Cancel
                         </Button>
-                        <Button size="sm" onClick={handleSave} disabled={isSaving} className="h-6 text-[10px] px-3 bg-blue-600 hover:bg-blue-700">
+                        <Button size="sm" onClick={handleSave} disabled={isSaving} className="h-6 text-[10px] px-3 bg-[#2568C1] hover:bg-[#1a4f99]">
                             {isSaving ? "Saving..." : "Save"}
                         </Button>
                     </div>
                 )}
             </CardHeader>
-            <CardContent className="p-3">
+            <CardContent className="p-4 pt-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-2">
                     {/* Full Name */}
                     <div className="space-y-1">
@@ -93,11 +90,11 @@ export function PersonalInfoCard({ profile, onSave, isSaving }: PersonalInfoCard
                             <Input 
                                 value={formData.full_name} 
                                 onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
-                                className="h-8 focus-visible:ring-blue-500 text-xs"
+                                className="h-8 focus-visible:ring-[#2568C1] text-xs"
                             />
                         ) : (
-                            <div className="flex h-8 w-full items-center rounded-md border border-slate-200 bg-slate-50/50 px-2.5 text-xs font-medium text-slate-800">
-                                {profile.name}
+                            <div className="flex min-h-7 w-full items-center rounded-md bg-slate-50/50 px-2.5 py-1 text-xs font-medium text-slate-800 border border-slate-200/60">
+                                {profile.name || profile.full_name || "—"}
                             </div>
                         )}
                     </div>
@@ -110,10 +107,10 @@ export function PersonalInfoCard({ profile, onSave, isSaving }: PersonalInfoCard
                                 type="email"
                                 value={formData.email} 
                                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                                className="h-8 focus-visible:ring-blue-500 text-xs"
+                                className="h-8 focus-visible:ring-[#2568C1] text-xs"
                             />
                         ) : (
-                            <div className="flex h-8 w-full items-center rounded-md border border-slate-200 bg-slate-50/50 px-2.5 text-xs font-medium text-slate-800">
+                            <div className="flex min-h-7 w-full items-center rounded-md bg-slate-50/50 px-2.5 py-1 text-xs font-medium text-slate-800 border border-slate-200/60">
                                 {profile.email}
                             </div>
                         )}
@@ -126,10 +123,10 @@ export function PersonalInfoCard({ profile, onSave, isSaving }: PersonalInfoCard
                             <Input 
                                 value={formData.phone_number} 
                                 onChange={(e) => setFormData(prev => ({ ...prev, phone_number: e.target.value }))}
-                                className="h-8 focus-visible:ring-blue-500 text-xs"
+                                className="h-8 focus-visible:ring-[#2568C1] text-xs"
                             />
                         ) : (
-                            <div className="flex h-8 w-full items-center rounded-md border border-slate-200 bg-slate-50/50 px-2.5 text-xs font-medium text-slate-800">
+                            <div className="flex min-h-7 w-full items-center rounded-md bg-slate-50/50 px-2.5 py-1 text-xs font-medium text-slate-800 border border-slate-200/60">
                                 {profile.phone_number || "—"}
                             </div>
                         )}
@@ -140,11 +137,11 @@ export function PersonalInfoCard({ profile, onSave, isSaving }: PersonalInfoCard
                         <Label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Employee Type</Label>
                         <div>
                             {profile.employee_type ? (
-                                <Badge variant="secondary" className="bg-slate-50 border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 text-[10px] h-6 rounded px-2">
+                                <Badge variant="secondary" className="bg-slate-50 border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 text-[10px] min-h-7 rounded px-2">
                                     {formatEmployeeType(profile.employee_type)}
                                 </Badge>
                             ) : (
-                                <div className="flex h-8 w-full items-center rounded-md border border-slate-200 bg-slate-50/50 px-2.5 text-xs font-medium text-slate-800">
+                                <div className="flex min-h-7 w-full items-center rounded-md bg-slate-50/50 px-2.5 py-1 text-xs font-medium text-slate-800 border border-slate-200/60">
                                     —
                                 </div>
                             )}

@@ -20,26 +20,26 @@ export function ProfileSidebar({ profile }: ProfileSidebarProps) {
         .toUpperCase();
 
     return (
-        <Card className="bg-white border-slate-200 shadow-sm rounded-xl overflow-hidden flex flex-col justify-center items-center py-6">
-            <Avatar className="h-20 w-20 shadow-sm mb-3 bg-white">
-                <AvatarFallback className="text-2xl font-bold bg-slate-100 text-slate-700">
+        <Card className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col items-center text-center w-full">
+            <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-slate-50 mb-1 bg-gradient-to-br from-[#2568C1] to-[#1a4f99] flex items-center justify-center shrink-0 shadow-sm">
+                <span className="text-[28px] font-bold text-white tracking-wide">
                     {initials}
-                </AvatarFallback>
-            </Avatar>
+                </span>
+            </div>
             
-            <h2 className="text-lg font-bold text-slate-900 text-center mb-0.5">{displayName}</h2>
-            <p className="text-xs font-medium text-slate-500 text-center mb-3">{roleLabels[profile.role]}</p>
+            <h2 className="text-lg font-bold text-slate-900 text-center leading-tight">{displayName}</h2>
+            <p className="text-xs font-medium text-slate-500 text-center mb-1.5">{roleLabels[profile.role]}</p>
             
             {profile.is_active || profile.status === "active" ? (
-                <div className="flex items-center gap-2 px-3 py-1 bg-[#4B7BEC]/5 border border-[#4B7BEC]/10 rounded-full">
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-full">
                     <div className="relative flex h-1.5 w-1.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4B7BEC] opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#4B7BEC]"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
                     </div>
-                    <span className="text-[10px] font-bold text-[#4B7BEC]">Active</span>
+                    <span className="text-[10px] font-bold text-emerald-600">Active</span>
                 </div>
             ) : (
-                <div className="flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-200 rounded-full">
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-50 border border-slate-200 rounded-full">
                     <div className="h-1.5 w-1.5 rounded-full bg-slate-400" />
                     <span className="text-[10px] font-bold text-slate-600">Inactive</span>
                 </div>

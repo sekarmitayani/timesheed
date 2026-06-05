@@ -28,15 +28,12 @@ export function AccountDetailsCard({ profile }: AccountDetailsCardProps) {
 
     return (
         <Card className="bg-white border-slate-200 shadow-sm rounded-xl overflow-hidden flex flex-col">
-            <CardHeader className="py-2 px-4 border-b border-slate-100">
-                <CardTitle className="text-sm font-bold text-slate-800 flex items-center">
-                    <div className="p-1.5 bg-[#4B7BEC]/10 text-[#4B7BEC] rounded-md mr-2">
-                        <Contact className="h-3.5 w-3.5" />
-                    </div>
+            <CardHeader className="py-2.5 px-4 border-b border-slate-100">
+                <CardTitle className="text-sm font-bold text-slate-800">
                     Account Details
                 </CardTitle>
             </CardHeader>
-            <CardContent className="p-3">
+            <CardContent className="p-4 pt-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-2">
                     <div className="space-y-0.5">
                         <Label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Created At</Label>

@@ -54,15 +54,12 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
 
     return (
         <Card className="bg-white border-slate-200 shadow-sm rounded-xl overflow-hidden flex flex-col">
-            <CardHeader className="py-2 px-4 border-b border-slate-100">
-                <CardTitle className="text-sm font-bold text-slate-800 flex items-center">
-                    <div className="p-1.5 bg-[#4B7BEC]/10 text-[#4B7BEC] rounded-md mr-2">
-                        <Lock className="h-3.5 w-3.5" />
-                    </div>
+            <CardHeader className="py-2.5 px-4 border-b border-slate-100">
+                <CardTitle className="text-sm font-bold text-slate-800">
                     Security
                 </CardTitle>
             </CardHeader>
-            <CardContent className="p-3">
+            <CardContent className="p-4 pt-3">
                 <div className="flex flex-col gap-1">
                     <Label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Password</Label>
                     <div className="flex items-center gap-3">
@@ -73,7 +70,7 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
                         />
                         <Dialog open={isOpen} onOpenChange={setIsOpen}>
                             <DialogTrigger asChild>
-                                <Button className="h-8 text-xs bg-[#3B4C9B] hover:bg-[#2D3A7B] text-white px-4">
+                                <Button className="h-8 text-xs bg-[#2568C1] hover:bg-[#1a4f99] text-white px-4">
                                     Change Password
                                 </Button>
                             </DialogTrigger>
@@ -100,7 +97,7 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
                                                     type="password"
                                                     value={formData.current_password}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, current_password: e.target.value }))}
-                                                    className="pl-9"
+                                                    className="pl-9 focus-visible:ring-[#2568C1]"
                                                     placeholder="Enter current password"
                                                 />
                                             </div>
@@ -114,7 +111,7 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
                                                     type="password"
                                                     value={formData.new_password}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, new_password: e.target.value }))}
-                                                    className="pl-9"
+                                                    className="pl-9 focus-visible:ring-[#2568C1]"
                                                     placeholder="Enter new password"
                                                 />
                                             </div>
@@ -128,7 +125,7 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
                                                     type="password"
                                                     value={formData.confirm_password}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, confirm_password: e.target.value }))}
-                                                    className="pl-9"
+                                                    className="pl-9 focus-visible:ring-[#2568C1]"
                                                     placeholder="Confirm new password"
                                                 />
                                             </div>
@@ -138,8 +135,8 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
                                         <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isChangingPassword}>
                                             Cancel
                                         </Button>
-                                        <Button type="submit" disabled={isChangingPassword} className="bg-blue-600 hover:bg-blue-700">
-                                            {isChangingPassword ? "Changing..." : "Save Password"}
+                                        <Button type="submit" disabled={isChangingPassword} className="bg-[#2568C1] hover:bg-[#1a4f99]">
+                                            {isChangingPassword ? "Updating..." : "Update Password"}
                                         </Button>
                                     </DialogFooter>
                                 </form>
