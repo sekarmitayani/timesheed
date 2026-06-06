@@ -26,9 +26,18 @@ const DataViewer = ({ data, emptyMessage, level = 0 }: { data: any, emptyMessage
                     {typeof value === 'object' && value !== null ? (
                         <DataViewer data={value} emptyMessage="No data" level={level + 1} />
                     ) : (
-                        <span className="text-sm font-semibold text-slate-800 break-words">
-                            {typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value)}
-                        </span>
+                        <div className="text-sm font-semibold text-slate-800 break-words">
+                            {typeof value === 'boolean' ? (
+                                value ? 'Yes' : 'No'
+                            ) : typeof value === 'string' && /<\/?[a-z][\s\S]*>/i.test(value) ? (
+                                <div 
+                                    className="font-medium bg-transparent p-0 min-h-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:my-1 [&_ol]:my-1" 
+                                    dangerouslySetInnerHTML={{ __html: value }} 
+                                />
+                            ) : (
+                                String(value)
+                            )}
+                        </div>
                     )}
                 </div>
             ))}
@@ -65,14 +74,14 @@ export function AuditDetailDialog({ open, onOpenChange, log }: AuditDetailDialog
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-3">
                             <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-1">Old Value</h4>
-                            <ScrollArea className="h-[300px] w-full rounded-xl border border-slate-100 bg-slate-50 p-4">
+                            <ScrollArea className="h-[300px] w-full border border-slate-100 bg-slate-50 p-4">
                                 <DataViewer data={oldData} emptyMessage="No previous data" />
                             </ScrollArea>
                         </div>
 
                         <div className="space-y-3">
                             <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-1">New Value</h4>
-                            <ScrollArea className="h-[300px] w-full rounded-xl border border-blue-50/50 bg-blue-50/30 p-4">
+                            <ScrollArea className="h-[300px] w-full border border-blue-50/50 bg-blue-50/30 p-4">
                                 <DataViewer data={newData} emptyMessage="Data was removed" />
                             </ScrollArea>
                         </div>
