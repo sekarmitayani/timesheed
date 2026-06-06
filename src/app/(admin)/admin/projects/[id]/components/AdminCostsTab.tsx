@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { CustomDateRangePicker } from "@/app/(pm)/pm/approvals/components/CustomDateRangePicker";
 import { CostEntry } from "../hooks/useAdminProjectDetailData";
 
 interface AdminCostsTabProps {
@@ -30,16 +31,24 @@ export function AdminCostsTab({
                 </div>
                 <div className="flex flex-wrap gap-2 items-center">
                     <Select value={filterType} onValueChange={setFilterType}>
-                        <SelectTrigger className="w-[140px] h-9 text-xs bg-white border-slate-200 rounded-[6px] shadow-none"><SelectValue placeholder="Type" /></SelectTrigger>
+                        <SelectTrigger className="w-[140px] h-10 bg-white border-slate-200">
+                            <SelectValue placeholder="Type" />
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Costs</SelectItem>
                             <SelectItem value="Gaji">Gaji</SelectItem>
                             <SelectItem value="Resource">Resource</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Input type="date" className="w-[140px] h-9 text-xs bg-white border-slate-200 rounded-[6px] shadow-none text-slate-600 font-medium" value={filterStart} onChange={e => setFilterStart(e.target.value)} />
-                    <span className="text-slate-400 font-bold text-xs px-1">TO</span>
-                    <Input type="date" className="w-[140px] h-9 text-xs bg-white border-slate-200 rounded-[6px] shadow-none text-slate-600 font-medium" value={filterEnd} onChange={e => setFilterEnd(e.target.value)} />
+                    <CustomDateRangePicker 
+                        dateFrom={filterStart} 
+                        dateTo={filterEnd} 
+                        onDateChange={(from, to) => {
+                            setFilterStart(from);
+                            setFilterEnd(to);
+                        }}
+                        align="end"
+                    />
                 </div>
             </div>
 

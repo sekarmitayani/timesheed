@@ -72,18 +72,18 @@ export function AdminTeamsTab({
                     <p className="text-xs text-slate-500">Manage team roles and project access.</p>
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <div className="relative flex-1 sm:w-[240px]">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <div className="relative w-full sm:w-[240px] shrink-0">
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input 
                             placeholder="Search team..." 
-                            className="pl-9 h-10 text-xs border-[#E2E8F0] rounded-[8px] bg-white shadow-none focus-visible:ring-[#2568C1]"
+                            className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#4B7BEC] focus-visible:border-[#4B7BEC]"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
                     <Button 
-                        size="sm" 
-                        className="h-10 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] font-bold px-4 rounded-[8px]"
+                        size="sm"
+                        className="h-9 gap-2 bg-[#4B7BEC] hover:bg-[#385bb5] text-white font-bold rounded-[8px] shadow-sm shadow-blue-500/10"
                         onClick={onAssign}
                     >
                         <UserPlus className="h-4 w-4" /> Add Member

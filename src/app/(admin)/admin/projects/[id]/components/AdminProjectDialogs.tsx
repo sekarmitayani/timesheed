@@ -110,7 +110,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                         <div className="space-y-1.5">
                             <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Type</label>
                             <Select value={resCreateForm.type} onValueChange={v => actions.setResCreateForm({...resCreateForm, type: v})}>
-                                <SelectTrigger className="h-10 text-sm"><SelectValue /></SelectTrigger>
+                                <SelectTrigger className="h-10 text-sm"><SelectValue placeholder="Select resource type" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="manpower">Manpower</SelectItem>
                                     <SelectItem value="tools">Tools</SelectItem>

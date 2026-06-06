@@ -43,16 +43,18 @@ export function AdminResourcesTab({
                 </div>
                 <div className="flex flex-wrap gap-2 items-center">
                     <div className="relative w-full md:w-[220px]">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search requests..."
-                            className="pl-9 h-9 text-xs border-[#E2E8F0] rounded-[6px] bg-white shadow-none focus-visible:ring-[#2568C1]"
+                            className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#4B7BEC] focus-visible:border-[#4B7BEC]"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
                     <Select value={filterStatus} onValueChange={setFilterStatus}>
-                        <SelectTrigger className="h-9 w-[130px] text-xs bg-white border-slate-200 rounded-[6px] shadow-none"><SelectValue placeholder="Status" /></SelectTrigger>
+                        <SelectTrigger className="w-[130px] h-10 bg-white border-slate-200">
+                            <SelectValue placeholder="Status" />
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Status</SelectItem>
                             <SelectItem value="pending">Pending</SelectItem>
@@ -61,7 +63,9 @@ export function AdminResourcesTab({
                         </SelectContent>
                     </Select>
                     <Select value={filterType} onValueChange={setFilterType}>
-                        <SelectTrigger className="h-9 w-[150px] text-xs bg-white border-slate-200 rounded-[6px] shadow-none"><SelectValue placeholder="All Types" /></SelectTrigger>
+                        <SelectTrigger className="w-[150px] h-10 bg-white border-slate-200">
+                            <SelectValue placeholder="All Types" />
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Types</SelectItem>
                             <SelectItem value="manpower">Manpower</SelectItem>
@@ -70,7 +74,7 @@ export function AdminResourcesTab({
                             <SelectItem value="accommodation">Accommodation</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Button size="sm" className="h-9 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] font-bold px-4 rounded-[6px]" onClick={onCreate}>
+                    <Button size="sm" className="h-9 gap-2 bg-[#4B7BEC] hover:bg-[#385bb5] text-white font-bold rounded-[8px] shadow-sm shadow-blue-500/10" onClick={onCreate}>
                         <Plus className="h-4 w-4" /> New Request
                     </Button>
                 </div>

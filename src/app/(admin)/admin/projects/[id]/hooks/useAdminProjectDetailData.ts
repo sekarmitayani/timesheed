@@ -55,7 +55,7 @@ export function useAdminProjectDetailData(projectId: string) {
     const [memberUserContracts, setMemberUserContracts] = useState<Contract[]>([]);
     const [memberLoadingContracts, setMemberLoadingContracts] = useState(false);
 
-    const [resCreateForm, setResCreateForm] = useState({ type: "manpower", details: "" });
+    const [resCreateForm, setResCreateForm] = useState({ type: "", details: "" });
     const [resEditForm, setResEditForm] = useState<EditResourcePayload & { confirm_zero?: boolean }>({});
 
     // --- Queries ---
@@ -175,7 +175,7 @@ export function useAdminProjectDetailData(projectId: string) {
             toast.success("Resource request submitted!");
             queryClient.invalidateQueries({ queryKey: ['admin', 'project', projectId, 'resources'] });
             setResCreateOpen(false);
-            setResCreateForm({ type: "manpower", details: "" });
+            setResCreateForm({ type: "", details: "" });
         },
         onError: (e: any) => toast.error(e.message || "Failed to submit request")
     });
