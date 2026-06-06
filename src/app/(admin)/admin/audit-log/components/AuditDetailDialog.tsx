@@ -45,7 +45,7 @@ export function AuditDetailDialog({ open, onOpenChange, log }: AuditDetailDialog
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-[#e2e8f0]">
+            <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-[#e2e8f0]" showCloseButton={false}>
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                     <div className="flex items-center gap-2 mb-2">
                         <Badge variant="outline" className="text-[10px] uppercase font-bold bg-white text-[#2568C1] border-blue-100">
@@ -84,7 +84,7 @@ export function AuditDetailDialog({ open, onOpenChange, log }: AuditDetailDialog
                         onClick={() => onOpenChange(false)}
                         className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors shadow-sm"
                     >
-                        Close Detail
+                        Close
                     </button>
                 </div>
             </DialogContent>
