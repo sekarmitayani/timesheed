@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { resourceService, ResourceRequest, ApprovalActionPayload, EditResourcePayload } from "@/lib/services/resource-service";
+import { resourceService, ResourceRequest, ApprovalActionPayload, EditResourcePayload, CreateResourcePayload } from "@/lib/services/resource-service";
 import { projectService } from "@/lib/services/project-service";
 import { toast } from "sonner";
 
@@ -25,7 +25,7 @@ export function useAdminResourcesData() {
     const [selectedRequest, setSelectedRequest] = useState<ResourceRequest | null>(null);
     const [approveAmount, setApproveAmount] = useState<number>(0);
     const [editForm, setEditForm] = useState<EditResourcePayload>({});
-    const [createForm, setCreateForm] = useState<CreateResourcePayload>({ project_id: "", type: "", details: "" });
+    const [createForm, setCreateForm] = useState<CreateResourcePayload>({ project_id: 0 as any, type: "", details: "" });
 
     // --- Queries ---
     const { data: resourceRes, isLoading: isLoadingRequests } = useQuery({
@@ -87,7 +87,7 @@ export function useAdminResourcesData() {
             toast.success("Resource request created!");
             queryClient.invalidateQueries({ queryKey: ["admin", "resources"] });
             setCreateOpen(false);
-            setCreateForm({ project_id: "", type: "", details: "" });
+            setCreateForm({ project_id: 0 as any, type: "", details: "" });
         },
         onError: (err: any) => toast.error(err.message || "Failed to create request"),
     });
