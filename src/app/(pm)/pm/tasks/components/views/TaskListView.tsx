@@ -26,6 +26,7 @@ export function TaskListView({
     statusConfig
 }: TaskListViewProps) {
     const getInitials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
+    const stripHtml = (html: string) => html ? html.replace(/<[^>]*>?/gm, '') : "";
 
     return (
         <div className="flex-1 overflow-y-auto pr-1 pb-10 custom-scrollbar">
@@ -73,7 +74,7 @@ export function TaskListView({
                                             return (
                                                 <TableRow key={task.id} className="cursor-pointer hover:bg-slate-50/80 group border-b border-slate-50 last:border-0" onClick={() => handleTaskClick(task)}>
                                                     <TableCell className="px-6 py-4 max-w-[200px]"><span className="text-sm font-bold text-slate-700 group-hover:text-[#4B7BEC] block truncate">{task.title}</span></TableCell>
-                                                    <TableCell className="px-4 py-4 max-w-[250px]"><span className="text-xs font-medium text-slate-400 block truncate">{task.description || "—"}</span></TableCell>
+                                                    <TableCell className="px-4 py-4 max-w-[250px]"><span className="text-xs font-medium text-slate-400 block truncate">{stripHtml(task.description) || "—"}</span></TableCell>
                                                     <TableCell className="px-4 py-4">
                                                         <div className="flex items-center gap-2">
                                                             <Avatar className="h-6 w-6 rounded-full">
