@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, UserCog, ShieldX, FolderKanban } from "lucide-react";
 import { Role } from "@/lib/types";
@@ -69,7 +70,7 @@ export function UserFormDialog({
                             <div className="space-y-1.5">
                                 <label className="text-sm font-medium text-[#0f172a]">System Role</label>
                                 <Select value={form.role} onValueChange={(v: Role) => setForm({ ...form, role: v })} disabled={isSaving}>
-                                    <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
+                                    <SelectTrigger className="bg-white"><SelectValue placeholder="Select role" /></SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="employee">Employee</SelectItem>
                                         <SelectItem value="projectmanager">Project Manager</SelectItem>
@@ -114,9 +115,9 @@ export function UserFormDialog({
                                     role="switch"
                                     onClick={() => setForm((prev: any) => ({ ...prev, is_active: !prev.is_active }))}
                                     disabled={isSaving}
-                                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2568C1] focus-visible:ring-offset-2 focus-visible:ring-offset-white ${form.is_active ? 'bg-[#2568C1]' : 'bg-slate-300'}`}
+                                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4B7BEC] focus-visible:ring-offset-2 focus-visible:ring-offset-white ${form.is_active ? 'bg-[#4B7BEC]' : 'bg-slate-300'}`}
                                 >
-                                    <span className={`pointer-events-none absolute left-0 inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ease-in-out ${form.is_active ? 'translate-x-4 border-[#2568C1]' : 'translate-x-0.5 border-slate-300'}`} />
+                                    <span className={`pointer-events-none absolute left-0 inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ease-in-out ${form.is_active ? 'translate-x-4 border-[#4B7BEC]' : 'translate-x-0.5 border-slate-300'}`} />
                                 </button>
                             </div>
                         </div>
@@ -131,7 +132,7 @@ export function UserFormDialog({
                                 <div className="space-y-1.5 flex-1 col-span-2 sm:col-span-1">
                                     <label className="text-sm font-medium text-[#0f172a]">Contract Type</label>
                                     <Select value={contractForm.contract_type} onValueChange={(v: any) => setContractForm({ ...contractForm, contract_type: v })} disabled={isSaving}>
-                                        <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
+                                        <SelectTrigger className="bg-white"><SelectValue placeholder="Select contract type" /></SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="yearly">Yearly</SelectItem>
                                             <SelectItem value="monthly">Monthly</SelectItem>
@@ -143,7 +144,7 @@ export function UserFormDialog({
                                 <div className="space-y-1.5 flex-1 col-span-2 sm:col-span-1">
                                     <label className="text-sm font-medium text-[#0f172a]">Payment Scheme</label>
                                     <Select value={contractForm.payment_scheme} onValueChange={(v: any) => setContractForm({ ...contractForm, payment_scheme: v })} disabled={isSaving}>
-                                        <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
+                                        <SelectTrigger className="bg-white"><SelectValue placeholder="Select payment scheme" /></SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="monthly">Monthly</SelectItem>
                                             <SelectItem value="termin">Termin</SelectItem>
@@ -171,11 +172,11 @@ export function UserFormDialog({
                                 </div>
                                 <div className="space-y-1.5 flex-1 col-span-2 sm:col-span-1">
                                     <label className="text-sm font-medium text-[#0f172a]">Start Date</label>
-                                    <Input type="date" className="bg-white" value={contractForm.start_date} onChange={(e) => setContractForm({ ...contractForm, start_date: e.target.value })} disabled={isSaving} />
+                                    <CustomDatePicker date={contractForm.start_date} onDateChange={(date) => setContractForm({ ...contractForm, start_date: date })} disabled={isSaving} className="h-10 px-3 py-2 text-sm" />
                                 </div>
                                 <div className="space-y-1.5 flex-1 col-span-2 sm:col-span-1">
                                     <label className="text-sm font-medium text-[#0f172a]">End Date (Optional)</label>
-                                    <Input type="date" className="bg-white" value={contractForm.end_date || ""} onChange={(e) => setContractForm({ ...contractForm, end_date: e.target.value })} disabled={isSaving} />
+                                    <CustomDatePicker date={contractForm.end_date || ""} onDateChange={(date) => setContractForm({ ...contractForm, end_date: date })} disabled={isSaving} className="h-10 px-3 py-2 text-sm" placeholder="Optional" />
                                 </div>
                             </div>
                         </div>

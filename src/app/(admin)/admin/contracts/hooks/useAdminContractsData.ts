@@ -28,8 +28,8 @@ export function useAdminContractsData() {
     // --- Form States ---
     const [contractForm, setContractForm] = useState<{
         user_id: number;
-        contract_type: Contract["contract_type"];
-        payment_scheme: PaymentScheme;
+        contract_type: Contract["contract_type"] | "";
+        payment_scheme: PaymentScheme | "";
         rate_amount: number;
         rate_display: string;
         start_date: string;
@@ -37,8 +37,8 @@ export function useAdminContractsData() {
         is_active: boolean;
     }>({
         user_id: 0,
-        contract_type: "monthly",
-        payment_scheme: "monthly",
+        contract_type: "",
+        payment_scheme: "",
         rate_amount: 0,
         rate_display: "",
         start_date: new Date().toISOString().split("T")[0],
@@ -143,7 +143,7 @@ export function useAdminContractsData() {
     const resetForm = () => {
         setEditId(null);
         setContractForm({
-            user_id: 0, contract_type: "monthly", payment_scheme: "monthly",
+            user_id: 0, contract_type: "", payment_scheme: "",
             rate_amount: 0, rate_display: "",
             start_date: new Date().toISOString().split("T")[0], end_date: "", is_active: true,
         });

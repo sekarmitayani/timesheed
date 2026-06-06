@@ -3,6 +3,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CurrencyInput } from "@/components/ui/currency-input";
 import { Loader2 } from "lucide-react";
@@ -66,7 +67,7 @@ export function ContractFormDialog({
                                 value={form.contract_type} 
                                 onValueChange={(v: any) => setForm({ ...form, contract_type: v })}
                             >
-                                <SelectTrigger className="bg-white border-slate-200 h-10"><SelectValue /></SelectTrigger>
+                                <SelectTrigger className="bg-white border-slate-200 h-10"><SelectValue placeholder="Select contract type" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="yearly">Yearly</SelectItem>
                                     <SelectItem value="monthly">Monthly</SelectItem>
@@ -81,7 +82,7 @@ export function ContractFormDialog({
                                 value={form.payment_scheme} 
                                 onValueChange={(v: any) => setForm({ ...form, payment_scheme: v })}
                             >
-                                <SelectTrigger className="bg-white border-slate-200 h-10"><SelectValue /></SelectTrigger>
+                                <SelectTrigger className="bg-white border-slate-200 h-10"><SelectValue placeholder="Select payment scheme" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="monthly">Monthly</SelectItem>
                                     <SelectItem value="termin">Termin</SelectItem>
@@ -103,22 +104,21 @@ export function ContractFormDialog({
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
                             <label className="text-sm font-medium">Start Date</label>
-                            <Input 
-                                type="date" 
-                                value={form.start_date} 
-                                onChange={e => setForm({ ...form, start_date: e.target.value })} 
+                            <CustomDatePicker 
+                                date={form.start_date} 
+                                onDateChange={(date) => setForm({ ...form, start_date: date })} 
                                 disabled={isSaving} 
-                                className="bg-white border-slate-200 h-10"
+                                className="h-10 px-3 py-2 text-sm bg-white border-slate-200"
                             />
                         </div>
                         <div className="space-y-1.5">
                             <label className="text-sm font-medium">End Date</label>
-                            <Input 
-                                type="date" 
-                                value={form.end_date} 
-                                onChange={e => setForm({ ...form, end_date: e.target.value })} 
+                            <CustomDatePicker 
+                                date={form.end_date || ""} 
+                                onDateChange={(date) => setForm({ ...form, end_date: date })} 
                                 disabled={isSaving} 
-                                className="bg-white border-slate-200 h-10"
+                                className="h-10 px-3 py-2 text-sm bg-white border-slate-200"
+                                placeholder="Optional"
                             />
                         </div>
                     </div>

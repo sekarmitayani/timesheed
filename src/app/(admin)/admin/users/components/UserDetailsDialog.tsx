@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { Loader2, Mail, Phone, Briefcase, Calendar, Plus, Trash2, Edit, FolderKanban } from "lucide-react";
@@ -131,7 +132,7 @@ export function UserDetailsDialog({
                                                                 <span className="text-[10px] text-muted-foreground font-medium uppercase mt-0.5 tracking-wider">Payment: {c.payment_scheme}</span>
                                                             </div>
                                                             <div className="flex items-center gap-1.5 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100">
-                                                                {c.is_active ? <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /> : <span className="h-2 w-2 rounded-full bg-slate-300" />}
+                                                                {c.is_active ? <span className="h-2 w-2 rounded-full bg-[#4B7BEC] animate-pulse" /> : <span className="h-2 w-2 rounded-full bg-slate-300" />}
                                                                 <span className="text-[10px] font-bold text-slate-600 uppercase">{c.is_active ? 'Active' : 'Ended'}</span>
                                                             </div>
                                                         </div>
@@ -190,7 +191,7 @@ export function UserDetailsDialog({
                                                                         <div className="flex flex-col items-end gap-1">
                                                                             <span className="font-mono text-sm font-bold text-[#0f172a]">Rp {(c.rate_amount || 0).toLocaleString('id-ID')}</span>
                                                                             <div className="flex items-center gap-1">
-                                                                                {c.is_active ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> : <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />}
+                                                                                {c.is_active ? <span className="h-1.5 w-1.5 rounded-full bg-[#4B7BEC] animate-pulse" /> : <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />}
                                                                                 <span className="text-[9px] font-bold text-slate-500 uppercase">{c.is_active ? 'Active Rate' : 'Historical'}</span>
                                                                             </div>
                                                                         </div>
@@ -220,7 +221,7 @@ export function UserDetailsDialog({
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Contract Type</label>
                                     <Select value={contractForm.contract_type} onValueChange={(v: any) => setContractForm({ ...contractForm, contract_type: v })} disabled={isSavingContract}>
-                                        <SelectTrigger className="h-9 text-xs bg-white border-slate-300"><SelectValue /></SelectTrigger>
+                                        <SelectTrigger className="h-9 text-xs bg-white border-slate-300"><SelectValue placeholder="Select contract type" /></SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="yearly" className="text-xs">Yearly Salary</SelectItem>
                                             <SelectItem value="monthly" className="text-xs">Monthly Salary</SelectItem>
@@ -232,7 +233,7 @@ export function UserDetailsDialog({
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Payment Scheme</label>
                                     <Select value={contractForm.payment_scheme} onValueChange={(v: any) => setContractForm({ ...contractForm, payment_scheme: v })} disabled={isSavingContract}>
-                                        <SelectTrigger className="h-9 text-xs bg-white border-slate-300"><SelectValue /></SelectTrigger>
+                                        <SelectTrigger className="h-9 text-xs bg-white border-slate-300"><SelectValue placeholder="Select payment scheme" /></SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="monthly" className="text-xs">Monthly Cycle</SelectItem>
                                             <SelectItem value="termin" className="text-xs">Termin/Milestone</SelectItem>
@@ -266,11 +267,11 @@ export function UserDetailsDialog({
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end mt-4">
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Start Date</label>
-                                    <Input type="date" className="h-9 text-xs bg-white border-slate-300" value={contractForm.start_date} onChange={(e) => setContractForm({ ...contractForm, start_date: e.target.value })} disabled={isSavingContract} />
+                                    <CustomDatePicker date={contractForm.start_date} onDateChange={(date) => setContractForm({ ...contractForm, start_date: date })} disabled={isSavingContract} className="h-9 text-xs bg-white border-slate-300" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold uppercase tracking-wide text-slate-500">End Date</label>
-                                    <Input type="date" className="h-9 text-xs bg-white border-slate-300" value={contractForm.end_date || ""} onChange={(e) => setContractForm({ ...contractForm, end_date: e.target.value })} disabled={isSavingContract} />
+                                    <CustomDatePicker date={contractForm.end_date || ""} onDateChange={(date) => setContractForm({ ...contractForm, end_date: date })} disabled={isSavingContract} className="h-9 text-xs bg-white border-slate-300" placeholder="Optional" />
                                 </div>
                                 <div className="flex items-center gap-2 h-9">
                                     <input type="checkbox" className="rounded border-slate-300 text-[#2568C1] h-4 w-4 cursor-pointer" id="active-contract-chk" checked={contractForm.is_active} onChange={(e) => setContractForm({ ...contractForm, is_active: e.target.checked })} disabled={isSavingContract} />
