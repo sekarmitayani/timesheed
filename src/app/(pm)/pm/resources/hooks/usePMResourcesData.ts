@@ -23,7 +23,7 @@ export function usePMResourcesData() {
 
     // --- Active Data ---
     const [selectedRequest, setSelectedRequest] = useState<ResourceRequest | null>(null);
-    const [createForm, setCreateForm] = useState<CreateResourcePayload>({ project_id: 0, type: "tools", details: "" });
+    const [createForm, setCreateForm] = useState<CreateResourcePayload>({ project_id: 0, type: "", details: "" });
 
     // --- Queries ---
     const { data: resourceRes, isLoading: isLoadingRequests } = useQuery({
@@ -82,7 +82,7 @@ export function usePMResourcesData() {
             toast.success("Resource request submitted successfully!");
             queryClient.invalidateQueries({ queryKey: ["pm", "resources"] });
             setCreateOpen(false);
-            setCreateForm({ project_id: 0, type: "tools", details: "" });
+            setCreateForm({ project_id: 0, type: "", details: "" });
         },
         onError: (err: any) => toast.error(err.message || "Failed to submit request"),
     });

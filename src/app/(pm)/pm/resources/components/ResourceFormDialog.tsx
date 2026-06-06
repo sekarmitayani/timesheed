@@ -57,7 +57,7 @@ export function ResourceFormDialog({
                     <div className="space-y-1.5">
                         <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Type</label>
                         <Select value={form.type} onValueChange={v => setForm({ ...form, type: v })}>
-                            <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
+                            <SelectTrigger className="h-11"><SelectValue placeholder="Select type" /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="manpower">Manpower</SelectItem>
                                 <SelectItem value="tools">Tools</SelectItem>

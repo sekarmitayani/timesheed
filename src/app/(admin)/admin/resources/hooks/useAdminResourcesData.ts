@@ -25,7 +25,7 @@ export function useAdminResourcesData() {
     const [selectedRequest, setSelectedRequest] = useState<ResourceRequest | null>(null);
     const [approveAmount, setApproveAmount] = useState<number>(0);
     const [editForm, setEditForm] = useState<EditResourcePayload>({});
-    const [createForm, setCreateForm] = useState({ project_id: "", type: "manpower", details: "" });
+    const [createForm, setCreateForm] = useState<CreateResourcePayload>({ project_id: "", type: "", details: "" });
 
     // --- Queries ---
     const { data: resourceRes, isLoading: isLoadingRequests } = useQuery({
@@ -87,7 +87,7 @@ export function useAdminResourcesData() {
             toast.success("Resource request created!");
             queryClient.invalidateQueries({ queryKey: ["admin", "resources"] });
             setCreateOpen(false);
-            setCreateForm({ project_id: "", type: "manpower", details: "" });
+            setCreateForm({ project_id: "", type: "", details: "" });
         },
         onError: (err: any) => toast.error(err.message || "Failed to create request"),
     });
@@ -129,6 +129,7 @@ return {
     // State
     page, setPage,
     limit, setLimit,
+    searchQuery, setSearchQuery,
     filterProject, setFilterProject,
     filterStatus, setFilterStatus,
     filterType, setFilterType,

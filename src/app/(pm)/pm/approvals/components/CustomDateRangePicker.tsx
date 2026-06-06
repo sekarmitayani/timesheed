@@ -12,14 +12,15 @@ import {
 } from "@/components/ui/popover";
 
 interface CustomDateRangePickerProps {
-    dateFrom: string;
-    dateTo: string;
+    dateFrom?: string;
+    dateTo?: string;
+    align?: "center" | "end" | "start";
     onDateChange: (from: string, to: string) => void;
 }
 
 type Preset = "All Records" | "Daily" | "Weekly" | "Monthly" | "Custom";
 
-export function CustomDateRangePicker({ dateFrom, dateTo, onDateChange }: CustomDateRangePickerProps) {
+export function CustomDateRangePicker({ dateFrom, dateTo, onDateChange, align = "start" }: CustomDateRangePickerProps) {
     const [open, setOpen] = React.useState(false);
     
     // Internal state for the calendar
@@ -152,7 +153,7 @@ export function CustomDateRangePicker({ dateFrom, dateTo, onDateChange }: Custom
                     {formatDateRange()}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 rounded-2xl shadow-lg border-slate-100" align="start">
+            <PopoverContent className="w-auto p-0 rounded-2xl shadow-lg border-slate-100" align={align}>
                 <div className="flex flex-col sm:flex-row">
                     {/* Sidebar */}
                     <div className="flex flex-col p-4 border-r border-slate-100 w-full sm:w-[160px] bg-white rounded-l-2xl shrink-0">

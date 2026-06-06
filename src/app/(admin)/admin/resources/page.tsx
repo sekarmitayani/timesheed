@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ai/ai-components";
+import { Plus } from "lucide-react";
 import { useAdminResourcesData } from "./hooks/useAdminResourcesData";
 import { ResourceFilters } from "./components/ResourceFilters";
 import { ResourcesTable } from "./components/ResourcesTable";
@@ -25,6 +26,7 @@ export default function AdminResourcesPage() {
         approveAmount, setApproveAmount,
         editForm, setEditForm,
         createForm, setCreateForm,
+        searchQuery, setSearchQuery,
 
         // Data
         allProjects,
@@ -52,14 +54,16 @@ export default function AdminResourcesPage() {
             >
                 <Button 
                     size="sm" 
-                    className="gap-2 bg-[#2568C1] hover:bg-[#1e56a6] text-white rounded-lg shadow-sm" 
+                    className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] shadow-md shadow-[#2568C1]/20 rounded-[6px]" 
                     onClick={() => setCreateOpen(true)}
                 >
-                    + New Request
+                    <Plus className="h-4 w-4" /> New Request
                 </Button>
             </PageHeader>
 
             <ResourceFilters 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
                 filterProject={filterProject}
                 setFilterProject={setFilterProject}
                 filterType={filterType}
