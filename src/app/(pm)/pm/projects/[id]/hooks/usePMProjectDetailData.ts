@@ -33,7 +33,7 @@ export function usePMProjectDetailData(projectId: string) {
         project_id: Number(projectId), title: "", description: "", assigned_to_id: 0 
     });
     const [resForm, setResForm] = useState<CreateResourcePayload>({ 
-        project_id: Number(projectId), type: "tools", details: "" 
+        project_id: Number(projectId), type: "" as any, details: "" 
     });
 
     // --- Queries ---
@@ -145,19 +145,19 @@ export function usePMProjectDetailData(projectId: string) {
     // --- Handlers ---
     const openCreateTask = () => {
         setTaskEditing(null);
-        setTaskForm({ project_id: Number(projectId), title: "", description: "", assigned_to_id: 0 });
+        setTaskForm({ project_id: Number(projectId), title: "", description: "", assigned_to_id: 0, due_date: undefined });
         setTaskDialogOpen(true);
     };
 
     const openEditTask = (t: ApiTask) => {
         setTaskEditing(t);
-        setTaskForm({ project_id: t.project_id, title: t.title, description: t.description, assigned_to_id: t.assigned_to_id, status: t.status });
+        setTaskForm({ project_id: t.project_id, title: t.title, description: t.description, assigned_to_id: t.assigned_to_id, status: t.status, due_date: t.due_date });
         setTaskDialogOpen(true);
     };
 
     const openCreateRes = () => {
         setResEditing(null);
-        setResForm({ project_id: Number(projectId), type: "tools", details: "" });
+        setResForm({ project_id: Number(projectId), type: "" as any, details: "" });
         setResDialogOpen(true);
     };
 

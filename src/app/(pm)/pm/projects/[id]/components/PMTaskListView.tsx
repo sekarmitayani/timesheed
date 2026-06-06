@@ -42,6 +42,8 @@ export function PMTaskListView({
         return "Unassigned";
     };
 
+    const getInitials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
+
     return (
         <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar pb-10">
             <div className="space-y-10">
@@ -82,17 +84,17 @@ export function PMTaskListView({
                                             const assigneeName = getAssigneeName(task);
                                             return (
                                                 <TableRow key={task.id} className="cursor-pointer hover:bg-slate-50/80 group border-b border-slate-50 last:border-0" onClick={() => onTaskClick(task)}>
-                                                    <TableCell className="px-6 py-4">
-                                                        <span className="text-sm font-bold text-slate-700 group-hover:text-[#4B7BEC] transition-colors line-clamp-1">{task.title}</span>
+                                                    <TableCell className="px-6 py-4 max-w-[200px]">
+                                                        <span className="text-sm font-bold text-slate-700 group-hover:text-[#4B7BEC] transition-colors block truncate">{task.title}</span>
                                                     </TableCell>
-                                                    <TableCell className="px-4 py-4">
-                                                        <span className="text-xs font-medium text-slate-400 line-clamp-1">{task.description || "—"}</span>
+                                                    <TableCell className="px-4 py-4 max-w-[250px]">
+                                                        <span className="text-xs font-medium text-slate-400 block truncate">{task.description || "—"}</span>
                                                     </TableCell>
                                                     <TableCell className="px-4 py-4">
                                                         <div className="flex items-center gap-2">
                                                             <Avatar className="h-6 w-6 rounded-full">
                                                                 <AvatarFallback className="text-[8px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
-                                                                    {reporterName.charAt(0).toUpperCase()}
+                                                                    {getInitials(reporterName)}
                                                                 </AvatarFallback>
                                                             </Avatar>
                                                             <span className="text-[11px] font-bold text-slate-600 truncate max-w-[100px]">{reporterName}</span>
@@ -102,7 +104,7 @@ export function PMTaskListView({
                                                         <div className="flex items-center gap-2">
                                                             <Avatar className="h-6 w-6 rounded-full border border-[#4B7BEC]/10 shadow-sm">
                                                                 <AvatarFallback className="text-[8px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
-                                                                    {assigneeName.charAt(0).toUpperCase()}
+                                                                    {getInitials(assigneeName)}
                                                                 </AvatarFallback>
                                                             </Avatar>
                                                             <span className="text-[11px] font-bold text-slate-600 truncate max-w-[100px]">{assigneeName}</span>
