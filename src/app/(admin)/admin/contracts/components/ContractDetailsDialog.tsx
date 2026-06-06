@@ -70,8 +70,8 @@ export function ContractDetailsDialog({
                     <Card className="p-4 shadow-sm border-slate-200 bg-white space-y-3">
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Assigned Identity</div>
                         <div className="flex items-center gap-3">
-                            <Avatar className="h-10 w-10 border border-slate-100 shadow-sm">
-                                <AvatarFallback className="bg-gradient-to-br from-slate-100 to-slate-200 text-slate-600 font-bold">
+                            <Avatar className="h-10 w-10 border border-[#e2e8f0] shadow-sm">
+                                <AvatarFallback className="text-xs font-semibold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                     {(user?.full_name || user?.name || "U").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase()}
                                 </AvatarFallback>
                             </Avatar>
