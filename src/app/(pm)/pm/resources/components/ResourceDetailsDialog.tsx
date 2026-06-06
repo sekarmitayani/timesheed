@@ -36,7 +36,7 @@ export function ResourceDetailsDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]">
+            <DialogContent showCloseButton={false} className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]">
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                     <DialogTitle className="text-lg font-bold text-slate-900 leading-tight">Request Details</DialogTitle>
                 </div>

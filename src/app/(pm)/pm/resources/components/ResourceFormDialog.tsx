@@ -39,47 +39,55 @@ export function ResourceFormDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden border-[#e2e8f0]">
+            <DialogContent showCloseButton={false} className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0] shadow-2xl rounded-md bg-white flex flex-col text-slate-900">
+                <DialogDescription className="sr-only">Form to submit a new resource request.</DialogDescription>
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                     <DialogTitle className="text-lg font-bold text-slate-900">New Resource Request</DialogTitle>
                     <DialogDescription className="text-xs">Submit a new request for project resources.</DialogDescription>
                 </div>
                 <div className="px-6 py-5 space-y-4">
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Select Project <span className="text-red-500">*</span></label>
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-slate-400 ml-1">Project *</label>
                         <Select value={String(form.project_id || "")} onValueChange={v => setForm({ ...form, project_id: Number(v) })}>
-                            <SelectTrigger className="h-11"><SelectValue placeholder="Choose a project" /></SelectTrigger>
-                            <SelectContent>
-                                {projects.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}
+                            <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
+                                <SelectValue placeholder="Choose a project" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-md">
+                                {projects.map(p => <SelectItem key={p.id} value={String(p.id)} className="text-sm">{p.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Type</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Type *</label>
                         <Select value={form.type} onValueChange={v => setForm({ ...form, type: v })}>
-                            <SelectTrigger className="h-11"><SelectValue placeholder="Select type" /></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="manpower">Manpower</SelectItem>
-                                <SelectItem value="tools">Tools</SelectItem>
-                                <SelectItem value="infrastructure">Infrastructure</SelectItem>
-                                <SelectItem value="accommodation">Accommodation</SelectItem>
+                            <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
+                                <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-md">
+                                <SelectItem value="manpower" className="text-sm font-medium">Manpower</SelectItem>
+                                <SelectItem value="tools" className="text-sm font-medium">Tools</SelectItem>
+                                <SelectItem value="infrastructure" className="text-sm font-medium">Infrastructure</SelectItem>
+                                <SelectItem value="accommodation" className="text-sm font-medium">Accommodation</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Details <span className="text-red-500">*</span></label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Details *</label>
                         <textarea
-                            className="w-full min-h-[120px] p-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none"
+                            className="w-full min-h-[120px] p-3 rounded-md border border-slate-200 text-sm font-medium focus:ring-1 focus:ring-[#4B7BEC] focus:outline-none custom-scrollbar shadow-sm bg-white"
                             placeholder="Describe the resource needed, quantity, and reason..."
                             value={form.details}
                             onChange={e => setForm({ ...form, details: e.target.value })}
+                            disabled={isProcessing}
                         />
                     </div>
                 </div>
-                <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex gap-3">
-                    <Button variant="ghost" className="flex-1" onClick={() => onOpenChange(false)} disabled={isProcessing}>Cancel</Button>
-                    <Button className="flex-1 bg-[#2568C1] hover:bg-[#1e56a6] text-white" onClick={handleSave} disabled={isProcessing || !form.project_id || !form.details}>
-                        {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit Request"}
+                <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2.5">
+                    <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isProcessing} className="font-bold rounded-md px-5 text-xs text-slate-500 h-9">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSave} disabled={isProcessing || !form.project_id || !form.details} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[100px] font-bold rounded-md uppercase tracking-widest text-[10px] h-9 shadow-md shadow-blue-100">
+                        {isProcessing ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
                     </Button>
                 </div>
             </DialogContent>

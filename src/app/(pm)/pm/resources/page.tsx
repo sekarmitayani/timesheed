@@ -1,5 +1,6 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ai/ai-components";
 import { usePMResourcesData } from "./hooks/usePMResourcesData";
@@ -51,10 +52,10 @@ export default function PMResourcesPage() {
             >
                 <Button 
                     size="sm" 
-                    className="gap-2 bg-[#2568C1] hover:bg-[#1e56a6] text-white rounded-lg shadow-sm" 
+                    className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] shadow-md shadow-[#2568C1]/20 font-bold h-9 rounded-lg text-white" 
                     onClick={() => setCreateOpen(true)}
                 >
-                    + New Request
+                    <Plus className="h-4 w-4" /> New Request
                 </Button>
             </PageHeader>
 
