@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { CurrencyInput } from "@/components/ui/currency-input";
-import { 
+import { CustomDatePicker } from "@/components/ui/custom-date-picker";
+import {
     Loader2, WalletCards, FileText, Calendar, Trash2, 
     ChevronDown, ChevronUp, CheckCircle2, Clock 
 } from "lucide-react";
@@ -250,7 +251,13 @@ export function PaymentsDialog({
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-bold text-slate-700">Execution Date</label>
-                                    <Input type="date" className="h-9 text-sm border-slate-200 text-slate-600 font-medium" value={paymentForm.paid_at || ""} onChange={e => setPaymentForm({ ...paymentForm, paid_at: e.target.value })} disabled={isSavingPayment} />
+                                    <CustomDatePicker 
+                                        date={paymentForm.paid_at || undefined} 
+                                        onDateChange={date => setPaymentForm({ ...paymentForm, paid_at: date })} 
+                                        disabled={isSavingPayment} 
+                                        className="h-9 text-sm border-slate-200 text-slate-600 font-medium"
+                                        placeholder="Select execution date"
+                                    />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-bold text-slate-700">Attached Description</label>
