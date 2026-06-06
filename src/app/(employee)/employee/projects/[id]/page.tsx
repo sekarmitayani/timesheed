@@ -9,7 +9,7 @@ import { OverviewTab } from "./components/OverviewTab";
 import { TeamsTab } from "./components/TeamsTab";
 import { TaskViewsContainer } from "./components/TaskViewsContainer";
 import { TaskFormDialog } from "../../tasks/components/TaskFormDialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { DeleteConfirmDialog } from "../../tasks/components/DeleteConfirmDialog";
 import { cn } from "@/lib/utils";
 
 export default function EmployeeProjectDetailPage() {
@@ -127,23 +127,13 @@ export default function EmployeeProjectDetailPage() {
                 />
             )}
 
-            <AlertDialog open={state.deleteOpen} onOpenChange={actions.setDeleteOpen}>
-                <AlertDialogContent className="bg-white border-slate-200">
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Task?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Are you sure you want to delete <span className="font-bold text-slate-700">"{state.taskToDelete?.title}"</span>? This action cannot be undone.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel className="font-bold border-slate-200 text-slate-500 hover:bg-slate-50">Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={actions.handleDelete} disabled={state.isDeleting} className="bg-rose-500 hover:bg-rose-600 text-white font-bold">
-                            {state.isDeleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                            Delete
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            <DeleteConfirmDialog
+                isOpen={state.deleteOpen}
+                onClose={() => actions.setDeleteOpen(false)}
+                onConfirm={actions.handleDelete}
+                isDeleting={state.isDeleting}
+                taskTitle={state.taskToDelete?.title || ""}
+            />
         </div>
     );
 }
