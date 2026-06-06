@@ -23,11 +23,11 @@ const HOUR_HEIGHT = 64;
 const WEEK_HEADER_HEIGHT = 52;
 const EXTRA_PADDING = 20;
 
-const PROJECT_COLORS = [
-    { bg: "bg-blue-50", text: "text-blue-700", borderL: "border-l-[#2568C1]", dot: "bg-[#2568C1]" },
-    { bg: "bg-violet-50", text: "text-violet-700", borderL: "border-l-violet-400", dot: "bg-violet-400" },
-    { bg: "bg-emerald-50", text: "text-emerald-700", borderL: "border-l-emerald-400", dot: "bg-emerald-400" },
-];
+const STATUS_COLORS: Record<string, { bg: string; text: string; borderL: string; dot: string }> = {
+    todo: { bg: "bg-slate-50", text: "text-slate-700", borderL: "border-l-slate-400", dot: "bg-slate-400" },
+    in_progress: { bg: "bg-blue-50", text: "text-blue-700", borderL: "border-l-blue-400", dot: "bg-blue-400" },
+    done: { bg: "bg-emerald-50", text: "text-emerald-700", borderL: "border-l-emerald-400", dot: "bg-emerald-400" },
+};
 
 export function CalendarView({ tasks, onTaskClick, currentUser }: CalendarViewProps) {
     const [calView, setCalView] = useState<"day" | "week" | "month">("month");
@@ -57,7 +57,7 @@ export function CalendarView({ tasks, onTaskClick, currentUser }: CalendarViewPr
         }
     }, [calView, currentMonth]);
 
-    const getProjectColor = () => PROJECT_COLORS[0];
+    const getStatusColor = (status: string) => STATUS_COLORS[status] || STATUS_COLORS.todo;
 
     const calendarDays = useMemo(() => {
         const monthStart = startOfMonth(currentMonth);
@@ -153,7 +153,7 @@ export function CalendarView({ tasks, onTaskClick, currentUser }: CalendarViewPr
                                         </div>
                                         <div className="space-y-0.5">
                                             {dayTasks.slice(0, 3).map(task => { 
-                                                const pColor = getProjectColor(); 
+                                                const sColor = getStatusColor(task.status); 
                                                 const isAssignedToMe = currentUser && String(task.assigned_to_id) === String(currentUser.id);
                                                 return (
                                                     <div 
@@ -161,11 +161,11 @@ export function CalendarView({ tasks, onTaskClick, currentUser }: CalendarViewPr
                                                         onClick={(e) => { e.stopPropagation(); onTaskClick(task); }} 
                                                         className={cn(
                                                             "flex items-center gap-1 px-1.5 py-1 rounded-[4px] text-[9px] font-bold truncate transition-all hover:shadow-sm", 
-                                                            pColor.bg, pColor.text,
+                                                            sColor.bg, sColor.text,
                                                             !isAssignedToMe ? "opacity-60 grayscale-[0.2] cursor-not-allowed" : "cursor-pointer"
                                                         )}
                                                     >
-                                                        <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", pColor.dot)} />
+                                                        <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", sColor.dot)} />
                                                         {!isAssignedToMe && <Lock className="h-2 w-2 mr-0.5 opacity-50 shrink-0" />}
                                                         <span className="truncate">{task.title}</span>
                                                     </div>
@@ -226,7 +226,7 @@ export function CalendarView({ tasks, onTaskClick, currentUser }: CalendarViewPr
                                             ))}
 
                                             {dayTasks.map(task => {
-                                                const pColor = getProjectColor();
+                                                const sColor = getStatusColor(task.status);
                                                 const style = getTaskStyle(task, dayTasks);
                                                 const isAssignedToMe = currentUser && String(task.assigned_to_id) === String(currentUser.id);
                                                 
@@ -236,7 +236,7 @@ export function CalendarView({ tasks, onTaskClick, currentUser }: CalendarViewPr
                                                         onClick={(e) => { e.stopPropagation(); onTaskClick(task); }}
                                                         className={cn(
                                                             "absolute p-2 rounded-[4px] border-l-[3px] shadow-sm z-10 transition-all hover:z-20 hover:shadow-md group/task overflow-hidden",
-                                                            pColor.bg, pColor.text, pColor.borderL,
+                                                            sColor.bg, sColor.text, sColor.borderL,
                                                             !isAssignedToMe ? "opacity-60 grayscale-[0.2] cursor-not-allowed" : "cursor-pointer"
                                                         )}
                                                         style={{

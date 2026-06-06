@@ -102,7 +102,6 @@ export function TaskViewsContainer({
                     <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
                         <SelectTrigger className="w-[180px] h-10 bg-white border-slate-200">
                             <div className="flex items-center gap-2 min-w-0">
-                                <User2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                                 <span className="truncate"><SelectValue placeholder="All Assignees" /></span>
                             </div>
                         </SelectTrigger>

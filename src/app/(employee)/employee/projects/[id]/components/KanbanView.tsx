@@ -31,6 +31,8 @@ function resolveName(task: ApiTask, userId: number, members: ProjectMember[]) {
     return members.find(m => m.user_id === userId)?.user?.full_name || `User #${userId}`;
 }
 
+const getInitials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
+
 export function KanbanView({ projectId, tasks, members, onTaskClick, currentUser }: KanbanViewProps) {
     const queryClient = useQueryClient();
 
@@ -136,7 +138,7 @@ export function KanbanView({ projectId, tasks, members, onTaskClick, currentUser
                                                                             <div className="flex items-center gap-1 min-w-0">
                                                                                 <Avatar className="h-4 w-4 rounded-[4px] shrink-0">
                                                                                     <AvatarFallback className="text-[7px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white rounded-[4px]">
-                                                                                        {reporterName.charAt(0)}
+                                                                                        {getInitials(reporterName)}
                                                                                     </AvatarFallback>
                                                                                 </Avatar>
                                                                                 <span className="font-semibold text-slate-500 truncate max-w-[80px]">{reporterName}</span>
@@ -145,7 +147,7 @@ export function KanbanView({ projectId, tasks, members, onTaskClick, currentUser
                                                                             <div className="flex items-center gap-1 min-w-0">
                                                                                 <Avatar className="h-4 w-4 rounded-[4px] shrink-0">
                                                                                     <AvatarFallback className="text-[7px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white rounded-[4px]">
-                                                                                        {assigneeName.charAt(0)}
+                                                                                        {getInitials(assigneeName)}
                                                                                     </AvatarFallback>
                                                                                 </Avatar>
                                                                                 <span className={cn("truncate max-w-[100px]", isAssignedToMe ? "font-black text-[#2568C1]" : "font-bold text-slate-700")}>{assigneeName}</span>
