@@ -71,6 +71,25 @@ export function TaskDetailDialog({
 }: TaskDetailDialogProps) {
     if (!selectedTask) return null;
 
+    const getInitials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
+
+    const parseMarkdown = (text: string) => {
+        if (!text) return "";
+        let html = text
+            .replace(/&lt;u&gt;(.*?)&lt;\/u&gt;/g, "<u>$1</u>")
+            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+            .replace(/\*(.*?)\*/g, "<em>$1</em>")
+            .replace(/\n/g, "<br />");
+        
+        html = html.replace(/(?:^|<br \/>)- (.*?)(?=(<br \/>|$))/g, "<li>$1</li>");
+        html = html.replace(/(<li>.*?<\/li>)+/g, "<ul class='list-disc pl-5 my-1'>$&</ul>");
+
+        html = html.replace(/(?:^|<br \/>)\d+\. (.*?)(?=(<br \/>|$))/g, "<li>$1</li>");
+        html = html.replace(/(<li>.*?<\/li>)+/g, "<ol class='list-decimal pl-5 my-1'>$&</ol>");
+
+        return html;
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent showCloseButton={false} className="sm:max-w-[1100px] p-0 gap-0 overflow-hidden border-none shadow-2xl rounded-md max-h-[90vh] flex flex-col bg-white">
@@ -119,7 +138,9 @@ export function TaskDetailDialog({
                                     <ListTodo className="h-3.5 w-3.5" /> Description
                                 </h5>
                                 <div className="text-sm text-slate-600 leading-relaxed font-medium bg-slate-50/30 rounded-md p-4 border border-slate-50 min-h-[100px] break-words whitespace-pre-wrap">
-                                    {selectedTask.description || "No description provided."}
+                                    {selectedTask.description ? (
+                                        <div dangerouslySetInnerHTML={{ __html: parseMarkdown(selectedTask.description) }} />
+                                    ) : "No description provided."}
                                 </div>
                             </div>
 
@@ -148,7 +169,7 @@ export function TaskDetailDialog({
                                                     <div key={comm.id} className="flex gap-3">
                                                         <Avatar size="sm" className="rounded-md border border-slate-100">
                                                             <AvatarFallback className="text-[10px] font-bold rounded-md bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
-                                                                {comm.user?.full_name?.charAt(0)}
+                                                                {getInitials(comm.user?.full_name || "")}
                                                             </AvatarFallback>
                                                         </Avatar>
                                                         <div className="flex-1 space-y-1">
@@ -259,7 +280,7 @@ export function TaskDetailDialog({
                                     <label className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 flex items-center gap-2"><User2 className="h-3 w-3" /> Assignee</label>
                                     <div className="flex items-center gap-3 bg-white p-3 rounded-md border border-slate-100 shadow-sm">
                                         <Avatar size="sm" className="rounded-md border border-slate-100">
-                                            <AvatarFallback className="rounded-md font-bold text-xs bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">{assignee?.full_name?.charAt(0) || "?"}</AvatarFallback>
+                                            <AvatarFallback className="rounded-md font-bold text-xs bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">{getInitials(assignee?.full_name || "")}</AvatarFallback>
                                         </Avatar>
                                         <div className="min-w-0">
                                             <p className="text-sm font-bold text-slate-800 truncate">{assignee?.full_name || "Unassigned"}</p>
@@ -271,7 +292,7 @@ export function TaskDetailDialog({
                                     <label className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 flex items-center gap-2"><Briefcase className="h-3 w-3" /> Reporter</label>
                                     <div className="flex items-center gap-3 bg-white p-3 rounded-md border border-slate-100 shadow-sm">
                                         <Avatar size="sm" className="rounded-md border border-slate-100">
-                                            <AvatarFallback className="rounded-md font-bold text-xs bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">{reporter?.full_name?.charAt(0) || "?"}</AvatarFallback>
+                                            <AvatarFallback className="rounded-md font-bold text-xs bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">{getInitials(reporter?.full_name || "")}</AvatarFallback>
                                         </Avatar>
                                         <div className="min-w-0">
                                             <p className="text-sm font-bold text-slate-800 truncate">{reporter?.full_name || "System"}</p>
