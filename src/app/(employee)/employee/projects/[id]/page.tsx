@@ -8,6 +8,8 @@ import { ProjectHeader } from "./components/ProjectHeader";
 import { OverviewTab } from "./components/OverviewTab";
 import { TeamsTab } from "./components/TeamsTab";
 import { TaskViewsContainer } from "./components/TaskViewsContainer";
+import { TaskFormDialog } from "../../tasks/components/TaskFormDialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
 export default function EmployeeProjectDetailPage() {
@@ -109,6 +111,39 @@ export default function EmployeeProjectDetailPage() {
                     )}
                 </div>
             </div>
+
+            {state.dialogOpen && (
+                <TaskFormDialog
+                    isOpen={state.dialogOpen}
+                    onClose={actions.setDialogOpen}
+                    editingTask={state.editingTask}
+                    isSaving={state.isSaving}
+                    form={state.form}
+                    setForm={actions.setForm}
+                    onSave={actions.handleSave}
+                    projects={state.project ? [state.project] : []}
+                    members={state.members}
+                    isEmployee={true}
+                />
+            )}
+
+            <AlertDialog open={state.deleteOpen} onOpenChange={actions.setDeleteOpen}>
+                <AlertDialogContent className="bg-white border-slate-200">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Task?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete <span className="font-bold text-slate-700">"{state.taskToDelete?.title}"</span>? This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="font-bold border-slate-200 text-slate-500 hover:bg-slate-50">Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={actions.handleDelete} disabled={state.isDeleting} className="bg-rose-500 hover:bg-rose-600 text-white font-bold">
+                            {state.isDeleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

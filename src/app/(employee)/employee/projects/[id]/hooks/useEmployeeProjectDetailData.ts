@@ -24,6 +24,17 @@ export function useEmployeeProjectDetailData(projectId: string) {
     const [taskDetailOpen, setTaskDetailOpen] = useState(false);
     const [commentText, setCommentText] = useState("");
 
+    // Form/Edit state
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [editingTask, setEditingTask] = useState<ApiTask | null>(null);
+    const [form, setForm] = useState<any>({
+        project_id: Number(projectId), assigned_to_id: 0, title: "", description: "", status: "todo", due_date: ""
+    });
+
+    // Delete state
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [taskToDelete, setTaskToDelete] = useState<ApiTask | null>(null);
+
     // --- Queries ---
     const { data: project, isLoading: isLoadingProject } = useQuery({
         queryKey: ['employee', 'project', projectId],
@@ -91,6 +102,38 @@ export function useEmployeeProjectDetailData(projectId: string) {
         onError: (e: any) => toast.error(e.message || "Failed to clock in")
     });
 
+    const saveTaskMutation = useMutation({
+        mutationFn: async (payload: any) => {
+            if (editingTask) {
+                return taskService.updateTask(editingTask.id, {
+                    title: payload.title,
+                    description: payload.description,
+                    status: payload.status,
+                    due_date: payload.due_date
+                });
+            } else {
+                return taskService.createTask(payload);
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['employee', 'project', projectId, 'tasks'] });
+            setDialogOpen(false);
+        },
+        onSuccess: () => toast.success(editingTask ? "Task updated" : "Task created"),
+        onError: () => toast.error("Failed to save task")
+    });
+
+    const deleteTaskMutation = useMutation({
+        mutationFn: (taskId: number) => taskService.deleteTask(taskId),
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['employee', 'project', projectId, 'tasks'] });
+            setDeleteOpen(false);
+            setTaskDetailOpen(false);
+        },
+        onSuccess: () => toast.success("Task deleted"),
+        onError: () => toast.error("Failed to delete task")
+    });
+
     // --- Computed ---
     const filteredTasks = useMemo(() => {
         const q = taskSearch.toLowerCase();
@@ -118,6 +161,11 @@ export function useEmployeeProjectDetailData(projectId: string) {
         done: (tasks as ApiTask[]).filter(t => t.status === "done").length,
     };
 
+    const canManageTask = useMemo(() => {
+        if (!selectedTask || !currentUser) return false;
+        return selectedTask.created_by_id === Number(currentUser.id);
+    }, [selectedTask, currentUser]);
+
     // --- Handlers ---
     const handleTaskClick = (task: ApiTask) => {
         if (currentUser && String(task.assigned_to_id) !== String(currentUser.id)) {
@@ -134,6 +182,42 @@ export function useEmployeeProjectDetailData(projectId: string) {
 
     const handleClockIn = () => {
         clockInMutation.mutate();
+    };
+
+    const openEdit = (task: ApiTask) => {
+        setEditingTask(task);
+        const formattedDate = task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : "";
+        setForm({ 
+            project_id: task.project_id, 
+            assigned_to_id: task.assigned_to_id, 
+            title: task.title, 
+            description: task.description || "", 
+            status: task.status,
+            due_date: formattedDate
+        });
+        setDialogOpen(true);
+    };
+
+    const handleSave = async () => {
+        if (!form.title) { toast.error("Title is required"); return; }
+        
+        const payload: any = { 
+            project_id: Number(projectId), 
+            title: form.title, 
+            description: form.description || undefined,
+            due_date: form.due_date ? new Date(form.due_date).toISOString() : undefined,
+            status: form.status
+        };
+        saveTaskMutation.mutate(payload);
+    };
+
+    const openDelete = (task: ApiTask) => {
+        setTaskToDelete(task);
+        setDeleteOpen(true);
+    };
+
+    const handleDelete = async () => {
+        if (taskToDelete) deleteTaskMutation.mutate(taskToDelete.id);
     };
 
     return {
@@ -160,7 +244,15 @@ export function useEmployeeProjectDetailData(projectId: string) {
             isLoadingActivities,
             commentText,
             isSendingComment: commentMutation.isPending,
-            isClockingIn: clockInMutation.isPending
+            isClockingIn: clockInMutation.isPending,
+            canManageTask,
+            dialogOpen,
+            editingTask,
+            form,
+            isSaving: saveTaskMutation.isPending,
+            deleteOpen,
+            taskToDelete,
+            isDeleting: deleteTaskMutation.isPending
         },
         actions: {
             setActiveTab,
@@ -172,7 +264,14 @@ export function useEmployeeProjectDetailData(projectId: string) {
             setCommentText,
             handleTaskClick,
             handleSendComment,
-            handleClockIn
+            handleClockIn,
+            setDialogOpen,
+            setForm,
+            openEdit,
+            handleSave,
+            openDelete,
+            setDeleteOpen,
+            handleDelete
         }
     };
 }

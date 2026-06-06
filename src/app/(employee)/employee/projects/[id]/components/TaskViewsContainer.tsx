@@ -45,11 +45,12 @@ export function TaskViewsContainer({
     const { 
         selectedTask, taskDetailOpen, taskLogs, isLoadingLogs, 
         comments, auditLogs, isLoadingActivities, commentText,
-        isSendingComment, isClockingIn, currentUser 
+        isSendingComment, isClockingIn, currentUser, canManageTask
     } = taskDetailState;
 
     const { 
-        setTaskDetailOpen, setCommentText, handleSendComment, handleClockIn 
+        setTaskDetailOpen, setCommentText, handleSendComment, handleClockIn,
+        openEdit, openDelete
     } = taskDetailActions;
 
     const { reporter, assignee, enrichedAuditLogs } = useMemo(() => {
@@ -135,9 +136,9 @@ export function TaskViewsContainer({
                 selectedTask={selectedTask}
                 taskLogs={taskLogs as any}
                 isLoadingLogs={isLoadingLogs}
-                canManageTask={false} // Employee cannot edit project tasks
-                onEdit={() => {}}
-                onDelete={() => {}}
+                canManageTask={canManageTask}
+                onEdit={openEdit}
+                onDelete={openDelete}
                 statusConfig={statusConfig}
                 comments={comments as any}
                 auditLogs={enrichedAuditLogs as any}
