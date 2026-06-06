@@ -54,7 +54,7 @@ const RichTextEditor = ({ value, onChange, disabled }: { value: string, onChange
             onInput={handleInput}
             onKeyDown={handleKeyDown}
             className={cn(
-                "min-h-[100px] max-h-[300px] overflow-y-auto p-3 text-sm focus:outline-none custom-scrollbar cursor-text",
+                "min-h-[100px] max-h-[300px] overflow-y-auto p-3 text-sm focus:outline-none custom-scrollbar cursor-text [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:my-1 [&_ol]:my-1",
                 disabled && "opacity-50 cursor-not-allowed bg-slate-50"
             )}
             style={{
@@ -100,7 +100,7 @@ export function TaskFormDialog({
                             disabled={!!editingTask}
                         >
                             <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
-                                <SelectValue />
+                                <SelectValue placeholder="Select project" />
                             </SelectTrigger>
                             <SelectContent className="rounded-md">
                                 {projects.map(p => <SelectItem key={p.id} value={String(p.id)} className="text-sm">{p.name}</SelectItem>)}
@@ -153,7 +153,7 @@ export function TaskFormDialog({
                                 onValueChange={v => setForm({ ...form, assigned_to_id: Number(v) })}
                             >
                                 <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
-                                    <SelectValue />
+                                    <SelectValue placeholder="Select member" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-md">
                                     {members.map(m => (

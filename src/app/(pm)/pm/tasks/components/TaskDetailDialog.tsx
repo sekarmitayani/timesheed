@@ -78,14 +78,16 @@ export function TaskDetailDialog({
         let html = text
             .replace(/&lt;u&gt;(.*?)&lt;\/u&gt;/g, "<u>$1</u>")
             .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-            .replace(/\*(.*?)\*/g, "<em>$1</em>")
-            .replace(/\n/g, "<br />");
-        
-        html = html.replace(/(?:^|<br \/>)- (.*?)(?=(<br \/>|$))/g, "<li>$1</li>");
-        html = html.replace(/(<li>.*?<\/li>)+/g, "<ul class='list-disc pl-5 my-1'>$&</ul>");
-
-        html = html.replace(/(?:^|<br \/>)\d+\. (.*?)(?=(<br \/>|$))/g, "<li>$1</li>");
-        html = html.replace(/(<li>.*?<\/li>)+/g, "<ol class='list-decimal pl-5 my-1'>$&</ol>");
+            .replace(/\*(.*?)\*/g, "<em>$1</em>");
+            
+        // If the text contains HTML lists from the editor, avoid breaking them
+        if (!html.includes("<ul") && !html.includes("<ol") && !html.includes("<li")) {
+            html = html.replace(/\n/g, "<br />");
+            html = html.replace(/(?:^|<br \/>)- (.*?)(?=(<br \/>|$))/g, "<li>$1</li>");
+            html = html.replace(/(<li>.*?<\/li>)+/g, "<ul class='list-disc pl-5 my-1'>$&</ul>");
+            html = html.replace(/(?:^|<br \/>)\d+\. (.*?)(?=(<br \/>|$))/g, "<li>$1</li>");
+            html = html.replace(/(<li>.*?<\/li>)+/g, "<ol class='list-decimal pl-5 my-1'>$&</ol>");
+        }
 
         return html;
     };
@@ -137,7 +139,7 @@ export function TaskDetailDialog({
                                 <h5 className="text-xs font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
                                     <ListTodo className="h-3.5 w-3.5" /> Description
                                 </h5>
-                                <div className="text-sm text-slate-600 leading-relaxed font-medium bg-slate-50/30 rounded-md p-4 border border-slate-50 min-h-[100px] break-words whitespace-pre-wrap">
+                                <div className="text-sm text-slate-600 leading-relaxed font-medium bg-slate-50/30 rounded-md p-4 border border-slate-50 min-h-[100px] break-words whitespace-pre-wrap [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:my-1 [&_ol]:my-1">
                                     {selectedTask.description ? (
                                         <div dangerouslySetInnerHTML={{ __html: parseMarkdown(selectedTask.description) }} />
                                     ) : "No description provided."}

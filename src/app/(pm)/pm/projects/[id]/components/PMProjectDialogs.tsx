@@ -47,7 +47,7 @@ const RichTextEditor = ({ value, onChange, disabled }: { value: string, onChange
             onInput={handleInput}
             onKeyDown={handleKeyDown}
             className={cn(
-                "min-h-[100px] max-h-[300px] overflow-y-auto p-3 text-sm focus:outline-none custom-scrollbar cursor-text",
+                "min-h-[100px] max-h-[300px] overflow-y-auto p-3 text-sm focus:outline-none custom-scrollbar cursor-text [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:my-1 [&_ol]:my-1",
                 disabled && "opacity-50 cursor-not-allowed bg-slate-50"
             )}
             style={{
