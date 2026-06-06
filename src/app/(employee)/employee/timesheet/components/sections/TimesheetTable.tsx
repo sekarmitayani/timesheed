@@ -15,10 +15,10 @@ interface TimesheetTableProps {
     totalPages: number;
     limit: number;
     statusConfig: Record<string, { bg: string; text: string; icon: any; label: string }>;
-    
+
     setCurrentPage: (val: number) => void;
     setSelectedLog: (log: TimesheetLog) => void;
-    
+
     getTaskTitle: (taskId: number | null) => string;
     formatTime24: (dateStr: string | null) => string;
     formatDuration: (mins: number) => string;
@@ -44,7 +44,7 @@ export function TimesheetTable({
                 <Table>
                     <TableHeader>
                         <TableRow className="hover:bg-transparent bg-slate-50/50">
-                            <TableHead className="w-[50px] pl-6 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 text-center">#</TableHead>
+                            <TableHead className="w-[50px] pl-6 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 text-center">No</TableHead>
                             <TableHead className="w-[160px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Date</TableHead>
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Task & Project</TableHead>
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Session Time</TableHead>
@@ -71,8 +71,8 @@ export function TimesheetTable({
                             </TableRow>
                         ) : (
                             paginatedLogs.map((l, idx) => (
-                                <TableRow 
-                                    key={l.id} 
+                                <TableRow
+                                    key={l.id}
                                     className="hover:bg-[#f0f4fa]/50 transition-colors cursor-pointer border-b border-slate-100 last:border-0 group"
                                     onClick={() => setSelectedLog(l)}
                                 >
@@ -141,11 +141,11 @@ export function TimesheetTable({
                         Showing <span className="text-slate-900">{(currentPage - 1) * limit + 1}</span> to <span className="text-slate-900">{Math.min(currentPage * limit, logs.length)}</span> of <span className="text-slate-900">{logs.length}</span> entries
                     </div>
                     <div className="flex items-center gap-2">
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="h-8 w-8 p-0 border-slate-200" 
-                            disabled={currentPage <= 1} 
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 w-8 p-0 border-slate-200"
+                            disabled={currentPage <= 1}
                             onClick={() => setCurrentPage(currentPage - 1)}
                         >
                             <ChevronLeft className="h-4 w-4" />
@@ -153,11 +153,11 @@ export function TimesheetTable({
                         <div className="text-xs font-semibold px-2 text-slate-700">
                             Page {currentPage} of {totalPages}
                         </div>
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="h-8 w-8 p-0 border-slate-200" 
-                            disabled={currentPage >= totalPages} 
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 w-8 p-0 border-slate-200"
+                            disabled={currentPage >= totalPages}
                             onClick={() => setCurrentPage(currentPage + 1)}
                         >
                             <ChevronRight className="h-4 w-4" />
