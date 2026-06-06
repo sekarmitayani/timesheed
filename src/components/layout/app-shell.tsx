@@ -58,7 +58,7 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
             {/* Mobile overlay */}
             {mobileSidebarOpen && (
                 <div
-                    className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+                    className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm lg:hidden"
                     onClick={closeMobileSidebar}
                 />
             )}
