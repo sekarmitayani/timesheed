@@ -25,6 +25,8 @@ function resolveName(task: ApiTask, userId: number, allMembers: Record<number, P
         || `User #${userId}`;
 }
 
+const getInitials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
+
 export function TaskKanbanView({
     grouped, onDragEnd, handleTaskClick, getProjectName,
     allMembers, currentUserId, currentUserFullName, statusConfig
@@ -73,7 +75,7 @@ export function TaskKanbanView({
                                                                             <div className="flex items-center gap-1 min-w-0">
                                                                                 <Avatar className="h-4 w-4 rounded-[4px] shrink-0">
                                                                                     <AvatarFallback className="text-[7px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white rounded-[4px]">
-                                                                                        {reporterName.charAt(0)}
+                                                                                        {getInitials(reporterName)}
                                                                                     </AvatarFallback>
                                                                                 </Avatar>
                                                                                 <span className="font-semibold text-slate-500 truncate max-w-[80px]">{reporterName}</span>
@@ -82,7 +84,7 @@ export function TaskKanbanView({
                                                                             <div className="flex items-center gap-1 min-w-0">
                                                                                 <Avatar className="h-4 w-4 rounded-[4px] shrink-0">
                                                                                     <AvatarFallback className="text-[7px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white rounded-[4px]">
-                                                                                        {assigneeName.charAt(0)}
+                                                                                        {getInitials(assigneeName)}
                                                                                     </AvatarFallback>
                                                                                 </Avatar>
                                                                                 <span className="font-bold text-slate-700 truncate max-w-[100px]">{assigneeName}</span>

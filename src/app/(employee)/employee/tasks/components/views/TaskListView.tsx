@@ -25,6 +25,9 @@ export function TaskListView({
     currentUserFullName,
     statusConfig
 }: TaskListViewProps) {
+    const getInitials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
+    const stripHtml = (html: string) => html ? html.replace(/<[^>]*>?/gm, '') : "";
+
     return (
         <div className="flex-1 overflow-y-auto pr-1 pb-10 custom-scrollbar">
             <div className="space-y-10">
@@ -71,12 +74,12 @@ export function TaskListView({
                                             return (
                                                 <TableRow key={task.id} className="cursor-pointer hover:bg-slate-50/80 group border-b border-slate-50 last:border-0" onClick={() => handleTaskClick(task)}>
                                                     <TableCell className="px-6 py-4 max-w-[200px]"><span className="text-sm font-bold text-slate-700 group-hover:text-[#4B7BEC] block truncate">{task.title}</span></TableCell>
-                                                    <TableCell className="px-4 py-4 max-w-[250px]"><span className="text-xs font-medium text-slate-400 block truncate">{task.description || "—"}</span></TableCell>
+                                                    <TableCell className="px-4 py-4 max-w-[250px]"><span className="text-xs font-medium text-slate-400 block truncate">{stripHtml(task.description) || "—"}</span></TableCell>
                                                     <TableCell className="px-4 py-4">
                                                         <div className="flex items-center gap-2">
                                                             <Avatar className="h-6 w-6 rounded-full">
                                                                 <AvatarFallback className="text-[8px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
-                                                                    {reporterName.charAt(0)}
+                                                                    {getInitials(reporterName)}
                                                                 </AvatarFallback>
                                                             </Avatar>
                                                             <span className="text-[11px] font-bold text-slate-600 truncate max-w-[100px]">
@@ -88,7 +91,7 @@ export function TaskListView({
                                                         <div className="flex items-center gap-2">
                                                             <Avatar className="h-6 w-6 rounded-full border border-[#4B7BEC]/10">
                                                                 <AvatarFallback className="text-[8px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
-                                                                    {assigneeName.charAt(0)}
+                                                                    {getInitials(assigneeName)}
                                                                 </AvatarFallback>
                                                             </Avatar>
                                                             <span className="text-[11px] font-bold text-slate-600 truncate max-w-[100px]">
