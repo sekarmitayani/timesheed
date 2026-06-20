@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Banknote, Crown, CalendarDays, Clock, UserCheck } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { AdminAIForecastSection } from "./AdminAIForecastSection";
 
 interface AdminOverviewTabProps {
     project: ApiProject;
@@ -129,6 +130,9 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* AI Forecast Section */}
+            <AdminAIForecastSection projectId={project.id.toString()} />
         </div>
     );
 }
