@@ -25,6 +25,7 @@ export interface User {
     joinDate: string;
     status: "active" | "inactive";
     is_active?: boolean;
+    skill_level?: number;
     created_at?: string;
     updated_at?: string;
 }

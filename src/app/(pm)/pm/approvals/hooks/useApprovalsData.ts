@@ -166,6 +166,7 @@ export function useApprovalsData() {
         state: {
             inbox: paginatedInbox,
             totalCount: filteredInbox.length,
+            totalAnomalyCount: filteredInbox.filter(l => l.is_anomaly).length,
             isLoading: isLoadingInbox,
             isProcessing: reviewMutation.isPending || bulkMutation.isPending,
             page,

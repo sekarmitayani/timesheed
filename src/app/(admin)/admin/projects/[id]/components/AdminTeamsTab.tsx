@@ -25,7 +25,8 @@ import {
     Briefcase,
     Loader2,
     Calendar,
-    WalletCards
+    WalletCards,
+    Star
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { adminContractService } from "@/lib/services/admin-contracts";
@@ -83,7 +84,7 @@ export function AdminTeamsTab({
                     </div>
                     <Button 
                         size="sm"
-                        className="h-9 gap-2 bg-[#4B7BEC] hover:bg-[#385bb5] text-white font-bold rounded-[8px] shadow-sm shadow-blue-500/10"
+                        className="h-9 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] text-white font-bold rounded-[8px] shadow-sm shadow-blue-500/10"
                         onClick={onAssign}
                     >
                         <UserPlus className="h-4 w-4" /> Add Member
@@ -181,6 +182,17 @@ export function AdminTeamsTab({
                                             : "N/A"}
                                     </span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Star className="h-4 w-4 text-slate-400" />
+                                <span className="text-xs font-semibold text-slate-700">
+                                    {selectedMember?.user?.skill_level === 1 ? "Junior" : 
+                                     selectedMember?.user?.skill_level === 2 ? "Mid-Level" : 
+                                     selectedMember?.user?.skill_level === 3 ? "Senior" : "Skill Not Set"}
+                                </span>
                             </div>
                         </div>
 

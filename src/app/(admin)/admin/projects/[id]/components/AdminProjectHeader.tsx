@@ -13,8 +13,8 @@ interface AdminProjectHeaderProps {
 }
 
 const statusConfig: Record<string, { label: string; bg: string; text: string; dot: string }> = {
-    active: { label: "Active", bg: "bg-blue-50/50", text: "text-[#4B7BEC]", dot: "bg-[#4B7BEC]" },
-    completed: { label: "Completed", bg: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500" },
+    active: { label: "Active", bg: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500" },
+    completed: { label: "Completed", bg: "bg-blue-50/50", text: "text-[#4B7BEC]", dot: "bg-[#4B7BEC]" },
     "on-hold": { label: "On Hold", bg: "bg-amber-50", text: "text-amber-600", dot: "bg-amber-500" },
     cancelled: { label: "Cancelled", bg: "bg-red-50", text: "text-red-600", dot: "bg-red-500" },
 };

@@ -18,7 +18,7 @@ const statusConfig: Record<string, { bg: string; text: string; label: string; ic
 
 export default function ApprovalsPage() {
     const { state, actions } = useApprovalsData();
-    const anomalyCount = state.inbox.filter(l => l.is_anomaly).length;
+    const anomalyCount = state.totalAnomalyCount;
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">

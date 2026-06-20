@@ -18,7 +18,10 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
     };
 
     const margin = (project.budget_revenue || 0) - (project.budget_cost || 0);
-    const pm = members.find(m => m.role_in_project === "Project Manager")?.user?.full_name || "Not Assigned";
+    const pm = members.find(m => {
+        const role = m.role_in_project?.toLowerCase().replace(/\s+/g, '') || "";
+        return role === "projectmanager" || role === "pm";
+    })?.user?.full_name || "Not Assigned";
 
     return (
         <div className="space-y-4">
