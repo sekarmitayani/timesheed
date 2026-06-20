@@ -13,6 +13,8 @@ export interface TimesheetLog {
     duration_minutes: number;
     status: "pending" | "approved" | "rejected";
     rejection_note?: string;
+    is_anomaly?: boolean;
+    anomaly_reason?: string;
     created_at?: string;
     updated_at?: string;
     // Pre-loaded relations (from inbox)
