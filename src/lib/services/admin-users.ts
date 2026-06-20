@@ -19,6 +19,7 @@ export interface CreateUserPayload {
     phone_number: string;
     role: Role;
     employee_type: "fulltime" | "parttime" | "freelance" | null;
+    skill_level?: number;
 }
 
 export interface UpdateUserPayload {
@@ -29,6 +30,7 @@ export interface UpdateUserPayload {
     role?: Role;
     employee_type?: "fulltime" | "parttime" | "freelance" | null;
     is_active?: boolean;
+    skill_level?: number;
 }
 
 export const adminUserService = {

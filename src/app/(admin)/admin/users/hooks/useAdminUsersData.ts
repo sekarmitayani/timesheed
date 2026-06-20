@@ -33,9 +33,10 @@ export function useAdminUsersData() {
         email: "",
         phone_number: "",
         password: "",
-        role: "employee" as Role,
-        employee_type: "fulltime" as any,
-        is_active: true
+        role: "" as Role,
+        employee_type: "" as any,
+        is_active: true,
+        skill_level: "" as any
     });
 
     const [contractForm, setContractForm] = useState<CreateContractPayload & { is_active: boolean, rate_display?: string }>({
@@ -170,7 +171,7 @@ export function useAdminUsersData() {
     // --- Helpers ---
     const resetForm = () => {
         setForm({
-            full_name: "", email: "", phone_number: "", password: "", role: "employee", employee_type: "fulltime", is_active: true
+            full_name: "", email: "", phone_number: "", password: "", role: "" as any, employee_type: "" as any, is_active: true, skill_level: "" as any
         });
         resetContractForm();
     };
@@ -192,7 +193,8 @@ export function useAdminUsersData() {
                 password: "",
                 role: u.role,
                 employee_type: u.employee_type || "fulltime",
-                is_active: u.status === "active" || u.is_active !== false
+                is_active: u.status === "active" || u.is_active !== false,
+                skill_level: (u as any).skill_level || 2
             });
             setEditId(userId);
             setAddOpen(true);
@@ -202,6 +204,12 @@ export function useAdminUsersData() {
     const handlePreSave = () => {
         if (!form.full_name || form.full_name.trim().length < 2) { toast.error("Full Name too short"); return; }
         if (!form.email || !form.email.includes("@")) { toast.error("Invalid email"); return; }
+        if (!form.role) { toast.error("System Role is required"); return; }
+        
+        if (form.role !== "admin") {
+            if (!form.employee_type) { toast.error("Employment Type is required"); return; }
+            if (!form.skill_level) { toast.error("Skill Level is required"); return; }
+        }
         
         if (!editId) {
             const hasContract = contractForm.rate_amount > 0 && contractForm.contract_type && contractForm.payment_scheme;
@@ -221,8 +229,12 @@ export function useAdminUsersData() {
             is_active: form.is_active
         };
         if (form.password) payload.password = form.password;
-        if (form.role !== "admin") payload.employee_type = form.employee_type;
-        else payload.employee_type = null;
+        if (form.role !== "admin") {
+            payload.employee_type = form.employee_type;
+            payload.skill_level = form.skill_level;
+        } else {
+            payload.employee_type = null;
+        }
 
         saveUserMutation.mutate(payload);
         setConfirmUserOpen(false);

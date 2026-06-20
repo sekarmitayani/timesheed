@@ -20,7 +20,8 @@ import {
     Crown, 
     Mail, 
     Phone, 
-    Calendar
+    Calendar,
+    Star
 } from "lucide-react";
 
 interface TeamsTabProps {
@@ -132,6 +133,17 @@ export function TeamsTab({ members, totalCount, search, setSearch }: TeamsTabPro
                                 <div className="flex items-center gap-3">
                                     <Phone className="h-4 w-4 text-slate-400" />
                                     <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.phone_number || "No phone"}</span>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                                <div className="flex items-center gap-3">
+                                    <Star className="h-4 w-4 text-slate-400" />
+                                    <span className="text-xs font-semibold text-slate-700">
+                                        {selectedMember?.user?.skill_level === 1 ? "Junior" : 
+                                         selectedMember?.user?.skill_level === 2 ? "Mid-Level" : 
+                                         selectedMember?.user?.skill_level === 3 ? "Senior" : "Skill Not Set"}
+                                    </span>
                                 </div>
                             </div>
 

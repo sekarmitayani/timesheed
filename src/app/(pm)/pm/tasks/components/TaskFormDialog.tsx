@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Bold, Italic, Underline, List, ListOrdered } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CustomDatePicker } from "@/components/ui/custom-date-picker";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { aiService } from "@/lib/services/ai-service";
 import { ApiTask, CreateTaskPayload } from "@/lib/services/task-service";
 import { ApiProject, ProjectMember } from "@/lib/types";
 
@@ -77,8 +78,24 @@ export function TaskFormDialog({
     members,
     isEmployee
 }: TaskFormDialogProps) {
+    const [isRecommending, setIsRecommending] = useState(false);
+    const [recommendedComplexity, setRecommendedComplexity] = useState<number | null>(null);
+
     const handleFormat = (command: string) => {
         document.execCommand(command, false, undefined);
+    };
+
+    const handleAISuggestion = async () => {
+        if (!form.title) return;
+        setIsRecommending(true);
+        try {
+            const score = await aiService.recommendTaskComplexity(form.title, form.description || "");
+            setRecommendedComplexity(score);
+        } catch (error) {
+            console.error("Failed to get recommendation", error);
+        } finally {
+            setIsRecommending(false);
+        }
     };
 
     return (
@@ -144,6 +161,37 @@ export function TaskFormDialog({
                                 disabled={isSaving} 
                                 className="h-10 text-sm w-full" 
                             />
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                Complexity (1-5)
+                            </label>
+                            <Input 
+                                type="number" 
+                                min={1} max={5}
+                                value={form.complexity || ""} 
+                                onChange={e => setForm({ ...form, complexity: Number(e.target.value) })} 
+                                disabled={isSaving} 
+                                placeholder="1 = Very Easy, 5 = Very Hard"
+                                className="border-slate-200 h-9 shadow-sm rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]" 
+                            />
+                            <div className="flex items-center justify-between mt-1">
+                                <Button 
+                                    type="button"
+                                    variant="ghost" 
+                                    size="sm" 
+                                    onClick={handleAISuggestion} 
+                                    disabled={isRecommending || !form.title}
+                                    className="h-6 text-[10px] px-2 text-[#4B7BEC] hover:bg-blue-50"
+                                >
+                                    {isRecommending ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : "AI Suggestion"}
+                                </Button>
+                                {recommendedComplexity && (
+                                    <p className="text-[10px] text-emerald-600 font-semibold">
+                                        AI merekomendasikan level: {recommendedComplexity}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     {!isEmployee && (
                         <div className="space-y-1.5">

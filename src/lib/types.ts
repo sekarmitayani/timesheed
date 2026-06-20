@@ -75,6 +75,7 @@ export interface ProjectMember {
         full_name: string;
         role?: string;
         phone_number?: string;
+        skill_level?: number;
     };
 }
 

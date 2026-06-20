@@ -68,7 +68,7 @@ export function UserFormDialog({
                         </h4>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-sm font-medium text-[#0f172a]">System Role</label>
+                                <label className="text-sm font-medium text-[#0f172a]">System Role <span className="text-red-500">*</span></label>
                                 <Select value={form.role} onValueChange={(v: Role) => setForm({ ...form, role: v })} disabled={isSaving}>
                                     <SelectTrigger className="bg-white"><SelectValue placeholder="Select role" /></SelectTrigger>
                                     <SelectContent>
@@ -99,6 +99,28 @@ export function UserFormDialog({
                                     </SelectContent>
                                 </Select>
                             </div>
+
+                            {form.role !== 'admin' && (
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-medium text-[#0f172a]">
+                                        Skill Level <span className="text-red-500">*</span>
+                                    </label>
+                                    <Select
+                                        value={form.skill_level ? String(form.skill_level) : ""}
+                                        onValueChange={(v: string) => setForm({ ...form, skill_level: Number(v) })}
+                                        disabled={isSaving}
+                                    >
+                                        <SelectTrigger className="bg-white">
+                                            <SelectValue placeholder="Select skill level" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="1">Junior</SelectItem>
+                                            <SelectItem value="2">Mid-Level</SelectItem>
+                                            <SelectItem value="3">Senior</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
                         </div>
                     </div>
 
