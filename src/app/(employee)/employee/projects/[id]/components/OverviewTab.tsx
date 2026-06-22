@@ -211,6 +211,15 @@ export function OverviewTab({ project, members, tasks = [] }: OverviewTabProps) 
 
                         <div className="space-y-1">
                             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                                Assigned Project Manager
+                            </span>
+                            <div className="text-sm font-bold text-slate-800">
+                                {members.find(m => m.user?.role === "projectmanager" || m.role_in_project?.toLowerCase().includes("manager"))?.user?.full_name || "Unassigned"}
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1">
                                 Created At
                             </span>
                             <div className="text-sm font-bold text-slate-800">
