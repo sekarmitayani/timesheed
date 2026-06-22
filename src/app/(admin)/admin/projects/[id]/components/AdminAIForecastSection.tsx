@@ -51,8 +51,8 @@ export function AdminAIForecastSection({ projectId }: AdminAIForecastSectionProp
     const isCritical = forecast.status === "CRITICAL_OVER";
 
     return (
-        <Card className="border-[#E2E8F0] shadow-sm rounded-xl overflow-hidden mt-6">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50/50 border-b border-[#E2E8F0] pb-4">
+        <Card className="border-[#E2E8F0] shadow-sm rounded-xl overflow-hidden mt-6 bg-white">
+            <CardHeader className="border-b border-[#E2E8F0] pb-3 bg-white">
                 <div className="flex items-center justify-between">
                     <div>
                         <CardTitle className="text-[15px] font-bold text-slate-800 flex items-center gap-2">
@@ -81,7 +81,7 @@ export function AdminAIForecastSection({ projectId }: AdminAIForecastSectionProp
                     )}
                 </div>
             </CardHeader>
-            <CardContent className="p-5 flex flex-col gap-5">
+            <CardContent className="p-5 pt-3 flex flex-col gap-5">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="space-y-1">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Budget Spent</span>
@@ -99,14 +99,14 @@ export function AdminAIForecastSection({ projectId }: AdminAIForecastSectionProp
                     </div>
                     <div className="space-y-1">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Estimated Runway</span>
-                        <p className={cn("text-sm font-bold", !forecast.runway ? "text-red-600" : "text-slate-800")}>
-                            {forecast.runway ? forecast.runway : "Budget Depleted"}
+                        <p className={cn("text-sm font-bold", isCritical ? "text-red-600" : isSafe ? "text-emerald-600" : "text-slate-800")}>
+                            {isCritical ? "Budget Depleted" : (forecast.runway ? forecast.runway : "> 90 Days (Safe)")}
                         </p>
                     </div>
                 </div>
 
                 {forecast.explanation && (
-                    <div className="bg-slate-50 rounded-lg p-4 border border-slate-100 text-sm text-slate-600 italic">
+                    <div className="bg-[#F8FAFC] rounded-[8px] p-4 border border-[#E2E8F0] border-l-4 border-l-[#2568C1] text-sm text-slate-600 font-medium">
                         &quot;{forecast.explanation}&quot;
                     </div>
                 )}

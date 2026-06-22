@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Briefcase, UserCircle, Calendar, FileText, AlertCircle } from "lucide-react";
+import { Briefcase, UserCircle, Calendar, FileText, AlertCircle, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TimesheetLog } from "@/lib/services/timesheet-service";
 import { ApiTask } from "@/lib/services/task-service";
@@ -101,17 +101,30 @@ export function TimesheetDetailModal({
                                     </p>
                                 </div>
                             </div>
-                            {selectedLog.task_id && taskMap[selectedLog.task_id] && (
-                                <div className="flex items-center gap-3 sm:col-span-2">
-                                    <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
-                                        <Calendar className="h-4 w-4" />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Task Created On</p>
-                                        <p className="text-xs font-semibold text-[#0f172a]">{formatDateTime(taskMap[selectedLog.task_id].created_at)}</p>
+                            <div className="flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                                    <Calendar className="h-4 w-4" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Task Created On</p>
+                                    <p className="text-xs font-semibold text-[#0f172a]">
+                                        {selectedLog.task_id ? formatDateTime((taskMap[selectedLog.task_id]?.created_at) || selectedLog.task?.created_at || "") : "N/A"}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-full bg-[#4B7BEC]/5 flex items-center justify-center text-[#4B7BEC] shrink-0 border border-[#4B7BEC]/10">
+                                    <Activity className="h-4 w-4" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Task Complexity</p>
+                                    <div className="mt-0.5">
+                                        <Badge variant="outline" className="text-[10px] font-black border-[#E2E8F0] shadow-sm px-1.5 py-0 bg-white text-slate-600">
+                                            {selectedLog.task_id ? `Level ${(taskMap[selectedLog.task_id]?.complexity) || selectedLog.task?.complexity || "-"}` : "N/A"}
+                                        </Badge>
                                     </div>
                                 </div>
-                            )}
+                            </div>
                         </div>
 
                         {/* Description Section */}
