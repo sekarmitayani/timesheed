@@ -97,8 +97,9 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
                     </motion.div>
                 </main>
             </div>
-            
-            <ChatbotWidget />
+            {(user.role === "admin" || user.role === "finance") && (
+                <ChatbotWidget />
+            )}
         </div>
     );
 }

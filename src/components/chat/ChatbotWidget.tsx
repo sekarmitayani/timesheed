@@ -82,7 +82,7 @@ export function ChatbotWidget() {
                         className="absolute bottom-16 right-0 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[500px] max-h-[80vh]"
                     >
                         {/* Header */}
-                        <div className="bg-primary px-4 py-3 flex items-center justify-between text-white">
+                        <div className="bg-[#2568C1] px-4 py-3 flex items-center justify-between text-white">
                             <div className="flex items-center gap-2">
                                 <div className="p-1.5 bg-white/20 rounded-full">
                                     <Bot size={18} />
@@ -99,19 +99,19 @@ export function ChatbotWidget() {
                             {messages.map(msg => (
                                 <div key={msg.id} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                                     {msg.role === "bot" && (
-                                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+                                        <div className="w-8 h-8 rounded-full bg-[#2568C1]/10 flex items-center justify-center flex-shrink-0 text-[#2568C1]">
                                             <Bot size={16} />
                                         </div>
                                     )}
                                     <div 
-                                        className={`px-4 py-2.5 rounded-2xl max-w-[80%] text-sm whitespace-pre-wrap shadow-sm ${msg.role === "user" ? "bg-primary text-white rounded-br-sm" : "bg-white border border-slate-100 text-slate-700 rounded-bl-sm"}`}
+                                        className={`px-4 py-2.5 rounded-2xl max-w-[80%] text-sm whitespace-pre-wrap shadow-sm ${msg.role === "user" ? "bg-[#2568C1] text-white rounded-br-sm" : "bg-white border border-slate-100 text-slate-700 rounded-bl-sm"}`}
                                         dangerouslySetInnerHTML={{ __html: msg.role === "bot" ? formatMessage(msg.content) : msg.content }}
                                     />
                                 </div>
                             ))}
                             {isLoading && (
                                 <div className="flex gap-2 justify-start">
-                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+                                    <div className="w-8 h-8 rounded-full bg-[#2568C1]/10 flex items-center justify-center flex-shrink-0 text-[#2568C1]">
                                         <Bot size={16} />
                                     </div>
                                     <div className="px-4 py-2.5 rounded-2xl bg-white border border-slate-100 text-slate-500 rounded-bl-sm flex items-center gap-2">
@@ -131,13 +131,13 @@ export function ChatbotWidget() {
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyDown={handleKeyDown}
                                     placeholder="Ask anything about the system..."
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-[#2568C1] resize-none"
                                     rows={1}
                                 />
                                 <button
                                     onClick={handleSend}
                                     disabled={!input.trim() || isLoading}
-                                    className="absolute right-2 top-2 p-1.5 text-primary hover:bg-primary/10 rounded-lg disabled:opacity-50 transition-colors"
+                                    className="absolute right-2 top-2 p-1.5 text-[#2568C1] hover:bg-[#2568C1]/10 rounded-lg disabled:opacity-50 transition-colors"
                                 >
                                     <Send size={16} />
                                 </button>
@@ -152,7 +152,7 @@ export function ChatbotWidget() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-shadow"
+                className="w-14 h-14 bg-[#2568C1] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#2568C1]/30 hover:shadow-[#2568C1]/50 transition-shadow"
             >
                 {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
             </motion.button>
