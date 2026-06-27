@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { User } from "lucide-react";
+import { User, ChevronDown, ChevronUp } from "lucide-react";
 import { ProjectProfitCardData } from "../hooks/useProfitabilityData";
 
 interface ProjectProfitabilityGridProps {
@@ -13,6 +14,8 @@ const fmtCurrency = (v: number): string => {
 };
 
 export function ProjectProfitabilityGrid({ projects }: ProjectProfitabilityGridProps) {
+    const [showAll, setShowAll] = useState(false);
+
     if (!projects || projects.length === 0) {
         return (
             <div className="py-12 text-center text-sm text-slate-500 font-medium bg-white rounded-xl border border-slate-100 shadow-sm">
@@ -21,11 +24,15 @@ export function ProjectProfitabilityGrid({ projects }: ProjectProfitabilityGridP
         );
     }
 
+    const INITIAL_COUNT = 6;
+    const hasMore = projects.length > INITIAL_COUNT;
+    const displayedProjects = showAll ? projects : projects.slice(0, INITIAL_COUNT);
+
     return (
         <div className="space-y-4">
             <h3 className="text-base font-bold text-slate-800 tracking-tight">Project Profitability</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {projects.map((project) => {
+                {displayedProjects.map((project) => {
                     const isPositive = project.net_margin >= 0;
                     const marginAbs = Math.abs(project.margin_percent);
                     const marginColor =
@@ -41,11 +48,15 @@ export function ProjectProfitabilityGrid({ projects }: ProjectProfitabilityGridP
                             ? "text-slate-700"
                             : "text-red-600";
 
+                    const statusRaw = project.status.toLowerCase();
                     const statusColor = 
-                        project.status === "active" ? "bg-emerald-100 text-emerald-700" :
-                        project.status === "completed" ? "bg-blue-100 text-blue-700" :
-                        project.status === "on-hold" ? "bg-amber-100 text-amber-700" :
+                        statusRaw === "active" ? "bg-emerald-50 text-emerald-600" :
+                        statusRaw === "completed" ? "bg-blue-50 text-[#2568C1]" :
+                        (statusRaw === "on-hold" || statusRaw === "on hold" || statusRaw === "on_hold") ? "bg-amber-50 text-amber-600" :
+                        statusRaw === "cancelled" ? "bg-rose-50 text-rose-600" :
                         "bg-slate-100 text-slate-600";
+                        
+                    const formatStatus = (s: string) => s.replace(/[_-]/g, ' ');
 
                     return (
                         <Card key={project.project_id} className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden">
@@ -61,7 +72,7 @@ export function ProjectProfitabilityGrid({ projects }: ProjectProfitabilityGridP
                                         </p>
                                     </div>
                                     <div className={`${statusColor} text-[9px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest shrink-0`}>
-                                        {project.status === "active" ? "ACTIVE" : project.status}
+                                        {formatStatus(project.status)}
                                     </div>
                                 </div>
 
@@ -122,6 +133,18 @@ export function ProjectProfitabilityGrid({ projects }: ProjectProfitabilityGridP
                     );
                 })}
             </div>
+
+            {hasMore && (
+                <div className="pt-4 flex justify-center">
+                    <button
+                        onClick={() => setShowAll(!showAll)}
+                        className="flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-4 py-2 rounded-full transition-colors"
+                    >
+                        {showAll ? "Show Less" : `Show All ${projects.length} Projects`}
+                        {showAll ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

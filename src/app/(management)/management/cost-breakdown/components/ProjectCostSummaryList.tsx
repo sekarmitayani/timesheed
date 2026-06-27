@@ -27,13 +27,23 @@ export function ProjectCostSummaryList({ projects, isLoading }: ProjectCostSumma
         const s = status.toLowerCase();
         if (s === 'active') return 'bg-emerald-50 text-emerald-600';
         if (s === 'completed') return 'bg-blue-50 text-[#2568C1]';
-        if (s === 'on-hold' || s === 'on hold') return 'bg-amber-50 text-amber-600';
+        if (s === 'on-hold' || s === 'on hold' || s === 'on_hold') return 'bg-amber-50 text-amber-600';
         if (s === 'cancelled') return 'bg-rose-50 text-rose-600';
         return 'bg-slate-100 text-slate-500';
     };
 
-    const displayedProjects = showAll ? projects : projects?.slice(0, 6);
-    const hasMore = projects && projects.length > 6;
+    const formatStatus = (s: string) => s.replace(/[_-]/g, ' ');
+
+    const sortedProjects = projects ? [...projects].sort((a, b) => {
+        const aActive = a.status.toLowerCase() === 'active';
+        const bActive = b.status.toLowerCase() === 'active';
+        if (aActive && !bActive) return -1;
+        if (!aActive && bActive) return 1;
+        return b.total_cost - a.total_cost;
+    }) : undefined;
+
+    const displayedProjects = showAll ? sortedProjects : sortedProjects?.slice(0, 6);
+    const hasMore = sortedProjects && sortedProjects.length > 6;
 
     return (
         <div className="mb-8">
@@ -62,7 +72,7 @@ export function ProjectCostSummaryList({ projects, isLoading }: ProjectCostSumma
                                 <div className="flex justify-between items-start mb-4">
                                     <h3 className="text-sm font-bold text-slate-900 truncate pr-2">{project.project_name}</h3>
                                     <Badge variant="outline" className={`text-[9px] uppercase tracking-wider font-bold border-none px-2 rounded-sm ${getStatusBadge(project.status)}`}>
-                                        {project.status}
+                                        {formatStatus(project.status)}
                                     </Badge>
                                 </div>
                                 
@@ -105,7 +115,7 @@ export function ProjectCostSummaryList({ projects, isLoading }: ProjectCostSumma
                         {showAll ? (
                             <>Show Less <ChevronUp className="ml-1.5 h-4 w-4" /></>
                         ) : (
-                            <>Show All {projects.length} Projects <ChevronDown className="ml-1.5 h-4 w-4" /></>
+                            <>Show All {sortedProjects?.length || 0} Projects <ChevronDown className="ml-1.5 h-4 w-4" /></>
                         )}
                     </Button>
                 </div>
