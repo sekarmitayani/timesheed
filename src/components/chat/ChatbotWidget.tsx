@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
 import { MessageCircle, X, Send, Bot, Loader2 } from "lucide-react";
 import { fetchApi } from "@/lib/api";
 
@@ -19,6 +19,63 @@ export function ChatbotWidget() {
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const widgetRef = useRef<HTMLDivElement>(null);
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+    const [bounds, setBounds] = useState({ left: 0, right: 0, top: 0, bottom: 0 });
+
+    useEffect(() => {
+        const updateBounds = () => {
+            const padding = 24; // 1.5rem
+            const buttonSize = 56;
+            setBounds({
+                left: -(window.innerWidth - buttonSize - padding * 2),
+                right: 0,
+                top: -(window.innerHeight - buttonSize - padding * 2),
+                bottom: 0
+            });
+        };
+        updateBounds();
+        window.addEventListener('resize', updateBounds);
+        return () => window.removeEventListener('resize', updateBounds);
+    }, []);
+
+    const handleDragEnd = () => {
+        if (!widgetRef.current) return;
+        const rect = widgetRef.current.getBoundingClientRect();
+        
+        const padding = 24;
+        
+        const distLeft = rect.left;
+        const distRight = window.innerWidth - rect.right;
+        const distTop = rect.top;
+        const distBottom = window.innerHeight - rect.bottom;
+        
+        const minDist = Math.min(distLeft, distRight, distTop, distBottom);
+        const springConfig = { type: "spring" as const, stiffness: 400, damping: 30 };
+        const currentX = x.get();
+        const currentY = y.get();
+
+        let targetX = currentX;
+        let targetY = currentY;
+
+        if (minDist === distLeft) targetX = currentX - distLeft + padding;
+        else if (minDist === distRight) targetX = currentX + distRight - padding;
+        else if (minDist === distTop) targetY = currentY - distTop + padding;
+        else targetY = currentY + distBottom - padding;
+
+        targetX = Math.max(bounds.left, Math.min(bounds.right, targetX));
+        targetY = Math.max(bounds.top, Math.min(bounds.bottom, targetY));
+
+        animate(currentX, targetX, {
+            ...springConfig,
+            onUpdate: (v) => x.set(v)
+        });
+        animate(currentY, targetY, {
+            ...springConfig,
+            onUpdate: (v) => y.set(v)
+        });
+    };
 
     const formatMessage = (text: string) => {
         let formatted = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
@@ -70,16 +127,40 @@ export function ChatbotWidget() {
         }
     };
 
+    const [panelPosition, setPanelPosition] = useState({ vertical: 'bottom', horizontal: 'right' });
+
+    const toggleOpen = () => {
+        if (!isOpen && widgetRef.current) {
+            const rect = widgetRef.current.getBoundingClientRect();
+            const isTopHalf = rect.top < window.innerHeight / 2;
+            const isLeftHalf = rect.left < window.innerWidth / 2;
+            setPanelPosition({
+                vertical: isTopHalf ? 'top' : 'bottom',
+                horizontal: isLeftHalf ? 'left' : 'right'
+            });
+        }
+        setIsOpen(!isOpen);
+    };
+
     return (
-        <div className="fixed bottom-6 right-6 z-[100]">
+        <motion.div 
+            ref={widgetRef}
+            className="fixed bottom-6 right-6 z-[100]"
+            drag
+            dragMomentum={false}
+            dragConstraints={bounds}
+            dragElastic={0.1}
+            style={{ x, y }}
+            onDragEnd={handleDragEnd}
+        >
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        initial={{ opacity: 0, y: panelPosition.vertical === 'top' ? -20 : 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        exit={{ opacity: 0, y: panelPosition.vertical === 'top' ? -20 : 20, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute bottom-16 right-0 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[500px] max-h-[80vh]"
+                        className={`absolute ${panelPosition.vertical === 'top' ? 'top-16' : 'bottom-16'} ${panelPosition.horizontal === 'left' ? 'left-0' : 'right-0'} origin-${panelPosition.vertical}-${panelPosition.horizontal} w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[500px] max-h-[80vh]`}
                     >
                         {/* Header */}
                         <div className="bg-[#2568C1] px-4 py-3 flex items-center justify-between text-white">
@@ -151,11 +232,11 @@ export function ChatbotWidget() {
             <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={toggleOpen}
                 className="w-14 h-14 bg-[#2568C1] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#2568C1]/30 hover:shadow-[#2568C1]/50 transition-shadow"
             >
                 {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
             </motion.button>
-        </div>
+        </motion.div>
     );
 }
