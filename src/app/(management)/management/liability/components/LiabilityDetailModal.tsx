@@ -86,8 +86,8 @@ export function LiabilityDetailModal({ contractId, open, onOpenChange }: Liabili
                                 <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest">User Identity</h3>
                                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
                                     <div className="flex gap-4 items-start">
-                                        <Avatar className="h-12 w-12 border-none shadow-sm">
-                                            <AvatarFallback className="bg-[#4B7BEC] text-white font-bold text-lg">
+                                        <Avatar className="h-12 w-12 border-none shadow-sm bg-gradient-to-br from-[#2568C1] to-[#1a4f99]">
+                                            <AvatarFallback className="bg-transparent text-white font-bold text-lg">
                                                 {getInitials(detail.user_name)}
                                             </AvatarFallback>
                                         </Avatar>
