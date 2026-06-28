@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 export type CostEntry = {
     id: string;
-    type: "Gaji" | "Resource";
+    type: "Salary" | "Resource";
     name: string;
     amount: number;
     date: string;
@@ -24,7 +24,7 @@ export function useAdminProjectDetailData(projectId: string) {
 
     // Filters
     const [teamSearch, setTeamSearch] = useState("");
-    const [costFilterType, setCostFilterType] = useState<"all" | "Gaji" | "Resource">("all");
+    const [costFilterType, setCostFilterType] = useState<"all" | "Salary" | "Resource">("all");
     const [costFilterStart, setCostFilterStart] = useState("");
     const [costFilterEnd, setCostFilterEnd] = useState("");
     const [resSearch, setResSearch] = useState("");
@@ -106,7 +106,7 @@ export function useAdminProjectDetailData(projectId: string) {
                     if (d.includes("T")) d = d.split("T")[0];
                     allCosts.push({
                         id: `gaji-${p.id}`,
-                        type: "Gaji",
+                        type: "Salary",
                         name: p.name || res.contract.contract_type,
                         amount: p.amount,
                         date: d,
