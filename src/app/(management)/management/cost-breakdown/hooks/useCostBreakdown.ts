@@ -17,10 +17,10 @@ export function useCostBreakdownProjects() {
     });
 }
 
-export function useCostBreakdownLogs(page: number, limit: number, search: string, category: string) {
+export function useCostBreakdownLogs(page: number, limit: number, search: string, category: string, projectId?: string | number, startDate?: string, endDate?: string) {
     return useQuery({
-        queryKey: ["costBreakdownLogs", page, limit, search, category],
-        queryFn: () => managementService.getCostBreakdownLogs(page, limit, search, category),
+        queryKey: ["costBreakdownLogs", page, limit, search, category, projectId, startDate, endDate],
+        queryFn: () => managementService.getCostBreakdownLogs(page, limit, search, category, projectId, startDate, endDate),
         staleTime: 1 * 60 * 1000, // Logs might update more frequently
         placeholderData: (prev) => prev,
     });

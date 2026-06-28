@@ -6,6 +6,7 @@ import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import { ProjectCostSummaryDetailModal } from "./ProjectCostSummaryDetailModal";
 
 interface ProjectCostSummaryListProps {
     projects?: ProjectCostItem[];
@@ -15,6 +16,7 @@ interface ProjectCostSummaryListProps {
 export function ProjectCostSummaryList({ projects, isLoading }: ProjectCostSummaryListProps) {
     const router = useRouter();
     const [showAll, setShowAll] = useState(false);
+    const [selectedProject, setSelectedProject] = useState<ProjectCostItem | null>(null);
     
     const fmtCurrencyShort = (v: number) => {
         if (v >= 1000000000) return `Rp ${(v / 1000000000).toFixed(1)}B`;
@@ -95,7 +97,7 @@ export function ProjectCostSummaryList({ projects, isLoading }: ProjectCostSumma
                                 <Button 
                                     variant="outline" 
                                     className="w-full text-[#4B7BEC] font-bold text-xs hover:bg-blue-50 border-slate-200 h-9"
-                                    onClick={() => router.push(`/management/profitability`)}
+                                    onClick={() => setSelectedProject(project)}
                                 >
                                     View Details <ArrowRight className="ml-1.5 h-3 w-3" />
                                 </Button>
@@ -120,6 +122,11 @@ export function ProjectCostSummaryList({ projects, isLoading }: ProjectCostSumma
                     </Button>
                 </div>
             )}
+            <ProjectCostSummaryDetailModal
+                project={selectedProject}
+                open={!!selectedProject}
+                onOpenChange={(open) => !open && setSelectedProject(null)}
+            />
         </div>
     );
 }
