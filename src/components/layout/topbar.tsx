@@ -39,14 +39,8 @@ export function Topbar() {
         setActiveIndex(-1);
     }, []);
 
-    // ⌘K global shortcut
     useEffect(() => {
         const handler = (e: KeyboardEvent) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-                e.preventDefault();
-                setShowSearch(true);
-                setTimeout(() => inputRef.current?.focus(), 50);
-            }
             if (e.key === "Escape" && showSearch) {
                 closeSearch();
             }
@@ -58,13 +52,13 @@ export function Topbar() {
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "ArrowDown") {
             e.preventDefault();
-            setActiveIndex((i) => Math.min(i + 1, results.length - 1));
+            setActiveIndex((i) => Math.min(i + 1, results.results.length - 1));
         } else if (e.key === "ArrowUp") {
             e.preventDefault();
             setActiveIndex((i) => Math.max(i - 1, 0));
-        } else if (e.key === "Enter" && activeIndex >= 0 && results[activeIndex]) {
+        } else if (e.key === "Enter" && activeIndex >= 0 && results.results[activeIndex]) {
             e.preventDefault();
-            router.push(results[activeIndex].href);
+            router.push(results.results[activeIndex].href);
             closeSearch();
         } else if (e.key === "Escape") {
             closeSearch();
@@ -159,12 +153,9 @@ export function Topbar() {
                                 </AnimatePresence>
                             </motion.div>
                         ) : (
-                            <Button variant="ghost" size="sm" onClick={() => setShowSearch(true)} className="gap-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 rounded-full h-9 px-4">
+                            <Button variant="ghost" size="sm" onClick={() => setShowSearch(true)} className="gap-2 text-slate-500 bg-slate-100 hover:bg-slate-200 hover:text-slate-900 rounded-full h-9 px-4 w-48 sm:w-64 justify-start">
                                 <Search className="h-4 w-4" />
-                                <span className="text-xs hidden md:inline">Search...</span>
-                                <kbd className="hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 text-[10px] font-medium text-muted-foreground">
-                                    ⌘K
-                                </kbd>
+                                <span className="text-xs">Search...</span>
                             </Button>
                         )}
                     </AnimatePresence>
