@@ -25,7 +25,8 @@ import {
     Briefcase,
     Loader2,
     Calendar,
-    WalletCards
+    WalletCards,
+    Star
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { adminContractService } from "@/lib/services/admin-contracts";
@@ -83,7 +84,7 @@ export function AdminTeamsTab({
                     </div>
                     <Button 
                         size="sm"
-                        className="h-9 gap-2 bg-[#4B7BEC] hover:bg-[#385bb5] text-white font-bold rounded-[8px] shadow-sm shadow-blue-500/10"
+                        className="h-9 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] text-white font-bold rounded-[8px] shadow-sm shadow-blue-500/10"
                         onClick={onAssign}
                     >
                         <UserPlus className="h-4 w-4" /> Add Member
@@ -138,7 +139,7 @@ export function AdminTeamsTab({
             </div>
 
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-                <DialogContent className="sm:max-w-[425px] p-6 bg-white rounded-xl shadow-xl border border-slate-100">
+                <DialogContent showCloseButton={false} className="sm:max-w-[425px] p-6 bg-white rounded-xl shadow-xl border border-slate-100">
                     <DialogHeader className="flex flex-row items-start gap-4 space-y-0 pb-4 border-b border-slate-100">
                         <Avatar className="h-16 w-16 border-2 border-slate-50 shadow-sm">
                             <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
@@ -184,6 +185,17 @@ export function AdminTeamsTab({
                             </div>
                         </div>
 
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Star className="h-4 w-4 text-slate-400" />
+                                <span className="text-xs font-semibold text-slate-700">
+                                    {selectedMember?.user?.skill_level === 1 ? "Junior" : 
+                                     selectedMember?.user?.skill_level === 2 ? "Mid-Level" : 
+                                     selectedMember?.user?.skill_level === 3 ? "Senior" : "Skill Not Set"}
+                                </span>
+                            </div>
+                        </div>
+
                         <div className="flex items-start gap-3 p-3 rounded-lg border border-slate-100 bg-blue-50/30">
                             <WalletCards className="h-4 w-4 text-[#4B7BEC] mt-0.5" />
                             <div className="flex flex-col flex-1 gap-2">
@@ -226,11 +238,6 @@ export function AdminTeamsTab({
                         </div>
                     </div>
 
-                    <div className="mt-4 flex justify-end">
-                        <Button variant="outline" className="h-9 px-6 rounded-lg text-xs font-bold border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700" onClick={() => setIsDetailOpen(false)}>
-                            Close
-                        </Button>
-                    </div>
                 </DialogContent>
             </Dialog>
         </div>

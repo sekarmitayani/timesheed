@@ -25,6 +25,7 @@ export interface User {
     joinDate: string;
     status: "active" | "inactive";
     is_active?: boolean;
+    skill_level?: number;
     created_at?: string;
     updated_at?: string;
 }
@@ -75,6 +76,7 @@ export interface ProjectMember {
         full_name: string;
         role?: string;
         phone_number?: string;
+        skill_level?: number;
     };
 }
 

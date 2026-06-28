@@ -8,6 +8,7 @@ export interface ApiTask {
     assigned_to_id: number;
     title: string;
     description: string;
+    complexity: number;
     status: "todo" | "in_progress" | "done";
     due_date?: string;
     comment_count?: number;
@@ -20,6 +21,7 @@ export interface CreateTaskPayload {
     assigned_to_id?: number; // Ignored if Employee
     title: string;
     description?: string;
+    complexity?: number;
     due_date?: string;
 }
 
@@ -31,6 +33,7 @@ export interface UpdateTaskPayload {
     project_id?: number;
     title?: string;
     description?: string;
+    complexity?: number;
     assigned_to_id?: number;
     status?: "todo" | "in_progress" | "done";
     due_date?: string;

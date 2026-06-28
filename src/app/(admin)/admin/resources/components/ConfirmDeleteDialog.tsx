@@ -20,7 +20,7 @@ export function ConfirmDeleteDialog({
 }: ConfirmDeleteDialogProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-sm">
+            <DialogContent showCloseButton={false} className="sm:max-w-sm">
                 <div className="flex flex-col items-center gap-4 py-4">
                     <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
                         <AlertTriangle className="h-6 w-6" />

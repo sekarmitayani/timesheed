@@ -114,9 +114,7 @@ export function ResourceDetailsDialog({
                     </div>
                 </div>
 
-                <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end">
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button>
-                </div>
+
             </DialogContent>
         </Dialog>
     );

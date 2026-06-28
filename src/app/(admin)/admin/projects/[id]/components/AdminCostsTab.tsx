@@ -36,7 +36,7 @@ export function AdminCostsTab({
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Costs</SelectItem>
-                            <SelectItem value="Gaji">Gaji</SelectItem>
+                            <SelectItem value="Salary">Salary</SelectItem>
                             <SelectItem value="Resource">Resource</SelectItem>
                         </SelectContent>
                     </Select>
@@ -84,7 +84,7 @@ export function AdminCostsTab({
                                             </TableCell>
                                             <TableCell>
                                                 <Badge variant="outline" className={`capitalize text-[10px] font-bold px-2.5 py-0.5 tracking-wider w-fit rounded-full border-none 
-                                                    ${c.type === 'Gaji' ? "bg-blue-50 text-blue-700" : "bg-teal-50 text-teal-700"}`}>
+                                                    ${c.type === 'Salary' ? "bg-blue-50 text-blue-700" : "bg-teal-50 text-teal-700"}`}>
                                                     {c.type}
                                                 </Badge>
                                             </TableCell>

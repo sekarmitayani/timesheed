@@ -114,44 +114,27 @@ export function useAdminDashboardData() {
     }, [users, projects, allResources, payrollItems]);
 
     const projectFinancials = useMemo(() => {
-        const projectFinMap = new Map<number, ProjectFinancial>();
+        const projectFinMap = new Map<string, ProjectFinancial>();
 
-        // We use payrollItems to aggregate by project
-        // Note: payrollItems has project_name, but we might want project_id if it's there.
-        // Looking at PayrollSummaryItem type in admin-contracts.ts, it doesn't have project_id.
-        // Let's assume projects are identified by name for distribution if project_id is missing,
-        // or we check if projects data can help.
-        
-        // Wait, PayrollSummaryItem might have id which is contract_id.
-        // Let's see if we can improve this. The original code was fetching contracts per user.
-        // The new service getPayrollSummary might need project_id to be useful for charts.
-        
-        // Actually, the original code fetched contracts for each user and aggregated by contract.project_id.
-        // If PayrollSummaryItem doesn't have project_id, we might have a problem for exact mapping.
-        // BUT, the original code had:
-        // if (contract.project_id) { ... }
-        // Let's check PayrollSummaryItem again.
-        
-        /*
-        export interface PayrollSummaryItem {
-            id: number;
-            user_id: number;
-            full_name: string;
-            contract_type: "yearly" | "monthly" | "mandays" | "timesheet" | "hourly";
-            payment_scheme: PaymentScheme;
-            base_rate: number;
-            calculated_target: number;
-            total_paid: number;
-            payment_status: "pending" | "paid" | "partially_paid";
-            project_name: string;
+        // Pre-populate with all active projects so they appear even with 0 payroll
+        for (const project of projects) {
+            if (project.status === "active") {
+                projectFinMap.set(project.name, {
+                    id: project.id,
+                    name: project.name,
+                    client: project.client_name || "Multiple Clients",
+                    budgetRevenue: project.budget_revenue || 0,
+                    totalContractValue: 0,
+                    totalPaid: 0,
+                    remaining: 0,
+                    progressPercent: 0,
+                });
+            }
         }
-        */
-        
-        // It has project_name. Let's aggregate by project_name.
         
         for (const item of payrollItems) {
             const pName = item.project_name || "Unassigned";
-            const existing = projectFinMap.get(pName as any);
+            const existing = projectFinMap.get(pName);
             
             if (existing) {
                 existing.totalContractValue += item.calculated_target;
@@ -162,7 +145,7 @@ export function useAdminDashboardData() {
                     : 0;
             } else {
                 const project = projects.find(p => p.name === pName);
-                projectFinMap.set(pName as any, {
+                projectFinMap.set(pName, {
                     id: project?.id || 0,
                     name: pName,
                     client: project?.client_name || "Multiple Clients",
@@ -173,7 +156,7 @@ export function useAdminDashboardData() {
                     progressPercent: item.calculated_target > 0
                         ? Math.round((item.total_paid / item.calculated_target) * 100)
                         : 0,
-                } as any);
+                });
             }
         }
 

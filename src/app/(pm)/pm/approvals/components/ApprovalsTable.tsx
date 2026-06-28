@@ -157,14 +157,21 @@ export function ApprovalsTable({
                                             </span>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge variant="outline" className={cn(
-                                                "uppercase text-[9px] font-black px-2.5 py-0.5 tracking-wider rounded-full border-none shadow-none",
-                                                l.status === 'approved' ? 'bg-emerald-50 text-emerald-700' :
-                                                l.status === 'rejected' ? 'bg-red-50 text-red-700' :
-                                                'bg-amber-50 text-amber-700'
-                                            )}>
-                                                {l.status}
-                                            </Badge>
+                                            <div className="flex flex-col gap-1.5 items-start">
+                                                <Badge variant="outline" className={cn(
+                                                    "uppercase text-[9px] font-black px-2.5 py-0.5 tracking-wider rounded-full border-none shadow-none",
+                                                    l.status === 'approved' ? 'bg-emerald-50 text-emerald-700' :
+                                                    l.status === 'rejected' ? 'bg-red-50 text-red-700' :
+                                                    'bg-amber-50 text-amber-700'
+                                                )}>
+                                                    {l.status}
+                                                </Badge>
+                                                {l.is_anomaly && (
+                                                    <Badge variant="outline" className="uppercase text-[9px] font-black px-2 py-0.5 tracking-wider rounded-full border border-red-200 bg-red-50 text-red-700 shadow-none">
+                                                        Suspicious
+                                                    </Badge>
+                                                )}
+                                            </div>
                                         </TableCell>
                                         <TableCell className="pr-6 text-right" onClick={(e) => e.stopPropagation()}>
                                             <div className="flex justify-end gap-1">

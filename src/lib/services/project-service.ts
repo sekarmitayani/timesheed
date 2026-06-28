@@ -55,6 +55,10 @@ export const projectService = {
         return fetchApi(`/getproject/${projectId}/members`, { method: "GET" });
     },
 
+    async getProjectForecast(projectId: number | string): Promise<any> {
+        return fetchApi(`/getproject/${projectId}/forecast`, { method: "GET" });
+    },
+
     // === ADMIN ONLY ===
 
     async createProject(payload: CreateProjectPayload): Promise<ApiProject> {

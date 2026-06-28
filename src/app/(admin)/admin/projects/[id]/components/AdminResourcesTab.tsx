@@ -74,7 +74,7 @@ export function AdminResourcesTab({
                             <SelectItem value="accommodation">Accommodation</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Button size="sm" className="h-9 gap-2 bg-[#4B7BEC] hover:bg-[#385bb5] text-white font-bold rounded-[8px] shadow-sm shadow-blue-500/10" onClick={onCreate}>
+                    <Button size="sm" className="h-9 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] text-white font-bold rounded-[8px] shadow-sm shadow-blue-500/10" onClick={onCreate}>
                         <Plus className="h-4 w-4" /> New Request
                     </Button>
                 </div>

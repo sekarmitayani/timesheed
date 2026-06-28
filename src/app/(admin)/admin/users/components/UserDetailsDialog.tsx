@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
-import { Loader2, Mail, Phone, Briefcase, Calendar, Plus, Trash2, Edit, FolderKanban } from "lucide-react";
+import { Loader2, Mail, Phone, Briefcase, Calendar, Plus, Trash2, Edit, FolderKanban, Star } from "lucide-react";
 import { User, ApiProject } from "@/lib/types";
 import { Contract, CreateContractPayload } from "@/lib/services/admin-contracts";
 
@@ -86,6 +86,17 @@ export function UserDetailsDialog({
                                 <div>
                                     <div className="text-[11px] text-slate-500 font-medium">Employee Base Type</div>
                                     <div className="text-sm text-slate-800 capitalize">{user.employee_type || "System Default"}</div>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 items-start">
+                                <Star className="h-4 w-4 text-slate-400 mt-0.5" />
+                                <div>
+                                    <div className="text-[11px] text-slate-500 font-medium">Skill Level</div>
+                                    <div className="text-sm text-slate-800 capitalize">
+                                        {(user as any).skill_level === 1 ? "Junior" : 
+                                         (user as any).skill_level === 2 ? "Mid-Level" : 
+                                         (user as any).skill_level === 3 ? "Senior" : "Not Set"}
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex gap-3 items-start">

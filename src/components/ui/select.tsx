@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon, Search } from "lucide-react"
 import { Select as SelectPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
@@ -15,8 +15,8 @@ function Select({
 function SelectGroup({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Group>) {
-  return <SelectPrimitive.Group data-slot="select-group" {...props} />
 }
+SelectGroup.displayName = "SelectGroup"
 
 function SelectValue({
   ...props
@@ -53,33 +53,102 @@ function SelectTrigger({
 function SelectContent({
   className,
   children,
-  position = "item-aligned",
+  position = "popper",
+  side = "bottom",
   align = "center",
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Content>) {
+  const [searchQuery, setSearchQuery] = React.useState("")
+
+  const countItems = (nodes: React.ReactNode): number => {
+    let count = 0;
+    React.Children.forEach(nodes, (child) => {
+      if (!React.isValidElement(child)) return;
+      const element = child as React.ReactElement<any>;
+      const type = element.type as any;
+      const isSelectItem = type === SelectItem || type?.displayName === "SelectItem" || type?.name === "SelectItem";
+      
+      if (isSelectItem) count++;
+      else if (element.props && element.props.children) count += countItems(element.props.children);
+    });
+    return count;
+  }
+
+  const filterChildren = (nodes: React.ReactNode): React.ReactNode => {
+    if (!searchQuery) return nodes;
+    return React.Children.map(nodes, (child) => {
+      if (!React.isValidElement(child)) return child;
+      const element = child as React.ReactElement<any>;
+      const type = element.type as any;
+      
+      const isSelectGroup = type === SelectGroup || type?.displayName === "SelectGroup" || type?.name === "SelectGroup";
+      if (isSelectGroup) {
+         const filteredGroupChildren = filterChildren(element.props.children);
+         return React.cloneElement(element, { ...element.props, children: filteredGroupChildren });
+      }
+
+      const isSelectItem = type === SelectItem || type?.displayName === "SelectItem" || type?.name === "SelectItem";
+      if (isSelectItem) {
+         let text = "";
+         const extractText = (node: React.ReactNode) => {
+            if (typeof node === "string" || typeof node === "number") text += node;
+            else if (React.isValidElement(node)) {
+               React.Children.forEach((node as React.ReactElement<any>).props.children, extractText);
+            }
+         }
+         extractText(element.props.children);
+         
+         const val = element.props.value || "";
+         const q = searchQuery.toLowerCase();
+         if (text.toLowerCase().includes(q) || val.toLowerCase().includes(q)) {
+            return element;
+         }
+         return null; 
+      }
+      return element;
+    });
+  }
+
+  const itemCount = countItems(children);
+  const showSearch = itemCount > 5;
+  const filteredChildren = filterChildren(children);
+
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border shadow-md",
+          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-[230px] min-w-[var(--radix-select-trigger-width)] w-full origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border shadow-md",
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className
         )}
         position={position}
+        side={side}
         align={align}
         {...props}
       >
+        {showSearch && (
+          <div className="flex items-center px-3 border-b sticky top-0 bg-popover z-10">
+            <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+            <input
+              className="flex h-9 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+          </div>
+        )}
         <SelectScrollUpButton />
         <SelectPrimitive.Viewport
           className={cn(
             "p-1",
             position === "popper" &&
-              "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1"
+              "h-full w-full min-w-[var(--radix-select-trigger-width)]"
           )}
         >
-          {children}
+          {filteredChildren}
         </SelectPrimitive.Viewport>
         <SelectScrollDownButton />
       </SelectPrimitive.Content>
@@ -126,6 +195,7 @@ function SelectItem({
     </SelectPrimitive.Item>
   )
 }
+SelectItem.displayName = "SelectItem"
 
 function SelectSeparator({
   className,

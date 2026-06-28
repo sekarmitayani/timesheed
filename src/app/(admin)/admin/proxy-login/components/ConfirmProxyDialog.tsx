@@ -43,7 +43,7 @@ export function ConfirmProxyDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden border-[#e2e8f0]">
+            <DialogContent showCloseButton={false} className="sm:max-w-[420px] p-0 overflow-hidden border-[#e2e8f0]">
                 <div className="bg-amber-50 border-b border-amber-200 px-6 py-5 flex items-center gap-3">
                     <div className="p-2.5 bg-white rounded-xl shadow-sm border border-amber-200">
                         <Shield className="h-5 w-5 text-amber-600" />

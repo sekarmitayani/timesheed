@@ -52,7 +52,8 @@ export function CostLogsTable({
                 <Table>
                     <TableHeader>
                         <TableRow className="hover:bg-transparent bg-slate-50/50 border-b-slate-100">
-                            <TableHead className="pl-6 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Expense Name</TableHead>
+                            <TableHead className="pl-6 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 w-[50px]">NO</TableHead>
+                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Expense Name</TableHead>
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Category</TableHead>
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Project</TableHead>
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Payment Scheme</TableHead>
@@ -63,7 +64,7 @@ export function CostLogsTable({
                     <TableBody>
                         {isLoading ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="h-64 text-center">
+                                <TableCell colSpan={7} className="h-64 text-center">
                                     <div className="flex flex-col items-center justify-center text-slate-400">
                                         <Loader2 className="h-8 w-8 animate-spin text-[#4B7BEC] mb-4" />
                                         <p className="text-sm font-medium">Loading cost logs...</p>
@@ -72,14 +73,17 @@ export function CostLogsTable({
                             </TableRow>
                         ) : logs.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="h-32 text-slate-400 text-center font-medium text-sm">
+                                <TableCell colSpan={7} className="h-32 text-slate-400 text-center font-medium text-sm">
                                     No cost records found matching your filters.
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            logs.map((log) => (
+                            logs.map((log, idx) => (
                                 <TableRow key={log.id} className="hover:bg-[#f8fafc] transition-colors border-b-slate-50">
-                                    <TableCell className="pl-6 text-xs text-slate-800 font-semibold max-w-[200px] truncate">
+                                    <TableCell className="pl-6 text-xs text-slate-500 font-medium w-[50px]">
+                                        {(pagination.page - 1) * pagination.limit + idx + 1}
+                                    </TableCell>
+                                    <TableCell className="text-xs text-slate-800 font-semibold max-w-[200px] truncate">
                                         {log.expense_name}
                                     </TableCell>
                                     <TableCell>

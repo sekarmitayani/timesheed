@@ -8,6 +8,7 @@ import { Sidebar } from "./sidebar";
 import { Topbar } from "./topbar";
 import { Role } from "@/lib/types";
 import { getDefaultRoute } from "@/lib/rbac";
+import { ChatbotWidget } from "@/components/chat/ChatbotWidget";
 
 interface AppShellProps {
     children: React.ReactNode;
@@ -96,6 +97,9 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
                     </motion.div>
                 </main>
             </div>
+            {(user.role === "admin" || user.role === "finance") && (
+                <ChatbotWidget />
+            )}
         </div>
     );
 }

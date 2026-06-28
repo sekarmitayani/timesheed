@@ -101,7 +101,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
 
             {/* RESOURCE CREATE DIALOG */}
             <Dialog open={resCreateOpen} onOpenChange={actions.setResCreateOpen}>
-                <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden border-[#e2e8f0]">
+                <DialogContent showCloseButton={false} className="sm:max-w-[480px] p-0 overflow-hidden border-[#e2e8f0]">
                     <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                         <DialogTitle className="text-lg font-bold text-slate-900">Request Resource</DialogTitle>
                         <DialogDescription className="text-xs">Submit a new resource request for this project.</DialogDescription>
@@ -129,9 +129,9 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                             />
                         </div>
                     </div>
-                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex gap-3">
-                        <Button variant="ghost" className="flex-1" onClick={() => actions.setResCreateOpen(false)} disabled={isSaving}>Cancel</Button>
-                        <Button className="flex-1 bg-[#2568C1] hover:bg-[#1a4f99] font-bold" onClick={actions.handleCreateRes} disabled={isSaving}>
+                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
+                        <Button variant="ghost" onClick={() => actions.setResCreateOpen(false)} disabled={isSaving}>Cancel</Button>
+                        <Button className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] font-bold text-white" onClick={actions.handleCreateRes} disabled={isSaving}>
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit Request"}
                         </Button>
                     </div>
@@ -232,7 +232,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
 
             {/* ASSIGN MEMBER DIALOG */}
             <Dialog open={assignOpen} onOpenChange={o => !isSaving && actions.setAssignOpen(o)}>
-                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]">
+                <DialogContent showCloseButton={false} className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]">
                     <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                         <DialogTitle className="text-lg font-bold text-slate-900">Assign Member</DialogTitle>
                         <DialogDescription className="text-xs">Add a new user to this project and define their rate.</DialogDescription>
@@ -309,7 +309,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                     </div>
                     <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
                         <Button variant="ghost" onClick={() => actions.setAssignOpen(false)} disabled={isSaving}>Cancel</Button>
-                        <Button onClick={actions.handleAssignSave} disabled={isSaving} className="bg-[#0f172a] hover:bg-slate-800 text-white min-w-[120px] font-bold">
+                        <Button onClick={actions.handleAssignSave} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] text-white min-w-[120px] font-bold">
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm Assign"}
                         </Button>
                     </div>

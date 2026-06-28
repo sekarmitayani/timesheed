@@ -13,11 +13,14 @@ export interface TimesheetLog {
     duration_minutes: number;
     status: "pending" | "approved" | "rejected";
     rejection_note?: string;
+    is_anomaly?: boolean;
+    anomaly_reason?: string;
     created_at?: string;
     updated_at?: string;
     // Pre-loaded relations (from inbox)
     user?: { id: number; full_name: string; email: string };
     project?: { id: number; name: string };
+    task?: { complexity: number; created_at: string; created_by_id: number; title: string; description: string };
 }
 
 export interface ClockInPayload {

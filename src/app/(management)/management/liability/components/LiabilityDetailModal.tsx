@@ -56,7 +56,7 @@ export function LiabilityDetailModal({ contractId, open, onOpenChange }: Liabili
                     </DialogTitle>
                     <button 
                         onClick={() => onOpenChange(false)}
-                        className="rounded-full p-2 hover:bg-slate-100 transition-colors text-slate-500 hover:text-slate-700 focus:outline-none"
+                        className="p-2 text-slate-500 focus:outline-none"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         <span className="sr-only">Close</span>
@@ -86,8 +86,8 @@ export function LiabilityDetailModal({ contractId, open, onOpenChange }: Liabili
                                 <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest">User Identity</h3>
                                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
                                     <div className="flex gap-4 items-start">
-                                        <Avatar className="h-12 w-12 border border-slate-200 shadow-sm">
-                                            <AvatarFallback className="bg-slate-50 text-slate-600 font-bold">
+                                        <Avatar className="h-12 w-12 border-none shadow-sm bg-gradient-to-br from-[#2568C1] to-[#1a4f99]">
+                                            <AvatarFallback className="bg-transparent text-white font-bold text-lg">
                                                 {getInitials(detail.user_name)}
                                             </AvatarFallback>
                                         </Avatar>

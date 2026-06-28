@@ -42,8 +42,8 @@ export function Sidebar() {
                                 exit={{ opacity: 0 }}
                                 className="flex items-center gap-2"
                             >
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 shadow-lg shadow-blue-600/20">
-                                    <span className="text-sm font-extrabold text-white tracking-tighter">H</span>
+                                <div className="flex items-center justify-center">
+                                    <img src="/logo.png" alt="Haerarchy Logo" className="h-8 w-auto object-contain rounded-md" />
                                 </div>
                                 <span className="font-bold text-sm tracking-tight text-[#0f172a]">Haerarchy</span>
                             </motion.div>
@@ -127,8 +127,8 @@ export function Sidebar() {
                         {/* Header */}
                         <div className="flex h-16 items-center justify-between px-4 border-b border-border">
                             <div className="flex items-center gap-2">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 shadow-lg shadow-blue-600/20">
-                                    <span className="text-sm font-extrabold text-white tracking-tighter">H</span>
+                                <div className="flex items-center justify-center">
+                                    <img src="/logo.png" alt="Haerarchy Logo" className="h-8 w-auto object-contain rounded-md" />
                                 </div>
                                 <span className="font-bold text-sm tracking-tight text-[#0f172a]">Haerarchy</span>
                             </div>

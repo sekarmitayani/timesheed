@@ -18,6 +18,7 @@ const statusConfig: Record<string, { bg: string; text: string; label: string; ic
 
 export default function ApprovalsPage() {
     const { state, actions } = useApprovalsData();
+    const anomalyCount = state.totalAnomalyCount;
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
@@ -25,16 +26,22 @@ export default function ApprovalsPage() {
                 title="Approvals Inbox" 
                 description={`${state.totalCount} records matching filters`}
             >
-                {state.selectedIds.size > 0 && (
-                    <Button 
-                        size="sm" 
-                        className="gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 shadow-md shadow-emerald-500/10 rounded-[6px]" 
-                        onClick={actions.handleBulkApprove} 
-                        disabled={state.isProcessing}
-                    >
-                        <CheckCheck className="h-4 w-4" /> Approve {state.selectedIds.size} Selected
-                    </Button>
-                )}
+                <div className="flex items-center gap-3">
+                    <div className={`flex items-center gap-2 px-3 py-1.5 border rounded-[6px] ${anomalyCount > 0 ? 'bg-red-50 border-red-200 text-red-700' : 'bg-slate-50 border-slate-200 text-slate-500'}`}>
+                        <AlertTriangle className="h-4 w-4" />
+                        <span className="text-xs font-bold">{anomalyCount} Suspicious</span>
+                    </div>
+                    {state.selectedIds.size > 0 && (
+                        <Button 
+                            size="sm" 
+                            className="gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 shadow-md shadow-emerald-500/10 rounded-[6px]" 
+                            onClick={actions.handleBulkApprove} 
+                            disabled={state.isProcessing}
+                        >
+                            <CheckCheck className="h-4 w-4" /> Approve {state.selectedIds.size} Selected
+                        </Button>
+                    )}
+                </div>
             </PageHeader>
 
             <ApprovalsFilters 
@@ -86,6 +93,7 @@ export default function ApprovalsPage() {
                     formatDuration={(m) => `${Math.floor(m / 60)}h ${m % 60}m`}
                     taskMap={{}} // Not strictly needed for basic detail
                     userMap={{}} // Not strictly needed for basic detail
+                    isPMView={true}
                 />
             )}
 
@@ -115,6 +123,25 @@ export default function ApprovalsPage() {
                         <Button variant="outline" className="flex-1" onClick={() => actions.setRejectOpen(false)} disabled={state.isProcessing}>Cancel</Button>
                         <Button variant="destructive" onClick={actions.handleReject} disabled={state.isProcessing} className="flex-1 font-bold">
                             {state.isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm Reject"}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Anomaly Warning Dialog */}
+            <Dialog open={state.anomalyWarningOpen} onOpenChange={open => !state.isProcessing && actions.setAnomalyWarningOpen(open)}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <div className="mx-auto w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4"><AlertTriangle className="h-6 w-6 text-red-600" /></div>
+                        <DialogTitle className="text-center text-lg font-bold">Anomaly Detected</DialogTitle>
+                        <DialogDescription className="text-center text-sm text-slate-500">
+                            One or more timesheets selected for approval have been flagged as suspicious by the AI. Are you sure you want to approve them?
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex gap-3 mt-6">
+                        <Button variant="outline" className="flex-1" onClick={() => actions.setAnomalyWarningOpen(false)} disabled={state.isProcessing}>Cancel</Button>
+                        <Button variant="destructive" onClick={actions.confirmApproval} disabled={state.isProcessing} className="flex-1 font-bold">
+                            {state.isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Approve Anyway"}
                         </Button>
                     </div>
                 </DialogContent>

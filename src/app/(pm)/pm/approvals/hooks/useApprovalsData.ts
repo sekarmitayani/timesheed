@@ -23,6 +23,9 @@ export function useApprovalsData() {
     const [rejectNote, setRejectNote] = useState("");
     const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
+    const [anomalyWarningOpen, setAnomalyWarningOpen] = useState(false);
+    const [pendingApprovalAction, setPendingApprovalAction] = useState<(() => void) | null>(null);
+
     // --- Queries ---
     const { data: inboxRaw = [], isLoading: isLoadingInbox } = useQuery({
         queryKey: ['pm', 'approvals', 'inbox', filterStatus],
@@ -117,7 +120,15 @@ export function useApprovalsData() {
         else setSelectedIds(new Set(filteredInbox.map(l => l.id)));
     };
 
-    const handleApprove = (id: number) => reviewMutation.mutate({ id, payload: { status: "approved" } });
+    const handleApprove = (id: number) => {
+        const log = filteredInbox.find(l => l.id === id);
+        if (log?.is_anomaly) {
+            setPendingApprovalAction(() => () => reviewMutation.mutate({ id, payload: { status: "approved" } }));
+            setAnomalyWarningOpen(true);
+            return;
+        }
+        reviewMutation.mutate({ id, payload: { status: "approved" } });
+    };
     
     const handleReject = () => {
         if (!selectedLog) return;
@@ -127,7 +138,20 @@ export function useApprovalsData() {
 
     const handleBulkApprove = () => {
         if (selectedIds.size === 0) return;
+        const hasAnomaly = filteredInbox.some(l => selectedIds.has(l.id) && l.is_anomaly);
+        
+        if (hasAnomaly) {
+            setPendingApprovalAction(() => () => bulkMutation.mutate({ timesheet_ids: Array.from(selectedIds), status: "approved" }));
+            setAnomalyWarningOpen(true);
+            return;
+        }
         bulkMutation.mutate({ timesheet_ids: Array.from(selectedIds), status: "approved" });
+    };
+
+    const confirmApproval = () => {
+        if (pendingApprovalAction) pendingApprovalAction();
+        setAnomalyWarningOpen(false);
+        setPendingApprovalAction(null);
     };
 
     const resetFilters = () => {
@@ -142,6 +166,7 @@ export function useApprovalsData() {
         state: {
             inbox: paginatedInbox,
             totalCount: filteredInbox.length,
+            totalAnomalyCount: filteredInbox.filter(l => l.is_anomaly).length,
             isLoading: isLoadingInbox,
             isProcessing: reviewMutation.isPending || bulkMutation.isPending,
             page,
@@ -156,7 +181,8 @@ export function useApprovalsData() {
             selectedLog,
             rejectOpen,
             rejectNote,
-            selectedIds
+            selectedIds,
+            anomalyWarningOpen
         },
         actions: {
             setPage,
@@ -174,6 +200,8 @@ export function useApprovalsData() {
             handleApprove,
             handleReject,
             handleBulkApprove,
+            confirmApproval,
+            setAnomalyWarningOpen,
             resetFilters
         }
     };

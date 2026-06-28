@@ -5,8 +5,19 @@ import { SessionExpiryDialog } from "@/components/layout/SessionExpiryDialog";
 import QueryProvider from "@/components/providers/query-provider";
 
 export const metadata: Metadata = {
-  title: "Haerarchy – Enterprise Project Management",
+  title: "Haerarchy",
   description: "AI-Powered Project & Workforce Management System",
+  icons: {
+    icon: [
+      { url: '/favicon/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' }
+    ],
+    apple: [
+      { url: '/favicon/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  manifest: '/favicon/site.webmanifest',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

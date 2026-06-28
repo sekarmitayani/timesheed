@@ -289,12 +289,15 @@ export const managementService = {
         return fetchApi(`/management/cost-breakdown/projects`, { method: "GET" });
     },
 
-    async getCostBreakdownLogs(page: number = 1, limit: number = 10, search: string = "", category: string = "all"): Promise<CostLogsResponse> {
+    async getCostBreakdownLogs(page: number = 1, limit: number = 10, search: string = "", category: string = "all", projectId?: string | number, startDate?: string, endDate?: string): Promise<CostLogsResponse> {
         const params = new URLSearchParams();
         params.append("page", String(page));
         params.append("limit", String(limit));
         if (search) params.append("search", search);
         if (category && category !== "all") params.append("category", category);
+        if (projectId && projectId !== "all") params.append("project_id", String(projectId));
+        if (startDate) params.append("start_date", startDate);
+        if (endDate) params.append("end_date", endDate);
         return fetchApi(`/management/cost-breakdown/logs?${params.toString()}`, { method: "GET" });
     },
 

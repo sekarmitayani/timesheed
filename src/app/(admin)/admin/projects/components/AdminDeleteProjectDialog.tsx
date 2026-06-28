@@ -17,7 +17,7 @@ export function AdminDeleteProjectDialog({
 }: AdminDeleteProjectDialogProps) {
     return (
         <Dialog open={open} onOpenChange={o => !isDeleting && onOpenChange(o)}>
-            <DialogContent className="sm:max-w-md max-w-[90vw]">
+            <DialogContent showCloseButton={false} className="sm:max-w-md max-w-[90vw]">
                 <div className="flex flex-col items-center gap-4 py-2">
                     <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
                         <AlertTriangle className="h-6 w-6 text-red-600" />

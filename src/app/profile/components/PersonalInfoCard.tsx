@@ -147,6 +147,23 @@ export function PersonalInfoCard({ profile, onSave, isSaving }: PersonalInfoCard
                             )}
                         </div>
                     </div>
+                    {/* Skill Level (Read-only) */}
+                    <div className="space-y-1">
+                        <Label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Skill Level</Label>
+                        <div>
+                            {profile.skill_level ? (
+                                <Badge variant="secondary" className="bg-[#EBF5FF] text-[#2568C1] border-none font-bold hover:bg-[#EBF5FF] text-[10px] min-h-7 rounded px-2">
+                                    {profile.skill_level === 1 ? "Junior" : 
+                                     profile.skill_level === 2 ? "Mid-Level" : 
+                                     profile.skill_level === 3 ? "Senior" : "Not Set"}
+                                </Badge>
+                            ) : (
+                                <div className="flex min-h-7 w-full items-center rounded-md bg-slate-50/50 px-2.5 py-1 text-xs font-medium text-slate-800 border border-slate-200/60">
+                                    —
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </CardContent>
         </Card>

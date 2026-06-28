@@ -20,7 +20,8 @@ import {
     Crown, 
     Mail, 
     Phone, 
-    Calendar
+    Calendar,
+    Star
 } from "lucide-react";
 
 interface TeamsTabProps {
@@ -137,6 +138,17 @@ export function TeamsTab({ members, totalCount, search, setSearch }: TeamsTabPro
 
                             <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
                                 <div className="flex items-center gap-3">
+                                    <Star className="h-4 w-4 text-slate-400" />
+                                    <span className="text-xs font-semibold text-slate-700">
+                                        {selectedMember?.user?.skill_level === 1 ? "Junior" : 
+                                         selectedMember?.user?.skill_level === 2 ? "Mid-Level" : 
+                                         selectedMember?.user?.skill_level === 3 ? "Senior" : "Skill Not Set"}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                                <div className="flex items-center gap-3">
                                     <Calendar className="h-4 w-4 text-slate-400" />
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Assigned On</span>
@@ -144,12 +156,6 @@ export function TeamsTab({ members, totalCount, search, setSearch }: TeamsTabPro
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div className="mt-2 flex justify-end">
-                            <Button variant="outline" className="h-9 px-6 rounded-lg text-xs font-bold border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700" onClick={() => setIsDetailOpen(false)}>
-                                Close
-                            </Button>
                         </div>
                     </div>
                 </DialogContent>
