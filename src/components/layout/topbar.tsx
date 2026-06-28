@@ -130,7 +130,7 @@ export function Topbar() {
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
                                 <Input
                                     ref={inputRef}
-                                    placeholder="Search projects, tasks, users..."
+                                    placeholder="Search..."
                                     className="pl-9 h-9 rounded-full bg-slate-100 border-none shadow-none focus-visible:ring-1 focus-visible:ring-blue-500"
                                     autoFocus
                                     value={searchQuery}
