@@ -93,6 +93,7 @@ export default function ApprovalsPage() {
                     formatDuration={(m) => `${Math.floor(m / 60)}h ${m % 60}m`}
                     taskMap={{}} // Not strictly needed for basic detail
                     userMap={{}} // Not strictly needed for basic detail
+                    isPMView={true}
                 />
             )}
 

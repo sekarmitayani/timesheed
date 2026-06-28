@@ -17,6 +17,7 @@ interface TimesheetDetailModalProps {
     formatDuration: (mins: number) => string;
     taskMap: Record<number, ApiTask>;
     userMap: Record<number, string>;
+    isPMView?: boolean;
 }
 
 export function TimesheetDetailModal({
@@ -27,7 +28,8 @@ export function TimesheetDetailModal({
     formatDateTime,
     formatDuration,
     taskMap,
-    userMap
+    userMap,
+    isPMView
 }: TimesheetDetailModalProps) {
     if (!selectedLog) return null;
 
@@ -35,13 +37,13 @@ export function TimesheetDetailModal({
         <Dialog open={!!selectedLog} onOpenChange={(open) => !open && onClose()}>
             <DialogContent 
                 showCloseButton={false}
-                className="sm:max-w-[500px] p-0 overflow-hidden border-[#E2E8F0] rounded-[8px] gap-0"
+                className="sm:max-w-[650px] p-0 overflow-hidden border-[#E2E8F0] rounded-[8px] gap-0"
             >
-                <div className="bg-white border-b border-[#F1F5F9] px-6 py-5">
-                    <div className="flex justify-between items-start">
+                <div className="bg-white border-b border-[#F1F5F9] px-6 py-5 pr-14">
+                    <div className="flex justify-between items-start gap-6">
                         <div className="space-y-1">
                             <p className="text-[10px] font-bold text-[#4B7BEC] uppercase tracking-widest">Timesheet Detail</p>
-                            <DialogTitle className="text-xl font-bold text-[#0f172a]">
+                            <DialogTitle className="text-xl font-bold text-[#0f172a] leading-tight">
                                 {getTaskTitle(selectedLog.task_id)}
                             </DialogTitle>
                         </div>
@@ -56,6 +58,17 @@ export function TimesheetDetailModal({
                 </div>
 
                 <div className="max-h-[70vh] overflow-y-auto custom-scrollbar">
+                    {isPMView && selectedLog.is_anomaly && (
+                        <div className="bg-rose-50 border-b border-rose-100 px-6 py-3 flex items-start gap-3">
+                            <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+                            <div>
+                                <p className="text-xs font-bold text-rose-700 uppercase tracking-wider mb-0.5">Anomaly Detected</p>
+                                <p className="text-sm font-medium text-rose-600 leading-relaxed">
+                                    {selectedLog.anomaly_reason || "System flagged this timesheet for review due to unusual patterns."}
+                                </p>
+                            </div>
+                        </div>
+                    )}
                     <div className="p-6 space-y-6">
                         {/* Info Grid */}
                         <div className="flex flex-col sm:grid sm:grid-cols-3 gap-4">
@@ -157,14 +170,6 @@ export function TimesheetDetailModal({
                     </div>
                 </div>
 
-                <div className="p-6 border-t border-[#F1F5F9] bg-[#F8FAFC] flex justify-end">
-                    <Button 
-                        onClick={onClose} 
-                        className="bg-[#0f172a] hover:bg-[#1e293b] text-white rounded-[4px] px-8"
-                    >
-                        Close
-                    </Button>
-                </div>
             </DialogContent>
         </Dialog>
     );
