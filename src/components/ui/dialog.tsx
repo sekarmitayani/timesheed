@@ -69,7 +69,7 @@ function DialogContent({
         {children}
         <DialogPrimitive.Close
           data-slot="dialog-close"
-          className="absolute top-4 right-4 p-1.5 bg-[#4B7BEC] text-white rounded-md focus:outline-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+          className="absolute top-4 right-4 p-1.5 text-slate-500 focus:outline-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
         >
           <XIcon />
           <span className="sr-only">Close</span>
