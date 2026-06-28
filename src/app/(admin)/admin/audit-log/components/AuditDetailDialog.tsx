@@ -88,14 +88,6 @@ export function AuditDetailDialog({ open, onOpenChange, log }: AuditDetailDialog
                     </div>
                 </div>
 
-                <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end">
-                    <button 
-                        onClick={() => onOpenChange(false)}
-                        className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors shadow-sm"
-                    >
-                        Close
-                    </button>
-                </div>
             </DialogContent>
         </Dialog>
     );
