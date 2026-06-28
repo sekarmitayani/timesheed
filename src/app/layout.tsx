@@ -5,7 +5,7 @@ import { SessionExpiryDialog } from "@/components/layout/SessionExpiryDialog";
 import QueryProvider from "@/components/providers/query-provider";
 
 export const metadata: Metadata = {
-  title: "Haerarchy – Enterprise Project Management",
+  title: "Haerarchy",
   description: "AI-Powered Project & Workforce Management System",
   icons: {
     icon: [

@@ -64,9 +64,9 @@ export default function LoginPage() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
-                        className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2568C1] to-[#1a4f99] shadow-2xl shadow-[#2568C1]/25 mb-4"
+                        className="inline-flex h-16 w-16 items-center justify-center rounded-2xl shadow-2xl shadow-[#2568C1]/25 mb-4"
                     >
-                        <span className="text-2xl font-extrabold text-white tracking-tighter">H</span>
+                        <img src="/logo.png" alt="Haerarchy Logo" className="h-full w-full object-contain rounded-2xl" />
                     </motion.div>
                     <h1 className="text-3xl font-bold tracking-tight text-[#0f172a]">Haerarchy</h1>
                     <p className="text-sm text-[#64748b] mt-2">
