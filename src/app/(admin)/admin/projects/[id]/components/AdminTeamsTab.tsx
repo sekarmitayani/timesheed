@@ -238,11 +238,6 @@ export function AdminTeamsTab({
                         </div>
                     </div>
 
-                    <div className="mt-4 flex justify-end">
-                        <Button variant="outline" className="h-9 px-6 rounded-lg text-xs font-bold border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700" onClick={() => setIsDetailOpen(false)}>
-                            Close
-                        </Button>
-                    </div>
                 </DialogContent>
             </Dialog>
         </div>
