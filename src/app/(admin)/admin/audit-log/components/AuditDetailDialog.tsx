@@ -54,11 +54,11 @@ export function AuditDetailDialog({ open, onOpenChange, log }: AuditDetailDialog
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-[#e2e8f0]" showCloseButton={false}>
-                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
+            <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-[#e2e8f0]">
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-14">
                     <div className="flex items-center gap-2 mb-2">
                         <Badge variant="outline" className="text-[10px] uppercase font-bold bg-white text-[#2568C1] border-blue-100">
-                            {log.target_table} #{log.record_id}
+                            {log.target_table.replace(/s$/i, '')} #{log.record_id}
                         </Badge>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                             {log.action}
