@@ -36,7 +36,6 @@ export function TimesheetDetailModal({
     return (
         <Dialog open={!!selectedLog} onOpenChange={(open) => !open && onClose()}>
             <DialogContent 
-                showCloseButton={false}
                 className="sm:max-w-[650px] p-0 overflow-hidden border-[#E2E8F0] rounded-[8px] gap-0"
             >
                 <div className="bg-white border-b border-[#F1F5F9] px-6 py-5 pr-14">
@@ -44,7 +43,7 @@ export function TimesheetDetailModal({
                         <div className="space-y-1">
                             <p className="text-[10px] font-bold text-[#4B7BEC] uppercase tracking-widest">Timesheet Detail</p>
                             <DialogTitle className="text-xl font-bold text-[#0f172a] leading-tight">
-                                {getTaskTitle(selectedLog.task_id)}
+                                {selectedLog.task?.title || getTaskTitle(selectedLog.task_id)}
                             </DialogTitle>
                         </div>
                         <Badge className={cn(
