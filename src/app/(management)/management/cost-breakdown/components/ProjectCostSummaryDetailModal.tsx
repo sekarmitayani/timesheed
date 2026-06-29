@@ -62,11 +62,14 @@ export function ProjectCostSummaryDetailModal({ project, open, onOpenChange }: P
         return 'bg-slate-100 text-slate-500';
     };
 
-    const pmMember = projectDetails?.members?.find((m: any) => m.role_in_project === "project_manager");
+    const pmMember = projectDetails?.members?.find((m: any) => {
+        const role = m.role_in_project?.toLowerCase().replace(/\s+/g, '') || "";
+        return role === "projectmanager" || role === "pm";
+    });
     const pmName = pmMember?.user?.full_name || "No PM Assigned";
 
-    const salaryCost = project ? (project.total_cost * (project.salary_percent / 100)) : 0;
-    const resourceCost = project ? (project.total_cost * (project.resource_percent / 100)) : 0;
+    const salaryCost = project ? project.salary_cost : 0;
+    const resourceCost = project ? project.resource_cost : 0;
 
     const totalPages = logsData?.pagination?.total ? Math.ceil(logsData.pagination.total / limit) : 1;
 

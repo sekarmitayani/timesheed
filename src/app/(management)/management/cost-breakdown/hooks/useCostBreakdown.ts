@@ -5,7 +5,7 @@ export function useCostBreakdownSummary(days: number | string = 30, category: st
     return useQuery({
         queryKey: ["costBreakdownSummary", days, category],
         queryFn: () => managementService.getCostBreakdownSummary(days, category),
-        staleTime: 5 * 60 * 1000,
+        staleTime: 0,
     });
 }
 
@@ -13,7 +13,7 @@ export function useCostBreakdownProjects() {
     return useQuery({
         queryKey: ["costBreakdownProjects"],
         queryFn: () => managementService.getCostBreakdownProjects(),
-        staleTime: 5 * 60 * 1000,
+        staleTime: 0,
     });
 }
 

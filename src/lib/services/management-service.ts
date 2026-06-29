@@ -178,6 +178,8 @@ export interface ProjectCostItem {
     project_name: string;
     status: string;
     total_cost: number;
+    salary_cost: number;
+    resource_cost: number;
     salary_percent: number;
     resource_percent: number;
 }
