@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,7 +10,7 @@ import { CurrencyInput } from "@/components/ui/currency-input";
 import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import {
     Loader2, WalletCards, FileText, Calendar, Trash2, 
-    ChevronDown, ChevronUp, CheckCircle2, Clock 
+    ChevronDown, ChevronUp, CheckCircle2, Clock, AlertTriangle
 } from "lucide-react";
 import { 
     ContractPayment, ContractSummary, PayrollSummaryItem, 
@@ -60,8 +60,23 @@ export function PaymentsDialog({
     paymentForm, setPaymentForm, onSave, onDelete, onEdit, resetForm
 }: PaymentsDialogProps) {
     const [showBreakdown, setShowBreakdown] = useState(false);
+    const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+    const [editConfirmOpen, setEditConfirmOpen] = useState(false);
+
+    const handleDeleteConfirm = () => {
+        if (deleteConfirmId !== null) {
+            onDelete(deleteConfirmId);
+            setDeleteConfirmId(null);
+        }
+    };
+
+    const handleSaveConfirm = () => {
+        setEditConfirmOpen(false);
+        onSave(paymentForm);
+    };
 
     return (
+        <>
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden border-[#e2e8f0] bg-white">
                 <div className="bg-gradient-to-r from-emerald-50 to-white border-b border-emerald-100 px-6 py-5 flex items-center gap-4">
@@ -209,7 +224,7 @@ export function PaymentsDialog({
                                                 </div>
                                                 <div className="flex flex-col items-end gap-1">
                                                     <span className="text-sm font-black text-emerald-600 tracking-tight">Rp {formatNumber(p.amount)}</span>
-                                                    <Button variant="ghost" size="icon" className="h-5 w-5 text-red-400 hover:text-red-700 hover:bg-red-50" onClick={e => { e.stopPropagation(); onDelete(p.id); }} disabled={isSavingPayment}>
+                                                    <Button variant="ghost" size="icon" className="h-5 w-5 text-red-400 hover:text-red-700 hover:bg-red-50" onClick={e => { e.stopPropagation(); setDeleteConfirmId(p.id); }} disabled={isSavingPayment}>
                                                         <Trash2 className="h-3 w-3" />
                                                     </Button>
                                                 </div>
@@ -263,7 +278,7 @@ export function PaymentsDialog({
                                     <label className="text-xs font-bold text-slate-700">Attached Description</label>
                                     <Input className="h-9 text-sm border-slate-200" placeholder="Optional notes regarding clearance..." value={paymentForm.description || ""} onChange={e => setPaymentForm({ ...paymentForm, description: e.target.value })} disabled={isSavingPayment} />
                                 </div>
-                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 shadow-sm h-10 mt-4 text-sm font-bold tracking-wide" onClick={() => onSave(paymentForm)} disabled={isSavingPayment}>
+                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 shadow-sm h-10 mt-4 text-sm font-bold tracking-wide" onClick={() => editingPaymentId ? setEditConfirmOpen(true) : onSave(paymentForm)} disabled={isSavingPayment}>
                                     {isSavingPayment ? <Loader2 className="h-4 w-4 animate-spin" /> : editingPaymentId ? "Commit Changes" : "Commit Execution"}
                                 </Button>
                             </div>
@@ -272,5 +287,49 @@ export function PaymentsDialog({
                 </div>
             </DialogContent>
         </Dialog>
+
+        {/* Delete Confirmation Modal */}
+        <Dialog open={deleteConfirmId !== null} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
+            <DialogContent showCloseButton={false} className="sm:max-w-md bg-white border-[#e2e8f0]">
+                <DialogHeader>
+                    <div className="mx-auto w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                        <AlertTriangle className="h-6 w-6 text-red-600" />
+                    </div>
+                    <DialogTitle className="text-center text-xl font-bold text-slate-800">Delete Ledger Entry?</DialogTitle>
+                </DialogHeader>
+                <div className="text-center text-sm text-slate-500 py-2">
+                    This will permanently remove the payment record. 
+                    This action represents data destruction and cannot be undone.
+                </div>
+                <DialogFooter className="sm:justify-center gap-2 pt-4">
+                    <Button variant="outline" onClick={() => setDeleteConfirmId(null)} className="border-slate-200">Cancel</Button>
+                    <Button variant="destructive" onClick={handleDeleteConfirm} className="bg-red-400/90 hover:bg-red-500 min-w-[120px]">
+                        Delete Identity
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+        {/* Edit Confirmation Modal */}
+        <Dialog open={editConfirmOpen} onOpenChange={setEditConfirmOpen}>
+            <DialogContent showCloseButton={false} className="sm:max-w-md bg-white border-[#e2e8f0]">
+                <DialogHeader>
+                    <div className="mx-auto w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
+                        <AlertTriangle className="h-6 w-6 text-amber-600" />
+                    </div>
+                    <DialogTitle className="text-center text-xl font-bold text-slate-800">Confirm Changes?</DialogTitle>
+                </DialogHeader>
+                <div className="text-center text-sm text-slate-500 py-2">
+                    Are you sure you want to commit these changes to the existing payment record?
+                </div>
+                <DialogFooter className="sm:justify-center gap-2 pt-4">
+                    <Button variant="outline" onClick={() => setEditConfirmOpen(false)} className="border-slate-200">Cancel</Button>
+                    <Button onClick={handleSaveConfirm} className="bg-amber-500 hover:bg-amber-600 min-w-[120px]">
+                        Commit Changes
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+        </>
     );
 }
