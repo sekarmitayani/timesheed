@@ -58,14 +58,9 @@ export function TimesheetDetailModal({
 
                 <div className="max-h-[70vh] overflow-y-auto custom-scrollbar">
                     {isPMView && selectedLog.is_anomaly && (
-                        <div className="bg-rose-50 border-b border-rose-100 px-6 py-3 flex items-start gap-3">
-                            <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
-                            <div>
-                                <p className="text-xs font-bold text-rose-700 uppercase tracking-wider mb-0.5">Anomaly Detected</p>
-                                <p className="text-sm font-medium text-rose-600 leading-relaxed">
-                                    {selectedLog.anomaly_reason || "System flagged this timesheet for review due to unusual patterns."}
-                                </p>
-                            </div>
+                        <div className="bg-rose-50 border-b border-rose-100 px-6 py-3 flex items-center gap-3">
+                            <AlertCircle className="w-5 h-5 text-rose-500 shrink-0" />
+                            <p className="text-xs font-bold text-rose-700 uppercase tracking-wider">Anomaly Detected</p>
                         </div>
                     )}
                     <div className="p-6 space-y-6">
