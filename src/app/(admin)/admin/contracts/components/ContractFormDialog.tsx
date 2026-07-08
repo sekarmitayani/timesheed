@@ -34,7 +34,7 @@ export function ContractFormDialog({
 }: ContractFormDialogProps) {
     return (
         <Dialog open={open} onOpenChange={v => !isSaving && onOpenChange(v)}>
-            <DialogContent showCloseButton={false} className="sm:max-w-[550px] p-0 overflow-hidden border-[#e2e8f0]">
+            <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-[#e2e8f0]">
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                     <DialogTitle className="text-xl text-[#0f172a]">{editId ? "Edit Contract Data" : "New Contract Setup"}</DialogTitle>
                     <DialogDescription className="text-sm">

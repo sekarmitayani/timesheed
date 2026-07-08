@@ -100,7 +100,7 @@ export function TaskFormDialog({
 
     return (
         <Dialog open={isOpen} onOpenChange={open => !isSaving && onClose(open)}>
-            <DialogContent showCloseButton={false} className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0] shadow-2xl rounded-md bg-white flex flex-col text-slate-900">
+            <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0] shadow-2xl rounded-md bg-white flex flex-col text-slate-900">
                 <DialogDescription className="sr-only">Form to create or edit a task.</DialogDescription>
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                     <DialogTitle className="text-lg font-bold text-slate-900">

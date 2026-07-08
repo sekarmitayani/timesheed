@@ -27,7 +27,7 @@ export function ConfirmDeleteDialog({
 
     return (
         <Dialog open={open} onOpenChange={v => !isDeleting && onOpenChange(v)}>
-            <DialogContent showCloseButton={false} className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <div className="mx-auto w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
                         <AlertTriangle className="h-6 w-6 text-red-600" />

@@ -46,7 +46,7 @@ export function SessionExpiryDialog() {
 
     return (
         <Dialog open={isSessionExpired} onOpenChange={() => {}}>
-            <DialogContent className="sm:max-w-md [&>button]:hidden">
+            <DialogContent className="sm:max-w-md">
                 <DialogHeader className="flex flex-col items-center gap-2 pt-4">
                     <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
                         <AlertCircle className="w-6 h-6 text-red-600" />

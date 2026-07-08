@@ -48,7 +48,7 @@ export function LiabilityDetailModal({ contractId, open, onOpenChange }: Liabili
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent showCloseButton={false} className="sm:max-w-3xl md:max-w-4xl lg:max-w-5xl max-h-[90vh] overflow-y-auto bg-white p-0 gap-0 border-none shadow-xl rounded-xl">
+            <DialogContent className="sm:max-w-3xl md:max-w-4xl lg:max-w-5xl max-h-[90vh] overflow-y-auto bg-white p-0 gap-0 border-none shadow-xl rounded-xl">
                 <DialogHeader className="p-6 pb-4 sticky top-0 bg-white/95 backdrop-blur z-10 border-b border-slate-100 flex flex-row items-center justify-between">
                     <DialogTitle className="text-xl font-bold flex items-center gap-2 text-slate-800">
                         <FileText className="w-5 h-5 text-[#4B7BEC]" />

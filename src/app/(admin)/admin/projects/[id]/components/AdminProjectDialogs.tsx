@@ -101,7 +101,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
 
             {/* RESOURCE CREATE DIALOG */}
             <Dialog open={resCreateOpen} onOpenChange={actions.setResCreateOpen}>
-                <DialogContent showCloseButton={false} className="sm:max-w-[480px] p-0 overflow-hidden border-[#e2e8f0]">
+                <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden border-[#e2e8f0]">
                     <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                         <DialogTitle className="text-lg font-bold text-slate-900">Request Resource</DialogTitle>
                         <DialogDescription className="text-xs">Submit a new resource request for this project.</DialogDescription>
@@ -232,7 +232,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
 
             {/* ASSIGN MEMBER DIALOG */}
             <Dialog open={assignOpen} onOpenChange={o => !isSaving && actions.setAssignOpen(o)}>
-                <DialogContent showCloseButton={false} className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]">
+                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]">
                     <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                         <DialogTitle className="text-lg font-bold text-slate-900">Assign Member</DialogTitle>
                         <DialogDescription className="text-xs">Add a new user to this project and define their rate.</DialogDescription>

@@ -290,7 +290,7 @@ export function PaymentsDialog({
 
         {/* Delete Confirmation Modal */}
         <Dialog open={deleteConfirmId !== null} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
-            <DialogContent showCloseButton={false} className="sm:max-w-md bg-white border-[#e2e8f0]">
+            <DialogContent className="sm:max-w-md bg-white border-[#e2e8f0]">
                 <DialogHeader>
                     <div className="mx-auto w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
                         <AlertTriangle className="h-6 w-6 text-red-600" />
@@ -312,7 +312,7 @@ export function PaymentsDialog({
 
         {/* Edit Confirmation Modal */}
         <Dialog open={editConfirmOpen} onOpenChange={setEditConfirmOpen}>
-            <DialogContent showCloseButton={false} className="sm:max-w-md bg-white border-[#e2e8f0]">
+            <DialogContent className="sm:max-w-md bg-white border-[#e2e8f0]">
                 <DialogHeader>
                     <div className="mx-auto w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
                         <AlertTriangle className="h-6 w-6 text-amber-600" />

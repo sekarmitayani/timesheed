@@ -85,7 +85,7 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
         <>
             {/* TASK CREATE / EDIT DIALOG */}
             <Dialog open={taskDialogOpen} onOpenChange={o => !isSaving && actions.setTaskDialogOpen(o)}>
-                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]" showCloseButton={false}>
+                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]">
                     <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                         <DialogTitle className="text-lg font-bold text-slate-900">{taskEditing ? "Edit Task" : "New Task"}</DialogTitle>
                         <DialogDescription className="text-xs">{taskEditing ? `Editing "${taskEditing.title}"` : "Create a new task for this project"}</DialogDescription>
@@ -161,7 +161,7 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
 
             {/* RESOURCE CREATE / EDIT DIALOG */}
             <Dialog open={resDialogOpen} onOpenChange={o => !isSaving && actions.setResDialogOpen(o)}>
-                <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden border-[#e2e8f0]" showCloseButton={false}>
+                <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden border-[#e2e8f0]">
                     <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                         <DialogTitle className="text-lg font-bold text-slate-900">{resEditing ? "Edit Request" : "New Resource Request"}</DialogTitle>
                         <DialogDescription className="text-xs">{resEditing ? "Update your resource request details" : "Submit a request for resources"}</DialogDescription>
@@ -195,7 +195,7 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
 
             {/* RESOURCE DETAIL DIALOG */}
             <Dialog open={resDetailOpen} onOpenChange={actions.setResDetailOpen}>
-                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]" showCloseButton={false}>
+                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]">
                     <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                         <DialogTitle className="text-lg font-bold text-slate-900">Resource Request Details</DialogTitle>
                         <DialogDescription className="text-xs">Detailed information for this resource request.</DialogDescription>
@@ -267,7 +267,7 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
 
             {/* DELETE CONFIRMATION DIALOG */}
             <Dialog open={!!deleteTarget} onOpenChange={o => !isDeleting && actions.setDeleteTarget(null)}>
-                <DialogContent className="sm:max-w-[400px]" showCloseButton={false}>
+                <DialogContent className="sm:max-w-[400px]">
                     <div className="pt-4 text-center">
                         <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4"><AlertTriangle className="h-6 w-6" /></div>
                         <DialogTitle className="text-xl font-bold text-slate-900">Delete {deleteTarget?.type === "task" ? "Task" : "Resource Request"}?</DialogTitle>

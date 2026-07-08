@@ -24,7 +24,7 @@ export function ClockOutDialog({
     return (
         <Dialog open={open} onOpenChange={o => !isClocking && onOpenChange(o)}>
             <DialogContent 
-                showCloseButton={false}
+               
                 className="sm:max-w-[450px] p-0 overflow-hidden border-[#E2E8F0] rounded-[6px] gap-0 shadow-lg"
             >
                 <div className="bg-white px-6 py-5 border-b border-[#F1F5F9]">

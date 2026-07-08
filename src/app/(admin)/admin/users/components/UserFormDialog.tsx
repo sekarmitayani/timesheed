@@ -27,7 +27,7 @@ export function UserFormDialog({
 }: UserFormDialogProps) {
     return (
         <Dialog open={open} onOpenChange={(open) => !isSaving && onOpenChange(open)}>
-            <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden border-[#e2e8f0] [&>button]:hidden">
+            <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden border-[#e2e8f0]">
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 flex flex-col gap-1">
                     <DialogTitle className="text-xl text-[#0f172a]">{editId ? "Edit User Profile" : "Register New User"}</DialogTitle>
                     <DialogDescription className="text-sm">

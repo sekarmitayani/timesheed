@@ -224,7 +224,7 @@ export function Topbar() {
                             <DropdownMenuSeparator />
                             <ScrollArea className="h-64">
                                 {notifications.length === 0 ? (
-                                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-4">
+                                    <div className="flex flex-col items-center justify-center min-h-[14rem] text-muted-foreground p-4">
                                         <Bell className="h-8 w-8 mb-2 opacity-20" />
                                         <span className="text-xs">No notifications</span>
                                     </div>

@@ -21,7 +21,7 @@ export function DeleteConfirmDialog({
 }: DeleteConfirmDialogProps) {
     return (
         <Dialog open={isOpen} onOpenChange={open => !isDeleting && onClose()}>
-            <DialogContent showCloseButton={false} className="sm:max-w-sm">
+            <DialogContent className="sm:max-w-sm">
                 <div className="flex flex-col items-center gap-4 py-4">
                     <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
                         <AlertTriangle className="h-6 w-6" />

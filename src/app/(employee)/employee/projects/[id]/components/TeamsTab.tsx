@@ -103,7 +103,7 @@ export function TeamsTab({ members, totalCount, search, setSearch }: TeamsTabPro
             </div>
 
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-                <DialogContent showCloseButton={false} className="sm:max-w-[425px] p-0 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden">
+                <DialogContent className="sm:max-w-[425px] p-0 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden">
                     <div className="p-6">
                         <DialogHeader className="flex flex-row items-start gap-4 space-y-0 pb-4 border-b border-slate-100">
                             <Avatar className="h-16 w-16 border-2 border-slate-50 shadow-sm">
