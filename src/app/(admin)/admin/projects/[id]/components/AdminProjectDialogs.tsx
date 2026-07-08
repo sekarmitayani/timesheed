@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CurrencyInput } from "@/components/ui/currency-input";
+import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -85,9 +86,15 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                                 <CurrencyInput value={editForm.budget_cost || ""} onChange={(v: any) => actions.setEditForm({ ...editForm, budget_cost: Number(v) || 0 })} disabled={isSaving} />
                             </div>
                         </div>
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Cost Threshold</label>
-                            <CurrencyInput value={editForm.budget_cost_threshold || ""} onChange={(v: any) => actions.setEditForm({ ...editForm, budget_cost_threshold: Number(v) || 0 })} disabled={isSaving} />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Cost Threshold</label>
+                                <CurrencyInput value={editForm.budget_cost_threshold || ""} onChange={(v: any) => actions.setEditForm({ ...editForm, budget_cost_threshold: Number(v) || 0 })} disabled={isSaving} />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Project Deadline</label>
+                                <CustomDatePicker date={editForm.deadline || ""} onDateChange={(d) => actions.setEditForm({ ...editForm, deadline: d })} disabled={isSaving} className="h-10 text-sm" placeholder="Optional" />
+                            </div>
                         </div>
                     </div>
                     <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">

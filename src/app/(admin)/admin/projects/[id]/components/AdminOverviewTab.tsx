@@ -79,7 +79,7 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4 pt-2">
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
                             <div className="flex items-center gap-2.5">
                                 <CalendarDays className="h-4 w-4 text-slate-300" />
                                 <div className="flex flex-col">
@@ -92,6 +92,13 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
                                 <div className="flex flex-col">
                                     <span className="text-[10px] font-bold text-slate-400 uppercase">Last Sync</span>
                                     <span className="text-xs font-bold text-slate-600">{format(new Date(project.updated_at), "dd MMM yyyy")}</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2.5">
+                                <CalendarDays className="h-4 w-4 text-slate-300" />
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase">Deadline</span>
+                                    <span className="text-xs font-bold text-slate-600">{project.deadline ? format(new Date(project.deadline), "dd MMM yyyy") : "-"}</span>
                                 </div>
                             </div>
                         </div>

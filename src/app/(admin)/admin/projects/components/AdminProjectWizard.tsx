@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { CurrencyInput } from "@/components/ui/currency-input";
+import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { Loader2, Check, ArrowRight, ArrowLeft, Save, UserPlus, Trash2 } from "lucide-react";
 import { adminContractService } from "@/lib/services/admin-contracts";
 import { useState } from "react";
@@ -125,6 +126,16 @@ export function AdminProjectWizard({
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Planned Cost / RAB (Rp)</label>
                                     <CurrencyInput value={form.budget_cost || ""} onChange={(v: any) => setForm({ ...form, budget_cost: Number(v) || 0 })} disabled={isSaving} />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Cost Threshold (Rp)</label>
+                                    <CurrencyInput value={form.budget_cost_threshold || ""} onChange={(v: any) => setForm({ ...form, budget_cost_threshold: Number(v) || 0 })} disabled={isSaving} />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Project Deadline</label>
+                                    <CustomDatePicker date={form.deadline || ""} onDateChange={(d) => setForm({ ...form, deadline: d })} disabled={isSaving} className="h-10 text-sm" placeholder="Optional" />
                                 </div>
                             </div>
                         </>

@@ -57,6 +57,7 @@ export interface ApiProject {
     budget_revenue: number | null;
     budget_cost: number | null;
     budget_cost_threshold: number | null;
+    deadline: string | null;
     actual_cost?: number;
     created_at: string;
     updated_at: string;

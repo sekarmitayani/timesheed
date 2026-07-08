@@ -18,6 +18,7 @@ export interface CreateProjectPayload {
     budget_revenue?: number;
     budget_cost?: number;
     budget_cost_threshold?: number;
+    deadline?: string;
 }
 
 export interface UpdateProjectPayload {
@@ -28,6 +29,7 @@ export interface UpdateProjectPayload {
     budget_revenue?: number;
     budget_cost?: number;
     budget_cost_threshold?: number;
+    deadline?: string;
 }
 
 export interface AssignMemberPayload {
@@ -62,9 +64,15 @@ export const projectService = {
     // === ADMIN ONLY ===
 
     async createProject(payload: CreateProjectPayload): Promise<ApiProject> {
+        const data = { ...payload };
+        if (data.deadline) {
+            if (data.deadline.length === 10) data.deadline = `${data.deadline}T00:00:00Z`;
+        } else {
+            delete data.deadline;
+        }
         return fetchApi("/project/create", {
             method: "POST",
-            body: JSON.stringify(payload),
+            body: JSON.stringify(data),
         });
     },
 
@@ -86,9 +94,15 @@ export const projectService = {
     // === OPERATIONAL (Admin / PM) ===
 
     async updateProject(projectId: number | string, payload: UpdateProjectPayload): Promise<ApiProject> {
+        const data = { ...payload };
+        if (data.deadline) {
+            if (data.deadline.length === 10) data.deadline = `${data.deadline}T00:00:00Z`;
+        } else {
+            delete data.deadline;
+        }
         const res = await fetchApi(`/project/update/${projectId}`, {
             method: "PUT",
-            body: JSON.stringify(payload),
+            body: JSON.stringify(data),
         });
         // Backend now returns { project: {...}, contracts_deactivated: N }
         return res.project || res;

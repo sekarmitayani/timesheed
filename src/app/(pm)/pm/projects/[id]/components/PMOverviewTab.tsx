@@ -218,12 +218,22 @@ export function PMOverviewTab({ project, members, tasks = [] }: PMOverviewTabPro
                             </div>
                         </div>
 
-                        <div className="space-y-1">
-                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                                Created At
-                            </span>
-                            <div className="text-sm font-bold text-slate-800">
-                                {format(new Date(project.created_at), "dd MMMM yyyy, HH:mm")}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                                    Created At
+                                </span>
+                                <div className="text-sm font-bold text-slate-800">
+                                    {format(new Date(project.created_at), "dd MMMM yyyy, HH:mm")}
+                                </div>
+                            </div>
+                            <div className="space-y-1">
+                                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                                    Deadline
+                                </span>
+                                <div className="text-sm font-bold text-slate-800">
+                                    {project.deadline ? format(new Date(project.deadline), "dd MMMM yyyy") : "Not Set"}
+                                </div>
                             </div>
                         </div>
                     </CardContent>

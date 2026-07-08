@@ -29,9 +29,9 @@ export function useAdminProjectsData() {
     const [showAssignForm, setShowAssignForm] = useState(false);
 
     // --- Form States ---
-    const [projectForm, setProjectForm] = useState({
+    const [projectForm, setProjectForm] = useState<any>({
         name: "", client_name: "", client_email: "",
-        budget_revenue: 0, budget_cost: 0, budget_cost_threshold: 0
+        budget_revenue: 0, budget_cost: 0, budget_cost_threshold: 0, deadline: ""
     });
     const [selectedPmId, setSelectedPmId] = useState<string>("");
     const [pendingEmployees, setPendingEmployees] = useState<any[]>([]);
@@ -187,7 +187,7 @@ export function useAdminProjectsData() {
 
     // --- Helpers ---
     const resetWizard = () => {
-        setProjectForm({ name: "", client_name: "", client_email: "", budget_revenue: 0, budget_cost: 0, budget_cost_threshold: 0 });
+        setProjectForm({ name: "", client_name: "", client_email: "", budget_revenue: 0, budget_cost: 0, budget_cost_threshold: 0, deadline: "" });
         setSelectedPmId("");
         setPendingEmployees([]);
         setWizardStep(1);

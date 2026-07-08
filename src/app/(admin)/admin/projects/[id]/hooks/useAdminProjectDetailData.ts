@@ -42,9 +42,9 @@ export function useAdminProjectDetailData(projectId: string) {
     const [selectedRes, setSelectedRes] = useState<any>(null);
 
     // Form States
-    const [editForm, setEditForm] = useState({
-        name: "", client_name: "", client_email: "", status: "",
-        budget_revenue: 0, budget_cost: 0, budget_cost_threshold: 0
+    const [editForm, setEditForm] = useState<any>({
+        name: "", client_name: "", client_email: "", status: "active",
+        budget_revenue: 0, budget_cost: 0, budget_cost_threshold: 0, deadline: ""
     });
 
     const [assignForm, setAssignForm] = useState<AssignMemberPayload>({
@@ -250,7 +250,8 @@ export function useAdminProjectDetailData(projectId: string) {
             status: project.status,
             budget_revenue: project.budget_revenue || 0,
             budget_cost: project.budget_cost || 0,
-            budget_cost_threshold: project.budget_cost_threshold || 0
+            budget_cost_threshold: project.budget_cost_threshold || 0,
+            deadline: project.deadline || ""
         });
         setEditOpen(true);
     };
