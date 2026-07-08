@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Bell, LogOut, User as UserIcon, Shield, ArrowLeft, Menu } from "lucide-react";
+import { Search, Bell, LogOut, User as UserIcon, Shield, ArrowLeft, Menu, Check, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { roleLabels, roleColors } from "@/lib/rbac";
+import { Notification } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -21,14 +22,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchResults, useSearchResults } from "@/components/layout/search-results";
+import { NotificationDetailModal } from "@/components/layout/NotificationDetailModal";
 
 export function Topbar() {
-    const { user, notifications, logout, markNotificationRead, isImpersonating, exitImpersonation, toggleMobileSidebar } = useAuthStore();
+    const { 
+        user, notifications, logout, isImpersonating, exitImpersonation, toggleMobileSidebar,
+        fetchNotifications, markNotificationRead, markAllNotificationsRead, clearAllNotifications, deleteNotification
+    } = useAuthStore();
     const [showSearch, setShowSearch] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [activeIndex, setActiveIndex] = useState(-1);
+    const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-    const unreadCount = notifications.filter((n) => !n.read).length;
+    const unreadCount = notifications.filter((n) => !n.is_read).length;
     const router = useRouter();
 
     const results = useSearchResults(searchQuery, user?.role ?? "employee");
@@ -48,6 +54,16 @@ export function Topbar() {
         window.addEventListener("keydown", handler);
         return () => window.removeEventListener("keydown", handler);
     }, [showSearch, closeSearch]);
+
+    // Polling notifications every 60 seconds
+    useEffect(() => {
+        if (!user) return;
+        fetchNotifications();
+        const interval = setInterval(() => {
+            fetchNotifications();
+        }, 60000);
+        return () => clearInterval(interval);
+    }, [user, fetchNotifications]);
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "ArrowDown") {
@@ -175,7 +191,7 @@ export function Topbar() {
                     </div>
 
                     {/* Notifications */}
-                    <DropdownMenu>
+                    <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="relative h-9 w-9">
                                 <Bell className="h-4 w-4" />
@@ -191,39 +207,71 @@ export function Topbar() {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-80">
-                            <DropdownMenuLabel className="flex items-center justify-between">
-                                <span>Notifications</span>
-                                <Badge variant="secondary" className="text-xs">{unreadCount} new</Badge>
+                            <DropdownMenuLabel className="flex flex-col gap-2 pb-2">
+                                <div className="flex items-center justify-between">
+                                    <span>Notifications</span>
+                                    <Badge variant="secondary" className="text-xs">{unreadCount} new</Badge>
+                                </div>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <Button variant="outline" size="sm" className="h-6 text-[10px] px-2 gap-1 flex-1" onClick={markAllNotificationsRead}>
+                                        <Check className="h-3 w-3" /> Mark all read
+                                    </Button>
+                                    <Button variant="outline" size="sm" className="h-6 text-[10px] px-2 gap-1 flex-1 text-red-500 hover:text-red-600" onClick={clearAllNotifications}>
+                                        <Trash2 className="h-3 w-3" /> Clear all
+                                    </Button>
+                                </div>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <ScrollArea className="h-64">
-                                {notifications.map((notif) => (
-                                    <DropdownMenuItem
-                                        key={notif.id}
-                                        onClick={() => markNotificationRead(notif.id)}
-                                        className={cn("flex flex-col items-start gap-1 py-3 px-3 cursor-pointer transition-colors", !notif.read && "bg-blue-50/50 hover:bg-blue-50")}
-                                    >
-                                        <div className="flex items-center gap-2 w-full">
-                                            <span className={cn(
-                                                "h-2 w-2 rounded-full shrink-0",
-                                                notif.type === "ai" && "bg-blue-600",
-                                                notif.type === "warning" && "bg-amber-500",
-                                                notif.type === "error" && "bg-red-500",
-                                                notif.type === "success" && "bg-emerald-500",
-                                                notif.type === "info" && "bg-blue-500",
-                                            )} />
-                                            <span className={cn("text-xs truncate", !notif.read ? "font-semibold text-slate-900" : "font-medium text-slate-600")}>{notif.title}</span>
-                                            {!notif.read && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-blue-600" />}
-                                        </div>
-                                        <span className="text-[11px] text-muted-foreground pl-4">{notif.message}</span>
-                                    </DropdownMenuItem>
-                                ))}
+                                {notifications.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-4">
+                                        <Bell className="h-8 w-8 mb-2 opacity-20" />
+                                        <span className="text-xs">No notifications</span>
+                                    </div>
+                                ) : (
+                                    notifications.map((notif) => (
+                                        <DropdownMenuItem
+                                            key={notif.id}
+                                            onClick={() => {
+                                                markNotificationRead(notif.id);
+                                                setSelectedNotification(notif);
+                                            }}
+                                            className={cn("flex items-start justify-between py-3 px-3 cursor-pointer transition-colors group", !notif.is_read && "bg-blue-50/50 hover:bg-blue-50")}
+                                        >
+                                            <div className="flex flex-col items-start gap-1 flex-1 pr-2 overflow-hidden">
+                                                <div className="flex items-center gap-2 w-full">
+                                                    <span className={cn(
+                                                        "h-2 w-2 rounded-full shrink-0",
+                                                        notif.type === "system_alert" && "bg-blue-600",
+                                                        notif.type.includes("alert") || notif.type.includes("deadline") || notif.type.includes("forgot") ? "bg-amber-500" :
+                                                        notif.type.includes("rejected") ? "bg-red-500" :
+                                                        notif.type.includes("approved") || notif.type.includes("disbursed") ? "bg-emerald-500" : "bg-blue-500"
+                                                    )} />
+                                                    <span className={cn("text-xs truncate", !notif.is_read ? "font-semibold text-slate-900" : "font-medium text-slate-600")}>{notif.title}</span>
+                                                    {!notif.is_read && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-blue-600 shrink-0" />}
+                                                </div>
+                                                <span className="text-[11px] text-muted-foreground pl-4 line-clamp-2 w-full whitespace-normal leading-snug">{notif.message}</span>
+                                            </div>
+                                            <Button 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                className="h-6 w-6 opacity-0 group-hover:opacity-100 shrink-0 text-red-500 hover:text-red-600 hover:bg-red-50 transition-opacity"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    deleteNotification(notif.id);
+                                                }}
+                                            >
+                                                <Trash2 className="h-3 w-3" />
+                                            </Button>
+                                        </DropdownMenuItem>
+                                    ))
+                                )}
                             </ScrollArea>
                         </DropdownMenuContent>
                     </DropdownMenu>
 
                     {/* User Menu */}
-                    <DropdownMenu>
+                    <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm" className="gap-2 ml-1">
                                 <Avatar className="h-7 w-7">
@@ -264,6 +312,19 @@ export function Topbar() {
                     </DropdownMenu>
                 </div>
             </header>
+
+            {/* Notification Detail Modal */}
+            <NotificationDetailModal 
+                notification={selectedNotification}
+                open={!!selectedNotification}
+                onOpenChange={(open) => {
+                    if (!open) setSelectedNotification(null);
+                }}
+                onDelete={(id) => {
+                    deleteNotification(id);
+                    setSelectedNotification(null);
+                }}
+            />
         </div>
     );
 }

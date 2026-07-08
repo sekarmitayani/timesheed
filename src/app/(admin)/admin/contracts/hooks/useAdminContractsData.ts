@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminContractService, Contract, CreateContractPayload, UpdateContractPayload, PaymentScheme } from "@/lib/services/admin-contracts";
 import { adminUserService } from "@/lib/services/admin-users";
@@ -163,6 +163,23 @@ export function useAdminContractsData() {
         });
         setFormOpen(true);
     };
+
+    // --- Effects ---
+    useEffect(() => {
+        if (typeof window === "undefined" || !contracts.length) return;
+        const params = new URLSearchParams(window.location.search);
+        const detailId = params.get("detailId");
+        
+        if (detailId) {
+            const c = contracts.find(c => String(c.id) === detailId);
+            if (c && !detailsOpen) {
+                setSelectedContract(c);
+                setDetailsOpen(true);
+                // Clean up URL without reloading
+                window.history.replaceState(null, "", window.location.pathname);
+            }
+        }
+    }, [contracts, detailsOpen]);
 
     const handleSaveContract = () => {
         if (!editId && !contractForm.user_id) { toast.error("Select a user"); return; }

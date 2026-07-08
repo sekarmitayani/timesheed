@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminUserService, CreateUserPayload, UpdateUserPayload } from "@/lib/services/admin-users";
 import { adminContractService, CreateContractPayload, UpdateContractPayload, Contract } from "@/lib/services/admin-contracts";
@@ -260,6 +260,22 @@ export function useAdminUsersData() {
         setIsContractEditorOpen(false);
         resetContractForm();
     };
+
+    // --- Effects ---
+    useEffect(() => {
+        if (typeof window === "undefined" || !mappedUsers.length) return;
+        const params = new URLSearchParams(window.location.search);
+        const detailId = params.get("detailId");
+        
+        if (detailId) {
+            const u = mappedUsers.find(u => u.id === detailId);
+            if (u && !detailsOpen) {
+                openDetails(u);
+                // Clean up URL without reloading
+                window.history.replaceState(null, "", window.location.pathname);
+            }
+        }
+    }, [mappedUsers, detailsOpen]);
 
     const editContract = (c: Contract) => {
         setEditingContractId(c.id);

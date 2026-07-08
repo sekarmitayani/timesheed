@@ -126,7 +126,7 @@ export function useSearchResults(query: string, role: Role) {
                 title: u.full_name,
                 subtitle: u.role,
                 category: "user",
-                href: "/admin/users",
+                href: `/admin/users?detailId=${u.id}`,
             });
         }
 
@@ -146,7 +146,7 @@ export function useSearchResults(query: string, role: Role) {
                 title: c.user_full_name,
                 subtitle: c.contract_type,
                 category: "contract",
-                href: "/admin/contracts",
+                href: `/admin/contracts?detailId=${c.id}`,
             });
         }
 

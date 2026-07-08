@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { User, Notification } from "@/lib/types";
-import { mockNotifications } from "@/lib/mock-data";
 import { fetchApi } from "@/lib/api";
 
 interface AuthState {
@@ -17,7 +16,11 @@ interface AuthState {
     toggleSidebar: () => void;
     toggleMobileSidebar: () => void;
     closeMobileSidebar: () => void;
-    markNotificationRead: (id: string) => void;
+    fetchNotifications: () => Promise<void>;
+    markNotificationRead: (id: number) => Promise<void>;
+    markAllNotificationsRead: () => Promise<void>;
+    deleteNotification: (id: number) => Promise<void>;
+    clearAllNotifications: () => Promise<void>;
     isSessionExpired: boolean;
     setSessionExpired: (expired: boolean) => void;
     checkTokenExpiry: () => void;
@@ -28,7 +31,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     isAuthenticated: typeof window !== "undefined" ? !!localStorage.getItem("token") : false,
     isImpersonating: typeof window !== "undefined" ? !!localStorage.getItem("admin_token") : false,
     isSessionExpired: false,
-    notifications: mockNotifications,
+    notifications: [],
     sidebarCollapsed: false,
     mobileSidebarOpen: false,
     setSessionExpired: (expired: boolean) => set({ isSessionExpired: expired }),
@@ -161,10 +164,56 @@ export const useAuthStore = create<AuthState>((set) => ({
     toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
     toggleMobileSidebar: () => set((s) => ({ mobileSidebarOpen: !s.mobileSidebarOpen })),
     closeMobileSidebar: () => set({ mobileSidebarOpen: false }),
-    markNotificationRead: (id) =>
-        set((s) => ({
-            notifications: s.notifications.map((n) =>
-                n.id === id ? { ...n, read: true } : n
-            ),
-        })),
+    
+    // Notifications Logic
+    fetchNotifications: async () => {
+        try {
+            const data = await fetchApi("/notifications");
+            if (Array.isArray(data)) {
+                set({ notifications: data });
+            }
+        } catch (e) {
+            console.error("Failed to fetch notifications:", e);
+        }
+    },
+    markNotificationRead: async (id: number) => {
+        try {
+            await fetchApi(`/notifications/${id}/read`, { method: "PATCH" });
+            set((s) => ({
+                notifications: s.notifications.map((n) =>
+                    n.id === id ? { ...n, is_read: true } : n
+                ),
+            }));
+        } catch (e) {
+            console.error("Failed to mark notification read:", e);
+        }
+    },
+    markAllNotificationsRead: async () => {
+        try {
+            await fetchApi("/notifications/read-all", { method: "PATCH" });
+            set((s) => ({
+                notifications: s.notifications.map((n) => ({ ...n, is_read: true })),
+            }));
+        } catch (e) {
+            console.error("Failed to mark all read:", e);
+        }
+    },
+    deleteNotification: async (id: number) => {
+        try {
+            await fetchApi(`/notifications/${id}`, { method: "DELETE" });
+            set((s) => ({
+                notifications: s.notifications.filter((n) => n.id !== id),
+            }));
+        } catch (e) {
+            console.error("Failed to delete notification:", e);
+        }
+    },
+    clearAllNotifications: async () => {
+        try {
+            await fetchApi("/notifications/clear-all", { method: "DELETE" });
+            set({ notifications: [] });
+        } catch (e) {
+            console.error("Failed to clear notifications:", e);
+        }
+    },
 }));

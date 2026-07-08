@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { roleMenus } from "@/lib/rbac";
@@ -35,28 +35,49 @@ export function Sidebar() {
                 {/* Logo / Brand + Hamburger Toggle */}
                 <div className="flex h-16 items-center justify-between px-4 border-b border-border">
                     <AnimatePresence mode="wait">
-                        {!sidebarCollapsed && (
+                        {!sidebarCollapsed ? (
                             <motion.div
+                                key="expanded"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="flex items-center gap-2"
+                                className="flex items-center justify-between w-full"
                             >
-                                <div className="flex items-center justify-center">
-                                    <img src="/logo.png" alt="Haerarchy Logo" className="h-8 w-auto object-contain rounded-md" />
+                                <div className="flex items-center gap-2">
+                                    <div className="flex items-center justify-center">
+                                        <img src="/logo.png" alt="Haerarchy Logo" className="h-8 w-auto object-contain rounded-md" />
+                                    </div>
+                                    <span className="font-bold text-sm tracking-tight text-[#0f172a]">Haerarchy</span>
                                 </div>
-                                <span className="font-bold text-sm tracking-tight text-[#0f172a]">Haerarchy</span>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={toggleSidebar}
+                                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                >
+                                    <PanelLeftClose className="h-5 w-5" />
+                                </Button>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="collapsed"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="flex items-center justify-center w-full group cursor-pointer"
+                                onClick={toggleSidebar}
+                            >
+                                <div className="relative flex items-center justify-center h-8 w-8">
+                                    <img 
+                                        src="/logo.png" 
+                                        alt="Logo" 
+                                        className="h-8 w-8 object-contain rounded-md transition-opacity duration-200 group-hover:opacity-0 absolute" 
+                                    />
+                                    <PanelLeftOpen className="h-5 w-5 text-muted-foreground transition-opacity duration-200 opacity-0 group-hover:opacity-100 group-hover:text-foreground absolute" />
+                                </div>
                             </motion.div>
                         )}
                     </AnimatePresence>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={toggleSidebar}
-                        className={cn("h-8 w-8 text-muted-foreground hover:text-foreground", sidebarCollapsed && "mx-auto")}
-                    >
-                        <Menu className="h-4 w-4" />
-                    </Button>
                 </div>
 
                 {/* Navigation */}

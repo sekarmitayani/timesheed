@@ -191,12 +191,16 @@ export interface WorkloadResult {
 
 // ---- Notification ----
 export interface Notification {
-    id: string;
+    id: number;
+    user_id: number;
     title: string;
     message: string;
-    type: "info" | "warning" | "error" | "success" | "ai";
-    read: boolean;
-    createdAt: string;
+    type: string;
+    is_read: boolean;
+    reference_id?: number;
+    reference_type?: string;
+    created_at: string;
+    updated_at?: string;
 }
 
 // ---- Audit Log ----
