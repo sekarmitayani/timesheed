@@ -271,34 +271,45 @@ export function AdminProjectWizard({
                 </div>
 
                 <div className="px-6 py-4 border-t border-slate-100 bg-[#f8fafc] flex items-center justify-between">
-                    <Button variant="ghost" onClick={() => { if (step === 1) onOpenChange(false); else setStep(step - 1); }} disabled={isSaving} className="gap-1.5">
-                        {step === 1 ? "Cancel" : <><ArrowLeft className="h-4 w-4" /> Back</>}
-                    </Button>
-                    {step < 3 ? 
-                        <Button 
-                            onClick={() => {
-                                if (step === 1) {
-                                    if (!form.name?.trim() || !form.client_name?.trim()) {
-                                        toast.error("Please fill in all required fields");
-                                        return;
-                                    }
-                                }
-                                if (step === 2) {
-                                    if (!selectedPmId) {
-                                        toast.error("Please select a Project Manager");
-                                        return;
-                                    }
-                                }
-                                setStep(step + 1);
-                            }} 
-                            className="gap-1.5 bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px]"
-                        >
-                            Next <ArrowRight className="h-4 w-4" />
-                        </Button> :
-                        <Button onClick={onSave} disabled={isSaving} className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 min-w-[160px]">
-                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4" /> Create Project</>}
+                    {step > 1 ? (
+                        <Button variant="ghost" onClick={() => setStep(step - 1)} disabled={isSaving} className="gap-1.5">
+                            <ArrowLeft className="h-4 w-4" /> Back
                         </Button>
-                    }
+                    ) : (
+                        <div />
+                    )}
+                    <div className="flex items-center gap-2">
+                        {step === 1 && (
+                            <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isSaving}>
+                                Cancel
+                            </Button>
+                        )}
+                        {step < 3 ? 
+                            <Button 
+                                onClick={() => {
+                                    if (step === 1) {
+                                        if (!form.name?.trim() || !form.client_name?.trim()) {
+                                            toast.error("Please fill in all required fields");
+                                            return;
+                                        }
+                                    }
+                                    if (step === 2) {
+                                        if (!selectedPmId) {
+                                            toast.error("Please select a Project Manager");
+                                            return;
+                                        }
+                                    }
+                                    setStep(step + 1);
+                                }} 
+                                className="gap-1.5 bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px]"
+                            >
+                                Next <ArrowRight className="h-4 w-4" />
+                            </Button> :
+                            <Button onClick={onSave} disabled={isSaving} className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 min-w-[160px]">
+                                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4" /> Create Project</>}
+                            </Button>
+                        }
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>

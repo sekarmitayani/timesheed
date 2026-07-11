@@ -232,7 +232,7 @@ export function TaskFormDialog({
                     </div>
                 </div>
                 <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2.5">
-                    <Button variant="ghost" onClick={() => onClose(false)} disabled={isSaving} className="font-bold rounded-md px-5 text-xs text-slate-500 h-9">
+                    <Button variant="ghost" onClick={() => onClose(false)} disabled={isSaving} className="text-slate-500">
                         Cancel
                     </Button>
                     <Button onClick={() => {
@@ -241,7 +241,7 @@ export function TaskFormDialog({
                             return;
                         }
                         onSave();
-                    }} disabled={isSaving} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[100px] font-bold rounded-md uppercase tracking-widest text-[10px] h-9 shadow-md shadow-blue-100">
+                    }} disabled={isSaving} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[120px] text-white shadow-md shadow-blue-100">
                         {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
                     </Button>
                 </div>

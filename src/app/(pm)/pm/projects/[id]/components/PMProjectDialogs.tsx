@@ -199,7 +199,7 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
                                 return;
                             }
                             actions.handleSaveRes();
-                        }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] font-bold">
+                        }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px]">
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit Request"}
                         </Button>
                     </div>

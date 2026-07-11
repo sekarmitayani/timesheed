@@ -154,7 +154,7 @@ export function TaskFormDialog({
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Due Date</label>
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Due Date <span className="text-red-500">*</span></label>
                             <CustomDatePicker 
                                 date={form.due_date || undefined} 
                                 onDateChange={(d) => setForm({ ...form, due_date: d })} 
@@ -165,7 +165,7 @@ export function TaskFormDialog({
                         </div>
                         <div className="space-y-1.5">
                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                Complexity (1-5)
+                                Complexity (1-5) <span className="text-red-500">*</span>
                             </label>
                             <Input 
                                 type="number" 
@@ -196,7 +196,7 @@ export function TaskFormDialog({
                         </div>
                     {!isEmployee && (
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Assign To</label>
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Assign To <span className="text-red-500">*</span></label>
                             <Select 
                                 value={String(form.assigned_to_id || "")} 
                                 onValueChange={v => setForm({ ...form, assigned_to_id: Number(v) })}
@@ -216,7 +216,7 @@ export function TaskFormDialog({
                     )}
                     {editingTask && (
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Status</label>
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Status <span className="text-red-500">*</span></label>
                             <Select value={form.status} onValueChange={v => setForm({ ...form, status: v })}>
                                 <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
                                     <SelectValue />
@@ -232,16 +232,16 @@ export function TaskFormDialog({
                     </div>
                 </div>
                 <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2.5">
-                    <Button variant="ghost" onClick={() => onClose(false)} disabled={isSaving} className="font-bold rounded-md px-5 text-xs text-slate-500 h-9">
+                    <Button variant="ghost" onClick={() => onClose(false)} disabled={isSaving} className="text-slate-500">
                         Cancel
                     </Button>
                     <Button onClick={() => {
-                        if (!form.title?.trim() || !form.project_id) {
+                        if (!form.project_id || !form.title?.trim() || !form.due_date || !form.complexity || (!isEmployee && !form.assigned_to_id) || (editingTask && !form.status)) {
                             toast.error("Please fill in all required fields");
                             return;
                         }
                         onSave();
-                    }} disabled={isSaving} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[100px] font-bold rounded-md uppercase tracking-widest text-[10px] h-9 shadow-md shadow-blue-100">
+                    }} disabled={isSaving} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[120px] text-white shadow-md shadow-blue-100">
                         {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
                     </Button>
                 </div>

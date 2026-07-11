@@ -51,7 +51,7 @@ export function ResourceFormDialog({
                 <div className="px-6 py-5 space-y-4">
                     <div className="space-y-1.5">
                         <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Select Project <span className="text-red-500">*</span></label>
-                        <Select value={form.project_id} onValueChange={v => setForm({ ...form, project_id: v })}>
+                        <Select value={form.project_id || undefined} onValueChange={v => setForm({ ...form, project_id: v })}>
                             <SelectTrigger className="h-11"><SelectValue placeholder="Choose a project" /></SelectTrigger>
                             <SelectContent>
                                 {projects.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}
@@ -80,9 +80,9 @@ export function ResourceFormDialog({
                         />
                     </div>
                 </div>
-                <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex gap-3">
-                    <Button variant="ghost" className="flex-1" onClick={() => onOpenChange(false)} disabled={isProcessing}>Cancel</Button>
-                    <Button className="flex-1 bg-[#2568C1] hover:bg-[#1e56a6] text-white" onClick={handleSave} disabled={isProcessing}>
+                <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
+                    <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isProcessing} className="text-slate-500">Cancel</Button>
+                    <Button className="bg-[#2568C1] hover:bg-[#1e56a6] text-white min-w-[120px]" onClick={handleSave} disabled={isProcessing}>
                         {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit Request"}
                     </Button>
                 </div>

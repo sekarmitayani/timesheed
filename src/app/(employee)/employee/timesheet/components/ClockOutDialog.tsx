@@ -59,7 +59,7 @@ export function ClockOutDialog({
                 <div className="px-6 py-4 border-t border-[#F1F5F9] bg-[#F8FAFC] flex flex-col sm:flex-row items-center justify-end gap-3">
                     <Button 
                         variant="ghost" 
-                        className="rounded-[4px] h-10 text-xs font-bold text-slate-500 hover:bg-slate-100 w-full sm:w-auto" 
+                        className="rounded-[4px] h-10 text-slate-500 hover:bg-slate-100 w-full sm:w-auto" 
                         onClick={() => onOpenChange(false)} 
                         disabled={isClocking}
                     >
@@ -74,7 +74,7 @@ export function ClockOutDialog({
                             onClockOut();
                         }} 
                         disabled={isClocking} 
-                        className="bg-red-600 hover:bg-red-700 min-w-[140px] h-10 rounded-[4px] text-xs font-bold shadow-sm w-full sm:w-auto"
+                        className="bg-red-600 hover:bg-red-700 min-w-[140px] h-10 rounded-[4px] shadow-sm w-full sm:w-auto"
                     >
                         {isClocking ? (
                             <>

@@ -52,7 +52,7 @@ export function ResourceFormDialog({
                 <div className="px-6 py-5 space-y-4">
                     <div className="space-y-1">
                         <label className="text-[10px] font-bold uppercase text-slate-400 ml-1">Project <span className="text-red-500">*</span></label>
-                        <Select value={String(form.project_id || "")} onValueChange={v => setForm({ ...form, project_id: Number(v) })}>
+                        <Select value={form.project_id ? String(form.project_id) : undefined} onValueChange={v => setForm({ ...form, project_id: Number(v) })}>
                             <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
                                 <SelectValue placeholder="Choose a project" />
                             </SelectTrigger>
@@ -87,10 +87,10 @@ export function ResourceFormDialog({
                     </div>
                 </div>
                 <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2.5">
-                    <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isProcessing} className="font-bold rounded-md px-5 text-xs text-slate-500 h-9">
+                    <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isProcessing} className="text-slate-500">
                         Cancel
                     </Button>
-                    <Button onClick={handleSave} disabled={isProcessing} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[100px] font-bold rounded-md uppercase tracking-widest text-[10px] h-9 shadow-md shadow-blue-100">
+                    <Button onClick={handleSave} disabled={isProcessing} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[120px] text-white shadow-md shadow-blue-100">
                         {isProcessing ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
                     </Button>
                 </div>
