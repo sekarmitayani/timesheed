@@ -106,12 +106,12 @@ export function AdminProjectWizard({
                     {step === 1 && (
                         <>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Project Name *</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Project Name <span className="text-red-500">*</span></label>
                                 <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Website Revamp" disabled={isSaving} className="h-10" />
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Client Name *</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Client Name <span className="text-red-500">*</span></label>
                                     <Input value={form.client_name} onChange={e => setForm({ ...form, client_name: e.target.value })} placeholder="PT ABC" disabled={isSaving} className="h-10" />
                                 </div>
                                 <div className="space-y-1.5">
@@ -145,7 +145,7 @@ export function AdminProjectWizard({
                     {step === 2 && (
                         <div className="space-y-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Project Manager *</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Project Manager <span className="text-red-500">*</span></label>
                                 <Select value={selectedPmId} onValueChange={setSelectedPmId}>
                                     <SelectTrigger className="h-10"><SelectValue placeholder="Choose a PM" /></SelectTrigger>
                                     <SelectContent>{pmUsers.map(u => <SelectItem key={u.id} value={String(u.id)}>{u.full_name || u.name}</SelectItem>)}</SelectContent>
@@ -275,7 +275,26 @@ export function AdminProjectWizard({
                         {step === 1 ? "Cancel" : <><ArrowLeft className="h-4 w-4" /> Back</>}
                     </Button>
                     {step < 3 ? 
-                        <Button onClick={() => setStep(step + 1)} className="gap-1.5 bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px]">Next <ArrowRight className="h-4 w-4" /></Button> :
+                        <Button 
+                            onClick={() => {
+                                if (step === 1) {
+                                    if (!form.name?.trim() || !form.client_name?.trim()) {
+                                        toast.error("Please fill in all required fields");
+                                        return;
+                                    }
+                                }
+                                if (step === 2) {
+                                    if (!selectedPmId) {
+                                        toast.error("Please select a Project Manager");
+                                        return;
+                                    }
+                                }
+                                setStep(step + 1);
+                            }} 
+                            className="gap-1.5 bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px]"
+                        >
+                            Next <ArrowRight className="h-4 w-4" />
+                        </Button> :
                         <Button onClick={onSave} disabled={isSaving} className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 min-w-[160px]">
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4" /> Create Project</>}
                         </Button>

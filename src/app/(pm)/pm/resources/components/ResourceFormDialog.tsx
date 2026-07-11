@@ -13,6 +13,7 @@ import {
     SelectValue
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { ApiProject } from "@/lib/types";
 
 interface ResourceFormDialogProps {
@@ -29,7 +30,10 @@ export function ResourceFormDialog({
     open, onOpenChange, projects, form, setForm, onSubmit, isProcessing
 }: ResourceFormDialogProps) {
     const handleSave = () => {
-        if (!form.project_id || !form.details) return;
+        if (!form.project_id || !form.type || !form.details?.trim()) {
+            toast.error("Please fill in all required fields");
+            return;
+        }
         onSubmit({
             project_id: Number(form.project_id),
             type: form.type,
@@ -47,7 +51,7 @@ export function ResourceFormDialog({
                 </div>
                 <div className="px-6 py-5 space-y-4">
                     <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase text-slate-400 ml-1">Project *</label>
+                        <label className="text-[10px] font-bold uppercase text-slate-400 ml-1">Project <span className="text-red-500">*</span></label>
                         <Select value={String(form.project_id || "")} onValueChange={v => setForm({ ...form, project_id: Number(v) })}>
                             <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
                                 <SelectValue placeholder="Choose a project" />
@@ -58,7 +62,7 @@ export function ResourceFormDialog({
                         </Select>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Type *</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Type <span className="text-red-500">*</span></label>
                         <Select value={form.type} onValueChange={v => setForm({ ...form, type: v })}>
                             <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
                                 <SelectValue placeholder="Select type" />
@@ -72,7 +76,7 @@ export function ResourceFormDialog({
                         </Select>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Details *</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Details <span className="text-red-500">*</span></label>
                         <textarea
                             className="w-full min-h-[120px] p-3 rounded-md border border-slate-200 text-sm font-medium focus:ring-1 focus:ring-[#4B7BEC] focus:outline-none custom-scrollbar shadow-sm bg-white"
                             placeholder="Describe the resource needed, quantity, and reason..."
@@ -86,7 +90,7 @@ export function ResourceFormDialog({
                     <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isProcessing} className="font-bold rounded-md px-5 text-xs text-slate-500 h-9">
                         Cancel
                     </Button>
-                    <Button onClick={handleSave} disabled={isProcessing || !form.project_id || !form.details} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[100px] font-bold rounded-md uppercase tracking-widest text-[10px] h-9 shadow-md shadow-blue-100">
+                    <Button onClick={handleSave} disabled={isProcessing} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[100px] font-bold rounded-md uppercase tracking-widest text-[10px] h-9 shadow-md shadow-blue-100">
                         {isProcessing ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
                     </Button>
                 </div>

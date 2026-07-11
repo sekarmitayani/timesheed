@@ -72,7 +72,7 @@ export function AdminProjectMembersDialog({
     };
 
     const handleSave = () => {
-        if (!assignForm.user_id || !assignForm.role_in_project) { toast.error("User and role required"); return; }
+        if (!assignForm.user_id || !assignForm.role_in_project?.trim()) { toast.error("Please fill in all required fields"); return; }
         const p: any = { 
             project_id: project.id, 
             user_id: Number(assignForm.user_id), 
@@ -111,14 +111,14 @@ export function AdminProjectMembersDialog({
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-bold uppercase text-slate-500">User *</label>
+                                    <label className="text-[10px] font-bold uppercase text-slate-500">User <span className="text-red-500">*</span></label>
                                     <Select value={String(assignForm.user_id || "")} onValueChange={v => handleUserSelect(Number(v))}>
                                         <SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Choose" /></SelectTrigger>
                                         <SelectContent>{allUsers.filter(u => !members.find(m => m.user_id === Number(u.id))).map(u => <SelectItem key={u.id} value={String(u.id)}>{u.full_name || u.name}</SelectItem>)}</SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-bold uppercase text-slate-500">Role *</label>
+                                    <label className="text-[10px] font-bold uppercase text-slate-500">Role <span className="text-red-500">*</span></label>
                                     <Input className="h-9 bg-white" placeholder="e.g. Backend Dev" value={assignForm.role_in_project} onChange={e => setAssignForm({ ...assignForm, role_in_project: e.target.value })} />
                                 </div>
                             </div>

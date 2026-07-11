@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Trash2, Edit, Calendar, Clock, AlertTriangle, Bold, Italic, Underline, List, ListOrdered } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CustomDatePicker } from "@/components/ui/custom-date-picker";
+import { toast } from "sonner";
 
 interface PMProjectDialogsProps {
     state: any;
@@ -92,7 +93,7 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
                     </div>
                     <div className="px-6 py-5 space-y-4 max-h-[65vh] overflow-y-auto custom-scrollbar">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Title *</label>
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Title <span className="text-red-500">*</span></label>
                             <Input value={taskForm.title} onChange={e => actions.setTaskForm({ ...taskForm, title: e.target.value })} className="h-10 text-sm" disabled={isSaving} placeholder="Enter task title" />
                         </div>
                         <div className="space-y-1.5">
@@ -152,7 +153,13 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
                     </div>
                     <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
                         <Button variant="ghost" onClick={() => actions.setTaskDialogOpen(false)} disabled={isSaving}>Cancel</Button>
-                        <Button onClick={actions.handleSaveTask} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] font-bold">
+                        <Button onClick={() => {
+                            if (!taskForm.title?.trim()) {
+                                toast.error("Please fill in all required fields");
+                                return;
+                            }
+                            actions.handleSaveTask();
+                        }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] font-bold">
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Task"}
                         </Button>
                     </div>
@@ -180,13 +187,19 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Details *</label>
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Details <span className="text-red-500">*</span></label>
                             <Textarea value={resForm.details} onChange={e => actions.setResForm({ ...resForm, details: e.target.value })} className="min-h-[100px] text-sm" placeholder="Describe what is needed..." disabled={isSaving} />
                         </div>
                     </div>
                     <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
                         <Button variant="ghost" onClick={() => actions.setResDialogOpen(false)} disabled={isSaving}>Cancel</Button>
-                        <Button onClick={actions.handleSaveRes} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] font-bold">
+                        <Button onClick={() => {
+                            if (!resForm.details?.trim()) {
+                                toast.error("Please fill in all required fields");
+                                return;
+                            }
+                            actions.handleSaveRes();
+                        }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] font-bold">
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit Request"}
                         </Button>
                     </div>

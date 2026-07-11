@@ -7,6 +7,7 @@ import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CurrencyInput } from "@/components/ui/currency-input";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { User } from "@/lib/types";
 
 interface ContractFormDialogProps {
@@ -62,7 +63,7 @@ export function ContractFormDialog({
                     )}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                            <label className="text-sm font-medium">Contract Type</label>
+                            <label className="text-sm font-medium">Contract Type <span className="text-red-500">*</span></label>
                             <Select 
                                 value={form.contract_type} 
                                 onValueChange={(v: any) => setForm({ ...form, contract_type: v })}
@@ -77,7 +78,7 @@ export function ContractFormDialog({
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-sm font-medium">Payment Scheme</label>
+                            <label className="text-sm font-medium">Payment Scheme <span className="text-red-500">*</span></label>
                             <Select 
                                 value={form.payment_scheme} 
                                 onValueChange={(v: any) => setForm({ ...form, payment_scheme: v })}
@@ -92,7 +93,7 @@ export function ContractFormDialog({
                         </div>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-sm font-medium">Rate Amount (Rp)</label>
+                        <label className="text-sm font-medium">Rate Amount (Rp) <span className="text-red-500">*</span></label>
                         <CurrencyInput
                             placeholder="e.g. 5.000.000"
                             value={form.rate_amount || ""}
@@ -103,7 +104,7 @@ export function ContractFormDialog({
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                            <label className="text-sm font-medium">Start Date</label>
+                            <label className="text-sm font-medium">Start Date <span className="text-red-500">*</span></label>
                             <CustomDatePicker 
                                 date={form.start_date} 
                                 onDateChange={(date) => setForm({ ...form, start_date: date })} 
@@ -139,7 +140,13 @@ export function ContractFormDialog({
                 <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
                     <Button variant="ghost" onClick={onCancel} disabled={isSaving}>Cancel</Button>
                     <Button 
-                        onClick={onSave} 
+                        onClick={() => {
+                            if ((!editId && !form.user_id) || !form.contract_type || !form.payment_scheme || form.rate_amount === null || form.rate_amount === undefined || form.rate_amount === "" || !form.start_date) {
+                                toast.error("Please fill in all required fields");
+                                return;
+                            }
+                            onSave();
+                        }} 
                         disabled={isSaving} 
                         className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[120px] transition-all duration-200 shadow-sm"
                     >

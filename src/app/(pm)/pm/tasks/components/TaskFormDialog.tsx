@@ -8,6 +8,7 @@ import { Loader2, Bold, Italic, Underline, List, ListOrdered } from "lucide-reac
 import { cn } from "@/lib/utils";
 import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { useRef, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { aiService } from "@/lib/services/ai-service";
 import { ApiTask, CreateTaskPayload } from "@/lib/services/task-service";
 import { ApiProject, ProjectMember } from "@/lib/types";
@@ -110,7 +111,7 @@ export function TaskFormDialog({
                 </div>
                 <div className="px-6 py-5 space-y-4 max-h-[65vh] overflow-y-auto custom-scrollbar">
                     <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase text-slate-400 ml-1">Project</label>
+                        <label className="text-[10px] font-bold uppercase text-slate-400 ml-1">Project <span className="text-red-500">*</span></label>
                         <Select 
                             value={String(form.project_id || "")} 
                             onValueChange={v => setForm({ ...form, project_id: Number(v), assigned_to_id: 0 })} 
@@ -125,7 +126,7 @@ export function TaskFormDialog({
                         </Select>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Title *</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Title <span className="text-red-500">*</span></label>
                         <Input 
                             value={form.title} 
                             onChange={e => setForm({ ...form, title: e.target.value })} 
@@ -234,7 +235,13 @@ export function TaskFormDialog({
                     <Button variant="ghost" onClick={() => onClose(false)} disabled={isSaving} className="font-bold rounded-md px-5 text-xs text-slate-500 h-9">
                         Cancel
                     </Button>
-                    <Button onClick={onSave} disabled={isSaving} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[100px] font-bold rounded-md uppercase tracking-widest text-[10px] h-9 shadow-md shadow-blue-100">
+                    <Button onClick={() => {
+                        if (!form.title?.trim() || !form.project_id) {
+                            toast.error("Please fill in all required fields");
+                            return;
+                        }
+                        onSave();
+                    }} disabled={isSaving} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[100px] font-bold rounded-md uppercase tracking-widest text-[10px] h-9 shadow-md shadow-blue-100">
                         {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
                     </Button>
                 </div>

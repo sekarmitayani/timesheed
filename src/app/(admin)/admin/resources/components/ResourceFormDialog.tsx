@@ -13,6 +13,7 @@ import {
     SelectValue
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { ApiProject } from "@/lib/types";
 
 interface ResourceFormDialogProps {
@@ -29,7 +30,10 @@ export function ResourceFormDialog({
     open, onOpenChange, projects, form, setForm, onSubmit, isProcessing
 }: ResourceFormDialogProps) {
     const handleSave = () => {
-        if (!form.project_id || !form.details) return;
+        if (!form.project_id || !form.details?.trim()) {
+            toast.error("Please fill in all required fields");
+            return;
+        }
         onSubmit({
             project_id: Number(form.project_id),
             type: form.type,
@@ -78,7 +82,7 @@ export function ResourceFormDialog({
                 </div>
                 <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex gap-3">
                     <Button variant="ghost" className="flex-1" onClick={() => onOpenChange(false)} disabled={isProcessing}>Cancel</Button>
-                    <Button className="flex-1 bg-[#2568C1] hover:bg-[#1e56a6] text-white" onClick={handleSave} disabled={isProcessing || !form.project_id || !form.details}>
+                    <Button className="flex-1 bg-[#2568C1] hover:bg-[#1e56a6] text-white" onClick={handleSave} disabled={isProcessing}>
                         {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit Request"}
                     </Button>
                 </div>

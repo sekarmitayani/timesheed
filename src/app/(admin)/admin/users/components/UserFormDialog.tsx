@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, UserCog, ShieldX, FolderKanban } from "lucide-react";
+import { toast } from "sonner";
 import { Role } from "@/lib/types";
 import { CreateContractPayload } from "@/lib/services/admin-contracts";
 
@@ -207,7 +208,21 @@ export function UserFormDialog({
 
                 <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
                     <Button variant="ghost" onClick={onCancel} disabled={isSaving} className="text-[#64748b]">Cancel</Button>
-                    <Button onClick={onSave} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1e56a6] shadow-md shadow-[#2568C1]/20 min-w-[120px]">
+                    <Button onClick={() => {
+                        if (!form.full_name?.trim() || !form.email?.trim() || !form.phone_number?.trim() || !form.role) {
+                            toast.error("Please fill in all required fields");
+                            return;
+                        }
+                        if (!editId && !form.password?.trim()) {
+                            toast.error("Password is required for new users");
+                            return;
+                        }
+                        if (form.role !== 'admin' && (!form.employee_type || !form.skill_level)) {
+                            toast.error("Employment Type and Skill Level are required");
+                            return;
+                        }
+                        onSave();
+                    }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1e56a6] shadow-md shadow-[#2568C1]/20 min-w-[120px]">
                         {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : (editId ? "Save Changes" : "Create User")}
                     </Button>
                 </div>

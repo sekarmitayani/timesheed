@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Loader2, Trash2, Edit, Save, WalletCards, Calendar, Clock, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface AdminProjectDialogsProps {
     state: any;
@@ -50,7 +51,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                     <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Project Name *</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Project Name <span className="text-red-500">*</span></label>
                                 <Input value={editForm.name} onChange={e => actions.setEditForm({ ...editForm, name: e.target.value })} className="h-10 text-sm" disabled={isSaving} />
                             </div>
                             <div className="space-y-1.5">
@@ -68,7 +69,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Client Name *</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Client Name <span className="text-red-500">*</span></label>
                                 <Input value={editForm.client_name} onChange={e => actions.setEditForm({ ...editForm, client_name: e.target.value })} className="h-10 text-sm" disabled={isSaving} />
                             </div>
                             <div className="space-y-1.5">
@@ -99,7 +100,13 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                     </div>
                     <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
                         <Button variant="ghost" onClick={() => actions.setEditOpen(false)} disabled={isSaving}>Cancel</Button>
-                        <Button onClick={actions.handleSaveEditProject} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] font-bold">
+                        <Button onClick={() => {
+                            if (!editForm.name?.trim() || !editForm.client_name?.trim()) {
+                                toast.error("Please fill in all required fields");
+                                return;
+                            }
+                            actions.handleSaveEditProject();
+                        }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] font-bold">
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Changes"}
                         </Button>
                     </div>
@@ -127,7 +134,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Details *</label>
+                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Details <span className="text-red-500">*</span></label>
                             <Textarea 
                                 className="w-full min-h-[120px] p-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-[#2568C1]/20 outline-none" 
                                 placeholder="Describe the resource needed..."
@@ -138,7 +145,13 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                     </div>
                     <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
                         <Button variant="ghost" onClick={() => actions.setResCreateOpen(false)} disabled={isSaving}>Cancel</Button>
-                        <Button className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] font-bold text-white" onClick={actions.handleCreateRes} disabled={isSaving}>
+                        <Button className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] font-bold text-white" onClick={() => {
+                            if (!resCreateForm.details?.trim()) {
+                                toast.error("Please fill in all required fields");
+                                return;
+                            }
+                            actions.handleCreateRes();
+                        }} disabled={isSaving}>
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit Request"}
                         </Button>
                     </div>
@@ -246,7 +259,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                     </div>
                     <div className="px-6 py-5 space-y-4">
                         <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Select User *</label>
+                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Select User <span className="text-red-500">*</span></label>
                             <Select value={String(state.assignForm.user_id || "")} onValueChange={v => actions.handleMemberUserSelect(Number(v))} disabled={isSaving}>
                                 <SelectTrigger className="h-10 text-sm"><SelectValue placeholder="Choose a user" /></SelectTrigger>
                                 <SelectContent>
@@ -257,7 +270,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Role in Project *</label>
+                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Role in Project <span className="text-red-500">*</span></label>
                             <Input placeholder="e.g. Backend Dev" value={state.assignForm.role_in_project} onChange={e => actions.setAssignForm({ ...state.assignForm, role_in_project: e.target.value })} className="h-10 text-sm" disabled={isSaving} />
                         </div>
 
@@ -316,7 +329,13 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                     </div>
                     <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
                         <Button variant="ghost" onClick={() => actions.setAssignOpen(false)} disabled={isSaving}>Cancel</Button>
-                        <Button onClick={actions.handleAssignSave} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] text-white min-w-[120px] font-bold">
+                        <Button onClick={() => {
+                            if (!state.assignForm.user_id || !state.assignForm.role_in_project?.trim()) {
+                                toast.error("Please fill in all required fields");
+                                return;
+                            }
+                            actions.handleAssignSave();
+                        }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] text-white min-w-[120px] font-bold">
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm Assign"}
                         </Button>
                     </div>

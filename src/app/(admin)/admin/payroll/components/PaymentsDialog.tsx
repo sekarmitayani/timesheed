@@ -12,6 +12,7 @@ import {
     Loader2, WalletCards, FileText, Calendar, Trash2, 
     ChevronDown, ChevronUp, CheckCircle2, Clock, AlertTriangle
 } from "lucide-react";
+import { toast } from "sonner";
 import { 
     ContractPayment, ContractSummary, PayrollSummaryItem, 
     MonthlyBreakdownItem 
@@ -265,7 +266,7 @@ export function PaymentsDialog({
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-700">Execution Date</label>
+                                    <label className="text-xs font-bold text-slate-700">Execution Date <span className="text-red-500">*</span></label>
                                     <CustomDatePicker 
                                         date={paymentForm.paid_at || undefined} 
                                         onDateChange={date => setPaymentForm({ ...paymentForm, paid_at: date })} 
@@ -278,7 +279,13 @@ export function PaymentsDialog({
                                     <label className="text-xs font-bold text-slate-700">Attached Description</label>
                                     <Input className="h-9 text-sm border-slate-200" placeholder="Optional notes regarding clearance..." value={paymentForm.description || ""} onChange={e => setPaymentForm({ ...paymentForm, description: e.target.value })} disabled={isSavingPayment} />
                                 </div>
-                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 shadow-sm h-10 mt-4 text-sm font-bold tracking-wide" onClick={() => editingPaymentId ? setEditConfirmOpen(true) : onSave(paymentForm)} disabled={isSavingPayment}>
+                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 shadow-sm h-10 mt-4 text-sm font-bold tracking-wide" onClick={() => {
+                                    if (!paymentForm.name?.trim() || paymentForm.amount === null || paymentForm.amount === undefined || paymentForm.amount === "" || !paymentForm.paid_at) {
+                                        toast.error("Please fill in all required fields");
+                                        return;
+                                    }
+                                    editingPaymentId ? setEditConfirmOpen(true) : onSave(paymentForm)
+                                }} disabled={isSavingPayment}>
                                     {isSavingPayment ? <Loader2 className="h-4 w-4 animate-spin" /> : editingPaymentId ? "Commit Changes" : "Commit Execution"}
                                 </Button>
                             </div>

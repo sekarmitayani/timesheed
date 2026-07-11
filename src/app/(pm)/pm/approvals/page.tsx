@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { CheckCheck, AlertTriangle, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { useApprovalsData } from "./hooks/useApprovalsData";
 import { ApprovalsFilters } from "./components/ApprovalsFilters";
 import { ApprovalsTable } from "./components/ApprovalsTable";
@@ -109,7 +110,7 @@ export default function ApprovalsPage() {
                     </DialogHeader>
                     <div className="space-y-3 pt-2">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Rejection Note *</label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Rejection Note <span className="text-red-500">*</span></label>
                             <Input 
                                 value={state.rejectNote} 
                                 onChange={e => actions.setRejectNote(e.target.value)} 
@@ -121,7 +122,13 @@ export default function ApprovalsPage() {
                     </div>
                     <div className="flex gap-3 mt-6">
                         <Button variant="outline" className="flex-1" onClick={() => actions.setRejectOpen(false)} disabled={state.isProcessing}>Cancel</Button>
-                        <Button variant="destructive" onClick={actions.handleReject} disabled={state.isProcessing} className="flex-1 font-bold">
+                        <Button variant="destructive" onClick={() => {
+                            if (!state.rejectNote?.trim()) {
+                                toast.error("Please fill in all required fields (Rejection Note)");
+                                return;
+                            }
+                            actions.handleReject();
+                        }} disabled={state.isProcessing} className="flex-1 font-bold">
                             {state.isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm Reject"}
                         </Button>
                     </div>

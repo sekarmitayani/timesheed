@@ -3,6 +3,7 @@
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { StopCircle, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface ClockOutDialogProps {
     open: boolean;
@@ -43,8 +44,7 @@ export function ClockOutDialog({
                 <div className="px-6 py-6 space-y-5 bg-white text-[#0f172a]">
                     <div className="space-y-2.5">
                         <div className="flex items-center justify-between">
-                            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Session Summary</label>
-                            <span className="text-[10px] text-red-500 font-bold uppercase">* Required</span>
+                            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Session Summary <span className="text-red-500">*</span></label>
                         </div>
                         <textarea 
                             value={clockOutDesc} 
@@ -66,8 +66,14 @@ export function ClockOutDialog({
                         Cancel
                     </Button>
                     <Button 
-                        onClick={onClockOut} 
-                        disabled={isClocking || !clockOutDesc.trim()} 
+                        onClick={() => {
+                            if (!clockOutDesc.trim()) {
+                                toast.error("Please fill in all required fields (Session Summary)");
+                                return;
+                            }
+                            onClockOut();
+                        }} 
+                        disabled={isClocking} 
                         className="bg-red-600 hover:bg-red-700 min-w-[140px] h-10 rounded-[4px] text-xs font-bold shadow-sm w-full sm:w-auto"
                     >
                         {isClocking ? (
