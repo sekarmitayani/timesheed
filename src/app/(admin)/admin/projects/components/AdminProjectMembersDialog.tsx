@@ -31,7 +31,7 @@ export function AdminProjectMembersDialog({
     const [showAssignForm, setShowAssignForm] = useState(false);
     const [assignForm, setAssignForm] = useState({
         user_id: 0, role_in_project: "", custom_rate: null as number | null, 
-        contract_type: "", payment_scheme: ""
+        contract_type: "", payment_scheme: "", start_date: new Date().toISOString()
     });
     const [loadingContracts, setLoadingContracts] = useState(false);
     const [userContracts, setUserContracts] = useState<any[]>([]);
@@ -39,7 +39,7 @@ export function AdminProjectMembersDialog({
     const [selectedContractId, setSelectedContractId] = useState("");
 
     const handleUserSelect = async (uid: number) => {
-        setAssignForm({ ...assignForm, user_id: uid, custom_rate: null, contract_type: "", payment_scheme: "" });
+        setAssignForm({ ...assignForm, user_id: uid, custom_rate: null, contract_type: "", payment_scheme: "", start_date: new Date().toISOString() });
         setSelectedContractId("");
         setAssignRateMode("contract");
         if (uid) {
@@ -62,7 +62,7 @@ export function AdminProjectMembersDialog({
         if (v === "custom") {
             setAssignRateMode("custom");
             setSelectedContractId("custom");
-            setAssignForm({ ...assignForm, custom_rate: null, contract_type: "", payment_scheme: "" });
+            setAssignForm({ ...assignForm, custom_rate: null, contract_type: "", payment_scheme: "", start_date: new Date().toISOString() });
         } else {
             setAssignRateMode("contract");
             setSelectedContractId(v);
@@ -79,14 +79,14 @@ export function AdminProjectMembersDialog({
             role_in_project: assignForm.role_in_project 
         };
         if (assignRateMode === "custom" && assignForm.custom_rate) {
-            p.custom_rate = Number(assignForm.custom_rate); p.contract_type = assignForm.contract_type || "termin"; p.payment_scheme = assignForm.payment_scheme || "monthly";
+            p.custom_rate = Number(assignForm.custom_rate); p.contract_type = assignForm.contract_type || "termin"; p.payment_scheme = assignForm.payment_scheme || "monthly"; p.start_date = assignForm.start_date;
         } else if (assignRateMode === "contract" && selectedContractId !== "custom") {
             const c = userContracts.find(x => String(x.id) === selectedContractId);
             if (c) { p.custom_rate = c.rate_amount; p.contract_type = c.contract_type; p.payment_scheme = c.payment_scheme; }
         }
         onAssign(p);
         setShowAssignForm(false);
-        setAssignForm({ user_id: 0, role_in_project: "", custom_rate: null, contract_type: "", payment_scheme: "" });
+        setAssignForm({ user_id: 0, role_in_project: "", custom_rate: null, contract_type: "", payment_scheme: "", start_date: new Date().toISOString() });
     };
 
     const getInitials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
@@ -131,10 +131,31 @@ export function AdminProjectMembersDialog({
                                             <SelectContent>{userContracts.map(c => <SelectItem key={c.id} value={String(c.id)}>{`${c.contract_type} - Rp ${c.rate_amount.toLocaleString()} (${c.payment_scheme})`}</SelectItem>)}<SelectItem value="custom">Custom Rate</SelectItem></SelectContent>
                                         </Select>}
                                     {assignRateMode === "custom" && (
-                                        <div className="grid grid-cols-3 gap-2 animate-in fade-in duration-300">
-                                            <CurrencyInput className="h-9 bg-white" value={assignForm.custom_rate || ""} onChange={(v: any) => setAssignForm({ ...assignForm, custom_rate: Number(v) || null })} />
-                                            <Select value={assignForm.contract_type} onValueChange={v => setAssignForm({...assignForm, contract_type: v})}><SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Type" /></SelectTrigger><SelectContent><SelectItem value="monthly">Monthly</SelectItem><SelectItem value="termin">Termin</SelectItem></SelectContent></Select>
-                                            <Select value={assignForm.payment_scheme} onValueChange={v => setAssignForm({...assignForm, payment_scheme: v})}><SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Scheme" /></SelectTrigger><SelectContent><SelectItem value="monthly">Monthly</SelectItem><SelectItem value="back_to_back">B2B</SelectItem></SelectContent></Select>
+                                        <div className="pt-1 space-y-3 animate-in fade-in duration-300">
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] font-bold text-slate-500 uppercase">Rate Amount</label>
+                                                    <CurrencyInput className="h-9 bg-white" value={assignForm.custom_rate || ""} onChange={(v: any) => setAssignForm({ ...assignForm, custom_rate: Number(v) || null })} />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] font-bold text-slate-500 uppercase">Contract Type</label>
+                                                    <Select value={assignForm.contract_type} onValueChange={v => setAssignForm({...assignForm, contract_type: v})}><SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Type" /></SelectTrigger><SelectContent><SelectItem value="monthly">Monthly</SelectItem><SelectItem value="termin">Termin</SelectItem><SelectItem value="freelance">Freelance</SelectItem><SelectItem value="internship">Internship</SelectItem></SelectContent></Select>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] font-bold text-slate-500 uppercase">Payment Scheme</label>
+                                                    <Select value={assignForm.payment_scheme} onValueChange={v => setAssignForm({...assignForm, payment_scheme: v})}><SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Scheme" /></SelectTrigger><SelectContent><SelectItem value="monthly">Monthly</SelectItem><SelectItem value="back_to_back">B2B</SelectItem><SelectItem value="per_project">Per-Project</SelectItem><SelectItem value="daily">Daily</SelectItem></SelectContent></Select>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] font-bold text-slate-500 uppercase">Start Date</label>
+                                                    <div className="relative">
+                                                        <Input type="date" className="h-9 bg-white text-xs w-full" value={assignForm.start_date ? assignForm.start_date.split('T')[0] : ""} onChange={(e) => setAssignForm({ ...assignForm, start_date: e.target.value ? new Date(e.target.value).toISOString() : new Date().toISOString() })} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="bg-amber-50 text-amber-700 text-[10px] p-2 rounded border border-amber-100 flex gap-2 items-start leading-tight">
+                                                <div className="font-bold mt-0.5">Note:</div>
+                                                <div>This contract will automatically deactivate (auto-off) when the project is marked as Completed or Cancelled.</div>
+                                            </div>
                                         </div>
                                     )}
                                 </div>

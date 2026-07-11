@@ -39,12 +39,12 @@ export function useAdminProjectsData() {
     const [empForm, setEmpForm] = useState({
         userId: "", role: "", rateMode: "contract" as "contract" | "custom",
         selectedContractId: "", customRate: null as number | null,
-        contractType: "", paymentScheme: ""
+        contractType: "", paymentScheme: "", startDate: new Date().toISOString()
     });
 
     const [assignForm, setAssignForm] = useState<AssignMemberPayload>({
         project_id: 0, user_id: 0, role_in_project: "",
-        custom_rate: null, contract_type: "", payment_scheme: ""
+        custom_rate: null, contract_type: "", payment_scheme: "", start_date: new Date().toISOString()
     });
 
     // --- Queries ---
@@ -109,7 +109,8 @@ export function useAdminProjectsData() {
                     role_in_project: emp.role_in_project,
                     custom_rate: emp.custom_rate,
                     contract_type: emp.contract_type,
-                    payment_scheme: emp.payment_scheme
+                    payment_scheme: emp.payment_scheme,
+                    start_date: emp.start_date
                 };
                 await projectService.assignMember(ep);
             }
@@ -143,7 +144,7 @@ export function useAdminProjectsData() {
     });
 
     const removeMemberMutation = useMutation({
-        mutationFn: (id: number) => projectService.removeMember(id),
+        mutationFn: (id: number) => projectService.removeProjectMember(id),
         onSuccess: () => {
             toast.success("Member removed");
             queryClient.invalidateQueries({ queryKey: ['admin', 'projects', 'members', selectedProject?.id] });

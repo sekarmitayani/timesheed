@@ -37,7 +37,7 @@ export function AdminProjectWizard({
     const [empForm, setEmpForm] = useState({
         userId: "", role: "", rateMode: "contract" as "contract" | "custom",
         selectedContractId: "", customRate: null as number | null,
-        contractType: "", paymentScheme: ""
+        contractType: "", paymentScheme: "", startDate: new Date().toISOString()
     });
     const [isLoadingContracts, setIsLoadingContracts] = useState(false);
     const [empContracts, setEmpContracts] = useState<any[]>([]);
@@ -47,7 +47,7 @@ export function AdminProjectWizard({
     const availableEmployees = allUsers.filter(u => String(u.id) !== selectedPmId && !pendingEmployees.find(e => String(e.user.id) === String(u.id)));
 
     const handleUserSelect = async (uid: string) => {
-        setEmpForm({ ...empForm, userId: uid, selectedContractId: "", rateMode: "contract", customRate: null, contractType: "", paymentScheme: "" });
+        setEmpForm({ ...empForm, userId: uid, selectedContractId: "", rateMode: "contract", customRate: null, contractType: "", paymentScheme: "", startDate: new Date().toISOString() });
         if (uid) {
             setIsLoadingContracts(true);
             try {
@@ -75,9 +75,10 @@ export function AdminProjectWizard({
             selectedContractId: empForm.selectedContractId, 
             custom_rate: empForm.customRate, 
             contract_type: empForm.contractType, 
-            payment_scheme: empForm.paymentScheme 
+            payment_scheme: empForm.paymentScheme,
+            start_date: empForm.startDate
         }]);
-        setEmpForm({ userId: "", role: "", rateMode: "contract", selectedContractId: "", customRate: null, contractType: "", paymentScheme: "" });
+        setEmpForm({ userId: "", role: "", rateMode: "contract", selectedContractId: "", customRate: null, contractType: "", paymentScheme: "", startDate: new Date().toISOString() });
     };
 
     return (
@@ -194,6 +195,49 @@ export function AdminProjectWizard({
                                                 <SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Select" /></SelectTrigger>
                                                 <SelectContent>{empContracts.map(c => <SelectItem key={c.id} value={String(c.id)}>{`${c.contract_type} - Rp ${c.rate_amount.toLocaleString()} (${c.payment_scheme})`}</SelectItem>)}<SelectItem value="custom">Custom Rate</SelectItem></SelectContent>
                                             </Select>}
+                                            
+                                        {empForm.selectedContractId === "custom" && (
+                                            <div className="pt-2 space-y-3 animate-in fade-in duration-300 border border-slate-100 rounded-lg p-3 bg-white">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                    <div className="space-y-1.5">
+                                                        <label className="text-[10px] font-bold text-slate-500 uppercase">Rate Amount</label>
+                                                        <CurrencyInput className="h-9" value={empForm.customRate || ""} onChange={(v: any) => setEmpForm({ ...empForm, customRate: Number(v) || null })} />
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        <label className="text-[10px] font-bold text-slate-500 uppercase">Contract Type</label>
+                                                        <Select value={empForm.contractType} onValueChange={v => setEmpForm({...empForm, contractType: v})}>
+                                                            <SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Select Type" /></SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="monthly">Monthly</SelectItem>
+                                                                <SelectItem value="termin">Termin</SelectItem>
+                                                                <SelectItem value="freelance">Freelance</SelectItem>
+                                                                <SelectItem value="internship">Internship</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        <label className="text-[10px] font-bold text-slate-500 uppercase">Payment Scheme</label>
+                                                        <Select value={empForm.paymentScheme} onValueChange={v => setEmpForm({...empForm, paymentScheme: v})}>
+                                                            <SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Select Scheme" /></SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="monthly">Monthly</SelectItem>
+                                                                <SelectItem value="back_to_back">Back-to-Back</SelectItem>
+                                                                <SelectItem value="per_project">Per-Project</SelectItem>
+                                                                <SelectItem value="daily">Daily</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        <label className="text-[10px] font-bold text-slate-500 uppercase">Start Date</label>
+                                                        <CustomDatePicker date={empForm.startDate || ""} onDateChange={(d) => setEmpForm({ ...empForm, startDate: d })} className="h-9 text-xs" />
+                                                    </div>
+                                                </div>
+                                                <div className="bg-amber-50 text-amber-700 text-[10px] p-2 rounded border border-amber-100 flex gap-2 items-start leading-tight">
+                                                    <div className="font-bold mt-0.5">Note:</div>
+                                                    <div>This contract will automatically deactivate (auto-off) when the project is marked as Completed or Cancelled.</div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                                 <Button size="sm" className="w-full bg-[#0f172a] hover:bg-slate-800 h-9" onClick={addEmployee} disabled={!empForm.userId || !empForm.role}>

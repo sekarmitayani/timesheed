@@ -89,6 +89,7 @@ export default function AdminProjectDetailPage() {
                             setSearch={actions.setTeamSearch}
                             onAssign={actions.openAssignMember}
                             onRemove={actions.handleRemoveMember}
+                            onUpdateRole={actions.handleUpdateMemberRole}
                             isSaving={state.isSaving}
                             projectId={parseInt(projectId)}
                         />

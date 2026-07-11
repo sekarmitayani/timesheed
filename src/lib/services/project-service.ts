@@ -39,6 +39,7 @@ export interface AssignMemberPayload {
     custom_rate?: number | null;
     contract_type?: string;
     payment_scheme?: string;
+    start_date?: string;
 }
 
 // ---- Service ----
@@ -87,8 +88,15 @@ export const projectService = {
         });
     },
 
-    async removeMember(memberId: number | string): Promise<{ message: string }> {
+    async removeProjectMember(memberId: number): Promise<void> {
         return fetchApi(`/project/member/${memberId}`, { method: "DELETE" });
+    },
+
+    async updateProjectMemberRole(memberId: number, role: string): Promise<void> {
+        return fetchApi(`/project/member/${memberId}/role`, {
+            method: "PUT",
+            body: JSON.stringify({ role_in_project: role })
+        });
     },
 
     // === OPERATIONAL (Admin / PM) ===

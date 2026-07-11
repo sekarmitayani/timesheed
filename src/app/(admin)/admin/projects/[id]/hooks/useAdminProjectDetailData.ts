@@ -160,13 +160,22 @@ export function useAdminProjectDetailData(projectId: string) {
     });
 
     const removeMemberMutation = useMutation({
-        mutationFn: (id: number) => projectService.removeMember(id),
+        mutationFn: (id: number) => projectService.removeProjectMember(id),
         onSuccess: () => {
             toast.success("Member removed!");
             queryClient.invalidateQueries({ queryKey: ['admin', 'project', projectId, 'members'] });
             queryClient.invalidateQueries({ queryKey: ['admin', 'project', projectId, 'costs'] });
         },
         onError: (e: any) => toast.error(e.message || "Failed to remove member")
+    });
+
+    const updateMemberRoleMutation = useMutation({
+        mutationFn: ({ memberId, role }: { memberId: number, role: string }) => projectService.updateProjectMemberRole(memberId, role),
+        onSuccess: () => {
+            toast.success("Member role updated!");
+            queryClient.invalidateQueries({ queryKey: ['admin', 'project', projectId, 'members'] });
+        },
+        onError: (e: any) => toast.error(e.message || "Failed to update member role")
     });
 
     const createResourceMutation = useMutation({
@@ -329,7 +338,7 @@ export function useAdminProjectDetailData(projectId: string) {
             editOpen, assignOpen, resDetailOpen, resCreateOpen, deleteConfirmOpen, zeroConfirmOpen, resEditMode, selectedRes,
             editForm, assignForm, memberAssignRateMode, memberSelectedContractId, memberUserContracts, memberLoadingContracts, resCreateForm, resEditForm,
             filteredMembers, filteredCosts, filteredResources,
-            isSaving: editProjectMutation.isPending || assignMemberMutation.isPending || createResourceMutation.isPending || editResourceMutation.isPending || deleteResourceMutation.isPending || removeMemberMutation.isPending
+            isSaving: editProjectMutation.isPending || assignMemberMutation.isPending || createResourceMutation.isPending || editResourceMutation.isPending || deleteResourceMutation.isPending || removeMemberMutation.isPending || updateMemberRoleMutation.isPending
         },
         actions: {
             setActiveTab, setTeamSearch, setCostFilterType, setCostFilterStart, setCostFilterEnd, setResSearch, setResFilterStatus, setResFilterType,
@@ -337,6 +346,7 @@ export function useAdminProjectDetailData(projectId: string) {
             setEditForm, setAssignForm, setResCreateForm, setResEditForm, setSelectedRes,
             openEditProject, openAssignMember, openResDetail,
             handleSaveEditProject, handleAssignSave, handleRemoveMember: (id: number) => removeMemberMutation.mutate(id),
+            handleUpdateMemberRole: (id: number, role: string) => updateMemberRoleMutation.mutate({ memberId: id, role }),
             handleCreateRes: () => createResourceMutation.mutate({ project_id: Number(projectId), type: resCreateForm.type, details: resCreateForm.details }),
             handleSaveResEdit: (forceZero = false) => {
                 if (!selectedRes) return;

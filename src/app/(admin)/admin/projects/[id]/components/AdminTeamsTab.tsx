@@ -26,7 +26,10 @@ import {
     Loader2,
     Calendar,
     WalletCards,
-    Star
+    Star,
+    Edit2,
+    Check,
+    X
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { adminContractService } from "@/lib/services/admin-contracts";
@@ -37,15 +40,19 @@ interface AdminTeamsTabProps {
     setSearch: (v: string) => void;
     onAssign: () => void;
     onRemove: (id: number) => void;
+    onUpdateRole: (id: number, role: string) => void;
     isSaving: boolean;
     projectId: number;
 }
 
 export function AdminTeamsTab({
-    members, search, setSearch, onAssign, onRemove, isSaving, projectId
+    members, search, setSearch, onAssign, onRemove, onUpdateRole, isSaving, projectId
 }: AdminTeamsTabProps) {
     const [selectedMember, setSelectedMember] = useState<ProjectMember | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
+    const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+    const [editingRoleMemberId, setEditingRoleMemberId] = useState<number | null>(null);
+    const [editingRoleValue, setEditingRoleValue] = useState("");
 
     const getInitials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
 
@@ -110,22 +117,38 @@ export function AdminTeamsTab({
                                     <span className="text-sm font-bold text-slate-800 truncate">{member.user?.full_name || `User #${member.user_id}`}</span>
                                     {member.role_in_project === "Project Manager" && <Crown className="h-3 w-3 text-amber-500 shrink-0" />}
                                 </div>
-                                <span className="text-[11px] font-bold text-[#4B7BEC] uppercase tracking-wider block mt-0.5">
+                                <span className="text-[11px] font-bold text-[#4B7BEC] uppercase tracking-wider block mt-0.5 truncate">
                                     {member.role_in_project}
                                 </span>
                                 {member.user?.email && (
                                     <span className="text-[11px] font-medium text-slate-400 truncate block mt-0.5">{member.user.email}</span>
                                 )}
                             </div>
-                            <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-8 w-8 text-slate-300 opacity-0 group-hover:opacity-100 hover:text-red-600 hover:bg-red-50 rounded-full transition-all"
-                                onClick={(e) => { e.stopPropagation(); onRemove(member.id); }}
-                                disabled={isSaving}
-                            >
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-8 w-8 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-full"
+                                    onClick={(e) => { 
+                                        e.stopPropagation(); 
+                                        setEditingRoleMemberId(member.id);
+                                        setEditingRoleValue(member.role_in_project);
+                                        setIsRoleModalOpen(true);
+                                    }}
+                                    disabled={isSaving}
+                                >
+                                    <Edit2 className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-8 w-8 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-full"
+                                    onClick={(e) => { e.stopPropagation(); onRemove(member.id); }}
+                                    disabled={isSaving}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 ))}
@@ -238,6 +261,51 @@ export function AdminTeamsTab({
                         </div>
                     </div>
 
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen}>
+                <DialogContent className="sm:max-w-[400px] bg-white border-slate-100">
+                    <DialogHeader>
+                        <DialogTitle className="text-lg font-bold text-slate-800">Edit Member Role</DialogTitle>
+                        <DialogDescription className="text-xs">
+                            Update the project role for this team member.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-2 space-y-4">
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold uppercase text-slate-500">Role In Project</label>
+                            <Input 
+                                value={editingRoleValue} 
+                                onChange={e => setEditingRoleValue(e.target.value)} 
+                                placeholder="e.g. Frontend Developer"
+                                className="h-9 bg-white"
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && editingRoleValue.trim() && editingRoleMemberId) {
+                                        onUpdateRole(editingRoleMemberId, editingRoleValue);
+                                        setIsRoleModalOpen(false);
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex justify-end gap-2 pt-2">
+                        <Button variant="ghost" size="sm" onClick={() => setIsRoleModalOpen(false)}>Cancel</Button>
+                        <Button 
+                            size="sm"
+                            className="bg-[#2568C1] hover:bg-[#1a4f99] text-white font-bold" 
+                            disabled={!editingRoleValue.trim() || isSaving}
+                            onClick={() => {
+                                if (editingRoleValue.trim() && editingRoleMemberId) {
+                                    onUpdateRole(editingRoleMemberId, editingRoleValue);
+                                    setIsRoleModalOpen(false);
+                                }
+                            }}
+                        >
+                            {isSaving ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : null}
+                            Save Changes
+                        </Button>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>
