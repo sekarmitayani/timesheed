@@ -4,7 +4,8 @@ import {
     History, UserCircle, FolderKanban, Inbox, Users, BarChart3,
     Brain, Settings, Shield, CreditCard, FileSearch, Activity,
     Building2, PieChart, TrendingUp, Scale, Gauge, ClipboardList,
-    UserCog, FileKey, Landmark, MonitorCheck, Zap, Package
+    UserCog, FileKey, Landmark, MonitorCheck, Zap, Package,
+    ReceiptText, HandCoins, ClipboardClock
 } from "lucide-react";
 
 export interface MenuItem {
@@ -32,7 +33,7 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             items: [
                 { label: "Tasks", href: "/employee/tasks", icon: ListTodo },
                 { label: "Projects", href: "/employee/projects", icon: FolderKanban },
-                { label: "Timesheet", href: "/employee/timesheet", icon: FileText },
+                { label: "Timesheet", href: "/employee/timesheet", icon: ClipboardClock },
                 { label: "Earnings", href: "/employee/earnings", icon: Wallet },
             ]
         }
@@ -65,7 +66,7 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             title: "ADMINISTRATION",
             items: [
                 { label: "User Management", href: "/admin/users", icon: UserCog },
-                { label: "Contracts", href: "/admin/contracts", icon: FileKey },
+                { label: "Contracts", href: "/admin/contracts", icon: ReceiptText },
                 { label: "Proxy Login", href: "/admin/proxy-login", icon: Shield },
             ]
         },
@@ -79,7 +80,7 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
         {
             title: "REPORTS",
             items: [
-                { label: "Payroll", href: "/admin/payroll", icon: Landmark },
+                { label: "Payroll", href: "/admin/payroll", icon: HandCoins },
                 { label: "Audit Log", href: "/admin/audit-log", icon: Activity },
             ]
         }

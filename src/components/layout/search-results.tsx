@@ -3,7 +3,7 @@
 import { useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { FolderKanban, Users, ListTodo, SearchX, Loader2, Zap, FileKey, Package, FileText, Landmark, Activity } from "lucide-react";
+import { FolderKanban, Users, ListTodo, SearchX, Loader2, Zap, ReceiptText, Package, ClipboardClock, HandCoins, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/lib/types";
 import { useGlobalSearch } from "@/hooks/useGlobalSearch";
@@ -30,10 +30,10 @@ const categoryConfig: Record<SearchCategory, { label: string, icon: any, color: 
     project: { label: "Projects", icon: FolderKanban, color: "text-blue-600 bg-blue-50" },
     user: { label: "Users", icon: Users, color: "text-violet-600 bg-violet-50" },
     task: { label: "Tasks", icon: ListTodo, color: "text-amber-600 bg-amber-50" },
-    contract: { label: "Contracts", icon: FileKey, color: "text-indigo-600 bg-indigo-50" },
-    resource_request: { label: "Resource Requests", icon: Package, color: "text-orange-600 bg-orange-50" },
-    timesheet: { label: "Timesheets", icon: FileText, color: "text-emerald-600 bg-emerald-50" },
-    payroll: { label: "Payroll", icon: Landmark, color: "text-green-600 bg-green-50" },
+    contract: { label: "Contracts", icon: ReceiptText, color: "text-indigo-600 bg-indigo-50" },
+    resource_request: { label: "Resource Requests", icon: Package, color: "text-rose-600 bg-rose-50" },
+    timesheet: { label: "Timesheets", icon: ClipboardClock, color: "text-emerald-600 bg-emerald-50" },
+    payroll: { label: "Payroll", icon: HandCoins, color: "text-green-600 bg-green-50" },
     audit_log: { label: "Audit Logs", icon: Activity, color: "text-slate-600 bg-slate-50" },
 };
 
