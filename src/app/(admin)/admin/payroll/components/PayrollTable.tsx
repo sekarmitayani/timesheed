@@ -28,7 +28,6 @@ const getRateSuffix = (type: string) => {
     switch (type) {
         case 'monthly': return 'per month';
         case 'yearly': return 'per year';
-        case 'hourly': return 'per hour';
         case 'timesheet': return 'per hour';
         case 'mandays': return 'per day';
         default: return '';

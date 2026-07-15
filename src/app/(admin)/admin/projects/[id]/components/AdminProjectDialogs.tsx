@@ -304,10 +304,10 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                                             <Select value={state.assignForm.contract_type || ""} onValueChange={v => actions.setAssignForm({ ...state.assignForm, contract_type: v })} disabled={isSaving}>
                                                 <SelectTrigger className="h-10 bg-white text-sm"><SelectValue placeholder="Type" /></SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="monthly">Monthly</SelectItem>
-                                                    <SelectItem value="hourly">Hourly</SelectItem>
+                                                    <SelectItem value="timesheet">Timesheet</SelectItem>
                                                     <SelectItem value="mandays">Mandays</SelectItem>
-                                                    <SelectItem value="termin">Termin</SelectItem>
+                                                    <SelectItem value="monthly">Monthly</SelectItem>
+                                                    <SelectItem value="yearly">Yearly</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>

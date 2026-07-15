@@ -60,10 +60,10 @@ export function ContractFilters({
                     <SelectTrigger className="h-10 w-[140px] bg-white shrink-0"><SelectValue placeholder="Contract Type" /></SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All Types</SelectItem>
-                        <SelectItem value="yearly">Yearly</SelectItem>
-                        <SelectItem value="monthly">Monthly</SelectItem>
-                        <SelectItem value="mandays">Mandays</SelectItem>
                         <SelectItem value="timesheet">Timesheet</SelectItem>
+                        <SelectItem value="mandays">Mandays</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="yearly">Yearly</SelectItem>
                     </SelectContent>
                 </Select>
 

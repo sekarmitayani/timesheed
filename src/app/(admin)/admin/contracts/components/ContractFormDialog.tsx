@@ -70,10 +70,10 @@ export function ContractFormDialog({
                             >
                                 <SelectTrigger className="bg-white border-slate-200 h-10"><SelectValue placeholder="Select contract type" /></SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="yearly">Yearly</SelectItem>
-                                    <SelectItem value="monthly">Monthly</SelectItem>
-                                    <SelectItem value="mandays">Mandays</SelectItem>
                                     <SelectItem value="timesheet">Timesheet</SelectItem>
+                                    <SelectItem value="mandays">Mandays</SelectItem>
+                                    <SelectItem value="monthly">Monthly</SelectItem>
+                                    <SelectItem value="yearly">Yearly</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

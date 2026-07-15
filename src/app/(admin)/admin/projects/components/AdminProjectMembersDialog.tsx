@@ -139,7 +139,7 @@ export function AdminProjectMembersDialog({
                                                 </div>
                                                 <div className="space-y-1">
                                                     <label className="text-[10px] font-bold text-slate-500 uppercase">Contract Type</label>
-                                                    <Select value={assignForm.contract_type} onValueChange={v => setAssignForm({...assignForm, contract_type: v})}><SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Type" /></SelectTrigger><SelectContent><SelectItem value="monthly">Monthly</SelectItem><SelectItem value="termin">Termin</SelectItem><SelectItem value="freelance">Freelance</SelectItem><SelectItem value="internship">Internship</SelectItem></SelectContent></Select>
+                                                    <Select value={assignForm.contract_type} onValueChange={v => setAssignForm({...assignForm, contract_type: v})}><SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Type" /></SelectTrigger><SelectContent><SelectItem value="timesheet">Timesheet</SelectItem><SelectItem value="mandays">Mandays</SelectItem><SelectItem value="monthly">Monthly</SelectItem><SelectItem value="yearly">Yearly</SelectItem></SelectContent></Select>
                                                 </div>
                                                 <div className="space-y-1">
                                                     <label className="text-[10px] font-bold text-slate-500 uppercase">Payment Scheme</label>

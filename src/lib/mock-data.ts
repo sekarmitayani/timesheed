@@ -92,10 +92,10 @@ export const mockAttendance: AttendanceRecord[] = [
 export const mockContracts: Contract[] = [
     { id: "c1", userId: "u1", type: "full-time", startDate: "2023-01-15", endDate: "2026-12-31", rate: 15000000, rateType: "monthly", status: "active" },
     { id: "c2", userId: "u2", type: "full-time", startDate: "2022-06-01", endDate: "2026-12-31", rate: 18000000, rateType: "monthly", status: "active" },
-    { id: "c3", userId: "u3", type: "freelance", startDate: "2025-01-01", endDate: "2026-06-30", rate: 140000, rateType: "hourly", status: "active" },
+    { id: "c3", userId: "u3", type: "freelance", startDate: "2025-01-01", endDate: "2026-06-30", rate: 140000, rateType: "timesheet", status: "active" },
     { id: "c4", userId: "u8", type: "contract", startDate: "2023-07-10", endDate: "2026-07-09", rate: 17000000, rateType: "monthly", status: "active" },
     { id: "c5", userId: "u9", type: "full-time", startDate: "2023-02-01", endDate: "2026-12-31", rate: 12000000, rateType: "monthly", status: "active" },
-    { id: "c6", userId: "u10", type: "freelance", startDate: "2025-09-15", endDate: "2026-03-14", rate: 120000, rateType: "hourly", status: "active" },
+    { id: "c6", userId: "u10", type: "freelance", startDate: "2025-09-15", endDate: "2026-03-14", rate: 120000, rateType: "timesheet", status: "active" },
 ];
 
 // ============================================================

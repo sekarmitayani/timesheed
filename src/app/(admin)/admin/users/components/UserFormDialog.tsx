@@ -157,10 +157,10 @@ export function UserFormDialog({
                                     <Select value={contractForm.contract_type} onValueChange={(v: any) => setContractForm({ ...contractForm, contract_type: v })} disabled={isSaving}>
                                         <SelectTrigger className="bg-white"><SelectValue placeholder="Select contract type" /></SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="yearly">Yearly</SelectItem>
-                                            <SelectItem value="monthly">Monthly</SelectItem>
-                                            <SelectItem value="mandays">Mandays</SelectItem>
                                             <SelectItem value="timesheet">Timesheet</SelectItem>
+                                            <SelectItem value="mandays">Mandays</SelectItem>
+                                            <SelectItem value="monthly">Monthly</SelectItem>
+                                            <SelectItem value="yearly">Yearly</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>

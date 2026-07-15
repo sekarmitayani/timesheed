@@ -6,7 +6,7 @@ export interface Contract {
     id: number;
     user_id: number;
     project_id?: number | null;
-    contract_type: "yearly" | "monthly" | "mandays" | "timesheet" | "hourly";
+    contract_type: "yearly" | "monthly" | "mandays" | "timesheet";
     payment_scheme: PaymentScheme;
     rate_amount: number;
     start_date: string;
@@ -23,7 +23,7 @@ export interface Contract {
 export interface CreateContractPayload {
     user_id: number | string;
     project_id?: number | null;
-    contract_type: "yearly" | "monthly" | "mandays" | "timesheet" | "hourly";
+    contract_type: "yearly" | "monthly" | "mandays" | "timesheet";
     payment_scheme: PaymentScheme;
     rate_amount: number;
     start_date: string; // YYYY-MM-DD
@@ -33,7 +33,7 @@ export interface CreateContractPayload {
 
 export interface UpdateContractPayload {
     project_id?: number | null;
-    contract_type?: "yearly" | "monthly" | "mandays" | "timesheet" | "hourly";
+    contract_type?: "yearly" | "monthly" | "mandays" | "timesheet";
     payment_scheme?: PaymentScheme;
     rate_amount?: number;
     start_date?: string;
@@ -94,7 +94,7 @@ export interface PayrollSummaryItem {
     id: number;
     user_id: number;
     full_name: string;
-    contract_type: "yearly" | "monthly" | "mandays" | "timesheet" | "hourly";
+    contract_type: "yearly" | "monthly" | "mandays" | "timesheet";
     payment_scheme: PaymentScheme;
     base_rate: number;
     calculated_target: number;

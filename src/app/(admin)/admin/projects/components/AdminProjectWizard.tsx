@@ -208,10 +208,10 @@ export function AdminProjectWizard({
                                                         <Select value={empForm.contractType} onValueChange={v => setEmpForm({...empForm, contractType: v})}>
                                                             <SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Select Type" /></SelectTrigger>
                                                             <SelectContent>
+                                                                <SelectItem value="timesheet">Timesheet</SelectItem>
+                                                                <SelectItem value="mandays">Mandays</SelectItem>
                                                                 <SelectItem value="monthly">Monthly</SelectItem>
-                                                                <SelectItem value="termin">Termin</SelectItem>
-                                                                <SelectItem value="freelance">Freelance</SelectItem>
-                                                                <SelectItem value="internship">Internship</SelectItem>
+                                                                <SelectItem value="yearly">Yearly</SelectItem>
                                                             </SelectContent>
                                                         </Select>
                                                     </div>

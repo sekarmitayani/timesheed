@@ -56,7 +56,7 @@ export function ContractOverview({ contracts }: ContractOverviewProps) {
 
                 {/* Specific Stats */}
                 <div className="mt-2 pt-2 border-t border-slate-50 flex gap-4">
-                  {(contract.contract_type === 'timesheet' || contract.contract_type === 'hourly') && (
+                  {(contract.contract_type === 'timesheet') && (
                     <>
                       <div className="flex items-center gap-1.5">
                         <Clock className="h-3 w-3 text-slate-400" />

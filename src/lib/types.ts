@@ -131,7 +131,7 @@ export interface Contract {
     startDate: string;
     endDate: string;
     rate: number;
-    rateType: "hourly" | "monthly" | "project";
+    rateType: "timesheet" | "monthly" | "project";
     status: "active" | "expired" | "pending";
 }
 

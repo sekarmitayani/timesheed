@@ -54,7 +54,7 @@ export function EarningTracker({
   let mainLabel = "";
   let MainIcon = Clock;
 
-  if (contractType === 'timesheet' || contractType === 'hourly') {
+  if (contractType === 'timesheet') {
     mainValue = currentMonthName;
     mainLabel = "Timesheet Tracking";
     MainIcon = Calendar;
@@ -89,15 +89,15 @@ export function EarningTracker({
             <p className="text-xl font-bold text-slate-800">{mainValue}</p>
 
             <div className="mt-3 pt-3 border-t border-blue-100/50 space-y-2">
-              {(contractType === 'timesheet' || contractType === 'hourly' || contractType === 'mandays') && (
+              {(contractType === 'timesheet' || contractType === 'mandays') && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-[10px] text-blue-600 uppercase font-medium">Approved (Fixed)</p>
                     <p className="text-xs font-bold text-emerald-600">
-                      {contractType === 'timesheet' || contractType === 'hourly' ? `${allTimeDuration.toFixed(1)} Hours` : `${allTimeDays} Days`}
+                      {contractType === 'timesheet' ? `${allTimeDuration.toFixed(1)} Hours` : `${allTimeDays} Days`}
                     </p>
                     <p className="text-[9px] text-emerald-500 font-medium">
-                      {approvedCount || (contractType === 'mandays' ? allTimeDays : 0)} {contractType === 'timesheet' || contractType === 'hourly' ? 'Logs' : 'Days'} Approved
+                      {approvedCount || (contractType === 'mandays' ? allTimeDays : 0)} {contractType === 'timesheet' ? 'Logs' : 'Days'} Approved
                     </p>
                     <p className="text-[9px] text-emerald-600 font-bold">{formatCurrency(totalPaid + liability)}</p>
                   </div>

@@ -68,7 +68,7 @@ export function ContractAccordion({ contracts }: ContractAccordionProps) {
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4 mt-4 w-full md:w-auto md:flex md:flex-nowrap md:items-center md:gap-6 md:mt-0">
-                    {(contract.contract_type === 'timesheet' || contract.contract_type === 'hourly' || contract.contract_type === 'mandays') && (
+                    {(contract.contract_type === 'timesheet' || contract.contract_type === 'mandays') && (
                       <>
                         <div className="text-left md:text-right border-r-0 md:border-r border-[#E2E8F0] md:pr-6">
                           <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-tight">Est. Pending</p>
