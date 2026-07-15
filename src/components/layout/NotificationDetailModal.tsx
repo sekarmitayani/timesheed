@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Notification } from "@/lib/types";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface NotificationDetailModalProps {
     notification: Notification | null;
@@ -27,18 +28,25 @@ export function NotificationDetailModal({
 }: NotificationDetailModalProps) {
     const router = useRouter();
 
+    const { user } = useAuthStore();
+
     if (!notification) return null;
 
     const handleActionClick = () => {
+        const role = user?.role || "employee";
+        const basePath = role === "projectmanager" ? "/pm" : role === "finance" ? "/management" : `/${role}`;
+
         // Basic routing logic based on reference_type
         if (notification.reference_type === "timesheet") {
-            router.push("/management/approvals");
+            router.push(`${basePath}/approvals`);
         } else if (notification.reference_type === "task" || notification.type.includes("task")) {
-            router.push("/dashboard"); 
+            router.push(`${basePath}/tasks`); 
         } else if (notification.reference_type === "project") {
-            router.push(`/management/projects/${notification.reference_id}`);
+            router.push(`${basePath}/projects/${notification.reference_id}`);
         } else if (notification.reference_type === "resource_request") {
-            router.push("/management/resources");
+            router.push(`${basePath}/resources`);
+        } else {
+            router.push(`${basePath}/dashboard`);
         }
         onOpenChange(false);
     };
@@ -69,9 +77,6 @@ export function NotificationDetailModal({
                         Delete
                     </Button>
                     <div className="flex gap-2">
-                        <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
-                            Close
-                        </Button>
                         {notification.reference_type && (
                             <Button size="sm" onClick={handleActionClick} className="bg-blue-600 hover:bg-blue-700 text-white">
                                 View Details
