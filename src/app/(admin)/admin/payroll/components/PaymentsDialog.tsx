@@ -280,7 +280,7 @@ export function PaymentsDialog({
                                     <Input className="h-9 text-sm border-slate-200" placeholder="Optional notes regarding clearance..." value={paymentForm.description || ""} onChange={e => setPaymentForm({ ...paymentForm, description: e.target.value })} disabled={isSavingPayment} />
                                 </div>
                                 <Button className="w-full bg-emerald-600 hover:bg-emerald-700 shadow-sm h-10 mt-4 text-sm font-bold tracking-wide" onClick={() => {
-                                    if (!paymentForm.name?.trim() || paymentForm.amount === null || paymentForm.amount === undefined || paymentForm.amount === "" || !paymentForm.paid_at) {
+                                    if (!paymentForm.name?.trim() || paymentForm.amount === null || paymentForm.amount === undefined || !paymentForm.paid_at) {
                                         toast.error("Please fill in all required fields");
                                         return;
                                     }
