@@ -31,7 +31,7 @@ export function MonthlyProfitChart({ data, months, setMonths }: MonthlyProfitCha
                         <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                             <TrendingUp className="h-4 w-4 text-[#4B7BEC]" /> Monthly Profit Growth
                         </CardTitle>
-                        <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Historical revenue and profit analysis</p>
+                        <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Historical prorated revenue and profit analysis</p>
                     </div>
                 </CardHeader>
                 <CardContent className="h-[250px] flex items-center justify-center">
@@ -54,7 +54,7 @@ export function MonthlyProfitChart({ data, months, setMonths }: MonthlyProfitCha
                     <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                         <TrendingUp className="h-4 w-4 text-[#4B7BEC]" /> Monthly Profit Growth
                     </CardTitle>
-                    <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Historical revenue and profit analysis</p>
+                    <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Historical prorated revenue and profit analysis</p>
                 </div>
                 {setMonths && (
                     <Select value={String(months)} onValueChange={(v) => setMonths(Number(v))}>

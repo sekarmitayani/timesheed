@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Wallet, TrendingUp, TrendingDown, Receipt, Landmark, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
+import { Wallet, TrendingUp, TrendingDown, Receipt, Landmark, ArrowUpRight, ArrowDownRight, Minus, Users, Clock } from "lucide-react";
 import { KpiStats } from "../hooks/useManagementDashboardData";
 
 interface KpiStatsRowProps {
@@ -71,13 +71,13 @@ export function KpiStatsRow({ stats }: KpiStatsRowProps) {
             iconColor: "text-[#4B7BEC]",
         },
         {
-            label: "Margin",
+            label: "Net Margin",
             value: fmtCurrencyShort(stats.margin),
             change: stats.marginChange,
             invertColor: false,
             icon: stats.marginChange >= 0 ? TrendingUp : TrendingDown,
-            iconBg: "bg-blue-50",
-            iconColor: "text-[#4B7BEC]",
+            iconBg: "bg-emerald-50",
+            iconColor: "text-emerald-600",
         },
         {
             label: "Total Expenses",
@@ -97,23 +97,41 @@ export function KpiStatsRow({ stats }: KpiStatsRowProps) {
             iconBg: "bg-amber-50",
             iconColor: "text-amber-600",
         },
+        {
+            label: "Salary & Comp",
+            value: fmtCurrencyShort(stats.salaryComp),
+            change: stats.salaryChange,
+            invertColor: true,
+            icon: Users,
+            iconBg: "bg-indigo-50",
+            iconColor: "text-indigo-600",
+        },
+        {
+            label: "Pending Res",
+            value: String(stats.pendingResources),
+            change: undefined,
+            invertColor: false,
+            icon: Clock,
+            iconBg: "bg-slate-100",
+            iconColor: "text-slate-600",
+        },
     ];
 
     return (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
             {kpis.map((kpi) => (
                 <Card key={kpi.label} className={cardClass}>
-                    <CardContent className="px-3 py-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
+                    <CardContent className="px-2.5 py-3 sm:px-3 sm:py-3 flex flex-row items-center gap-2.5 sm:gap-3 h-full">
                         <div
-                            className={`h-9 w-9 sm:h-12 sm:w-12 rounded-lg sm:rounded-xl ${kpi.iconBg} flex items-center justify-center ${kpi.iconColor} shrink-0`}
+                            className={`h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl ${kpi.iconBg} flex items-center justify-center ${kpi.iconColor} shrink-0`}
                         >
-                            <kpi.icon className="h-4 w-4 sm:h-6 sm:w-6" />
+                            <kpi.icon className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 truncate">
                                 {kpi.label}
                             </p>
-                            <span className="text-base sm:text-lg lg:text-2xl font-black text-slate-800 tracking-tight leading-tight block">
+                            <span className="text-sm sm:text-base lg:text-lg font-black text-slate-800 tracking-tight leading-tight block truncate">
                                 {kpi.value}
                             </span>
                             {kpi.change !== undefined && (

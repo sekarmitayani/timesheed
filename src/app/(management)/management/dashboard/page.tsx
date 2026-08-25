@@ -7,6 +7,11 @@ import { ManagementDashboardHeader } from "./components/ManagementDashboardHeade
 import { KpiStatsRow } from "./components/KpiStatsRow";
 import { FinancialHealthCard } from "./components/FinancialHealthCard";
 import { WorkingHoursCard } from "./components/WorkingHoursCard";
+import { ProfitabilitySnapshotCard } from "./components/ProfitabilitySnapshotCard";
+import { CostBreakdownMiniCard } from "./components/CostBreakdownMiniCard";
+import { LiabilitySnapshotCard } from "./components/LiabilitySnapshotCard";
+import { ResourcesOverviewCard } from "./components/ResourcesOverviewCard";
+import { TopProjectsCard } from "./components/TopProjectsCard";
 
 export default function ExecutiveDashboard() {
     const user = useAuthStore((s) => s.user);
@@ -16,11 +21,16 @@ export default function ExecutiveDashboard() {
         financialHealth,
         workingHours,
         projectEfficiency,
+        profitabilitySnapshot,
+        costBreakdownMini,
+        liabilitySnapshot,
+        resourcesOverview,
+        topProjects,
     } = useManagementDashboardData();
 
     if (isLoading) {
         return (
-            <div className="space-y-6">
+            <div className="space-y-3">
                 <ManagementDashboardHeader userName={user?.full_name || "Executive"} />
                 <div className="flex items-center justify-center py-32">
                     <div className="text-center space-y-4">
@@ -33,19 +43,32 @@ export default function ExecutiveDashboard() {
     }
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="space-y-3 animate-in fade-in duration-500">
             <ManagementDashboardHeader userName={user?.full_name || "Executive"} />
 
             {/* Row 1: KPI Stats */}
             <KpiStatsRow stats={kpiStats} />
 
-            {/* Row 2: Financial Health + Working Hours */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            {/* Row 2: Financial Health + Profitability Sparkline */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
                 <FinancialHealthCard data={financialHealth} />
+                <ProfitabilitySnapshotCard data={profitabilitySnapshot} isLoading={isLoading} />
+            </div>
+
+            {/* Row 3: Cost Breakdown Mini + Liability Snapshot + Resources Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
+                <CostBreakdownMiniCard data={costBreakdownMini} isLoading={isLoading} />
+                <LiabilitySnapshotCard data={liabilitySnapshot} isLoading={isLoading} />
+                <ResourcesOverviewCard data={resourcesOverview} isLoading={isLoading} />
+            </div>
+
+            {/* Row 4: Working Hours + Top Projects */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
                 <WorkingHoursCard
                     workingHours={workingHours}
                     projectEfficiency={projectEfficiency}
                 />
+                <TopProjectsCard data={topProjects} isLoading={isLoading} />
             </div>
         </div>
     );

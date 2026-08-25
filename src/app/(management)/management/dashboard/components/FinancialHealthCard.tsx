@@ -38,22 +38,22 @@ export function FinancialHealthCard({ data }: FinancialHealthCardProps) {
         }));
 
     return (
-        <Card className="md:col-span-2 bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col">
-            <CardHeader className="pb-1 border-b border-slate-50">
-                <div>
-                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <PieIcon className="h-4 w-4 text-[#4B7BEC]" /> Financial Health
+        <Card className="md:col-span-2 bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
+            <CardHeader className="px-4 py-3 border-b border-slate-100 [&.border-b]:py-3 flex flex-row items-center justify-between min-h-[52px]">
+                <div className="flex flex-col justify-center">
+                    <CardTitle className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <PieIcon className="h-3.5 w-3.5 text-[#4B7BEC]" /> Financial Health
                     </CardTitle>
-                    <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">P&L summary and cost breakdown</p>
+                    <p className="text-[9px] text-slate-400 font-medium ml-5 mt-0.5">P&L summary and cost breakdown</p>
                 </div>
             </CardHeader>
-            <CardContent className="px-4 pt-4 pb-4 flex-1">
+            <CardContent className="px-4 pt-3 pb-3.5 flex-1">
                 {chartData.length === 0 ? (
                     <div className="py-8 text-center text-xs text-slate-400 font-medium">
                         No financial data available yet.
                     </div>
                 ) : (
-                    <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+                    <div className="flex flex-col md:flex-row gap-3 md:gap-4">
                         {/* Left: Donut Chart + Legend */}
                         <div className="flex flex-col items-center gap-3 md:gap-4 md:w-[260px] shrink-0">
                             <div className="relative w-[160px] h-[160px] sm:w-[200px] sm:h-[200px]">

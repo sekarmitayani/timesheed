@@ -1,6 +1,16 @@
 import { useMemo } from "react";
 import { useQuery, useQueries } from "@tanstack/react-query";
-import { managementService, FinancialHealthResponse, LiabilityMonitorResponse, WorkingHoursResponse, CostBreakdownItem } from "@/lib/services/management-service";
+import { 
+    managementService, 
+    FinancialHealthResponse, 
+    LiabilityMonitorResponse, 
+    WorkingHoursResponse, 
+    CostBreakdownItem,
+    MonthlyProfitItem,
+    CostBreakdownSummaryResponse,
+    ManagementResourceStats,
+    ProjectProfitItem
+} from "@/lib/services/management-service";
 import { projectService } from "@/lib/services/project-service";
 import { ApiProject } from "@/lib/types";
 
@@ -11,9 +21,12 @@ export interface KpiStats {
     margin: number;
     totalExpenses: number;
     totalLiability: number;
+    salaryComp: number;
+    pendingResources: number;
     revenueChange: number;
     marginChange: number;
     expensesChange: number;
+    salaryChange: number;
 }
 
 export interface PLSummaryItem {
@@ -95,7 +108,45 @@ export function useManagementDashboardData() {
 
     const isLoadingProjectHours = projectHoursQueries.some((q) => q.isLoading);
 
-    const isLoading = isLoadingFinancial || isLoadingComparison || isLoadingLiability || isLoadingWorkingHours || isLoadingProjects || isLoadingProjectHours;
+    // 6. Profitability Snapshot (3 months)
+    const { data: monthlyProfitRaw, isLoading: isLoadingMonthlyProfit } = useQuery({
+        queryKey: ["management", "profitability", "monthly", 3],
+        queryFn: () => managementService.getMonthlyProfit(3),
+        staleTime: STALE_TIME,
+    });
+
+    // 7. Cost Breakdown Mini
+    const { data: costBreakdownSummaryRaw, isLoading: isLoadingCostBreakdownSummary } = useQuery({
+        queryKey: ["management", "costBreakdownSummary", "30", "all"],
+        queryFn: () => managementService.getCostBreakdownSummary("30", "all"),
+        staleTime: STALE_TIME,
+    });
+
+    // 8. Resources Overview
+    const { data: resourcesStatsRaw, isLoading: isLoadingResourcesStats } = useQuery({
+        queryKey: ["management", "resources", "stats"],
+        queryFn: () => managementService.getManagementResourceStats(),
+        staleTime: STALE_TIME,
+    });
+
+    // 9. Top Projects
+    const { data: projectProfitabilityRaw, isLoading: isLoadingProjectProfitability } = useQuery({
+        queryKey: ["management", "profitability", "projects"],
+        queryFn: () => managementService.getProjectProfitability(),
+        staleTime: STALE_TIME,
+    });
+
+    const isLoading = 
+        isLoadingFinancial || 
+        isLoadingComparison || 
+        isLoadingLiability || 
+        isLoadingWorkingHours || 
+        isLoadingProjects || 
+        isLoadingProjectHours ||
+        isLoadingMonthlyProfit ||
+        isLoadingCostBreakdownSummary ||
+        isLoadingResourcesStats ||
+        isLoadingProjectProfitability;
 
     // ---- Derived Data ----
 
@@ -104,13 +155,27 @@ export function useManagementDashboardData() {
         const totalExpenses = (financialRaw?.total_expenses ?? 0) + (financialRaw?.total_cost_sdm ?? 0);
         const margin = financialRaw?.margin ?? 0;
         const totalLiability = liabilityRaw?.total_liability ?? 0;
+        const salaryComp = costBreakdownSummaryRaw?.salary_comp?.value ?? 0;
+        const pendingResources = resourcesStatsRaw?.total_pending ?? 0;
 
         const revenueChange = comparisonRaw?.changes?.revenue_change ?? 0;
         const marginChange = comparisonRaw?.changes?.margin_change ?? 0;
         const expensesChange = comparisonRaw?.changes?.expenses_change ?? 0;
+        const salaryChange = costBreakdownSummaryRaw?.salary_comp?.trend ?? 0;
 
-        return { totalRevenue, margin, totalExpenses, totalLiability, revenueChange, marginChange, expensesChange };
-    }, [financialRaw, liabilityRaw, comparisonRaw]);
+        return { 
+            totalRevenue, 
+            margin, 
+            totalExpenses, 
+            totalLiability, 
+            salaryComp,
+            pendingResources,
+            revenueChange, 
+            marginChange, 
+            expensesChange,
+            salaryChange 
+        };
+    }, [financialRaw, liabilityRaw, comparisonRaw, costBreakdownSummaryRaw, resourcesStatsRaw]);
 
     const financialHealth = useMemo((): FinancialHealthData => {
         const costBreakdown = financialRaw?.cost_breakdown ?? [];
@@ -151,11 +216,37 @@ export function useManagementDashboardData() {
             .sort((a, b) => b.hours - a.hours);
     }, [activeProjects, projectHoursQueries]);
 
+    // Derived Enriched Data
+    const profitabilitySnapshot = useMemo(() => {
+        return monthlyProfitRaw?.items || [];
+    }, [monthlyProfitRaw]);
+
+    const costBreakdownMini = useMemo(() => {
+        return costBreakdownSummaryRaw;
+    }, [costBreakdownSummaryRaw]);
+
+    const liabilitySnapshot = useMemo(() => {
+        return liabilityRaw;
+    }, [liabilityRaw]);
+
+    const resourcesOverview = useMemo(() => {
+        return resourcesStatsRaw;
+    }, [resourcesStatsRaw]);
+
+    const topProjects = useMemo(() => {
+        return (projectProfitabilityRaw?.items || []).slice(0, 5); // top 5
+    }, [projectProfitabilityRaw]);
+
     return {
         isLoading,
         kpiStats,
         financialHealth,
         workingHours,
         projectEfficiency,
+        profitabilitySnapshot,
+        costBreakdownMini,
+        liabilitySnapshot,
+        resourcesOverview,
+        topProjects,
     };
 }

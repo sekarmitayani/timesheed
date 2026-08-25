@@ -30,7 +30,7 @@ export function ManagementDashboardHeader({ userName }: ManagementDashboardHeade
                     Real-time financial and operational metrics.
                 </p>
             </div>
-            
+
             <div className="bg-white border border-slate-100 shadow-sm rounded-xl px-5 py-2.5 flex items-center gap-4 shrink-0 w-fit">
                 <div className="text-2xl font-black text-slate-800 tracking-tight">
                     {format(currentTime, "HH:mm")}
