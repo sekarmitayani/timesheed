@@ -47,12 +47,17 @@ export function LiabilitySnapshotCard({ data, isLoading }: LiabilitySnapshotCard
 
     return (
         <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow p-0 py-0 gap-0">
-            <CardHeader className="px-4 py-3 border-b border-slate-100 [&.border-b]:py-3 flex flex-row items-center justify-between min-h-[52px]">
-                <div className="flex flex-col justify-center">
-                    <CardTitle className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <Landmark className="h-3.5 w-3.5 text-[#4B7BEC]" /> Liability Snapshot
-                    </CardTitle>
-                    <p className="text-[9px] text-slate-400 font-medium ml-5 mt-0.5">Unpaid salaries overview</p>
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <Landmark className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            Liability Snapshot
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Unpaid salaries overview
+                        </p>
+                    </div>
                 </div>
             </CardHeader>
             <CardContent className="p-0 flex-1 flex flex-col justify-between">

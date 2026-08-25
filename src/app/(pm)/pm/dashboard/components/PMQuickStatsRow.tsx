@@ -17,7 +17,7 @@ interface PMQuickStatsRowProps {
 export function PMQuickStatsRow({ stats }: PMQuickStatsRowProps) {
     const router = useRouter();
 
-    const cardClass = "bg-white border border-slate-100 shadow-sm rounded-xl h-[100px] flex flex-col overflow-hidden hover:shadow-md transition-shadow cursor-pointer";
+    const cardClass = "bg-white border border-slate-100 shadow-sm rounded-xl h-[100px] flex flex-col overflow-hidden hover:shadow-md transition-shadow cursor-pointer p-0 py-0 gap-0";
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

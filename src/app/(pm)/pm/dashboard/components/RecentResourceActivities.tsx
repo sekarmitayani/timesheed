@@ -14,16 +14,22 @@ export function RecentResourceActivities({ activities }: RecentResourceActivitie
     const displayActivities = activities.slice(0, 5);
 
     return (
-        <Card className="bg-white border-slate-100 shadow-sm rounded-xl h-full overflow-hidden flex flex-col">
-            <CardHeader className="pb-1 border-b border-slate-50">
-                <div>
-                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <Package className="h-4 w-4 text-[#4B7BEC]" /> Recent Resource Activity
-                    </CardTitle>
-                    <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Latest updates on resource requests</p>
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl h-full overflow-hidden flex flex-col hover:shadow-md transition-shadow p-0 py-0 gap-0">
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <Package className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            Recent Resource Activity
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Latest updates on resource requests
+                        </p>
+                    </div>
                 </div>
             </CardHeader>
-            <CardContent className="px-3 pt-0 pb-2.5 flex-1">
+            <CardContent className="p-0 flex-1 flex flex-col justify-between">
+                <div className="p-3 sm:p-4 flex-1">
                 {displayActivities.length === 0 ? (
                     <p className="text-xs text-slate-500 py-6 text-center">No recent activity.</p>
                 ) : (
@@ -65,6 +71,7 @@ export function RecentResourceActivities({ activities }: RecentResourceActivitie
                         ))}
                     </div>
                 )}
+                </div>
             </CardContent>
         </Card>
     );

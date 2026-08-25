@@ -35,16 +35,21 @@ export function WeeklyHoursChart({ timesheets, className }: WeeklyHoursChartProp
     }, [timesheets]);
 
     return (
-        <Card className={cn("bg-white border-slate-100 shadow-sm flex flex-col", className)}>
-            <CardHeader className="pb-2 border-b border-slate-50 flex flex-col items-start justify-between">
-                <div>
-                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-[#4B7BEC]" /> Weekly Hours (Last 7 Days)
-                    </CardTitle>
-                    <p className="text-[10px] text-slate-400 font-medium ml-6 mt-0.5">Daily breakdown of your logged work hours</p>
+        <Card className={cn("bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col hover:shadow-md transition-shadow p-0 py-0 gap-0", className)}>
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <TrendingUp className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            Weekly Hours (Last 7 Days)
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Daily breakdown of your logged work hours
+                        </p>
+                    </div>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 px-5 pb-5 pt-1 min-h-0">
+            <CardContent className="flex-1 p-4 sm:p-5 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />

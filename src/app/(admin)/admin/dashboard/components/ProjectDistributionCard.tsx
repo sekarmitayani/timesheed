@@ -26,24 +26,30 @@ export function ProjectDistributionCard({ projectFinancials }: ProjectDistributi
     const fmtCurrency = (v: number) => `Rp ${v.toLocaleString("id-ID")}`;
 
     return (
-        <Card className="lg:col-span-2 bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col">
-            <CardHeader className="pb-1 border-b border-slate-50 flex flex-row items-center justify-between">
-                <div>
-                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <BarChart3 className="h-4 w-4 text-[#4B7BEC]" /> Project Budget Distribution
-                    </CardTitle>
-                    <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Distribution of payroll costs across active projects</p>
+        <Card className="lg:col-span-2 bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <BarChart3 className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            Project Budget Distribution
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Distribution of payroll costs across active projects
+                        </p>
+                    </div>
                 </div>
                 <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="h-7 text-[9px] font-bold text-[#4B7BEC] gap-1 hover:bg-blue-50 px-2" 
+                    className="h-7 text-[9px] font-bold text-[#4B7BEC] gap-1 hover:bg-blue-50 px-2 uppercase tracking-widest" 
                     onClick={() => router.push("/admin/payroll")}
                 >
                     Details <ArrowRight className="h-3 w-3" />
                 </Button>
             </CardHeader>
-            <CardContent className="px-4 pt-3 pb-2.5 flex-1 flex flex-col justify-between">
+            <CardContent className="p-0 flex-1 flex flex-col justify-between">
+                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                 <div className="space-y-4">
                     {projectFinancials.length === 0 ? (
                         <div className="py-8 text-center text-xs text-slate-400 font-medium">No project financial data available yet.</div>
@@ -100,6 +106,7 @@ export function ProjectDistributionCard({ projectFinancials }: ProjectDistributi
                         </Button>
                     </div>
                 )}
+                </div>
             </CardContent>
         </Card>
     );

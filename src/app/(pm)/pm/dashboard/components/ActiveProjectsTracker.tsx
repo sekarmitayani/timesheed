@@ -37,21 +37,27 @@ export function ActiveProjectsTracker({ projects, tasks }: ActiveProjectsTracker
     );
 
     return (
-        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-full">
-            <CardHeader className="pb-1 border-b border-slate-50 flex flex-row items-center justify-between">
-                <div>
-                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-[#4B7BEC]" /> Active Projects Progress
-                    </CardTitle>
-                    <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Real-time completion status of active projects</p>
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow p-0 py-0 gap-0">
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <Activity className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            Active Projects Progress
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Real-time completion status of active projects
+                        </p>
+                    </div>
                 </div>
                 {projects.length > 0 && (
-                    <span className="text-[9px] font-bold text-[#4B7BEC] bg-blue-50 px-2 py-0.5 rounded-full">
+                    <span className="text-[9px] font-bold text-[#4B7BEC] bg-blue-50 px-2 py-0.5 rounded-full uppercase tracking-widest">
                         {projects.length} Total
                     </span>
                 )}
             </CardHeader>
-            <CardContent className="px-3 pt-0 pb-2.5 flex-1 flex flex-col justify-between">
+            <CardContent className="p-0 flex-1 flex flex-col justify-between">
+                <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
                 <div className="space-y-2">
                     {currentProjects.length === 0 ? (
                         <p className="text-xs text-slate-500 py-4 text-center">No active projects to track.</p>
@@ -106,6 +112,7 @@ export function ActiveProjectsTracker({ projects, tasks }: ActiveProjectsTracker
                         </Button>
                     </div>
                 )}
+                </div>
             </CardContent>
         </Card>
     );

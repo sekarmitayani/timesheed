@@ -14,16 +14,22 @@ export function PaymentStatusCard({ stats }: PaymentStatusCardProps) {
     const fmtCurrency = (v: number) => `Rp ${v.toLocaleString("id-ID")}`;
 
     return (
-        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col">
-            <CardHeader className="pb-1 border-b border-slate-50">
-                <div>
-                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <Wallet className="h-4 w-4 text-[#4B7BEC]" /> Sub-Ledger Payment Status
-                    </CardTitle>
-                    <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Overall distribution and contract payment status</p>
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow p-0 py-0 gap-0">
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <Wallet className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            Sub-Ledger Payment Status
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Overall distribution and contract payment status
+                        </p>
+                    </div>
                 </div>
             </CardHeader>
-            <CardContent className="px-4 pt-3 pb-2.5 flex-1 flex flex-col justify-between h-full">
+            <CardContent className="p-0 flex-1 flex flex-col justify-between">
+                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                 {/* Overall Progress */}
                 <div className="space-y-1.5 flex-none">
                     <div className="flex justify-between items-end">
@@ -62,6 +68,7 @@ export function PaymentStatusCard({ stats }: PaymentStatusCardProps) {
                         </div>
                         <span className="text-xs font-bold text-slate-800">{fmtCurrency(stats.totalResourceCost)}</span>
                     </div>
+                </div>
                 </div>
             </CardContent>
         </Card>

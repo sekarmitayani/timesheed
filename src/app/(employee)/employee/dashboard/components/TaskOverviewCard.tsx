@@ -36,16 +36,21 @@ export function TaskOverviewCard({ tasks, projects, className }: TaskOverviewCar
     }, [tasks]);
 
     return (
-        <Card className={cn("bg-white overflow-hidden gap-0 py-0", className)}>
-            <CardHeader className="px-6 pt-6 pb-5 border-b border-slate-50 flex flex-col items-start justify-between">
-                <div>
-                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <ListTodo className="h-4 w-4 text-[#4B7BEC]" /> Task Overview
-                    </CardTitle>
-                    <p className="text-[10px] text-slate-400 font-medium ml-6 mt-0.5">Current status of pending and upcoming tasks</p>
+        <Card className={cn("bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col hover:shadow-md transition-shadow p-0 py-0 gap-0", className)}>
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <ListTodo className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            Task Overview
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Current status of pending and upcoming tasks
+                        </p>
+                    </div>
                 </div>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-0 flex-1 overflow-hidden">
                 <Table>
                     <TableHeader className="bg-slate-50/50 sticky top-0 z-10 border-b border-slate-100">
                         <TableRow className="h-10 hover:bg-transparent border-none bg-slate-50/50">

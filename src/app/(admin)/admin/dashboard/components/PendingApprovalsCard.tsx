@@ -15,24 +15,30 @@ export function PendingApprovalsCard({ requests }: PendingApprovalsCardProps) {
     const router = useRouter();
 
     return (
-        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-full">
-            <CardHeader className="pb-1 border-b border-slate-50 flex flex-row items-center justify-between">
-                <div>
-                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4 text-amber-500" /> Pending Approvals
-                    </CardTitle>
-                    <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Resource requests awaiting administrative action</p>
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow p-0 py-0 gap-0">
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            Pending Approvals
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Resource requests awaiting administrative action
+                        </p>
+                    </div>
                 </div>
                 <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="h-7 text-[9px] font-bold text-[#4B7BEC] gap-1 hover:bg-blue-50 px-2" 
+                    className="h-7 text-[9px] font-bold text-[#4B7BEC] gap-1 hover:bg-blue-50 px-2 uppercase tracking-widest" 
                     onClick={() => router.push("/admin/resources")}
                 >
                     View All <ArrowRight className="h-3 w-3" />
                 </Button>
             </CardHeader>
-            <CardContent className="px-3 pt-0 pb-2.5 flex-1">
+            <CardContent className="p-0 flex-1 flex flex-col justify-between">
+                <div className="p-3 sm:p-4 flex-1">
                 {requests.length === 0 ? (
                     <div className="py-8 text-center">
                         <CheckCircle2 className="h-8 w-8 text-emerald-400 mx-auto mb-2 opacity-50" />
@@ -62,6 +68,7 @@ export function PendingApprovalsCard({ requests }: PendingApprovalsCardProps) {
                         ))}
                     </div>
                 )}
+                </div>
             </CardContent>
         </Card>
     );
