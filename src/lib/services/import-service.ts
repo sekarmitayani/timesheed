@@ -57,5 +57,39 @@ export const importService = {
         }
 
         return response.json();
+    },
+
+    /**
+     * Upload and bulk import contracts via CSV file
+     */
+    async importContracts(file: File): Promise<ImportSummary> {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const headers: Record<string, string> = {};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/admin/contracts/import`, {
+            method: "POST",
+            headers,
+            body: formData,
+        });
+
+        if (!response.ok) {
+            if (response.status === 401 && typeof window !== "undefined") {
+                useAuthStore.getState().setSessionExpired(true);
+            }
+            const errorData = await response.json().catch(() => ({}));
+            const err: any = new Error(errorData.error || errorData.message || response.statusText || "Failed to import contracts");
+            err.data = errorData;
+            err.status = response.status;
+            throw err;
+        }
+
+        return response.json();
     }
 };

@@ -19,6 +19,7 @@ export function useAdminContractsData() {
 
     // --- Modal State ---
     const [formOpen, setFormOpen] = useState(false);
+    const [importOpen, setImportOpen] = useState(false);
     const [editId, setEditId] = useState<number | null>(null);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [contractToDelete, setContractToDelete] = useState<Contract | null>(null);
@@ -209,15 +210,16 @@ export function useAdminContractsData() {
             isLoading,
             isSaving: saveContractMutation.isPending,
             search, statusFilter, typeFilter, schemeFilter, projectFilter,
-            formOpen, editId, deleteOpen, contractToDelete, detailsOpen, selectedContract,
+            formOpen, importOpen, editId, deleteOpen, contractToDelete, detailsOpen, selectedContract,
             contractForm
         },
         actions: {
             setSearch, setStatusFilter, setTypeFilter, setSchemeFilter, setProjectFilter, setPage, setLimit,
-            setFormOpen, setEditId, setDeleteOpen, setContractToDelete, setDetailsOpen, setSelectedContract,
+            setFormOpen, setImportOpen, setEditId, setDeleteOpen, setContractToDelete, setDetailsOpen, setSelectedContract,
             setContractForm,
             handleSaveContract,
             handleDeleteContract: () => contractToDelete && deleteContractMutation.mutate(contractToDelete.id),
+            handleImportSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'contracts'] }),
             openEdit,
             resetForm
         }
