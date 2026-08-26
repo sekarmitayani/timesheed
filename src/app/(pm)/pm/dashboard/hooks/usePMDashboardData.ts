@@ -96,7 +96,7 @@ export function usePMDashboardData() {
             const pendingReqs = allResources.filter((r: ResourceRequest) => r.status === "pending");
             
             // Fix: approvalService inbox parsing
-            const inboxData = Array.isArray(inboxResult) ? inboxResult : (inboxResult?.data || []);
+            const inboxData = Array.isArray(inboxResult) ? inboxResult : ((inboxResult as any)?.data || []);
 
             // Task calculations
             const tasksDone = flattenedTasks.filter(t => t.status === "done").length;

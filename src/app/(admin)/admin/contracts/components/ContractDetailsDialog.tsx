@@ -54,16 +54,11 @@ export function ContractDetailsDialog({
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[550px] max-h-[90vh] p-0 overflow-hidden border-[#e2e8f0] flex flex-col">
-                <div className="bg-gradient-to-r from-slate-50 to-[#f8fafc] border-b border-[#e2e8f0] px-5 py-4 flex items-center gap-3 shrink-0">
-                    <div className="p-2.5 bg-white rounded-xl shadow-sm border border-slate-100">
-                        <FileText className="h-5 w-5 text-[#2568C1]" />
-                    </div>
-                    <div>
-                        <DialogTitle className="text-base text-[#0f172a] mb-0.5">Contract Intelligence</DialogTitle>
-                        <DialogDescription className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                            Detailed specification overview
-                        </DialogDescription>
-                    </div>
+                <div className="bg-gradient-to-r from-slate-50 to-[#f8fafc] border-b border-[#e2e8f0] px-5 py-4 shrink-0">
+                    <DialogTitle className="text-base text-[#0f172a] mb-0.5">Contract Intelligence</DialogTitle>
+                    <DialogDescription className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        Detailed specification overview
+                    </DialogDescription>
                 </div>
 
                 <div className="px-5 pt-3 pb-5 space-y-4 bg-slate-50/30 overflow-y-auto">

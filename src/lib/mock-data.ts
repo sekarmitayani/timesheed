@@ -126,12 +126,12 @@ export const mockMilestones: Milestone[] = [
 // MOCK NOTIFICATIONS
 // ============================================================
 export const mockNotifications: Notification[] = [
-    { id: "n1", title: "AI Alert: Anomaly Detected", message: "Unusual overtime pattern detected for Andi Pratama", type: "ai", read: false, createdAt: "2026-02-19T10:30:00" },
-    { id: "n2", title: "Timesheet Approved", message: "Your timesheet for Feb 12-16 has been approved", type: "success", read: false, createdAt: "2026-02-19T09:15:00" },
-    { id: "n3", title: "Budget Warning", message: "Mobile Banking App budget is 85% consumed", type: "warning", read: false, createdAt: "2026-02-18T16:45:00" },
-    { id: "n4", title: "New Task Assigned", message: "Dashboard Charts has been assigned to you", type: "info", read: true, createdAt: "2026-02-18T14:00:00" },
-    { id: "n5", title: "AI: Burnout Risk", message: "Employee Lina Hartono shows high burnout risk", type: "ai", read: false, createdAt: "2026-02-18T11:30:00" },
-    { id: "n6", title: "Payment Released", message: "January salary has been released", type: "success", read: true, createdAt: "2026-02-01T08:00:00" },
+    { id: 1, user_id: 1, title: "AI Alert: Anomaly Detected", message: "Unusual overtime pattern detected for Andi Pratama", type: "ai", is_read: false, created_at: "2026-02-19T10:30:00" },
+    { id: 2, user_id: 1, title: "Timesheet Approved", message: "Your timesheet for Feb 12-16 has been approved", type: "success", is_read: false, created_at: "2026-02-19T09:15:00" },
+    { id: 3, user_id: 1, title: "Budget Warning", message: "Mobile Banking App budget is 85% consumed", type: "warning", is_read: false, created_at: "2026-02-18T16:45:00" },
+    { id: 4, user_id: 1, title: "New Task Assigned", message: "Dashboard Charts has been assigned to you", type: "info", is_read: true, created_at: "2026-02-18T14:00:00" },
+    { id: 5, user_id: 1, title: "AI: Burnout Risk", message: "Employee Lina Hartono shows high burnout risk", type: "ai", is_read: false, created_at: "2026-02-18T11:30:00" },
+    { id: 6, user_id: 1, title: "Payment Released", message: "January salary has been released", type: "success", is_read: true, created_at: "2026-02-01T08:00:00" },
 ];
 
 // ============================================================

@@ -20,8 +20,8 @@ interface ResourceFormDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     projects: ApiProject[];
-    form: { project_id: string; type: string; details: string };
-    setForm: (form: { project_id: string; type: string; details: string }) => void;
+    form: { project_id: string | number; type: string; details: string };
+    setForm: (form: any) => void;
     onSubmit: (payload: { project_id: number; type: string; details: string }) => void;
     isProcessing: boolean;
 }
@@ -51,7 +51,7 @@ export function ResourceFormDialog({
                 <div className="px-6 py-5 space-y-4">
                     <div className="space-y-1.5">
                         <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Select Project <span className="text-red-500">*</span></label>
-                        <Select value={form.project_id || undefined} onValueChange={v => setForm({ ...form, project_id: v })}>
+                        <Select value={form.project_id ? String(form.project_id) : undefined} onValueChange={v => setForm({ ...form, project_id: v })}>
                             <SelectTrigger className="h-11"><SelectValue placeholder="Choose a project" /></SelectTrigger>
                             <SelectContent>
                                 {projects.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}

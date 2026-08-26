@@ -80,16 +80,11 @@ export function PaymentsDialog({
         <>
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[800px] p-0 gap-0 overflow-hidden border-[#e2e8f0] bg-white">
-                <div className="bg-gradient-to-r from-emerald-50 to-white border-b border-emerald-100 px-6 py-5 flex items-center gap-4">
-                    <div className="p-3 bg-white rounded-xl shadow-sm border border-emerald-200">
-                        <WalletCards className="h-6 w-6 text-emerald-600" />
-                    </div>
-                    <div>
-                        <DialogTitle className="text-lg text-[#0f172a] mb-1">Ledger Distribution Window</DialogTitle>
-                        <DialogDescription className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                            User: <span className="text-slate-700">{selectedContract?.full_name || "..."}</span>
-                        </DialogDescription>
-                    </div>
+                <div className="bg-gradient-to-r from-emerald-50 to-white border-b border-emerald-100 px-6 py-5">
+                    <DialogTitle className="text-lg text-[#0f172a] mb-1">Ledger Distribution Window</DialogTitle>
+                    <DialogDescription className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        User: <span className="text-slate-700">{selectedContract?.full_name || "..."}</span>
+                    </DialogDescription>
                 </div>
 
                 <div className="max-h-[85vh] overflow-y-auto">

@@ -19,6 +19,7 @@ export function useAdminUsersData() {
 
     // --- Modal State ---
     const [addOpen, setAddOpen] = useState(false);
+    const [importOpen, setImportOpen] = useState(false);
     const [editId, setEditId] = useState<string | null>(null);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState<User | null>(null);
@@ -303,13 +304,13 @@ export function useAdminUsersData() {
             isSaving: saveUserMutation.isPending,
             isSavingContract: saveContractMutation.isPending,
             search, statusFilter, roleFilter, typeFilter,
-            addOpen, editId, deleteOpen, userToDelete, detailsOpen, selectedUserForDetails,
+            addOpen, importOpen, editId, deleteOpen, userToDelete, detailsOpen, selectedUserForDetails,
             isContractEditorOpen, editingContractId, form, contractForm,
             page, confirmUserOpen, confirmUserType
         },
         actions: {
             setSearch, setStatusFilter, setRoleFilter, setTypeFilter, setPage, setLimit,
-            setAddOpen, setEditId, setDeleteOpen, setUserToDelete, setDetailsOpen,
+            setAddOpen, setImportOpen, setEditId, setDeleteOpen, setUserToDelete, setDetailsOpen,
             setSelectedUserForDetails, setIsContractEditorOpen, setEditingContractId,
             setForm, setContractForm, setConfirmUserOpen,
             handlePreSave,
@@ -317,6 +318,9 @@ export function useAdminUsersData() {
             handleSaveContract,
             handleDeleteUser: () => userToDelete && deleteUserMutation.mutate(userToDelete.id),
             handleDeleteContract: (id: number) => deleteContractMutation.mutate(id),
+            handleImportSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+            },
             openEdit,
             openDetails,
             editContract,
