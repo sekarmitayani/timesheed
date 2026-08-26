@@ -60,28 +60,36 @@ export function PersonalInfoCard({ profile, onSave, isSaving }: PersonalInfoCard
     };
 
     return (
-        <Card className="bg-white border-slate-200 shadow-sm rounded-xl overflow-hidden flex flex-col">
-            <CardHeader className="py-2.5 px-4 flex flex-row items-center justify-between border-b border-slate-100">
-                <CardTitle className="text-sm font-bold text-slate-800">
-                    Personal Information
-                </CardTitle>
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <UserIcon className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            Personal Information
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Manage your personal details and contact information
+                        </p>
+                    </div>
+                </div>
                 {!isEditing ? (
-                    <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="h-6 gap-1 text-[10px] px-2 border-slate-200 text-slate-600">
+                    <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="h-7 gap-1 text-[9px] font-bold px-2.5 border-slate-200 text-slate-600 uppercase tracking-widest hover:bg-slate-50 hover:text-[#4B7BEC]">
                         <Pencil className="h-2.5 w-2.5" />
                         Edit
                     </Button>
                 ) : (
                     <div className="flex gap-2">
-                        <Button variant="ghost" size="sm" onClick={handleCancel} disabled={isSaving} className="h-6 text-[10px] text-slate-500">
+                        <Button variant="ghost" size="sm" onClick={handleCancel} disabled={isSaving} className="h-7 text-[9px] font-bold text-slate-500 uppercase tracking-wider">
                             Cancel
                         </Button>
-                        <Button size="sm" onClick={handleSave} disabled={isSaving} className="h-6 text-[10px] px-3 bg-[#2568C1] hover:bg-[#1a4f99]">
+                        <Button size="sm" onClick={handleSave} disabled={isSaving} className="h-7 text-[9px] font-bold px-3 bg-[#4B7BEC] hover:bg-[#385bb5] text-white uppercase tracking-wider">
                             {isSaving ? "Saving..." : "Save"}
                         </Button>
                     </div>
                 )}
             </CardHeader>
-            <CardContent className="p-4 pt-3">
+            <CardContent className="p-4 sm:p-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-2">
                     {/* Full Name */}
                     <div className="space-y-1">

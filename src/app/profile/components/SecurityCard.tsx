@@ -53,14 +53,22 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
     };
 
     return (
-        <Card className="bg-white border-slate-200 shadow-sm rounded-xl overflow-hidden flex flex-col">
-            <CardHeader className="py-2.5 px-4 border-b border-slate-100">
-                <CardTitle className="text-sm font-bold text-slate-800">
-                    Security
-                </CardTitle>
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <Lock className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            Security Settings
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Password protection and authentication options
+                        </p>
+                    </div>
+                </div>
             </CardHeader>
-            <CardContent className="p-4 pt-3">
-                <div className="flex flex-col gap-1">
+            <CardContent className="p-4 sm:p-5">
+                <div className="flex flex-col gap-1.5">
                     <Label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Password</Label>
                     <div className="flex items-center gap-3">
                         <Input 
@@ -70,72 +78,77 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
                         />
                         <Dialog open={isOpen} onOpenChange={setIsOpen}>
                             <DialogTrigger asChild>
-                                <Button className="h-8 text-xs bg-[#2568C1] hover:bg-[#1a4f99] text-white px-4">
+                                <Button className="h-8 text-xs bg-[#4B7BEC] hover:bg-[#385bb5] text-white px-4 font-bold">
                                     Change Password
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
+                            <DialogContent className="sm:max-w-[440px] p-0 overflow-hidden bg-white border border-slate-100 rounded-xl shadow-xl">
                                 <form onSubmit={handleSubmit}>
-                                    <DialogHeader>
-                                        <DialogTitle className="text-xl font-bold text-slate-900">Change Password</DialogTitle>
-                                        <DialogDescription className="text-slate-500">
-                                            Enter your current password and a new secure password.
-                                        </DialogDescription>
+                                    <DialogHeader className="px-6 py-5 border-b border-slate-100 flex flex-row items-center justify-between">
+                                        <div className="flex items-center gap-2.5">
+                                            <Lock className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                                            <div className="flex flex-col">
+                                                <DialogTitle className="text-sm font-bold text-slate-800 uppercase tracking-wide leading-none">Change Password</DialogTitle>
+                                                <DialogDescription className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                                                    Enter your current and new secure password
+                                                </DialogDescription>
+                                            </div>
+                                        </div>
                                     </DialogHeader>
-                                    <div className="grid gap-4 py-4">
+                                    <div className="p-6 space-y-4">
                                         {error && (
-                                            <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-100">
+                                            <div className="p-3 text-xs text-red-600 bg-red-50 rounded-lg border border-red-100 font-medium">
                                                 {error}
                                             </div>
                                         )}
-                                        <div className="space-y-2">
-                                            <Label htmlFor="old_password">Current Password</Label>
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="old_password" className="text-xs font-semibold text-slate-700">Current Password</Label>
                                             <div className="relative">
-                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                                                 <Input
                                                     id="old_password"
                                                     type="password"
                                                     value={formData.current_password}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, current_password: e.target.value }))}
-                                                    className="pl-9 focus-visible:ring-[#2568C1]"
+                                                    className="pl-9 h-9 text-xs focus-visible:ring-[#4B7BEC]"
                                                     placeholder="Enter current password"
                                                 />
                                             </div>
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="new_password">New Password</Label>
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="new_password" className="text-xs font-semibold text-slate-700">New Password</Label>
                                             <div className="relative">
-                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                                                 <Input
                                                     id="new_password"
                                                     type="password"
                                                     value={formData.new_password}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, new_password: e.target.value }))}
-                                                    className="pl-9 focus-visible:ring-[#2568C1]"
+                                                    className="pl-9 h-9 text-xs focus-visible:ring-[#4B7BEC]"
                                                     placeholder="Enter new password"
                                                 />
                                             </div>
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="confirm_password">Confirm New Password</Label>
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="confirm_password" className="text-xs font-semibold text-slate-700">Confirm New Password</Label>
                                             <div className="relative">
-                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                                                 <Input
                                                     id="confirm_password"
                                                     type="password"
                                                     value={formData.confirm_password}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, confirm_password: e.target.value }))}
-                                                    className="pl-9 focus-visible:ring-[#2568C1]"
+                                                    className="pl-9 h-9 text-xs focus-visible:ring-[#4B7BEC]"
                                                     placeholder="Confirm new password"
                                                 />
                                             </div>
                                         </div>
                                     </div>
-                                    <DialogFooter>
-                                        <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isChangingPassword}>
+                                    <DialogFooter className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-2">
+                                        <Button type="button" variant="outline" size="sm" onClick={() => setIsOpen(false)} disabled={isChangingPassword} className="h-8 text-xs font-semibold text-slate-600">
                                             Cancel
                                         </Button>
-                                        <Button type="submit" disabled={isChangingPassword} className="bg-[#2568C1] hover:bg-[#1a4f99]">
+                                        <Button type="submit" size="sm" disabled={isChangingPassword} className="h-8 text-xs font-bold bg-[#4B7BEC] hover:bg-[#385bb5] text-white">
                                             {isChangingPassword ? "Updating..." : "Update Password"}
                                         </Button>
                                     </DialogFooter>

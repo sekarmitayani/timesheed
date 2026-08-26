@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { User } from "@/lib/types";
 import { format } from "date-fns";
-import { Contact } from "lucide-react";
+import { Calendar } from "lucide-react";
 
 interface AccountDetailsCardProps {
     profile?: User;
@@ -27,13 +27,21 @@ export function AccountDetailsCard({ profile }: AccountDetailsCardProps) {
     };
 
     return (
-        <Card className="bg-white border-slate-200 shadow-sm rounded-xl overflow-hidden flex flex-col">
-            <CardHeader className="py-2.5 px-4 border-b border-slate-100">
-                <CardTitle className="text-sm font-bold text-slate-800">
-                    Account Details
-                </CardTitle>
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <Calendar className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            Account Details
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Account timeline and registration metadata
+                        </p>
+                    </div>
+                </div>
             </CardHeader>
-            <CardContent className="p-4 pt-3">
+            <CardContent className="p-4 sm:p-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-2">
                     <div className="space-y-0.5">
                         <Label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Created At</Label>

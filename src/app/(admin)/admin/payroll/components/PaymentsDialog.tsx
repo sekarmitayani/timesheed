@@ -79,7 +79,7 @@ export function PaymentsDialog({
     return (
         <>
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden border-[#e2e8f0] bg-white">
+            <DialogContent className="sm:max-w-[800px] p-0 gap-0 overflow-hidden border-[#e2e8f0] bg-white">
                 <div className="bg-gradient-to-r from-emerald-50 to-white border-b border-emerald-100 px-6 py-5 flex items-center gap-4">
                     <div className="p-3 bg-white rounded-xl shadow-sm border border-emerald-200">
                         <WalletCards className="h-6 w-6 text-emerald-600" />
