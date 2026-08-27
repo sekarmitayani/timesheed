@@ -48,17 +48,22 @@ export function MonthlyProfitChart({ data, months, setMonths }: MonthlyProfitCha
     }));
 
     return (
-        <Card className="bg-white border border-slate-100 shadow-sm rounded-xl overflow-hidden min-w-0">
-            <CardHeader className="pb-1 flex flex-row items-center justify-between border-b border-slate-50">
-                <div>
-                    <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-[#4B7BEC]" /> Monthly Profit Growth
-                    </CardTitle>
-                    <p className="text-[10px] text-slate-400 font-medium ml-6 -mt-0.5">Historical prorated revenue and profit analysis</p>
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0 min-w-0">
+            <CardHeader className="px-5 py-4 border-b border-slate-100 [&.border-b]:pb-4 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <TrendingUp className="h-4 w-4 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                            MONTHLY PROFIT GROWTH
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                            Historical prorated revenue and profit analysis
+                        </p>
+                    </div>
                 </div>
                 {setMonths && (
                     <Select value={String(months)} onValueChange={(v) => setMonths(Number(v))}>
-                        <SelectTrigger className="h-8 w-[110px] bg-white border-slate-200 shrink-0 text-xs shadow-sm">
+                        <SelectTrigger className="h-8 w-[110px] bg-white border-slate-200 shrink-0 text-xs shadow-xs">
                             <SelectValue placeholder="Period" />
                         </SelectTrigger>
                         <SelectContent>
@@ -69,7 +74,7 @@ export function MonthlyProfitChart({ data, months, setMonths }: MonthlyProfitCha
                     </Select>
                 )}
             </CardHeader>
-            <CardContent className="pt-3 pb-2 px-2 sm:px-6 min-w-0">
+            <CardContent className="px-5 py-4 min-w-0">
                 <div className="h-[250px] sm:h-[300px] md:h-[350px] w-full min-w-0" style={{ contain: "layout style paint" }}>
                     <DebouncedResponsiveContainer width="99%" height="100%">
                         <BarChart

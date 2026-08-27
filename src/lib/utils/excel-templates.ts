@@ -147,7 +147,7 @@ export function downloadUserExcelTemplate() {
     XLSX.utils.book_append_sheet(wb, wsGuidelines, "Field Guidelines");
 
     // Trigger download
-    XLSX.writeFile(wb, "Timesheed_User_Import_Template.xlsx");
+    XLSX.writeFile(wb, "Template_Users.xlsx");
 }
 
 /**
@@ -441,7 +441,7 @@ export function downloadContractExcelTemplate() {
     XLSX.utils.book_append_sheet(wb, wsGuidelines, "Field Guidelines");
 
     // Trigger download
-    XLSX.writeFile(wb, "Timesheed_Contract_Import_Template.xlsx");
+    XLSX.writeFile(wb, "Template_Contracts.xlsx");
 }
 
 /**
@@ -747,7 +747,7 @@ export function downloadProjectExcelTemplate() {
     XLSX.utils.book_append_sheet(wb, wsGuidelines, "Field Guidelines");
 
     // Trigger download
-    XLSX.writeFile(wb, "Timesheed_Project_Import_Template.xlsx");
+    XLSX.writeFile(wb, "Template_Projects.xlsx");
 }
 
 /**
@@ -1036,7 +1036,7 @@ export function downloadProjectMemberExcelTemplate() {
     XLSX.utils.book_append_sheet(wb, wsGuidelines, "Field Guidelines");
 
     // Trigger download
-    XLSX.writeFile(wb, "Timesheed_Project_Member_Import_Template.xlsx");
+    XLSX.writeFile(wb, "Template_Project_Members.xlsx");
 }
 
 /**
@@ -1314,7 +1314,7 @@ export function downloadResourceRequestExcelTemplate() {
     XLSX.utils.book_append_sheet(wb, wsGuidelines, "Field Guidelines");
 
     // Trigger download
-    XLSX.writeFile(wb, "Timesheed_Resource_Request_Import_Template.xlsx");
+    XLSX.writeFile(wb, "Template_Resource_Requests.xlsx");
 }
 
 /**
@@ -1584,7 +1584,7 @@ export function downloadPayrollExcelTemplate() {
     XLSX.utils.book_append_sheet(wb, wsGuidelines, "Field Guidelines");
 
     // Trigger download
-    XLSX.writeFile(wb, "Timesheed_Payroll_Import_Template.xlsx");
+    XLSX.writeFile(wb, "Template_Payroll.xlsx");
 }
 
 /**
@@ -1832,7 +1832,7 @@ export function downloadTaskAndTimesheetExcelTemplate() {
     XLSX.utils.book_append_sheet(wb, wsData, "Tasks & Timesheets");
     XLSX.utils.book_append_sheet(wb, wsGuide, "Panduan Kolom");
 
-    XLSX.writeFile(wb, "Template_Import_Tasks_Timesheets.xlsx");
+    XLSX.writeFile(wb, "Template_Tasks_Timesheets.xlsx");
 }
 
 /**

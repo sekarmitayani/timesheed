@@ -105,7 +105,7 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
         {
             title: "REPORTS",
             items: [
-                { label: "Reports & Export", href: "/management/reports", icon: Building2 },
+                { label: "Reports & Export", href: "/management/reports", icon: FileSpreadsheet },
             ]
         }
     ],
