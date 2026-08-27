@@ -19,28 +19,29 @@ import {
     Loader2, 
     Check, 
     Info, 
-    AlertCircle 
+    AlertCircle,
+    HandCoins
 } from "lucide-react";
-import { downloadContractExcelTemplate, parseAndValidateContractFile, ParsedContractRow } from "@/lib/utils/excel-templates";
+import { downloadPayrollExcelTemplate, parseAndValidatePayrollFile, ParsedPayrollRow } from "@/lib/utils/excel-templates";
 import { importService, ImportSummary } from "@/lib/services/import-service";
 import { toast } from "sonner";
 
-interface ImportContractsDialogProps {
+interface ImportPayrollDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onSuccess: () => void;
+    onSuccess?: () => void;
 }
 
 type Step = "upload" | "preview" | "result";
 type FilterView = "all" | "valid" | "error";
 
-export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportContractsDialogProps) {
+export function ImportPayrollDialog({ open, onOpenChange, onSuccess }: ImportPayrollDialogProps) {
     const [step, setStep] = useState<Step>("upload");
     const [isParsing, setIsParsing] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [csvBlob, setCsvBlob] = useState<Blob | null>(null);
-    const [parsedRows, setParsedRows] = useState<ParsedContractRow[]>([]);
+    const [parsedRows, setParsedRows] = useState<ParsedPayrollRow[]>([]);
     const [validCount, setValidCount] = useState(0);
     const [errorCount, setErrorCount] = useState(0);
     const [filterView, setFilterView] = useState<FilterView>("all");
@@ -78,7 +79,7 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
         setSelectedFile(file);
 
         try {
-            const result = await parseAndValidateContractFile(file);
+            const result = await parseAndValidatePayrollFile(file);
             setParsedRows(result.rows);
             setValidCount(result.validCount);
             setErrorCount(result.errorCount);
@@ -119,21 +120,21 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
 
         setIsUploading(true);
         try {
-            const csvFile = new File([csvBlob], "contracts_import.csv", { type: "text/csv" });
-            const result = await importService.importContracts(csvFile);
+            const csvFile = new File([csvBlob], "payroll_disbursements_import.csv", { type: "text/csv" });
+            const result = await importService.importPayroll(csvFile);
             setImportResult(result);
             setStep("result");
 
             if (result.success_count > 0) {
-                toast.success(`Successfully imported ${result.success_count} contracts!`);
-                onSuccess(); // Triggers table refresh
+                toast.success(`Successfully recorded ${result.success_count} payroll disbursements!`);
+                onSuccess?.();
             } else if (result.skipped_count > 0 && result.error_count === 0) {
-                toast.info("All contract records already exist in the database (skipped).");
+                toast.info("All payroll disbursements already exist in the database (skipped).");
             } else {
-                toast.error("No contracts were imported due to validation errors.");
+                toast.error("No disbursements were recorded due to validation errors.");
             }
         } catch (error: any) {
-            toast.error(error.message || "Failed to import contract records");
+            toast.error(error.message || "Failed to import payroll disbursements");
         } finally {
             setIsUploading(false);
         }
@@ -147,6 +148,7 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
     });
 
     const formatCurrency = (amount: number) => {
+        if (!amount || amount === 0) return "Rp 0";
         return new Intl.NumberFormat("id-ID", {
             style: "currency",
             currency: "IDR",
@@ -156,19 +158,20 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
 
     return (
         <Dialog open={open} onOpenChange={handleClose}>
-            <DialogContent className="sm:max-w-[850px] w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0]">
-                {/* Modal Header matching UserFormDialog */}
+            <DialogContent className="sm:max-w-[880px] w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0]">
+                {/* Modal Header */}
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 flex items-center justify-between">
                     <div>
-                        <DialogTitle className="text-xl text-[#0f172a]">
-                            Import Contracts (Excel / CSV)
+                        <DialogTitle className="text-xl text-[#0f172a] flex items-center gap-2">
+                            <HandCoins className="h-5 w-5 text-emerald-600" />
+                            Import Payroll Disbursements (Excel / CSV)
                         </DialogTitle>
                         <DialogDescription className="text-sm mt-0.5">
-                            Bulk import and migrate user contract agreements into the system
+                            Bulk record salary, milestone, and contract disbursements to employees
                         </DialogDescription>
                     </div>
 
-                    {/* Step Indicator Badges with safe margin from close button */}
+                    {/* Step Indicator Badges */}
                     <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold mr-8">
                         <span className={`px-2.5 py-1 rounded-md text-[11px] ${step === "upload" ? "bg-[#2568C1] text-white" : "bg-slate-100 text-slate-600"}`}>
                             1. Upload
@@ -195,17 +198,17 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
                                 <div className="space-y-1">
                                     <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                                        <Info className="h-3.5 w-3.5 text-[#2568C1]" /> Official Contract Template
+                                        <Info className="h-3.5 w-3.5 text-[#2568C1]" /> Official Payroll Disbursement Template
                                     </h4>
                                     <p className="text-xs text-slate-500">
-                                        Download our formatted Excel template with pre-configured headers for contracts, rates, schemes, and guidelines.
+                                        Download our formatted Excel template with pre-configured headers for employee email, project scope, payment title, amount, date, and description.
                                     </p>
                                 </div>
                                 <Button
                                     type="button"
                                     variant="outline"
                                     size="sm"
-                                    onClick={downloadContractExcelTemplate}
+                                    onClick={downloadPayrollExcelTemplate}
                                     className="shrink-0 gap-2 border-[#cbd5e1] bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-xs"
                                 >
                                     <Download className="h-3.5 w-3.5 text-[#2568C1]" />
@@ -241,12 +244,12 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                             </div>
 
                             {/* Prerequisite & Validation Notice */}
-                            <div className="flex items-start gap-2.5 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-800 text-xs">
-                                <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+                            <div className="flex items-start gap-2.5 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-900 text-xs">
+                                <Info className="h-4 w-4 shrink-0 text-[#2568C1] mt-0.5" />
                                 <div>
-                                    <span className="font-semibold text-amber-900">User Account Prerequisite:</span>
-                                    <span className="ml-1 text-amber-800">
-                                        Users referenced in the Excel file must already be registered in the system. The system matches contracts using the <strong>email</strong> column. Contracts with unregistered emails will be rejected.
+                                    <span className="font-semibold text-[#1e56a6]">Prerequisites & Rules:</span>
+                                    <span className="ml-1 text-slate-700">
+                                        Recipient <strong>email</strong> must be registered and have an active contract. If <strong>project_name</strong> is filled, payment attaches to the active project contract; if left empty, it attaches to the user&apos;s global base contract.
                                     </span>
                                 </div>
                             </div>
@@ -265,7 +268,7 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                                         File: <span className="text-[#2568C1] font-semibold">{selectedFile?.name}</span>
                                     </span>
                                     <span className="text-slate-300">|</span>
-                                    <span className="text-slate-600 font-medium">{parsedRows.length} total rows</span>
+                                    <span className="text-slate-600 font-medium">{parsedRows.length} total disbursements</span>
                                 </div>
 
                                 {/* Filter Controls */}
@@ -309,12 +312,11 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                                         <tr>
                                             <th className="py-2.5 px-3 w-12 text-center">Row</th>
                                             <th className="py-2.5 px-3">Status</th>
-                                            <th className="py-2.5 px-3">User Email</th>
-                                            <th className="py-2.5 px-3">Type</th>
-                                            <th className="py-2.5 px-3">Scheme</th>
-                                            <th className="py-2.5 px-3">Rate Amount</th>
-                                            <th className="py-2.5 px-3">Start Date</th>
+                                            <th className="py-2.5 px-3">Recipient Email</th>
                                             <th className="py-2.5 px-3">Scope / Project</th>
+                                            <th className="py-2.5 px-3">Payment Title</th>
+                                            <th className="py-2.5 px-3">Amount</th>
+                                            <th className="py-2.5 px-3">Paid Date</th>
                                             <th className="py-2.5 px-3">Validation Notes</th>
                                         </tr>
                                     </thead>
@@ -333,20 +335,19 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                                                         </Badge>
                                                     )}
                                                 </td>
-                                                <td className="py-2 px-3 text-slate-800 font-mono text-[11px]">{r.email || <span className="text-slate-300 italic">-</span>}</td>
-                                                <td className="py-2 px-3 capitalize font-medium text-slate-700">{r.contractType || "-"}</td>
-                                                <td className="py-2 px-3 capitalize text-slate-600">{r.paymentScheme?.replace(/_/g, " ") || "-"}</td>
-                                                <td className="py-2 px-3 font-semibold text-slate-800">{r.rateAmount ? formatCurrency(r.rateAmount) : "-"}</td>
-                                                <td className="py-2 px-3 text-slate-600 font-mono text-[11px]">{r.startDate || "-"}</td>
+                                                <td className="py-2 px-3 font-mono text-[11px] text-slate-700">{r.email || "-"}</td>
                                                 <td className="py-2 px-3">
                                                     {r.projectName ? (
-                                                        <Badge variant="outline" className="text-[10px] bg-blue-50 text-blue-700 border-blue-200">
-                                                            {r.projectName}
-                                                        </Badge>
+                                                        <span className="font-semibold text-slate-800">{r.projectName}</span>
                                                     ) : (
-                                                        <span className="text-slate-400 text-[11px] italic">Base Rate</span>
+                                                        <Badge variant="outline" className="text-[10px] bg-slate-50 text-slate-600 font-normal">
+                                                            Global Base Rate
+                                                        </Badge>
                                                     )}
                                                 </td>
+                                                <td className="py-2 px-3 text-slate-800 font-medium">{r.paymentName || "-"}</td>
+                                                <td className="py-2 px-3 font-semibold text-emerald-700">{formatCurrency(r.amount)}</td>
+                                                <td className="py-2 px-3 font-mono text-[11px] text-slate-600">{r.paidAt || "Current Date"}</td>
                                                 <td className="py-2 px-3">
                                                     {r.errors.length > 0 ? (
                                                         <span className="text-rose-600 font-medium text-[11px] flex items-center gap-1">
@@ -354,7 +355,7 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                                                             {r.errors.join(", ")}
                                                         </span>
                                                     ) : (
-                                                        <span className="text-slate-400 text-[11px]">Ready to import</span>
+                                                        <span className="text-slate-400 text-[11px]">Ready to disburse</span>
                                                     )}
                                                 </td>
                                             </tr>
@@ -366,7 +367,7 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                             {/* Import Note */}
                             {errorCount > 0 && (
                                 <p className="text-[11px] text-slate-500 italic">
-                                    * Note: Only valid rows will be processed and imported. Rows containing validation errors will be skipped automatically.
+                                    * Note: Only valid rows will be processed. Rows containing validation errors will be rejected.
                                 </p>
                             )}
                         </div>
@@ -382,13 +383,13 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                                 <div className="p-4 rounded-lg bg-emerald-50/70 border border-emerald-100 flex flex-col items-center justify-center text-center">
                                     <CheckCircle2 className="h-6 w-6 text-emerald-600 mb-1" />
                                     <span className="text-2xl font-black text-emerald-800">{importResult.success_count}</span>
-                                    <span className="text-xs font-semibold text-emerald-700">Successfully Imported</span>
+                                    <span className="text-xs font-semibold text-emerald-700">Disbursements Recorded</span>
                                 </div>
 
                                 <div className="p-4 rounded-lg bg-amber-50/70 border border-amber-100 flex flex-col items-center justify-center text-center">
                                     <AlertTriangle className="h-6 w-6 text-amber-600 mb-1" />
                                     <span className="text-2xl font-black text-amber-800">{importResult.skipped_count}</span>
-                                    <span className="text-xs font-semibold text-amber-700">Skipped / Duplicates</span>
+                                    <span className="text-xs font-semibold text-amber-700">Skipped (Duplicates)</span>
                                 </div>
 
                                 <div className="p-4 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex flex-col items-center justify-center text-center">
@@ -398,11 +399,11 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                                 </div>
                             </div>
 
-                            {/* Details of Skipped / Errors if any */}
+                            {/* Details of Errors / Skipped */}
                             {importResult.errors.length > 0 && (
                                 <div className="space-y-2">
                                     <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                        Skipped Rows & Error Details ({importResult.errors.length}):
+                                        Errors & Warnings ({importResult.errors.length}):
                                     </h4>
                                     <div className="border border-[#e2e8f0] rounded-lg overflow-hidden max-h-[200px] overflow-y-auto divide-y divide-slate-100 bg-white">
                                         {importResult.errors.map((err, idx) => (
@@ -422,18 +423,18 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                             {/* Success Notification message */}
                             <div className="p-3 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-xs text-slate-600 flex items-center gap-2">
                                 <Check className="h-4 w-4 text-emerald-600 shrink-0" />
-                                <span>All imported contracts are active and linked to their respective user profiles in the payroll & timesheet system.</span>
+                                <span>Disbursements have been saved. Contract status and balances have been automatically recalculated.</span>
                             </div>
                         </div>
                     )}
                 </div>
 
-                {/* Modal Footer matching UserFormDialog */}
+                {/* Modal Footer */}
                 <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-between items-center">
                     {step === "upload" && (
                         <>
                             <div className="text-xs text-slate-400 font-medium">
-                                Ensure column structure matches the official template
+                                Ensure recipient emails have active contracts in the system
                             </div>
                             <Button 
                                 type="button" 
@@ -475,7 +476,7 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                                     size="sm"
                                     onClick={handleExecuteImport}
                                     disabled={validCount === 0 || isUploading}
-                                    className="gap-2 bg-[#2568C1] hover:bg-[#1e56a6] shadow-md shadow-[#2568C1]/20 min-w-[120px] text-white"
+                                    className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] hover:from-[#1e56a6] hover:to-[#153f7a] shadow-md shadow-[#2568C1]/20 min-w-[120px] text-white"
                                 >
                                     {isUploading ? (
                                         <>
@@ -484,7 +485,7 @@ export function ImportContractsDialog({ open, onOpenChange, onSuccess }: ImportC
                                         </>
                                     ) : (
                                         <>
-                                            Import {validCount} Contracts <ArrowRight className="h-3.5 w-3.5" />
+                                            Record {validCount} Payments <ArrowRight className="h-3.5 w-3.5" />
                                         </>
                                     )}
                                 </Button>

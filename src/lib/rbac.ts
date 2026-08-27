@@ -5,7 +5,7 @@ import {
     Brain, Settings, Shield, CreditCard, FileSearch, Activity,
     Building2, PieChart, TrendingUp, Scale, Gauge, ClipboardList,
     UserCog, FileKey, Landmark, MonitorCheck, Zap, Package,
-    ReceiptText, HandCoins, ClipboardClock
+    ReceiptText, HandCoins, ClipboardClock, FileSpreadsheet
 } from "lucide-react";
 
 export interface MenuItem {
@@ -82,6 +82,7 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             items: [
                 { label: "Payroll", href: "/admin/payroll", icon: HandCoins },
                 { label: "Audit Log", href: "/admin/audit-log", icon: Activity },
+                { label: "Import Data", href: "/admin/import", icon: FileSpreadsheet },
             ]
         }
     ],

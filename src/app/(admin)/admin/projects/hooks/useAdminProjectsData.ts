@@ -22,6 +22,7 @@ export function useAdminProjectsData() {
 
     const [wizardOpen, setWizardOpen] = useState(false);
     const [wizardStep, setWizardStep] = useState(1);
+    const [importOpen, setImportOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [projectToDelete, setProjectToDelete] = useState<ApiProject | null>(null);
     const [membersOpen, setMembersOpen] = useState(false);
@@ -202,19 +203,20 @@ export function useAdminProjectsData() {
             isSaving: createProjectMutation.isPending || deleteProjectMutation.isPending,
             isSavingMember: assignMemberMutation.isPending || removeMemberMutation.isPending,
             search, statusFilter,
-            wizardOpen, wizardStep, deleteOpen, projectToDelete, membersOpen, selectedProject, showAssignForm,
+            wizardOpen, wizardStep, importOpen, deleteOpen, projectToDelete, membersOpen, selectedProject, showAssignForm,
             projectForm, selectedPmId, pendingEmployees, empForm, assignForm,
             allUsers, selectedProjectMembers,
             pagination: projectsResponse?.pagination || { page: 1, limit: 10, total: 0 }
         },
         actions: {
             setSearch, setStatusFilter, setPage, setLimit,
-            setWizardOpen, setWizardStep, setDeleteOpen, setProjectToDelete, setMembersOpen, setSelectedProject, setShowAssignForm,
+            setWizardOpen, setWizardStep, setImportOpen, setDeleteOpen, setProjectToDelete, setMembersOpen, setSelectedProject, setShowAssignForm,
             setProjectForm, setSelectedPmId, setPendingEmployees, setEmpForm, setAssignForm,
             handleCreateProject: () => createProjectMutation.mutate(projectForm),
             handleDeleteProject: () => projectToDelete && deleteProjectMutation.mutate(projectToDelete.id),
             handleAssignMember: (payload: AssignMemberPayload) => assignMemberMutation.mutate(payload),
             handleRemoveMember: (id: number) => removeMemberMutation.mutate(id),
+            handleImportSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'projects'] }),
             resetWizard
         }
     };
