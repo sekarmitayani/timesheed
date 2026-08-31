@@ -76,42 +76,70 @@ function SelectContent({
 
   const filterChildren = (nodes: React.ReactNode): React.ReactNode => {
     if (!searchQuery) return nodes;
-    return React.Children.map(nodes, (child) => {
+
+    const extractText = (node: React.ReactNode): string => {
+      if (node === null || node === undefined || typeof node === "boolean") return "";
+      if (typeof node === "string" || typeof node === "number") return String(node);
+      if (Array.isArray(node)) {
+        return node.map(extractText).join(" ");
+      }
+      if (React.isValidElement(node)) {
+        const props = (node as React.ReactElement<any>).props;
+        if (props && props.children) {
+          return extractText(props.children);
+        }
+      }
+      return "";
+    };
+
+    const filterNode = (child: React.ReactNode): React.ReactNode => {
       if (!React.isValidElement(child)) return child;
       const element = child as React.ReactElement<any>;
       const type = element.type as any;
       
       const isSelectGroup = type === SelectGroup || type?.displayName === "SelectGroup" || type?.name === "SelectGroup";
       if (isSelectGroup) {
-         const filteredGroupChildren = filterChildren(element.props.children);
+         const filteredGroupChildren = React.Children.map(element.props.children, filterNode);
          return React.cloneElement(element, { ...element.props, children: filteredGroupChildren });
       }
 
-      const isSelectItem = type === SelectItem || type?.displayName === "SelectItem" || type?.name === "SelectItem";
+      const isSelectItem = element.props?.value !== undefined || type === SelectItem || type?.displayName === "SelectItem" || type?.name === "SelectItem";
       if (isSelectItem) {
-         let text = "";
-         const extractText = (node: React.ReactNode) => {
-            if (typeof node === "string" || typeof node === "number") text += node;
-            else if (React.isValidElement(node)) {
-               React.Children.forEach((node as React.ReactElement<any>).props.children, extractText);
-            }
-         }
-         extractText(element.props.children);
-         
-         const val = element.props.value || "";
-         const q = searchQuery.toLowerCase();
+         const text = extractText(element.props.children);
+         const val = String(element.props.value || "");
+         const q = searchQuery.toLowerCase().trim();
          if (text.toLowerCase().includes(q) || val.toLowerCase().includes(q)) {
             return element;
          }
          return null; 
       }
+
+      if (element.props && element.props.children) {
+        const nestedChildren = React.Children.map(element.props.children, filterNode);
+        return React.cloneElement(element, { ...element.props, children: nestedChildren });
+      }
+
       return element;
-    });
+    };
+
+    return React.Children.map(nodes, filterNode);
   }
 
   const itemCount = countItems(children);
   const showSearch = itemCount > 5;
   const filteredChildren = filterChildren(children);
+
+  const hasVisibleItems = (nodes: React.ReactNode): boolean => {
+    let has = false;
+    React.Children.forEach(nodes, (child) => {
+      if (child !== null && child !== undefined && child !== false) {
+        has = true;
+      }
+    });
+    return has;
+  };
+
+  const hasMatches = hasVisibleItems(filteredChildren);
 
   return (
     <SelectPrimitive.Portal>
@@ -148,7 +176,13 @@ function SelectContent({
               "h-full w-full min-w-[var(--radix-select-trigger-width)]"
           )}
         >
-          {filteredChildren}
+          {hasMatches ? (
+            filteredChildren
+          ) : (
+            <div className="py-4 text-center text-xs text-muted-foreground">
+              No results found
+            </div>
+          )}
         </SelectPrimitive.Viewport>
         <SelectScrollDownButton />
       </SelectPrimitive.Content>

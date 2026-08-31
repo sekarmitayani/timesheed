@@ -485,7 +485,7 @@ export function IndicatorComparisonView({
                 </div>
 
                 <CardContent className="px-5 py-3.5 space-y-3">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
                         {/* 1. Dimension Scope & Target Entities Multi-Select */}
                         <div className="space-y-1.5">
                             <div className="h-4 flex items-center justify-between">

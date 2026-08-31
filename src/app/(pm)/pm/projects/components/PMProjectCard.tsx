@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { PMProjectCardData } from "../hooks/usePMProjectsData";
 import { useRouter } from "next/navigation";
 
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+
 export const statusConfig: Record<string, { label: string; bg: string; text: string; accent: string }> = {
     active: { label: "Active", bg: "bg-emerald-50/50", text: "text-emerald-700", accent: "bg-emerald-500" },
     completed: { label: "Completed", bg: "bg-blue-50/50", text: "text-blue-700", accent: "bg-blue-500" },
@@ -62,23 +64,51 @@ export function PMProjectCard({ data }: PMProjectCardProps) {
                 </div>
 
                 <div className="flex items-center justify-between p-4 pt-3 border-t border-slate-50">
-                    <div className="flex items-center -space-x-2">
-                        {visibleMembers.map((member) => (
-                            <Avatar key={member.id} className="h-7 w-7 border-2 border-white shadow-sm">
-                                <AvatarFallback className="text-[9px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
-                                    {getInitials(member.user?.full_name || "")}
-                                </AvatarFallback>
-                            </Avatar>
-                        ))}
-                        {extraCount > 0 && (
-                            <div className="h-7 w-7 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center z-10">
-                                <span className="text-[9px] font-bold text-slate-500">+{extraCount}</span>
-                            </div>
-                        )}
-                        {members.length === 0 && (
-                            <span className="text-[10px] text-slate-400 font-medium italic">No members</span>
-                        )}
-                    </div>
+                    <TooltipProvider>
+                        <div className="flex items-center -space-x-2" onClick={(e) => e.stopPropagation()}>
+                            {visibleMembers.map((member) => (
+                                <Tooltip key={member.id}>
+                                    <TooltipTrigger asChild>
+                                        <div className="relative inline-block cursor-pointer">
+                                            <Avatar className="h-7 w-7 border-2 border-white shadow-sm transition-transform hover:scale-110 hover:z-20">
+                                                <AvatarFallback className="text-[9px] font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                                    {getInitials(member.user?.full_name || "")}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" className="text-xs bg-slate-900 text-white px-2.5 py-1 z-50">
+                                        <p className="font-semibold">{member.user?.full_name || "Unknown Member"}</p>
+                                        {member.role_in_project && (
+                                            <p className="text-[10px] text-slate-300 capitalize">{member.role_in_project}</p>
+                                        )}
+                                    </TooltipContent>
+                                </Tooltip>
+                            ))}
+                            {extraCount > 0 && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div className="h-7 w-7 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center z-10 cursor-pointer transition-transform hover:scale-110">
+                                            <span className="text-[9px] font-bold text-slate-500">+{extraCount}</span>
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" className="text-xs bg-slate-900 text-white p-2 z-50 max-w-[200px]">
+                                        <p className="font-bold text-[10px] uppercase text-slate-400 mb-1">Other Members:</p>
+                                        <div className="flex flex-col gap-0.5">
+                                            {members.slice(3).map(m => (
+                                                <span key={m.id} className="truncate text-xs">
+                                                    {m.user?.full_name || "Unknown"}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </TooltipContent>
+                                </Tooltip>
+                            )}
+                            {members.length === 0 && (
+                                <span className="text-[10px] text-slate-400 font-medium italic">No members</span>
+                            )}
+                        </div>
+                    </TooltipProvider>
                     
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                         {members.length} Members

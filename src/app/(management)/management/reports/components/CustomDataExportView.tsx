@@ -408,7 +408,7 @@ export function CustomDataExportView({
                 </div>
 
                 <CardContent className="px-5 py-3.5 space-y-3">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                         {/* 1. Target Dataset */}
                         <div className="space-y-1.5">
                             <div className="h-4 flex items-center justify-between">
@@ -452,8 +452,8 @@ export function CustomDataExportView({
                                     <button
                                         type="button"
                                         onClick={() => {
-                                            setStartDate("");
-                                            setEndDate("");
+                                             setStartDate("");
+                                             setEndDate("");
                                         }}
                                         className="text-[9px] font-bold text-slate-400 hover:text-red-500 transition-colors uppercase tracking-wider"
                                     >
@@ -478,7 +478,7 @@ export function CustomDataExportView({
                         </div>
 
                         {/* 3. Quick Search Query */}
-                        <div className="space-y-1.5">
+                        <div className="space-y-1.5 md:col-span-2 lg:col-span-1">
                             <div className="h-4 flex items-center justify-between">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
                                     Quick Search Query
@@ -511,7 +511,7 @@ export function CustomDataExportView({
             {/* ========================================================================= */}
             {/* KPI STATS ROW (DASHBOARD STANDARD ARCHITECTURE) */}
             {/* ========================================================================= */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
                 {/* 1. Matched Records */}
                 <Card className={cardClass}>
                     <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">

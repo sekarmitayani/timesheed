@@ -63,6 +63,8 @@ export default function ContractsPage() {
                 form={state.contractForm}
                 setForm={actions.setContractForm}
                 allUsers={state.allUsers}
+                allProjects={state.allProjects}
+                allContracts={state.allContracts}
                 onSave={actions.handleSaveContract}
                 onCancel={() => { actions.setFormOpen(false); actions.resetForm(); }}
             />

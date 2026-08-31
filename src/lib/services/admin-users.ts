@@ -35,10 +35,22 @@ export interface UpdateUserPayload {
 
 export const adminUserService = {
     /**
-     * Get all users with pagination
+     * Get all users with pagination and optional filters
      */
-    async getUsers(page: number = 1, limit: number = 10): Promise<PaginatedUsersResponse> {
-        return fetchApi(`/admin/users?page=${page}&limit=${limit}`, {
+    async getUsers(
+        page: number = 1, 
+        limit: number = 10,
+        filters?: { search?: string; status?: string; role?: string; type?: string }
+    ): Promise<PaginatedUsersResponse> {
+        const params = new URLSearchParams();
+        params.append("page", String(page));
+        params.append("limit", String(limit));
+        if (filters?.search) params.append("search", filters.search);
+        if (filters?.status && filters.status !== "all") params.append("status", filters.status);
+        if (filters?.role && filters.role !== "all") params.append("role", filters.role);
+        if (filters?.type && filters.type !== "all") params.append("employee_type", filters.type);
+
+        return fetchApi(`/admin/users?${params.toString()}`, {
             method: "GET",
         });
     },
@@ -77,6 +89,15 @@ export const adminUserService = {
      */
     async deleteUser(id: string | number): Promise<{ message: string }> {
         return fetchApi(`/admin/users/${id}`, {
+            method: "DELETE",
+        });
+    },
+
+    /**
+     * Deactivate a user account (safe deletion alternative)
+     */
+    async deactivateUser(id: string | number): Promise<{ message: string; deactivated: boolean }> {
+        return fetchApi(`/admin/users/${id}?action=deactivate`, {
             method: "DELETE",
         });
     },

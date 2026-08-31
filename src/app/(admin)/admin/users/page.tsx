@@ -82,10 +82,16 @@ export default function UsersPage() {
 
             <ConfirmDeleteDialog 
                 open={state.deleteOpen}
-                onOpenChange={actions.setDeleteOpen}
+                onOpenChange={(open) => {
+                    actions.setDeleteOpen(open);
+                    if (!open) actions.setDeleteRelationReasons(null);
+                }}
                 user={state.userToDelete}
-                isDeleting={state.isSaving}
+                isDeleting={state.isDeletingUser}
                 onConfirm={actions.handleDeleteUser}
+                reasons={state.deleteRelationReasons}
+                onDeactivate={actions.handleDeactivateUser}
+                isDeactivating={state.isDeactivatingUser}
             />
 
             <ConfirmUserCreationDialog 

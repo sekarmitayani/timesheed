@@ -1,3 +1,5 @@
+"use client";
+
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -24,20 +26,32 @@ export function UserFilters({
     limit, setLimit, setPage
 }: UserFiltersProps) {
     return (
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-1">
-            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                <div className="relative w-full sm:w-[250px] shrink-0">
+        <div className="flex flex-col md:flex-row gap-2.5 items-stretch md:items-center justify-between pt-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+                {/* Search Bar */}
+                <div className="relative w-full sm:w-[240px] md:w-[260px] shrink-0">
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search Users..."
-                        className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
+                        className="pl-9 h-10 w-full bg-white border-slate-200 text-sm focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            setPage(1);
+                        }}
                     />
                 </div>
 
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="h-10 w-full sm:w-[130px] bg-white">
+                {/* 2-Column Grid on Mobile, Inline Flex on Tablet/Desktop */}
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <Select 
+                        value={statusFilter} 
+                        onValueChange={(v) => { 
+                            setStatusFilter(v); 
+                            setPage(1); 
+                        }}
+                    >
+                        <SelectTrigger className="h-10 w-full sm:w-[130px] bg-white text-sm border-slate-200">
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -47,8 +61,14 @@ export function UserFilters({
                         </SelectContent>
                     </Select>
 
-                    <Select value={roleFilter} onValueChange={setRoleFilter}>
-                        <SelectTrigger className="h-10 w-full sm:w-[140px] bg-white">
+                    <Select 
+                        value={roleFilter} 
+                        onValueChange={(v) => { 
+                            setRoleFilter(v); 
+                            setPage(1); 
+                        }}
+                    >
+                        <SelectTrigger className="h-10 w-full sm:w-[155px] bg-white text-sm border-slate-200">
                             <SelectValue placeholder="Role" />
                         </SelectTrigger>
                         <SelectContent>
@@ -60,8 +80,14 @@ export function UserFilters({
                         </SelectContent>
                     </Select>
 
-                    <Select value={typeFilter} onValueChange={setTypeFilter}>
-                        <SelectTrigger className="h-10 w-full sm:w-[140px] bg-white">
+                    <Select 
+                        value={typeFilter} 
+                        onValueChange={(v) => { 
+                            setTypeFilter(v); 
+                            setPage(1); 
+                        }}
+                    >
+                        <SelectTrigger className="h-10 w-full sm:w-[135px] bg-white text-sm border-slate-200">
                             <SelectValue placeholder="Type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -72,8 +98,14 @@ export function UserFilters({
                         </SelectContent>
                     </Select>
 
-                    <Select value={String(limit)} onValueChange={(v) => { setLimit(Number(v)); setPage(1); }}>
-                        <SelectTrigger className="h-10 w-full sm:w-[75px] bg-white text-xs border-slate-200">
+                    <Select 
+                        value={String(limit)} 
+                        onValueChange={(v) => { 
+                            setLimit(Number(v)); 
+                            setPage(1); 
+                        }}
+                    >
+                        <SelectTrigger className="h-10 w-full sm:w-[75px] bg-white text-sm border-slate-200">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -83,6 +115,7 @@ export function UserFilters({
                             <SelectItem value="100">100</SelectItem>
                         </SelectContent>
                     </Select>
+                </div>
             </div>
         </div>
     );

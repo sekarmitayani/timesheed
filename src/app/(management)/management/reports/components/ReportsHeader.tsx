@@ -22,7 +22,7 @@ interface ReportsHeaderProps {
 
 export function ReportsHeader({ activeTab, onTabChange, onRefresh, isLoading }: ReportsHeaderProps) {
     return (
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2 border-b border-slate-100">
             <div className="space-y-1">
                 <div className="flex items-center gap-2.5">
                     <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
@@ -39,7 +39,7 @@ export function ReportsHeader({ activeTab, onTabChange, onRefresh, isLoading }: 
 
             <div className="flex flex-wrap items-center gap-2">
                 {/* Tab Navigation Pill Group */}
-                <div className="bg-slate-100 p-1 rounded-xl flex items-center gap-1 border border-slate-200/60">
+                <div className="bg-slate-100 p-1 rounded-xl flex items-center gap-1 border border-slate-200/60 overflow-x-auto max-w-full">
                     <button
                         type="button"
                         onClick={() => onTabChange("compare")}

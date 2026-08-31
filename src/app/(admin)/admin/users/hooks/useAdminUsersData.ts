@@ -53,13 +53,19 @@ export function useAdminUsersData() {
 
     const [confirmUserOpen, setConfirmUserOpen] = useState(false);
     const [confirmUserType, setConfirmUserType] = useState<"empty_contract" | "valid_contract" | null>(null);
+    const [deleteRelationReasons, setDeleteRelationReasons] = useState<string[] | null>(null);
 
     // --- Queries ---
     
-    // 1. Fetch Users (Paginated)
+    // 1. Fetch Users (Paginated with server-side filters)
     const { data: usersResponse, isLoading: isLoadingUsers } = useQuery({
-        queryKey: ['admin', 'users', 'list', page, limit],
-        queryFn: () => adminUserService.getUsers(page, limit),
+        queryKey: ['admin', 'users', 'list', page, limit, search, statusFilter, roleFilter, typeFilter],
+        queryFn: () => adminUserService.getUsers(page, limit, {
+            search,
+            status: statusFilter,
+            role: roleFilter,
+            type: typeFilter
+        }),
         staleTime: 5 * 60 * 1000,
     });
 
@@ -72,11 +78,11 @@ export function useAdminUsersData() {
     const projects = projectsData?.data || [];
 
     // 3. Fetch User Contracts (when detail is open)
-    const { data: userContractsRaw, isLoading: isLoadingContracts } = useQuery({
+    const { data: userContractsRaw, isLoading: isLoadingContracts } = useQuery<Contract[]>({
         queryKey: ['admin', 'users', 'contracts', selectedUserForDetails?.id],
-        queryFn: () => adminContractService.getUserContracts(selectedUserForDetails!.id),
-        enabled: !!selectedUserForDetails && detailsOpen,
-        staleTime: 5 * 60 * 1000,
+        queryFn: () => selectedUserForDetails ? adminContractService.getUserContracts(selectedUserForDetails.id) : Promise.resolve([]),
+        enabled: !!selectedUserForDetails,
+        staleTime: 2 * 60 * 1000,
     });
     const userContracts = userContractsRaw || [];
 
@@ -87,15 +93,14 @@ export function useAdminUsersData() {
             if (editId) return adminUserService.updateUser(editId, payload);
             return adminUserService.createUser(payload);
         },
-        onSuccess: (newUser) => {
+        onSuccess: (data: any) => {
             toast.success(editId ? "User updated" : "User created");
-            // If new user and has initial contract, create it
-            if (!editId && contractForm.rate_amount > 0 && contractForm.contract_type) {
+            if (!editId && data?.id && contractForm.rate_amount > 0 && contractForm.contract_type && contractForm.payment_scheme) {
                  const contractPayload: CreateContractPayload = {
-                    user_id: Number(newUser.id),
+                    user_id: Number(data.id),
                     contract_type: contractForm.contract_type,
                     payment_scheme: contractForm.payment_scheme,
-                    rate_amount: contractForm.rate_amount,
+                    rate_amount: Number(contractForm.rate_amount),
                     start_date: contractForm.start_date || new Date().toISOString().split("T")[0],
                     end_date: contractForm.end_date || undefined,
                     is_active: true
@@ -115,11 +120,29 @@ export function useAdminUsersData() {
     const deleteUserMutation = useMutation({
         mutationFn: (id: string | number) => adminUserService.deleteUser(id),
         onSuccess: () => {
-            toast.success("User deleted");
+            toast.success("User permanently deleted");
             queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'list'] });
             setDeleteOpen(false);
+            setDeleteRelationReasons(null);
         },
-        onError: (err: any) => toast.error(err.message || "Failed to delete user")
+        onError: (err: any) => {
+            if (err?.data?.has_relations && Array.isArray(err?.data?.reasons)) {
+                setDeleteRelationReasons(err.data.reasons);
+            } else {
+                toast.error(err.message || "Failed to delete user");
+            }
+        }
+    });
+
+    const deactivateUserMutation = useMutation({
+        mutationFn: (id: string | number) => adminUserService.deactivateUser(id),
+        onSuccess: (res: any) => {
+            toast.success(res?.message || "User deactivated successfully");
+            queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'list'] });
+            setDeleteOpen(false);
+            setDeleteRelationReasons(null);
+        },
+        onError: (err: any) => toast.error(err.message || "Failed to deactivate user")
     });
 
     const saveContractMutation = useMutation({
@@ -159,15 +182,7 @@ export function useAdminUsersData() {
         })) as User[];
     }, [usersResponse]);
 
-    const filteredUsers = useMemo(() => {
-        return mappedUsers.filter((u) => {
-            const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase());
-            const matchStatus = statusFilter === "all" || u.status === statusFilter;
-            const matchRole = roleFilter === "all" || u.role === roleFilter;
-            const matchType = typeFilter === "all" || (u.employee_type || "system") === typeFilter;
-            return matchSearch && matchStatus && matchRole && matchType;
-        });
-    }, [mappedUsers, search, statusFilter, roleFilter, typeFilter]);
+    const filteredUsers = mappedUsers;
 
     // --- Helpers ---
     const resetForm = () => {
@@ -303,6 +318,9 @@ export function useAdminUsersData() {
             isLoadingDetails: isLoadingContracts,
             isSaving: saveUserMutation.isPending,
             isSavingContract: saveContractMutation.isPending,
+            isDeletingUser: deleteUserMutation.isPending,
+            isDeactivatingUser: deactivateUserMutation.isPending,
+            deleteRelationReasons,
             search, statusFilter, roleFilter, typeFilter,
             addOpen, importOpen, editId, deleteOpen, userToDelete, detailsOpen, selectedUserForDetails,
             isContractEditorOpen, editingContractId, form, contractForm,
@@ -312,11 +330,12 @@ export function useAdminUsersData() {
             setSearch, setStatusFilter, setRoleFilter, setTypeFilter, setPage, setLimit,
             setAddOpen, setImportOpen, setEditId, setDeleteOpen, setUserToDelete, setDetailsOpen,
             setSelectedUserForDetails, setIsContractEditorOpen, setEditingContractId,
-            setForm, setContractForm, setConfirmUserOpen,
+            setForm, setContractForm, setConfirmUserOpen, setDeleteRelationReasons,
             handlePreSave,
             handleSaveUser,
             handleSaveContract,
             handleDeleteUser: () => userToDelete && deleteUserMutation.mutate(userToDelete.id),
+            handleDeactivateUser: () => userToDelete && deactivateUserMutation.mutate(userToDelete.id),
             handleDeleteContract: (id: number) => deleteContractMutation.mutate(id),
             handleImportSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });

@@ -29,6 +29,7 @@ export function useAdminContractsData() {
     // --- Form States ---
     const [contractForm, setContractForm] = useState<{
         user_id: number;
+        project_id?: number | null;
         contract_type: Contract["contract_type"] | "";
         payment_scheme: PaymentScheme | "";
         rate_amount: number;
@@ -38,6 +39,7 @@ export function useAdminContractsData() {
         is_active: boolean;
     }>({
         user_id: 0,
+        project_id: null,
         contract_type: "",
         payment_scheme: "",
         rate_amount: 0,
@@ -116,8 +118,11 @@ export function useAdminContractsData() {
         return contracts.filter(c => {
             const u = allUsers.find(user => Number(user.id) === c.user_id);
             const name = (u?.full_name || u?.name || "").toLowerCase();
+            const p = allProjects.find(proj => Number(proj.id) === Number(c.project_id));
+            const pName = (p?.name || c.project_name || "").toLowerCase();
 
-            const matchSearch = name.includes(search.toLowerCase());
+            const query = search.toLowerCase();
+            const matchSearch = name.includes(query) || pName.includes(query);
             const matchType = typeFilter === "all" || c.contract_type === typeFilter;
             const matchScheme = schemeFilter === "all" || c.payment_scheme === schemeFilter;
             const matchProject = projectFilter === "all" ? true : (projectFilter === "base" ? !c.project_id : c.project_id === Number(projectFilter));
@@ -128,7 +133,7 @@ export function useAdminContractsData() {
 
             return matchSearch && matchType && matchScheme && matchStatus && matchProject;
         });
-    }, [contracts, allUsers, search, typeFilter, schemeFilter, projectFilter, statusFilter]);
+    }, [contracts, allUsers, allProjects, search, typeFilter, schemeFilter, projectFilter, statusFilter]);
 
     const paginatedContracts = useMemo(() => {
         return filteredContracts.slice((page - 1) * limit, page * limit);
@@ -144,7 +149,7 @@ export function useAdminContractsData() {
     const resetForm = () => {
         setEditId(null);
         setContractForm({
-            user_id: 0, contract_type: "", payment_scheme: "",
+            user_id: 0, project_id: null, contract_type: "", payment_scheme: "",
             rate_amount: 0, rate_display: "",
             start_date: new Date().toISOString().split("T")[0], end_date: "", is_active: true,
         });
@@ -154,6 +159,7 @@ export function useAdminContractsData() {
         setEditId(c.id);
         setContractForm({
             user_id: c.user_id,
+            project_id: c.project_id || null,
             contract_type: c.contract_type,
             payment_scheme: c.payment_scheme || "monthly",
             rate_amount: c.rate_amount,
@@ -167,11 +173,13 @@ export function useAdminContractsData() {
 
     // --- Effects ---
     useEffect(() => {
-        if (typeof window === "undefined" || !contracts.length) return;
+        if (typeof window === "undefined") return;
         const params = new URLSearchParams(window.location.search);
         const detailId = params.get("detailId");
+        const newContract = params.get("newContract");
+        const userId = params.get("userId");
         
-        if (detailId) {
+        if (detailId && contracts.length) {
             const c = contracts.find(c => String(c.id) === detailId);
             if (c && !detailsOpen) {
                 setSelectedContract(c);
@@ -179,6 +187,22 @@ export function useAdminContractsData() {
                 // Clean up URL without reloading
                 window.history.replaceState(null, "", window.location.pathname);
             }
+        } else if (newContract === "true" || userId) {
+            setEditId(null);
+            setContractForm({
+                user_id: userId ? Number(userId) : 0,
+                project_id: null,
+                contract_type: "",
+                payment_scheme: "",
+                rate_amount: 0,
+                rate_display: "",
+                start_date: new Date().toISOString().split("T")[0],
+                end_date: "",
+                is_active: true,
+            });
+            setFormOpen(true);
+            // Clean up URL without reloading
+            window.history.replaceState(null, "", window.location.pathname);
         }
     }, [contracts, detailsOpen]);
 
@@ -192,6 +216,7 @@ export function useAdminContractsData() {
             start_date: contractForm.start_date,
             end_date: contractForm.end_date || null,
             is_active: contractForm.is_active,
+            project_id: contractForm.project_id ? Number(contractForm.project_id) : null,
         };
         if (!editId) payload.user_id = Number(contractForm.user_id);
 
@@ -201,6 +226,7 @@ export function useAdminContractsData() {
     return {
         state: {
             contracts: paginatedContracts,
+            allContracts: contracts,
             allContractsCount: contracts.length,
             filteredCount: filteredContracts.length,
             pagination: { page, limit, totalPages },
