@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { 
     UnifiedProjectRecord, 
-    UnifiedMemberRecord,
+    UnifiedMemberRecord, 
     UnifiedResourceRecord,
     CompositeProjectMasterRecord,
     CompositeEmployeePayrollRecord
@@ -24,6 +24,15 @@ import {
 } from "lucide-react";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
+import { 
+    fmtIDR,
+    generatePresetPLExcelWorkbook,
+    generatePresetProjectMasterExcelWorkbook,
+    generatePresetLiabilityExcelWorkbook,
+    generatePresetResourceExcelWorkbook,
+    generatePresetExecutiveMasterWorkbook
+} from "@/lib/utils/reports-excel-helper";
+import { exportLandscapePDF } from "@/lib/utils/print-report-helper";
 
 interface PresetExecutiveReportsProps {
     projects: UnifiedProjectRecord[];
@@ -44,24 +53,13 @@ export function PresetExecutiveReports({
 }: PresetExecutiveReportsProps) {
     const [generatingReport, setGeneratingReport] = useState<string | null>(null);
 
-    // Financial Statements Export (Monthly P&L)
+    // 1. Financial Statements Export (Monthly P&L)
     const exportPLReport = async () => {
-        setGeneratingReport("pl");
+        setGeneratingReport("pl_excel");
         try {
-            const rows = monthlyTrends.map((m, idx) => ({
-                "No": idx + 1,
-                "Month": m.month,
-                "Gross Revenue (IDR)": m.revenue,
-                "Operating Expenses (IDR)": m.expenses,
-                "Net Margin (IDR)": m.net_profit,
-                "Margin Ratio (%)": m.revenue > 0 ? `${((m.net_profit / m.revenue) * 100).toFixed(1)}%` : "0%",
-            }));
-
-            const ws = XLSX.utils.json_to_sheet(rows);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Monthly P&L Ledger");
+            const wb = generatePresetPLExcelWorkbook(monthlyTrends);
             XLSX.writeFile(wb, `Haerarchy_PL_Statement_${new Date().toISOString().split("T")[0]}.xlsx`);
-            toast.success("Downloaded P&L Financial Statement!");
+            toast.success("Downloaded P&L Financial Statement Excel!");
         } catch (err: any) {
             toast.error(err.message);
         } finally {
@@ -69,30 +67,58 @@ export function PresetExecutiveReports({
         }
     };
 
-    // Project Portfolio Master Export
+    const exportPLPDF = async () => {
+        setGeneratingReport("pl_pdf");
+        try {
+            const totalRev = monthlyTrends.reduce((acc, m) => acc + (m.revenue || 0), 0);
+            const totalExp = monthlyTrends.reduce((acc, m) => acc + (m.expenses || 0), 0);
+            const totalNet = totalRev - totalExp;
+            const avgMargin = totalRev > 0 ? `${((totalNet / totalRev) * 100).toFixed(1)}%` : "0.0%";
+
+            await exportLandscapePDF({
+                title: "P&L Financial Statement & Monthly Performance Ledger",
+                subtitle: "Historical gross revenue, operating costs, and net profit margins across all monitored periods",
+                dateRangeLabel: "Full Historical Timeline",
+                appliedFilters: [
+                    { label: "Report Module", value: "P&L Financial Audit" },
+                    { label: "Total Periods", value: `${monthlyTrends.length} Months` }
+                ],
+                summaryMetrics: [
+                    { label: "Total Gross Revenue", value: fmtIDR(totalRev), subtext: "Revenue Inflow" },
+                    { label: "Total Operating Cost", value: fmtIDR(totalExp), subtext: "Expense Outflow" },
+                    { label: "Net Margin", value: fmtIDR(totalNet), subtext: "Net Balance", highlight: totalNet >= 0 },
+                    { label: "Avg Margin Ratio", value: avgMargin, subtext: "Profitability Ratio" }
+                ],
+                columns: [
+                    { header: "Month & Year", key: "month", align: "left" },
+                    { header: "Gross Revenue (IDR)", key: "rev_str", align: "right" },
+                    { header: "Operating Expenses (IDR)", key: "exp_str", align: "right" },
+                    { header: "Net Margin (IDR)", key: "net_str", align: "right" },
+                    { header: "Margin %", key: "pct_str", align: "center" },
+                ],
+                data: monthlyTrends.map(m => ({
+                    month: m.month,
+                    rev_str: fmtIDR(m.revenue),
+                    exp_str: fmtIDR(m.expenses),
+                    net_str: fmtIDR(m.net_profit),
+                    pct_str: m.revenue > 0 ? `${((m.net_profit / m.revenue) * 100).toFixed(1)}%` : "0.0%"
+                })),
+                fileName: `Haerarchy_PL_Statement_${new Date().toISOString().split("T")[0]}.pdf`
+            });
+        } catch (err: any) {
+            toast.error(err.message);
+        } finally {
+            setGeneratingReport(null);
+        }
+    };
+
+    // 2. Project Portfolio Master Export
     const exportProjectMasterReport = async () => {
-        setGeneratingReport("projects");
+        setGeneratingReport("projects_excel");
         try {
-            const rows = compositeProjects.map((p, idx) => ({
-                "No": idx + 1,
-                "Project Code / Name": p.project_name,
-                "Client Organization": p.client_name || "Internal",
-                "Contract Revenue (IDR)": p.contract_value || 0,
-                "Planned Budget (IDR)": p.budget_cost || 0,
-                "Labor / SDM Cost (IDR)": p.labor_cost || 0,
-                "Resource Procurements (IDR)": p.resource_expenses || 0,
-                "Total Outflow (IDR)": p.total_expenses || 0,
-                "Net Profit (IDR)": p.net_margin || 0,
-                "Margin Ratio (%)": `${(p.margin_percent).toFixed(1)}%`,
-                "Assigned Personnel": p.team_size || 0,
-                "Lifecycle Status": p.status,
-            }));
-
-            const ws = XLSX.utils.json_to_sheet(rows);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Project Master Portfolio");
+            const wb = generatePresetProjectMasterExcelWorkbook(compositeProjects);
             XLSX.writeFile(wb, `Haerarchy_Project_Portfolio_Master_${new Date().toISOString().split("T")[0]}.xlsx`);
-            toast.success("Downloaded Project Portfolio Master!");
+            toast.success("Downloaded Project Portfolio Master Excel!");
         } catch (err: any) {
             toast.error(err.message);
         } finally {
@@ -100,25 +126,65 @@ export function PresetExecutiveReports({
         }
     };
 
-    // Liability & Personnel Compensation Export
+    const exportProjectMasterPDF = async () => {
+        setGeneratingReport("projects_pdf");
+        try {
+            const totalValue = compositeProjects.reduce((acc, p) => acc + (p.contract_value || 0), 0);
+            const totalOutflow = compositeProjects.reduce((acc, p) => acc + (p.total_expenses || 0), 0);
+            const totalMargin = totalValue - totalOutflow;
+
+            await exportLandscapePDF({
+                title: "Project Portfolio Master & Profitability Ledger",
+                subtitle: "Cross-module aggregation of project revenues, planned budgets, labor costs, and net margins",
+                dateRangeLabel: "Enterprise Active Portfolio",
+                appliedFilters: [
+                    { label: "Report Module", value: "Project Portfolio Master" },
+                    { label: "Total Projects", value: `${compositeProjects.length} Projects` }
+                ],
+                summaryMetrics: [
+                    { label: "Total Projects", value: `${compositeProjects.length} Items`, subtext: "Portfolio Scope" },
+                    { label: "Portfolio Contract Value", value: fmtIDR(totalValue), subtext: "Total Revenue" },
+                    { label: "Total Expenses", value: fmtIDR(totalOutflow), subtext: "Labor & Resources" },
+                    { label: "Total Net Margin", value: fmtIDR(totalMargin), subtext: "Net Balance", highlight: totalMargin >= 0 }
+                ],
+                columns: [
+                    { header: "Project Name", key: "project_name", align: "left" },
+                    { header: "Client", key: "client_name", align: "left" },
+                    { header: "Contract Value", key: "val_str", align: "right" },
+                    { header: "Labor Cost", key: "labor_str", align: "right" },
+                    { header: "Resource Cost", key: "res_str", align: "right" },
+                    { header: "Total Cost", key: "exp_str", align: "right" },
+                    { header: "Net Margin", key: "margin_str", align: "right" },
+                    { header: "Margin %", key: "pct_str", align: "center" },
+                    { header: "Status", key: "status_str", align: "center" },
+                ],
+                data: compositeProjects.map(p => ({
+                    project_name: p.project_name,
+                    client_name: p.client_name || "Internal",
+                    val_str: fmtIDR(p.contract_value),
+                    labor_str: fmtIDR(p.labor_cost),
+                    res_str: fmtIDR(p.resource_expenses),
+                    exp_str: fmtIDR(p.total_expenses),
+                    margin_str: fmtIDR(p.net_margin),
+                    pct_str: `${(p.margin_percent || 0).toFixed(1)}%`,
+                    status_str: (p.status || "Active").toUpperCase()
+                })),
+                fileName: `Haerarchy_Project_Portfolio_Master_${new Date().toISOString().split("T")[0]}.pdf`
+            });
+        } catch (err: any) {
+            toast.error(err.message);
+        } finally {
+            setGeneratingReport(null);
+        }
+    };
+
+    // 3. Liability & Personnel Compensation Export
     const exportLiabilityReport = async () => {
-        setGeneratingReport("liability");
+        setGeneratingReport("liability_excel");
         try {
-            const rows = compositeMembers.map((m, idx) => ({
-                "No": idx + 1,
-                "Staff Name": m.full_name,
-                "Organizational Role": m.role,
-                "Base Hourly / Monthly Rate (IDR)": m.base_rate,
-                "Disbursed / Paid Out (IDR)": m.total_paid_disbursements,
-                "Pending Liability (IDR)": m.pending_liability,
-                "Total Compensation Exposure (IDR)": m.total_paid_disbursements + m.pending_liability,
-            }));
-
-            const ws = XLSX.utils.json_to_sheet(rows);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Personnel & Liability Matrix");
+            const wb = generatePresetLiabilityExcelWorkbook(compositeMembers);
             XLSX.writeFile(wb, `Haerarchy_Liability_Payroll_Exposure_${new Date().toISOString().split("T")[0]}.xlsx`);
-            toast.success("Downloaded Liability & Payroll Exposure Ledger!");
+            toast.success("Downloaded Liability & Payroll Exposure Excel!");
         } catch (err: any) {
             toast.error(err.message);
         } finally {
@@ -126,25 +192,63 @@ export function PresetExecutiveReports({
         }
     };
 
-    // Resource Procurements Export
+    const exportLiabilityPDF = async () => {
+        setGeneratingReport("liability_pdf");
+        try {
+            const totalPaid = compositeMembers.reduce((acc, m) => acc + (m.total_paid_disbursements || 0), 0);
+            const totalLiab = compositeMembers.reduce((acc, m) => acc + (m.pending_liability || 0), 0);
+            const totalExposure = totalPaid + totalLiab;
+
+            await exportLandscapePDF({
+                title: "Personnel Liability & Payroll Exposure Matrix",
+                subtitle: "Staff compensation agreements, disbursed earnings, and pending contract liabilities",
+                dateRangeLabel: "Workforce Active Roster",
+                appliedFilters: [
+                    { label: "Report Module", value: "Personnel Liability Matrix" },
+                    { label: "Total Staff", value: `${compositeMembers.length} Members` }
+                ],
+                summaryMetrics: [
+                    { label: "Total Personnel", value: `${compositeMembers.length} Staff`, subtext: "Headcount" },
+                    { label: "Disbursed Payouts", value: fmtIDR(totalPaid), subtext: "Released Salary" },
+                    { label: "Pending Liability", value: fmtIDR(totalLiab), subtext: "Unpaid Ledger", highlight: false },
+                    { label: "Total Exposure", value: fmtIDR(totalExposure), subtext: "Total Obligation" }
+                ],
+                columns: [
+                    { header: "Staff Member", key: "full_name", align: "left" },
+                    { header: "Role", key: "role", align: "left" },
+                    { header: "Assigned Project", key: "project_name", align: "left" },
+                    { header: "Contract Scheme", key: "scheme_str", align: "center" },
+                    { header: "Base Rate", key: "rate_str", align: "right" },
+                    { header: "Paid Out", key: "paid_str", align: "right" },
+                    { header: "Pending Liability", key: "liab_str", align: "right" },
+                    { header: "Total Exposure", key: "exposure_str", align: "right" },
+                ],
+                data: compositeMembers.map(m => ({
+                    full_name: m.full_name,
+                    role: m.role,
+                    project_name: m.project_name || "Global / Base",
+                    scheme_str: `${m.contract_type} • ${m.payment_scheme}`,
+                    rate_str: fmtIDR(m.base_rate),
+                    paid_str: fmtIDR(m.total_paid_disbursements),
+                    liab_str: fmtIDR(m.pending_liability),
+                    exposure_str: fmtIDR((m.total_paid_disbursements || 0) + (m.pending_liability || 0))
+                })),
+                fileName: `Haerarchy_Liability_Payroll_Exposure_${new Date().toISOString().split("T")[0]}.pdf`
+            });
+        } catch (err: any) {
+            toast.error(err.message);
+        } finally {
+            setGeneratingReport(null);
+        }
+    };
+
+    // 4. Resource Procurements Export
     const exportResourceReport = async () => {
-        setGeneratingReport("resources");
+        setGeneratingReport("resources_excel");
         try {
-            const rows = resources.map((r, idx) => ({
-                "No": idx + 1,
-                "Resource Name": r.item_name,
-                "Resource Type": r.category,
-                "Project Assignment": r.project_name || "General Overhead",
-                "Unit Cost (IDR)": r.amount,
-                "Lifecycle Status": r.status,
-                "Procurement Date": r.created_at ? new Date(r.created_at).toLocaleDateString() : "-",
-            }));
-
-            const ws = XLSX.utils.json_to_sheet(rows);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Resource Procurements");
+            const wb = generatePresetResourceExcelWorkbook(resources);
             XLSX.writeFile(wb, `Haerarchy_Resource_Asset_Outflows_${new Date().toISOString().split("T")[0]}.xlsx`);
-            toast.success("Downloaded Resource Outflow Report!");
+            toast.success("Downloaded Resource Outflow Excel!");
         } catch (err: any) {
             toast.error(err.message);
         } finally {
@@ -152,49 +256,62 @@ export function PresetExecutiveReports({
         }
     };
 
-    // Comprehensive Executive Master Workbook (Multi-Sheet)
-    const exportComprehensiveWorkbook = async () => {
-        setGeneratingReport("all");
+    const exportResourcePDF = async () => {
+        setGeneratingReport("resources_pdf");
         try {
-            const wb = XLSX.utils.book_new();
+            const totalAmount = resources.reduce((acc, r) => acc + (r.amount || 0), 0);
+            const approvedCount = resources.filter(r => (r.status || "").toLowerCase() === "approved").length;
 
-            // Sheet 1: P&L
-            const plData = monthlyTrends.map((m, idx) => ({
-                "No": idx + 1,
-                "Month": m.month,
-                "Revenue": m.revenue,
-                "Expenses": m.expenses,
-                "Net Margin": m.net_profit,
-                "Margin %": m.revenue > 0 ? `${((m.net_profit / m.revenue) * 100).toFixed(1)}%` : "0%",
-            }));
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(plData), "Monthly P&L");
+            await exportLandscapePDF({
+                title: "Resource & Asset Procurement Outflow Ledger",
+                subtitle: "Itemized breakdown of software licenses, cloud infrastructure, and tool expenses",
+                dateRangeLabel: "Full Procurement Lifecycle",
+                appliedFilters: [
+                    { label: "Report Module", value: "Resource Procurements" },
+                    { label: "Total Items", value: `${resources.length} Requests` }
+                ],
+                summaryMetrics: [
+                    { label: "Total Requests", value: `${resources.length} Items`, subtext: "Procurement Volume" },
+                    { label: "Approved Items", value: `${approvedCount} Items`, subtext: "Validated Spend", highlight: true },
+                    { label: "Total Outflow", value: fmtIDR(totalAmount), subtext: "Asset & Tool Spend" }
+                ],
+                columns: [
+                    { header: "Resource Name", key: "item_name", align: "left" },
+                    { header: "Category", key: "category", align: "left" },
+                    { header: "Project Assignment", key: "project_name", align: "left" },
+                    { header: "Amount (IDR)", key: "amount_str", align: "right" },
+                    { header: "Status", key: "status_str", align: "center" },
+                    { header: "Requested Date", key: "date_str", align: "center" },
+                ],
+                data: resources.map(r => ({
+                    item_name: r.item_name,
+                    category: r.category,
+                    project_name: r.project_name || "General Overhead",
+                    amount_str: fmtIDR(r.amount),
+                    status_str: (r.status || "Pending").toUpperCase(),
+                    date_str: r.created_at ? new Date(r.created_at).toLocaleDateString("id-ID") : "-"
+                })),
+                fileName: `Haerarchy_Resource_Asset_Outflows_${new Date().toISOString().split("T")[0]}.pdf`
+            });
+        } catch (err: any) {
+            toast.error(err.message);
+        } finally {
+            setGeneratingReport(null);
+        }
+    };
 
-            // Sheet 2: Projects
-            const projData = compositeProjects.map((p, idx) => ({
-                "No": idx + 1,
-                "Project": p.project_name,
-                "Client": p.client_name || "Internal",
-                "Revenue": p.contract_value || 0,
-                "Total Cost": p.total_expenses || 0,
-                "Net Profit": p.net_margin || 0,
-                "Margin %": `${(p.margin_percent).toFixed(1)}%`,
-                "Status": p.status,
-            }));
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(projData), "Projects Summary");
-
-            // Sheet 3: Personnel
-            const memberData = compositeMembers.map((m, idx) => ({
-                "No": idx + 1,
-                "Name": m.full_name,
-                "Role": m.role,
-                "Base Rate": m.base_rate,
-                "Paid": m.total_paid_disbursements,
-                "Liability": m.pending_liability,
-            }));
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(memberData), "Personnel Payroll");
-
+    // 5. Comprehensive Executive Master Workbook (Multi-Sheet)
+    const exportComprehensiveWorkbook = async () => {
+        setGeneratingReport("all_excel");
+        try {
+            const wb = generatePresetExecutiveMasterWorkbook({
+                monthlyTrends,
+                compositeProjects,
+                compositeMembers,
+                resources
+            });
             XLSX.writeFile(wb, `Haerarchy_Executive_Master_Intelligence_${new Date().toISOString().split("T")[0]}.xlsx`);
-            toast.success("Downloaded Full Multi-Sheet Executive Workbook!");
+            toast.success("Downloaded Consolidated Multi-Sheet Executive Master Workbook!");
         } catch (err: any) {
             toast.error(err.message);
         } finally {
@@ -211,6 +328,7 @@ export function PresetExecutiveReports({
             badge: "Financial Audit",
             records: monthlyTrends.length,
             onExcel: exportPLReport,
+            onPDF: exportPLPDF,
         },
         {
             id: "projects",
@@ -220,6 +338,7 @@ export function PresetExecutiveReports({
             badge: "Operational",
             records: projects.length,
             onExcel: exportProjectMasterReport,
+            onPDF: exportProjectMasterPDF,
         },
         {
             id: "liability",
@@ -229,6 +348,7 @@ export function PresetExecutiveReports({
             badge: "HR & Finance",
             records: members.length,
             onExcel: exportLiabilityReport,
+            onPDF: exportLiabilityPDF,
         },
         {
             id: "resources",
@@ -238,6 +358,7 @@ export function PresetExecutiveReports({
             badge: "Cost Breakdown",
             records: resources.length,
             onExcel: exportResourceReport,
+            onPDF: exportResourcePDF,
         },
     ];
 
@@ -259,10 +380,10 @@ export function PresetExecutiveReports({
                 <Button
                     type="button"
                     onClick={exportComprehensiveWorkbook}
-                    disabled={generatingReport === "all"}
+                    disabled={generatingReport === "all_excel"}
                     className="shrink-0 gap-2 bg-[#4B7BEC] hover:bg-[#385bb5] text-white text-xs font-semibold shadow-md min-w-[170px]"
                 >
-                    {generatingReport === "all" ? (
+                    {generatingReport === "all_excel" ? (
                         <><Loader2 className="h-4 w-4 animate-spin" /> Compiling Sheets...</>
                     ) : (
                         <><Download className="h-4 w-4" /> Download Master (.xlsx)</>
@@ -274,7 +395,8 @@ export function PresetExecutiveReports({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {PRESET_CARDS.map((card) => {
                     const Icon = card.icon;
-                    const isProcessing = generatingReport === card.id;
+                    const isProcessingExcel = generatingReport === `${card.id}_excel`;
+                    const isProcessingPDF = generatingReport === `${card.id}_pdf`;
 
                     return (
                         <Card key={card.id} className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0 hover:shadow-md transition-shadow">
@@ -304,17 +426,17 @@ export function PresetExecutiveReports({
 
                                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
                                     <span className="text-[10px] font-mono text-slate-400">
-                                        Audit-Ready Standard Formats
+                                        Audit-Ready Formats
                                     </span>
                                     <div className="flex items-center gap-2">
                                         <Button
                                             type="button"
                                             size="sm"
                                             onClick={card.onExcel}
-                                            disabled={isProcessing}
+                                            disabled={isProcessingExcel}
                                             className="h-8 text-xs bg-[#4B7BEC] hover:bg-[#385bb5] text-white font-semibold gap-1.5 px-3 shadow-xs"
                                         >
-                                            {isProcessing ? (
+                                            {isProcessingExcel ? (
                                                 <Loader2 className="h-3 w-3 animate-spin" />
                                             ) : (
                                                 <Download className="h-3 w-3" />
@@ -325,10 +447,15 @@ export function PresetExecutiveReports({
                                             type="button"
                                             size="sm"
                                             variant="outline"
-                                            onClick={() => window.print()}
+                                            onClick={card.onPDF}
+                                            disabled={isProcessingPDF}
                                             className="h-8 text-xs border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold gap-1.5 px-3 shadow-xs"
                                         >
-                                            <Printer className="h-3 w-3 text-slate-500" />
+                                            {isProcessingPDF ? (
+                                                <Loader2 className="h-3 w-3 animate-spin" />
+                                            ) : (
+                                                <Printer className="h-3 w-3 text-slate-500" />
+                                            )}
                                             Print PDF
                                         </Button>
                                     </div>

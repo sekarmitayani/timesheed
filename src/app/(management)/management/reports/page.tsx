@@ -30,7 +30,7 @@ export default function ManagementReportsPage() {
             </div>
 
             {/* 2. Executive Reports Suite (Visible on Tablet portrait/landscape >= 768px and Desktop viewports) */}
-            <div className="hidden md:block space-y-6 animate-in fade-in duration-500">
+            <div className="hidden md:block space-y-3 animate-in fade-in duration-500">
                 {/* Standard SaaS Navigation Header */}
                 <div className="no-print">
                     <ReportsHeader

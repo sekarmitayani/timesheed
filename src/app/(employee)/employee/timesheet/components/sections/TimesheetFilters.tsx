@@ -1,8 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RefreshCcw } from "lucide-react";
 import { ApiProject } from "@/lib/types";
 import { CustomDateRangePicker } from "@/app/(pm)/pm/approvals/components/CustomDateRangePicker";
 
@@ -30,57 +28,58 @@ export function TimesheetFilters({
     projects,
     resetFilters
 }: TimesheetFiltersProps) {
-    const hasActiveFilters = dateFrom || dateTo || filterProject !== "all" || filterStatus !== "all";
-
     return (
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between px-1.5">
-            <div className="flex flex-wrap items-center gap-3 w-full">
+        <div className="flex flex-col md:flex-row gap-2.5 items-stretch md:items-center justify-between pt-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
                 {/* Unified Date Range & Frequency Picker */}
-                <CustomDateRangePicker 
-                    dateFrom={dateFrom} 
-                    dateTo={dateTo} 
-                    onDateChange={(from, to) => {
-                        setDateFrom(from);
-                        setDateTo(to);
-                    }} 
-                />
+                <div className="w-full sm:w-auto shrink-0">
+                    <CustomDateRangePicker 
+                        dateFrom={dateFrom} 
+                        dateTo={dateTo} 
+                        onDateChange={(from, to) => {
+                            setDateFrom(from);
+                            setDateTo(to);
+                        }} 
+                    />
+                </div>
 
-                {/* Project Filter - Remove Icon */}
-                <Select value={filterProject} onValueChange={setFilterProject}>
-                    <SelectTrigger className="w-[180px] h-10 bg-white border-slate-200 focus-visible:ring-[#2568C1]">
-                        <SelectValue placeholder="All Projects" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Projects</SelectItem>
-                        {projects.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}
-                    </SelectContent>
-                </Select>
+                {/* 2-Column Grid on Mobile, Inline Flex on Tablet/Desktop */}
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <Select value={filterProject} onValueChange={setFilterProject}>
+                        <SelectTrigger className="w-full sm:w-[160px] h-10 bg-white text-sm border-slate-200 focus-visible:ring-[#2568C1]">
+                            <SelectValue placeholder="All Projects" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Projects</SelectItem>
+                            {projects.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
 
-                {/* Status Filter - Remove Icon */}
-                <Select value={filterStatus} onValueChange={setFilterStatus}>
-                    <SelectTrigger className="w-[140px] h-10 bg-white border-slate-200 focus-visible:ring-[#2568C1]">
-                        <SelectValue placeholder="All Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Status</SelectItem>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="approved">Approved</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                    </SelectContent>
-                </Select>
+                    <Select value={filterStatus} onValueChange={setFilterStatus}>
+                        <SelectTrigger className="w-full sm:w-[130px] h-10 bg-white text-sm border-slate-200 focus-visible:ring-[#2568C1]">
+                            <SelectValue placeholder="All Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Status</SelectItem>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="approved">Approved</SelectItem>
+                            <SelectItem value="rejected">Rejected</SelectItem>
+                        </SelectContent>
+                    </Select>
 
-                {/* Limit - Remove Icon */}
-                <Select value={String(limit)} onValueChange={(v) => setLimit(Number(v))}>
-                    <SelectTrigger className="w-[70px] h-10 bg-white border-slate-200 focus-visible:ring-[#2568C1] text-xs">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {[10, 20, 50, 100].map(v => (
-                            <SelectItem key={v} value={String(v)} className="text-xs">{v}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                    <Select value={String(limit)} onValueChange={(v) => setLimit(Number(v))}>
+                        <SelectTrigger className="w-full sm:w-[75px] h-10 bg-white text-sm border-slate-200 focus-visible:ring-[#2568C1]">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {[10, 20, 50, 100].map(v => (
+                                <SelectItem key={v} value={String(v)} className="text-xs">{v}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
         </div>
     );
 }
+

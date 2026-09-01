@@ -300,3 +300,271 @@ export function generateCustomExportExcelWorkbook({
     XLSX.utils.book_append_sheet(wb, ws, "Export Ledger");
     return wb;
 }
+
+/**
+ * Builds a clean, audit-ready Excel Workbook for P&L Financial Statement
+ */
+export function generatePresetPLExcelWorkbook(monthlyTrends: any[]): XLSX.WorkBook {
+    const wb = XLSX.utils.book_new();
+    const today = new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+
+    const totalRev = monthlyTrends.reduce((acc, m) => acc + (m.revenue || 0), 0);
+    const totalExp = monthlyTrends.reduce((acc, m) => acc + (m.expenses || 0), 0);
+    const totalNet = totalRev - totalExp;
+    const avgMarginPct = totalRev > 0 ? ((totalNet / totalRev) * 100).toFixed(1) : "0.0";
+
+    const sheetData: any[][] = [
+        ["HAERARCHY • EXECUTIVE MANAGEMENT INTELLIGENCE"],
+        ["P&L FINANCIAL STATEMENT & MONTHLY PERFORMANCE LEDGER"],
+        [`Generated On: ${today} | Total Periods: ${monthlyTrends.length}`],
+        [],
+        ["EXECUTIVE FINANCIAL SUMMARY", "", "", ""],
+        ["Total Gross Revenue", "Total Operating Expenses", "Net Margin", "Average Margin %"],
+        [fmtIDR(totalRev), fmtIDR(totalExp), fmtIDR(totalNet), `${avgMarginPct}%`],
+        [],
+        ["No", "Month & Year", "Gross Revenue (IDR)", "Operating Expenses (IDR)", "Net Margin (IDR)", "Margin Ratio (%)"]
+    ];
+
+    monthlyTrends.forEach((m, idx) => {
+        sheetData.push([
+            idx + 1,
+            m.month,
+            fmtIDR(m.revenue),
+            fmtIDR(m.expenses),
+            fmtIDR(m.net_profit),
+            m.revenue > 0 ? `${((m.net_profit / m.revenue) * 100).toFixed(1)}%` : "0.0%"
+        ]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
+    ws["!cols"] = autoComputeColumnWidths(sheetData, 15, 35);
+    ws["!autofilter"] = { ref: `A9:F${sheetData.length}` };
+    XLSX.utils.book_append_sheet(wb, ws, "Monthly P&L Ledger");
+    return wb;
+}
+
+/**
+ * Builds a clean, audit-ready Excel Workbook for Project Portfolio Master
+ */
+export function generatePresetProjectMasterExcelWorkbook(compositeProjects: any[]): XLSX.WorkBook {
+    const wb = XLSX.utils.book_new();
+    const today = new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+
+    const totalValue = compositeProjects.reduce((acc, p) => acc + (p.contract_value || 0), 0);
+    const totalOutflow = compositeProjects.reduce((acc, p) => acc + (p.total_expenses || 0), 0);
+    const totalMargin = totalValue - totalOutflow;
+
+    const sheetData: any[][] = [
+        ["HAERARCHY • EXECUTIVE MANAGEMENT INTELLIGENCE"],
+        ["PROJECT PORTFOLIO MASTER & PROFITABILITY LEDGER"],
+        [`Generated On: ${today} | Total Projects: ${compositeProjects.length}`],
+        [],
+        ["PORTFOLIO FINANCIAL SUMMARY", "", "", ""],
+        ["Total Projects", "Portfolio Contract Value", "Total Portfolio Outflow", "Total Net Margin"],
+        [`${compositeProjects.length} Projects`, fmtIDR(totalValue), fmtIDR(totalOutflow), fmtIDR(totalMargin)],
+        [],
+        [
+            "No",
+            "Project Name",
+            "Client Organization",
+            "Contract Revenue",
+            "Planned Budget",
+            "Labor / SDM Cost",
+            "Resource Procurements",
+            "Total Outflow",
+            "Net Profit",
+            "Margin Ratio (%)",
+            "Assigned Staff",
+            "Status"
+        ]
+    ];
+
+    compositeProjects.forEach((p, idx) => {
+        sheetData.push([
+            idx + 1,
+            p.project_name,
+            p.client_name || "Internal",
+            fmtIDR(p.contract_value),
+            fmtIDR(p.budget_cost),
+            fmtIDR(p.labor_cost),
+            fmtIDR(p.resource_expenses),
+            fmtIDR(p.total_expenses),
+            fmtIDR(p.net_margin),
+            `${(p.margin_percent || 0).toFixed(1)}%`,
+            p.team_size || 0,
+            (p.status || "Active").toUpperCase()
+        ]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
+    ws["!cols"] = autoComputeColumnWidths(sheetData, 14, 40);
+    ws["!autofilter"] = { ref: `A9:L${sheetData.length}` };
+    XLSX.utils.book_append_sheet(wb, ws, "Project Portfolio Master");
+    return wb;
+}
+
+/**
+ * Builds a clean, audit-ready Excel Workbook for Liability & Payroll Exposure
+ */
+export function generatePresetLiabilityExcelWorkbook(compositeMembers: any[]): XLSX.WorkBook {
+    const wb = XLSX.utils.book_new();
+    const today = new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+
+    const totalPaid = compositeMembers.reduce((acc, m) => acc + (m.total_paid_disbursements || 0), 0);
+    const totalLiab = compositeMembers.reduce((acc, m) => acc + (m.pending_liability || 0), 0);
+    const totalExposure = totalPaid + totalLiab;
+
+    const sheetData: any[][] = [
+        ["HAERARCHY • EXECUTIVE MANAGEMENT INTELLIGENCE"],
+        ["PERSONNEL LIABILITY & PAYROLL EXPOSURE MATRIX"],
+        [`Generated On: ${today} | Total Personnel: ${compositeMembers.length}`],
+        [],
+        ["LIABILITY & COMPENSATION SUMMARY", "", "", ""],
+        ["Total Personnel", "Total Disbursed Payouts", "Pending Contract Liability", "Total Financial Exposure"],
+        [`${compositeMembers.length} Staff`, fmtIDR(totalPaid), fmtIDR(totalLiab), fmtIDR(totalExposure)],
+        [],
+        [
+            "No",
+            "Staff Full Name",
+            "Email Address",
+            "Organizational Role",
+            "Assigned Project",
+            "Contract Scheme",
+            "Base Rate",
+            "Disbursed Payouts",
+            "Pending Liability",
+            "Total Compensation Exposure"
+        ]
+    ];
+
+    compositeMembers.forEach((m, idx) => {
+        sheetData.push([
+            idx + 1,
+            m.full_name,
+            m.email,
+            m.role,
+            m.project_name || "Global / Base",
+            `${m.contract_type} • ${m.payment_scheme}`,
+            fmtIDR(m.base_rate),
+            fmtIDR(m.total_paid_disbursements),
+            fmtIDR(m.pending_liability),
+            fmtIDR((m.total_paid_disbursements || 0) + (m.pending_liability || 0))
+        ]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
+    ws["!cols"] = autoComputeColumnWidths(sheetData, 14, 40);
+    ws["!autofilter"] = { ref: `A9:J${sheetData.length}` };
+    XLSX.utils.book_append_sheet(wb, ws, "Personnel & Liability Matrix");
+    return wb;
+}
+
+/**
+ * Builds a clean, audit-ready Excel Workbook for Resource & Asset Outflows
+ */
+export function generatePresetResourceExcelWorkbook(resources: any[]): XLSX.WorkBook {
+    const wb = XLSX.utils.book_new();
+    const today = new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+
+    const totalAmount = resources.reduce((acc, r) => acc + (r.amount || 0), 0);
+    const approvedCount = resources.filter(r => (r.status || "").toLowerCase() === "approved").length;
+
+    const sheetData: any[][] = [
+        ["HAERARCHY • EXECUTIVE MANAGEMENT INTELLIGENCE"],
+        ["RESOURCE & ASSET PROCUREMENT OUTFLOW LEDGER"],
+        [`Generated On: ${today} | Total Procurement Items: ${resources.length}`],
+        [],
+        ["PROCUREMENT SPENDING SUMMARY", "", "", ""],
+        ["Total Requests", "Approved Items", "Total Outflow Amount", ""],
+        [`${resources.length} Items`, `${approvedCount} Approved`, fmtIDR(totalAmount), ""],
+        [],
+        [
+            "No",
+            "Resource / Asset Name",
+            "Category Type",
+            "Project Assignment",
+            "Cost / Amount (IDR)",
+            "Procurement Status",
+            "Requested On"
+        ]
+    ];
+
+    resources.forEach((r, idx) => {
+        sheetData.push([
+            idx + 1,
+            r.item_name,
+            r.category,
+            r.project_name || "General Overhead",
+            fmtIDR(r.amount),
+            (r.status || "Pending").toUpperCase(),
+            r.created_at ? new Date(r.created_at).toLocaleDateString("id-ID") : "-"
+        ]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
+    ws["!cols"] = autoComputeColumnWidths(sheetData, 14, 40);
+    ws["!autofilter"] = { ref: `A9:G${sheetData.length}` };
+    XLSX.utils.book_append_sheet(wb, ws, "Resource Procurements");
+    return wb;
+}
+
+/**
+ * Builds a comprehensive Multi-Sheet Master Executive Workbook
+ */
+export function generatePresetExecutiveMasterWorkbook({
+    monthlyTrends,
+    compositeProjects,
+    compositeMembers,
+    resources,
+}: {
+    monthlyTrends: any[];
+    compositeProjects: any[];
+    compositeMembers: any[];
+    resources: any[];
+}): XLSX.WorkBook {
+    const wb = XLSX.utils.book_new();
+    const today = new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+
+    // 1. Sheet: Executive Summary
+    const totalRev = monthlyTrends.reduce((acc, m) => acc + (m.revenue || 0), 0);
+    const totalExp = monthlyTrends.reduce((acc, m) => acc + (m.expenses || 0), 0);
+    const totalNet = totalRev - totalExp;
+    const totalProjectsVal = compositeProjects.reduce((acc, p) => acc + (p.contract_value || 0), 0);
+    const totalPayrollPaid = compositeMembers.reduce((acc, m) => acc + (m.total_paid_disbursements || 0), 0);
+    const totalPayrollLiab = compositeMembers.reduce((acc, m) => acc + (m.pending_liability || 0), 0);
+
+    const summarySheetData: any[][] = [
+        ["HAERARCHY • EXECUTIVE MANAGEMENT INTELLIGENCE"],
+        ["EXECUTIVE MASTER BI INTELLIGENCE WORKBOOK"],
+        [`Consolidated Export Generated On: ${today}`],
+        [],
+        ["ENTERPRISE KPI METRICS", "VALUE"],
+        ["Total Projects Monitored", `${compositeProjects.length} Projects`],
+        ["Total Portfolio Contract Value", fmtIDR(totalProjectsVal)],
+        ["Consolidated Net Margin", fmtIDR(totalNet)],
+        ["Total Disbursed Payroll", fmtIDR(totalPayrollPaid)],
+        ["Pending Contract Liability", fmtIDR(totalPayrollLiab)],
+        ["Total Resource Procurement Spending", fmtIDR(resources.reduce((acc, r) => acc + (r.amount || 0), 0))],
+    ];
+    const wsSummary = XLSX.utils.aoa_to_sheet(summarySheetData);
+    wsSummary["!cols"] = [{ wch: 38 }, { wch: 28 }];
+    XLSX.utils.book_append_sheet(wb, wsSummary, "Executive Summary");
+
+    // 2. Sheet: Monthly P&L
+    const plSheet = generatePresetPLExcelWorkbook(monthlyTrends).Sheets["Monthly P&L Ledger"];
+    XLSX.utils.book_append_sheet(wb, plSheet, "Monthly P&L");
+
+    // 3. Sheet: Projects Portfolio
+    const projSheet = generatePresetProjectMasterExcelWorkbook(compositeProjects).Sheets["Project Portfolio Master"];
+    XLSX.utils.book_append_sheet(wb, projSheet, "Projects Portfolio");
+
+    // 4. Sheet: Personnel Liability
+    const memberSheet = generatePresetLiabilityExcelWorkbook(compositeMembers).Sheets["Personnel & Liability Matrix"];
+    XLSX.utils.book_append_sheet(wb, memberSheet, "Personnel & Liability");
+
+    // 5. Sheet: Resource Procurements
+    const resourceSheet = generatePresetResourceExcelWorkbook(resources).Sheets["Resource Procurements"];
+    XLSX.utils.book_append_sheet(wb, resourceSheet, "Resource Procurements");
+
+    return wb;
+}

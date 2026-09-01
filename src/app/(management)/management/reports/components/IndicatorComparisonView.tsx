@@ -229,8 +229,11 @@ export function IndicatorComparisonView({
 
     // Active Dataset (Applies Custom Entity Multi-Selection)
     const activeDataset = useMemo(() => {
-        if (!hasCustomSelection || selectedEntityIds.length === 0) {
+        if (!hasCustomSelection) {
             return rawDataset;
+        }
+        if (selectedEntityIds.length === 0) {
+            return [];
         }
         const selectedSet = new Set(selectedEntityIds);
         return rawDataset.filter((d) => selectedSet.has(d.id));
@@ -917,8 +920,15 @@ export function IndicatorComparisonView({
 
                 <CardContent className="px-5 py-4">
                     <div id="indicator-comparison-chart-container" className="w-full h-[320px]">
-                        {/* 1. SCATTER PLOT VIEW */}
-                        {chartType === "scatter" && (
+                        {activeDataset.length === 0 ? (
+                            <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 gap-2 border-2 border-dashed border-slate-100 rounded-xl bg-slate-50/50">
+                                <FolderKanban className="h-8 w-8 text-slate-300" />
+                                <p className="text-xs font-semibold text-slate-600">No Entities Selected</p>
+                                <p className="text-[11px] text-slate-400 max-w-sm text-center">
+                                    You have 0 items picked. Please select one or more items from the Dimension Scope dropdown to visualize comparisons.
+                                </p>
+                            </div>
+                        ) : chartType === "scatter" ? (
                             <ResponsiveContainer width="100%" height="100%">
                                 <ScatterChart margin={{ top: 20, right: 30, bottom: 40, left: 40 }}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -1020,10 +1030,7 @@ export function IndicatorComparisonView({
                                     </Scatter>
                                 </ScatterChart>
                             </ResponsiveContainer>
-                        )}
-
-                        {/* 2. DUAL-AXIS GROUPED BAR CHART */}
-                        {chartType === "grouped_bar" && (
+                        ) : chartType === "grouped_bar" ? (
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={activeDataset.slice(0, 15)} margin={{ top: 20, right: 30, bottom: 40, left: 20 }}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -1047,10 +1054,7 @@ export function IndicatorComparisonView({
                                     <Bar dataKey="y" name={yMetricInfo.label} fill="#10b981" radius={[4, 4, 0, 0]} isAnimationActive={false} />
                                 </BarChart>
                             </ResponsiveContainer>
-                        )}
-
-                        {/* 3. RANKED HORIZONTAL BAR CHART */}
-                        {chartType === "ranked_bar" && (
+                        ) : (
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart
                                     layout="vertical"
@@ -1106,7 +1110,10 @@ export function IndicatorComparisonView({
                                 type="text"
                                 placeholder="Search matrix..."
                                 value={tableSearch}
-                                onChange={(e) => setTableSearch(e.target.value)}
+                                onChange={(e) => {
+                                    setTableSearch(e.target.value);
+                                    setPage(1);
+                                }}
                                 className="pl-8 pr-7 h-8 text-xs border-slate-200 bg-white shadow-xs focus-visible:ring-[#4B7BEC]"
                             />
                             {tableSearch && (
@@ -1124,7 +1131,10 @@ export function IndicatorComparisonView({
                             <span className="text-[10px] font-semibold text-slate-400 uppercase">Show:</span>
                             <Select 
                                 value={String(pageSize)} 
-                                onValueChange={(v) => setPageSize(Number(v))}
+                                onValueChange={(v) => {
+                                    setPageSize(Number(v));
+                                    setPage(1);
+                                }}
                             >
                                 <SelectTrigger className="h-8 w-[65px] bg-white border-slate-200 text-xs font-medium">
                                     <SelectValue placeholder="10" />
@@ -1153,22 +1163,32 @@ export function IndicatorComparisonView({
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {paginatedRecords.map((d, index) => {
-                                const isHighlighted = activeHighlightName && d.name.toLowerCase().includes(activeHighlightName);
-                                const ratio = d.x !== 0 ? (d.y / d.x).toFixed(2) : "-";
-                                const isAboveAvgX = d.x >= avgX;
-                                const isAboveAvgY = d.y >= avgY;
+                            {paginatedRecords.length === 0 ? (
+                                <tr>
+                                    <td colSpan={7} className="py-12 text-center text-slate-400">
+                                        <div className="flex flex-col items-center justify-center gap-1.5">
+                                            <FolderKanban className="h-6 w-6 text-slate-300" />
+                                            <p className="text-xs font-medium text-slate-500">No records match the active scope or filter.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : (
+                                paginatedRecords.map((d, index) => {
+                                    const isHighlighted = activeHighlightName && d.name.toLowerCase().includes(activeHighlightName);
+                                    const ratio = d.x !== 0 ? (d.y / d.x).toFixed(2) : "-";
+                                    const isAboveAvgX = d.x >= avgX;
+                                    const isAboveAvgY = d.y >= avgY;
 
-                                return (
-                                    <tr
-                                        key={`matrix-row-${scope}-${d.id}-${index}`}
-                                        className={`transition-colors border-b border-slate-100 last:border-0 ${
-                                            isHighlighted
-                                                ? "bg-blue-50/80 font-semibold"
-                                                : "hover:bg-[#f0f4fa]/50"
-                                        }`}
-                                    >
-                                        <td className="py-2.5 px-4 text-center text-xs font-medium text-slate-500">
+                                    return (
+                                        <tr
+                                            key={`matrix-row-${scope}-${d.id}-${index}`}
+                                            className={`transition-colors border-b border-slate-100 last:border-0 ${
+                                                isHighlighted
+                                                    ? "bg-blue-50/80 font-semibold"
+                                                    : "hover:bg-[#f0f4fa]/50"
+                                            }`}
+                                        >
+                                            <td className="py-2.5 px-4 text-center text-xs font-medium text-slate-500">
                                             {(page - 1) * pageSize + index + 1}
                                         </td>
                                         <td className="py-2.5 px-4">
@@ -1207,9 +1227,10 @@ export function IndicatorComparisonView({
                                                 </Badge>
                                             )}
                                         </td>
-                                    </tr>
-                                );
-                            })}
+                                        </tr>
+                                    );
+                                })
+                            )}
                         </tbody>
                     </table>
                 </div>

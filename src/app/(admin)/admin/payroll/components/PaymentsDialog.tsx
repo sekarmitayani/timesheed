@@ -46,12 +46,18 @@ const fmtDate = (d?: string) => {
     if (!d) return "-";
     const date = new Date(d);
     if (isNaN(date.getTime())) return "-";
-    return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    const dateStr = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    if (d.includes("T") && (hours !== 0 || minutes !== 0)) {
+        return `${dateStr} ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    }
+    return dateStr;
 };
 
 const summaryStatusColor = (s: string) => {
-    if (s === "Paid") return "bg-emerald-50 text-emerald-600 border-none";
-    if (s === "PartiallyPaid") return "bg-amber-50 text-amber-600 border-none";
+    if (s === "Paid" || s === "paid") return "bg-emerald-50 text-emerald-600 border-none";
+    if (s === "PartiallyPaid" || s === "partially_paid") return "bg-amber-50 text-amber-600 border-none";
     return "bg-slate-100 text-slate-500 border-none";
 };
 
@@ -63,6 +69,19 @@ export function PaymentsDialog({
     const [showBreakdown, setShowBreakdown] = useState(false);
     const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
     const [editConfirmOpen, setEditConfirmOpen] = useState(false);
+    const [overpayConfirmOpen, setOverpayConfirmOpen] = useState(false);
+
+    const targetAmount = contractSummary?.contract_target ?? selectedContract?.calculated_target ?? 0;
+    const currentPaid = contractSummary?.total_paid ?? selectedContract?.total_paid ?? 0;
+    const remainingUnpaid = Math.max(0, targetAmount - currentPaid);
+
+    // If editing, subtract old payment amount and add new amount
+    const editingPreviousAmount = editingPaymentId 
+        ? (payments.find(p => p.id === editingPaymentId)?.amount || 0)
+        : 0;
+    const projectedTotalPaid = currentPaid - editingPreviousAmount + (Number(paymentForm.amount) || 0);
+    const isOverpaying = targetAmount > 0 && projectedTotalPaid > targetAmount;
+    const excessAmount = Math.max(0, projectedTotalPaid - targetAmount);
 
     const handleDeleteConfirm = () => {
         if (deleteConfirmId !== null) {
@@ -74,6 +93,33 @@ export function PaymentsDialog({
     const handleSaveConfirm = () => {
         setEditConfirmOpen(false);
         onSave(paymentForm);
+    };
+
+    const handleOverpayConfirm = () => {
+        setOverpayConfirmOpen(false);
+        if (editingPaymentId) {
+            setEditConfirmOpen(true);
+        } else {
+            onSave(paymentForm);
+        }
+    };
+
+    const handleSubmit = () => {
+        if (!paymentForm.name?.trim() || paymentForm.amount === null || paymentForm.amount === undefined || paymentForm.amount <= 0 || !paymentForm.paid_at) {
+            toast.error("Please fill in all required fields with a valid payment amount");
+            return;
+        }
+
+        if (isOverpaying) {
+            setOverpayConfirmOpen(true);
+            return;
+        }
+
+        if (editingPaymentId) {
+            setEditConfirmOpen(true);
+        } else {
+            onSave(paymentForm);
+        }
     };
 
     return (
@@ -113,13 +159,13 @@ export function PaymentsDialog({
                                 <div>
                                     <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Unpaid Ledger</div>
                                     <div className="text-sm font-black text-rose-600">
-                                        Rp {formatNumber(Math.max(0, (contractSummary?.contract_target || selectedContract?.calculated_target || 0) - (contractSummary?.total_paid || selectedContract?.total_paid || 0)))}
+                                        Rp {formatNumber(remainingUnpaid)}
                                     </div>
                                 </div>
                                 <div>
                                     <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Total Disbursed</div>
                                     <div className="text-sm font-black text-emerald-600">
-                                        Rp {formatNumber(contractSummary?.total_paid || selectedContract?.total_paid || 0)}
+                                        Rp {formatNumber(currentPaid)}
                                     </div>
                                 </div>
                                 <div>
@@ -215,7 +261,7 @@ export function PaymentsDialog({
                                                 <div>
                                                     <span className="text-sm font-bold text-slate-800 tracking-tight block">{p.name}</span>
                                                     <div className="text-[10px] font-medium text-slate-400 flex items-center gap-1 mt-0.5">
-                                                        <Calendar className="h-2.5 w-2.5" /> {fmtDate(p.paid_at.split("T")[0])}
+                                                        <Calendar className="h-2.5 w-2.5" /> {fmtDate(p.paid_at)}
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-col items-end gap-1">
@@ -274,19 +320,65 @@ export function PaymentsDialog({
                                     <label className="text-xs font-bold text-slate-700">Attached Description</label>
                                     <Input className="h-9 text-sm border-slate-200" placeholder="Optional notes regarding clearance..." value={paymentForm.description || ""} onChange={e => setPaymentForm({ ...paymentForm, description: e.target.value })} disabled={isSavingPayment} />
                                 </div>
-                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 shadow-sm h-10 mt-4 text-sm font-bold tracking-wide" onClick={() => {
-                                    if (!paymentForm.name?.trim() || paymentForm.amount === null || paymentForm.amount === undefined || !paymentForm.paid_at) {
-                                        toast.error("Please fill in all required fields");
-                                        return;
-                                    }
-                                    editingPaymentId ? setEditConfirmOpen(true) : onSave(paymentForm)
-                                }} disabled={isSavingPayment}>
+                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 shadow-sm h-10 mt-4 text-sm font-bold tracking-wide" onClick={handleSubmit} disabled={isSavingPayment}>
                                     {isSavingPayment ? <Loader2 className="h-4 w-4 animate-spin" /> : editingPaymentId ? "Commit Changes" : "Commit Execution"}
                                 </Button>
                             </div>
                         </div>
                     </div>
                 </div>
+            </DialogContent>
+        </Dialog>
+
+        {/* Overpayment Warning Confirmation Modal */}
+        <Dialog open={overpayConfirmOpen} onOpenChange={setOverpayConfirmOpen}>
+            <DialogContent className="sm:max-w-md bg-white border-[#e2e8f0]">
+                <DialogHeader>
+                    <div className="mx-auto w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-2">
+                        <AlertTriangle className="h-6 w-6 text-amber-600" />
+                    </div>
+                    <DialogTitle className="text-center text-lg font-bold text-slate-800">
+                        Disbursement Exceeds Required Amount
+                    </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 py-2 text-sm text-slate-600">
+                    <p className="text-center text-xs text-slate-500">
+                        The entered amount exceeds the remaining unpaid ledger for this contract. Please review the financial breakdown below:
+                    </p>
+                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2 text-xs">
+                        <div className="flex justify-between">
+                            <span className="text-slate-500 font-medium">Contract Target:</span>
+                            <span className="font-bold text-slate-700">Rp {formatNumber(targetAmount)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500 font-medium">Current Total Paid:</span>
+                            <span className="font-bold text-slate-700">Rp {formatNumber(currentPaid)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500 font-medium">Remaining Unpaid:</span>
+                            <span className="font-bold text-rose-600">Rp {formatNumber(remainingUnpaid)}</span>
+                        </div>
+                        <div className="border-t border-slate-200 pt-2 flex justify-between">
+                            <span className="text-slate-700 font-bold">Disbursement Entered:</span>
+                            <span className="font-bold text-[#2568C1]">Rp {formatNumber(paymentForm.amount)}</span>
+                        </div>
+                        <div className="flex justify-between text-amber-700 font-bold bg-amber-50 p-1.5 rounded">
+                            <span>Excess / Overpayment:</span>
+                            <span>+ Rp {formatNumber(excessAmount)}</span>
+                        </div>
+                    </div>
+                    <p className="text-center text-xs font-semibold text-slate-700">
+                        Are you sure you want to proceed with this disbursement?
+                    </p>
+                </div>
+                <DialogFooter className="sm:justify-center gap-2 pt-2">
+                    <Button variant="outline" onClick={() => setOverpayConfirmOpen(false)} className="border-slate-200">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleOverpayConfirm} className="bg-amber-600 hover:bg-amber-700 text-white min-w-[140px]">
+                        Confirm & Disburse
+                    </Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
 

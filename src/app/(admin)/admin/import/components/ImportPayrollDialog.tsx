@@ -162,8 +162,7 @@ export function ImportPayrollDialog({ open, onOpenChange, onSuccess }: ImportPay
                 {/* Modal Header */}
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 flex items-center justify-between">
                     <div>
-                        <DialogTitle className="text-xl text-[#0f172a] flex items-center gap-2">
-                            <HandCoins className="h-5 w-5 text-emerald-600" />
+                        <DialogTitle className="text-xl text-[#0f172a]">
                             Import Payroll Disbursements (Excel / CSV)
                         </DialogTitle>
                         <DialogDescription className="text-sm mt-0.5">

@@ -100,7 +100,7 @@ export default function AdminImportHubPage() {
             optionalFields: ["phone_number", "password", "employee_type"],
             icon: UserCog,
             color: "#2568C1",
-            bgSoft: "bg-blue-50/50",
+            bgSoft: "bg-blue-50/60",
             borderSoft: "border-blue-100",
             downloadFn: downloadUserExcelTemplate,
             openModal: () => setUsersImportOpen(true),
@@ -115,9 +115,9 @@ export default function AdminImportHubPage() {
             mandatoryFields: ["email", "contract_type", "payment_scheme", "rate_amount"],
             optionalFields: ["start_date", "end_date", "is_active", "project_name"],
             icon: ReceiptText,
-            color: "#4B7BEC",
-            bgSoft: "bg-indigo-50/50",
-            borderSoft: "border-indigo-100",
+            color: "#2568C1",
+            bgSoft: "bg-blue-50/60",
+            borderSoft: "border-blue-100",
             downloadFn: downloadContractExcelTemplate,
             openModal: () => setContractsImportOpen(true),
             guideline: "Target user emails must already be registered in the system."
@@ -131,9 +131,9 @@ export default function AdminImportHubPage() {
             mandatoryFields: ["name", "client_name"],
             optionalFields: ["client_email", "budget_revenue", "budget_cost", "budget_cost_threshold", "deadline", "status", "pm_email"],
             icon: FolderKanban,
-            color: "#0284c7",
-            bgSoft: "bg-sky-50/50",
-            borderSoft: "border-sky-100",
+            color: "#2568C1",
+            bgSoft: "bg-blue-50/60",
+            borderSoft: "border-blue-100",
             downloadFn: downloadProjectExcelTemplate,
             openModal: () => setProjectsImportOpen(true),
             guideline: "Project names must be unique. Assigned PM email must have 'projectmanager' role."
@@ -147,9 +147,9 @@ export default function AdminImportHubPage() {
             mandatoryFields: ["project_name", "email", "role_in_project"],
             optionalFields: ["custom_rate", "contract_type", "payment_scheme", "start_date"],
             icon: Users,
-            color: "#0d9488",
-            bgSoft: "bg-teal-50/50",
-            borderSoft: "border-teal-100",
+            color: "#2568C1",
+            bgSoft: "bg-blue-50/60",
+            borderSoft: "border-blue-100",
             downloadFn: downloadProjectMemberExcelTemplate,
             openModal: () => setMembersImportOpen(true),
             guideline: "Both project name and user email must already exist in the database."
@@ -163,9 +163,9 @@ export default function AdminImportHubPage() {
             mandatoryFields: ["project_name", "assignee_email", "task_title"],
             optionalFields: ["created_at", "due_date", "task_description", "complexity", "task_status", "clock_in", "clock_out", "timesheet_status"],
             icon: ListTodo,
-            color: "#7c3aed",
-            bgSoft: "bg-purple-50/50",
-            borderSoft: "border-purple-100",
+            color: "#2568C1",
+            bgSoft: "bg-blue-50/60",
+            borderSoft: "border-blue-100",
             downloadFn: downloadTaskAndTimesheetExcelTemplate,
             openModal: () => setTasksImportOpen(true),
             guideline: "Assignee email must be a project member. If clock_in is provided, timesheet is created."
@@ -179,9 +179,9 @@ export default function AdminImportHubPage() {
             mandatoryFields: ["project_name", "requester_email", "type", "details"],
             optionalFields: ["amount", "status"],
             icon: Package,
-            color: "#e11d48",
-            bgSoft: "bg-rose-50/50",
-            borderSoft: "border-rose-100",
+            color: "#2568C1",
+            bgSoft: "bg-blue-50/60",
+            borderSoft: "border-blue-100",
             downloadFn: downloadResourceRequestExcelTemplate,
             openModal: () => setResourceRequestsImportOpen(true),
             guideline: "Project name and requester email must exist in database. Type: tools, infrastructure, accommodation, manpower."
@@ -195,9 +195,9 @@ export default function AdminImportHubPage() {
             mandatoryFields: ["email", "payment_name", "amount"],
             optionalFields: ["project_name", "paid_at", "description"],
             icon: HandCoins,
-            color: "#059669",
-            bgSoft: "bg-emerald-50/50",
-            borderSoft: "border-emerald-100",
+            color: "#2568C1",
+            bgSoft: "bg-blue-50/60",
+            borderSoft: "border-blue-100",
             downloadFn: downloadPayrollExcelTemplate,
             openModal: () => setPayrollImportOpen(true),
             guideline: "Recipient email must have an active contract. If project_name is omitted, payment attaches to global base contract."
@@ -257,7 +257,7 @@ export default function AdminImportHubPage() {
                     </div>
 
                     <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex items-start gap-2">
-                        <span className="h-5.5 w-5.5 rounded-full bg-purple-600 text-white flex items-center justify-center text-[11px] font-bold shrink-0">5</span>
+                        <span className="h-5.5 w-5.5 rounded-full bg-[#2568C1] text-white flex items-center justify-center text-[11px] font-bold shrink-0">5</span>
                         <div>
                             <span className="text-xs font-bold text-slate-800">Tasks</span>
                             <p className="text-[10px] text-slate-500 leading-tight mt-0.5">Tasks & timesheets</p>
@@ -273,7 +273,7 @@ export default function AdminImportHubPage() {
                     </div>
 
                     <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex items-start gap-2">
-                        <span className="h-5.5 w-5.5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[11px] font-bold shrink-0">7</span>
+                        <span className="h-5.5 w-5.5 rounded-full bg-[#2568C1] text-white flex items-center justify-center text-[11px] font-bold shrink-0">7</span>
                         <div>
                             <span className="text-xs font-bold text-slate-800">Payroll</span>
                             <p className="text-[10px] text-slate-500 leading-tight mt-0.5">Disbursements</p>

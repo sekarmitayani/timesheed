@@ -1482,7 +1482,7 @@ export function downloadPayrollExcelTemplate() {
             "project_name": "",
             "payment_name": "Gaji Pokok Periode Januari 2026",
             "amount": 5000000,
-            "paid_at": "2026-01-25",
+            "paid_at": "2026-01-25 09:30",
             "description": "BCA Payroll Transfer Ref #PY202601-01"
         },
         {
@@ -1498,7 +1498,7 @@ export function downloadPayrollExcelTemplate() {
             "project_name": "Fintech Core Banking System",
             "payment_name": "Disbursement Termin 1 - Desain UI/UX",
             "amount": 3500000,
-            "paid_at": "2026-02-10",
+            "paid_at": "2026-02-10 14:15",
             "description": "Pembayaran progress milestone desain tahap 1"
         },
         {
@@ -1544,9 +1544,9 @@ export function downloadPayrollExcelTemplate() {
         {
             "Field": "paid_at",
             "Required": "NO (Optional)",
-            "Format / Type": "Date (YYYY-MM-DD)",
-            "Valid Options / Example": "2026-01-25",
-            "Description": "Payment settlement date. Defaults to current date if left blank."
+            "Format / Type": "Date / DateTime (YYYY-MM-DD or YYYY-MM-DD HH:mm)",
+            "Valid Options / Example": "2026-01-25 or 2026-01-25 09:30",
+            "Description": "Payment settlement date and optional time. Defaults to current date/time if left blank."
         },
         {
             "Field": "description",
@@ -1567,7 +1567,7 @@ export function downloadPayrollExcelTemplate() {
         { wch: 32 }, // project_name
         { wch: 36 }, // payment_name
         { wch: 16 }, // amount
-        { wch: 14 }, // paid_at
+        { wch: 20 }, // paid_at
         { wch: 45 }  // description
     ];
     XLSX.utils.book_append_sheet(wb, wsTemplate, "Payroll Data Template");
@@ -1577,7 +1577,7 @@ export function downloadPayrollExcelTemplate() {
     wsGuidelines["!cols"] = [
         { wch: 20 }, // Field
         { wch: 28 }, // Required
-        { wch: 28 }, // Type
+        { wch: 36 }, // Type
         { wch: 45 }, // Example
         { wch: 70 }  // Description
     ];
@@ -1661,10 +1661,11 @@ export async function parseAndValidatePayrollFile(file: File): Promise<ParsePayr
             }
         }
 
-        // Validate Paid At (if provided)
+        // Validate Paid At (if provided, supports date and optional time)
         if (paidAt) {
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(paidAt) || isNaN(Date.parse(paidAt))) {
-                errors.push("Invalid paid_at date format (use YYYY-MM-DD)");
+            const isDateValid = /^\d{4}-\d{2}-\d{2}(([ T])\d{2}:\d{2}(:\d{2})?)?$/.test(paidAt) || /^\d{2}\/\d{2}\/\d{4}( \d{2}:\d{2}(:\d{2})?)?$/.test(paidAt);
+            if (!isDateValid || isNaN(Date.parse(paidAt.replace(" ", "T")))) {
+                errors.push("Invalid paid_at format (use YYYY-MM-DD or YYYY-MM-DD HH:mm)");
             }
         }
 

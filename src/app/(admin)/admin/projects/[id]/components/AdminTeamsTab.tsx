@@ -29,7 +29,8 @@ import {
     Star,
     Edit2,
     Check,
-    X
+    X,
+    AlertTriangle
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { adminContractService } from "@/lib/services/admin-contracts";
@@ -53,6 +54,7 @@ export function AdminTeamsTab({
     const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
     const [editingRoleMemberId, setEditingRoleMemberId] = useState<number | null>(null);
     const [editingRoleValue, setEditingRoleValue] = useState("");
+    const [memberToDelete, setMemberToDelete] = useState<ProjectMember | null>(null);
 
     const getInitials = (name: string) => (name || "?").split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
 
@@ -143,7 +145,10 @@ export function AdminTeamsTab({
                                     variant="ghost" 
                                     size="icon" 
                                     className="h-8 w-8 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-full"
-                                    onClick={(e) => { e.stopPropagation(); onRemove(member.id); }}
+                                    onClick={(e) => { 
+                                        e.stopPropagation(); 
+                                        setMemberToDelete(member);
+                                    }}
                                     disabled={isSaving}
                                 >
                                     <Trash2 className="h-4 w-4" />
@@ -304,6 +309,51 @@ export function AdminTeamsTab({
                         >
                             {isSaving ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : null}
                             Save Changes
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Remove Member Confirmation Dialog */}
+            <Dialog open={memberToDelete !== null} onOpenChange={(open) => !open && setMemberToDelete(null)}>
+                <DialogContent className="sm:max-w-md bg-white border-[#e2e8f0]">
+                    <DialogHeader>
+                        <div className="mx-auto w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-2">
+                            <AlertTriangle className="h-6 w-6 text-red-600" />
+                        </div>
+                        <DialogTitle className="text-center text-lg font-bold text-slate-800">
+                            Remove Team Member?
+                        </DialogTitle>
+                    </DialogHeader>
+                    <div className="text-center text-sm text-slate-500 py-2 space-y-2">
+                        <p>
+                            Are you sure you want to remove <span className="font-semibold text-slate-800">{memberToDelete?.user?.full_name || "this member"}</span> {memberToDelete?.role_in_project ? `(${memberToDelete.role_in_project})` : ""} from this project?
+                        </p>
+                        <p className="text-xs text-slate-400">
+                            This will unassign them from the project team and revoke their project-level permissions.
+                        </p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row justify-center gap-2 pt-2">
+                        <Button 
+                            variant="outline" 
+                            onClick={() => setMemberToDelete(null)} 
+                            className="border-slate-200"
+                        >
+                            Cancel
+                        </Button>
+                        <Button 
+                            variant="destructive" 
+                            onClick={() => {
+                                if (memberToDelete) {
+                                    onRemove(memberToDelete.id);
+                                    setMemberToDelete(null);
+                                }
+                            }}
+                            disabled={isSaving}
+                            className="bg-red-600 hover:bg-red-700 text-white min-w-[130px]"
+                        >
+                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                            Remove Member
                         </Button>
                     </div>
                 </DialogContent>

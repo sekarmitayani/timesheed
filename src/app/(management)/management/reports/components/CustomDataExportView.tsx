@@ -71,6 +71,7 @@ export function CustomDataExportView({
     const [selectedDataset, setSelectedDataset] = useState<DatasetOption>("composite_project_master");
     const [startDate, setStartDate] = useState<string>("");
     const [endDate, setEndDate] = useState<string>("");
+    const [activeDatePreset, setActiveDatePreset] = useState<"all" | "this_month" | "last_30_days" | "this_quarter" | "ytd" | "custom">("all");
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [page, setPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(10);
@@ -96,6 +97,7 @@ export function CustomDataExportView({
 
     // Quick Date Presets
     const applyDatePreset = (preset: "all" | "this_month" | "last_30_days" | "this_quarter" | "ytd") => {
+        setActiveDatePreset(preset);
         const now = new Date();
         const y = now.getFullYear();
         const m = String(now.getMonth() + 1).padStart(2, "0");
@@ -372,35 +374,55 @@ export function CustomDataExportView({
                         <button
                             type="button"
                             onClick={() => applyDatePreset("all")}
-                            className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-semibold transition-colors"
+                            className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors ${
+                                activeDatePreset === "all"
+                                    ? "bg-blue-50 text-[#4B7BEC] border border-blue-200/60 font-bold shadow-xs"
+                                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-transparent"
+                            }`}
                         >
                             All Time
                         </button>
                         <button
                             type="button"
                             onClick={() => applyDatePreset("this_month")}
-                            className="px-2.5 py-1 rounded-md bg-blue-50 text-[#4B7BEC] border border-blue-200/60 hover:bg-blue-100 text-[10px] font-semibold transition-colors"
+                            className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors ${
+                                activeDatePreset === "this_month"
+                                    ? "bg-blue-50 text-[#4B7BEC] border border-blue-200/60 font-bold shadow-xs"
+                                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-transparent"
+                            }`}
                         >
                             This Month
                         </button>
                         <button
                             type="button"
                             onClick={() => applyDatePreset("last_30_days")}
-                            className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-semibold transition-colors"
+                            className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors ${
+                                activeDatePreset === "last_30_days"
+                                    ? "bg-blue-50 text-[#4B7BEC] border border-blue-200/60 font-bold shadow-xs"
+                                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-transparent"
+                            }`}
                         >
                             Last 30 Days
                         </button>
                         <button
                             type="button"
                             onClick={() => applyDatePreset("this_quarter")}
-                            className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-semibold transition-colors"
+                            className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors ${
+                                activeDatePreset === "this_quarter"
+                                    ? "bg-blue-50 text-[#4B7BEC] border border-blue-200/60 font-bold shadow-xs"
+                                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-transparent"
+                            }`}
                         >
                             This Quarter
                         </button>
                         <button
                             type="button"
                             onClick={() => applyDatePreset("ytd")}
-                            className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-semibold transition-colors"
+                            className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors ${
+                                activeDatePreset === "ytd"
+                                    ? "bg-blue-50 text-[#4B7BEC] border border-blue-200/60 font-bold shadow-xs"
+                                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-transparent"
+                            }`}
                         >
                             YTD
                         </button>
@@ -454,6 +476,7 @@ export function CustomDataExportView({
                                         onClick={() => {
                                              setStartDate("");
                                              setEndDate("");
+                                             setActiveDatePreset("all");
                                         }}
                                         className="text-[9px] font-bold text-slate-400 hover:text-red-500 transition-colors uppercase tracking-wider"
                                     >
@@ -464,13 +487,19 @@ export function CustomDataExportView({
                             <div className="grid grid-cols-2 gap-2">
                                 <CustomDatePicker
                                     date={startDate}
-                                    onDateChange={setStartDate}
+                                    onDateChange={(val) => {
+                                        setStartDate(val);
+                                        setActiveDatePreset("custom");
+                                    }}
                                     placeholder="Start Date"
                                     className="h-9 text-xs bg-white border-slate-200"
                                 />
                                 <CustomDatePicker
                                     date={endDate}
-                                    onDateChange={setEndDate}
+                                    onDateChange={(val) => {
+                                        setEndDate(val);
+                                        setActiveDatePreset("custom");
+                                    }}
                                     placeholder="End Date"
                                     className="h-9 text-xs bg-white border-slate-200"
                                 />
