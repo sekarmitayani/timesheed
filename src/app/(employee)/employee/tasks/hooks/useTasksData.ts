@@ -249,6 +249,8 @@ export function useTasksData() {
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['employee', 'tasks', 'list', selectedProjectId] });
+            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets'] });
+            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets', 'logs'] });
             setDetailOpen(false);
         },
         onSuccess: () => {

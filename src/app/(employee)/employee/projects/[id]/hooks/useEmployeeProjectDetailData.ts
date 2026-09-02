@@ -97,6 +97,8 @@ export function useEmployeeProjectDetailData(projectId: string) {
         onSuccess: () => {
             toast.success("Clocked in successfully");
             queryClient.invalidateQueries({ queryKey: ['employee', 'project', projectId, 'tasks'] });
+            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets'] });
+            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets', 'logs'] });
             setTaskDetailOpen(false);
         },
         onError: (e: any) => toast.error(e.message || "Failed to clock in")

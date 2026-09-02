@@ -28,12 +28,13 @@ interface PaymentHistoryTableProps {
 export function PaymentHistoryTable({ payments = [], paymentStatus = "pending" }: PaymentHistoryTableProps) {
   const [selectedPayment, setSelectedPayment] = useState<PaymentLog | null>(null);
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | null | undefined) => {
+    const val = Number(amount);
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(isNaN(val) ? 0 : val);
   };
 
   const formatDate = (date: string) => {

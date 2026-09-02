@@ -40,6 +40,9 @@ export function useTimesheetData() {
     const { data: rawLogs, isLoading: isLoadingLogs } = useQuery({
         queryKey: ['employee', 'timesheets', 'logs'],
         queryFn: () => timesheetService.getMyLogs(),
+        staleTime: 0,
+        refetchOnMount: "always",
+        refetchOnWindowFocus: true,
     });
 
     const logs = useMemo(() => {
@@ -102,9 +105,43 @@ export function useTimesheetData() {
         }
     });
 
+    const pauseMutation = useMutation({
+        mutationFn: () => timesheetService.pauseSession(),
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets', 'logs'] });
+        },
+        onSuccess: () => {
+            toast.success("Timesheet session paused");
+        },
+        onError: (e: any) => {
+            toast.error(e.message || "Failed to pause session");
+        }
+    });
+
+    const resumeMutation = useMutation({
+        mutationFn: () => timesheetService.resumeSession(),
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets', 'logs'] });
+        },
+        onSuccess: () => {
+            toast.success("Timesheet session resumed");
+        },
+        onError: (e: any) => {
+            toast.error(e.message || "Failed to resume session");
+        }
+    });
+
     const handleClockOut = async () => {
         if (!clockOutDesc.trim()) { toast.error("Description is required"); return; }
         clockOutMutation.mutate(clockOutDesc);
+    };
+
+    const handlePause = () => {
+        pauseMutation.mutate();
+    };
+
+    const handleResume = () => {
+        resumeMutation.mutate();
     };
 
     // --- Computed Logic ---
@@ -177,16 +214,33 @@ export function useTimesheetData() {
             setLiveElapsed("");
             return;
         }
-        const tick = () => {
-            const start = new Date(activeLog.clock_in).getTime();
-            const now = Date.now();
-            const diffSec = Math.floor((now - start) / 1000);
+
+        const formatElapsed = (diffSec: number) => {
             const h = Math.floor(diffSec / 3600);
             const m = Math.floor((diffSec % 3600) / 60);
             const s = diffSec % 60;
-            setLiveElapsed(`${h}h ${m.toString().padStart(2, "0")}m ${s.toString().padStart(2, "0")}s`);
+            return `${h}h ${m.toString().padStart(2, "0")}m ${s.toString().padStart(2, "0")}s`;
         };
+
+        const tick = () => {
+            const start = new Date(activeLog.clock_in).getTime();
+            const totalPaused = activeLog.total_paused_seconds || 0;
+
+            if (activeLog.is_paused && activeLog.paused_at) {
+                const pauseTime = new Date(activeLog.paused_at).getTime();
+                const diffSec = Math.max(0, Math.floor((pauseTime - start) / 1000) - totalPaused);
+                setLiveElapsed(formatElapsed(diffSec));
+            } else {
+                const now = Date.now();
+                const diffSec = Math.max(0, Math.floor((now - start) / 1000) - totalPaused);
+                setLiveElapsed(formatElapsed(diffSec));
+            }
+        };
+
         tick();
+        if (activeLog.is_paused) {
+            return;
+        }
         const id = setInterval(tick, 1000);
         return () => clearInterval(id);
     }, [activeLog]);
@@ -232,6 +286,8 @@ export function useTimesheetData() {
             limit,
             clockOutOpen,
             isClocking: clockOutMutation.isPending,
+            isPausing: pauseMutation.isPending,
+            isResuming: resumeMutation.isPending,
             projects,
             clockOutDesc,
             selectedLog,
@@ -255,6 +311,8 @@ export function useTimesheetData() {
             setClockOutDesc,
             setSelectedLog,
             handleClockOut,
+            handlePause,
+            handleResume,
             resetFilters,
             formatDuration,
             formatTime24,

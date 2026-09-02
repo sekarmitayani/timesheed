@@ -40,12 +40,13 @@ export function EarningTracker({
 }: EarningTrackerProps) {
   const [showBreakdown, setShowBreakdown] = useState(false);
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | null | undefined) => {
+    const val = Number(amount);
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(isNaN(val) ? 0 : val);
   };
 
   const currentMonthName = new Date().toLocaleString('en-US', { month: 'long' });
@@ -94,12 +95,12 @@ export function EarningTracker({
                   <div>
                     <p className="text-[10px] text-blue-600 uppercase font-medium">Approved (Fixed)</p>
                     <p className="text-xs font-bold text-emerald-600">
-                      {contractType === 'timesheet' ? `${allTimeDuration.toFixed(1)} Hours` : `${allTimeDays} Days`}
+                      {contractType === 'timesheet' ? `${(allTimeDuration || 0).toFixed(1)} Hours` : `${allTimeDays || 0} Days`}
                     </p>
                     <p className="text-[9px] text-emerald-500 font-medium">
                       {approvedCount || (contractType === 'mandays' ? allTimeDays : 0)} {contractType === 'timesheet' ? 'Logs' : 'Days'} Approved
                     </p>
-                    <p className="text-[9px] text-emerald-600 font-bold">{formatCurrency(totalPaid + liability)}</p>
+                    <p className="text-[9px] text-emerald-600 font-bold">{formatCurrency(Number(totalPaid || 0) + Number(liability || 0))}</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-blue-600 uppercase font-medium">Pending (Est)</p>
@@ -108,7 +109,7 @@ export function EarningTracker({
                       {estimatedEarning > 0 ? formatCurrency(estimatedEarning) : "0"}
                     </p>
                     <p className="text-[9px] text-slate-400 font-medium">
-                      {(submittedCount || 0) - (approvedCount || 0)} Pending
+                      {Math.max(0, (submittedCount || 0) - (approvedCount || 0))} Pending
                     </p>
                   </div>
                 </div>
@@ -130,7 +131,7 @@ export function EarningTracker({
               {contractType === 'yearly' && (
                 <div className="pt-2">
                   <p className="text-[10px] text-blue-600 uppercase font-medium">Accumulated Earnings</p>
-                  <p className="text-sm font-bold text-[#4B7BEC]">{formatCurrency(totalPaid + liability)}</p>
+                  <p className="text-sm font-bold text-[#4B7BEC]">{formatCurrency(Number(totalPaid || 0) + Number(liability || 0))}</p>
                   <p className="text-[9px] text-slate-400 font-medium">Fixed income grows every year of contract</p>
                 </div>
               )}

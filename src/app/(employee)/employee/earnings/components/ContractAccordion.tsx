@@ -11,12 +11,13 @@ interface ContractAccordionProps {
 }
 
 export function ContractAccordion({ contracts }: ContractAccordionProps) {
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | null | undefined) => {
+    const val = Number(amount);
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(isNaN(val) ? 0 : val);
   };
 
   const getPastelBg = (index: number) => {
@@ -37,7 +38,7 @@ export function ContractAccordion({ contracts }: ContractAccordionProps) {
 
       <Accordion type="single" collapsible className="space-y-3">
         {contracts.map((contract, index) => {
-          const liability = contract.total_liability ?? Math.max(0, contract.total_earned - contract.total_paid);
+          const liability = contract.total_liability ?? Math.max(0, Number(contract.total_earned || 0) - Number(contract.total_paid || 0));
 
           return (
             <AccordionItem 

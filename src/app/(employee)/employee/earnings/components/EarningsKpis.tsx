@@ -8,12 +8,13 @@ interface EarningsKpisProps {
 }
 
 export function EarningsKpis({ currentMonthReleased, totalLiability, totalEarned }: EarningsKpisProps) {
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | null | undefined) => {
+    const val = Number(amount);
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(isNaN(val) ? 0 : val);
   };
 
   const currentMonthName = new Date().toLocaleString('en-US', { month: 'short' });

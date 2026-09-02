@@ -11,12 +11,13 @@ export function ContractOverview({ contracts }: ContractOverviewProps) {
   const baseContracts = contracts.filter((c) => !c.project_id && c.is_active);
   const projectContracts = contracts.filter((c) => c.project_id && c.is_active);
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | null | undefined) => {
+    const val = Number(amount);
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(isNaN(val) ? 0 : val);
   };
 
   const renderContractList = (title: string, items: EnrichedContract[], icon: React.ReactNode) => (

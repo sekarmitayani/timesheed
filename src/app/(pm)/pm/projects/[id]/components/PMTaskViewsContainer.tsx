@@ -117,6 +117,8 @@ export function PMTaskViewsContainer({
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['pm', 'project', String(project.id), 'tasks'] });
+            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets'] });
+            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets', 'logs'] });
             setDialogOpen(false);
         },
         onSuccess: () => {

@@ -14,14 +14,20 @@ export function useEarningsData(userId: string | undefined) {
 
     const data = response?.data || {};
 
-    const enrichedContracts: EnrichedContract[] = (data.contracts || []).map((c: any) => ({
-        ...c,
-        // Ensure mapping if backend field names slightly differ from what UI expects
-        total_earned: c.calculated_target || c.total_earned,
-        payment_status: c.status || c.payment_status,
-        total_liability: c.remaining || c.total_liability,
-        payments: c.payments || [],
-    }));
+    const enrichedContracts: EnrichedContract[] = (data.contracts || []).map((c: any) => {
+        const total_earned = c.calculated_target ?? c.total_earned ?? 0;
+        const total_paid = c.total_paid ?? 0;
+        const remaining = c.remaining ?? c.total_liability ?? Math.max(0, Number(total_earned) - Number(total_paid));
+        return {
+            ...c,
+            total_earned: Number(total_earned) || 0,
+            total_paid: Number(total_paid) || 0,
+            payment_status: c.status || c.payment_status || "pending",
+            total_liability: Number(remaining) || 0,
+            remaining: Number(remaining) || 0,
+            payments: c.payments || [],
+        };
+    });
 
     const myPayments = (data.my_payments || []).map((p: any) => {
         const contract = enrichedContracts.find(c => c.id === p.contract_id);

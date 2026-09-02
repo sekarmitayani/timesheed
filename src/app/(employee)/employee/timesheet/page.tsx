@@ -66,6 +66,10 @@ export default function TimesheetPage() {
                 activeLog={computed.activeLog}
                 liveElapsed={state.liveElapsed}
                 onClockOut={() => actions.setClockOutOpen(true)}
+                onPause={actions.handlePause}
+                onResume={actions.handleResume}
+                isPausing={state.isPausing}
+                isResuming={state.isResuming}
                 getTaskTitle={actions.getTaskTitle}
                 formatTime24={actions.formatTime24}
             />

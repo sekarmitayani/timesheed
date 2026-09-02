@@ -15,6 +15,9 @@ export interface TimesheetLog {
     rejection_note?: string;
     is_anomaly?: boolean;
     anomaly_reason?: string;
+    is_paused?: boolean;
+    paused_at?: string | null;
+    total_paused_seconds?: number;
     created_at?: string;
     updated_at?: string;
     // Pre-loaded relations (from inbox)
@@ -46,6 +49,18 @@ export const timesheetService = {
         return fetchApi("/timesheets/clock-out", {
             method: "POST",
             body: JSON.stringify(payload),
+        });
+    },
+
+    async pauseSession(): Promise<{ message: string; data: TimesheetLog }> {
+        return fetchApi("/timesheets/pause", {
+            method: "POST",
+        });
+    },
+
+    async resumeSession(): Promise<{ message: string; data: TimesheetLog }> {
+        return fetchApi("/timesheets/resume", {
+            method: "POST",
         });
     },
 
