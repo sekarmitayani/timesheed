@@ -481,18 +481,16 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                     </div>
 
                     {/* Modal Footer */}
-                    <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5 shrink-0">
+                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3 shrink-0">
                         <Button 
                             variant="ghost" 
-                            size="sm" 
                             onClick={() => actions.setAssignOpen(false)} 
                             disabled={isSaving} 
-                            className="text-xs font-medium"
+                            className="text-[#64748b]"
                         >
                             Cancel
                         </Button>
                         <Button 
-                            size="sm"
                             onClick={() => {
                                 if (!state.assignForm.user_id || !state.assignForm.role_in_project?.trim()) {
                                     toast.error("Please fill in all required fields");
@@ -501,9 +499,9 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                                 actions.handleAssignSave();
                             }} 
                             disabled={isSaving} 
-                            className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[120px] transition-all duration-200 shadow-sm text-xs font-semibold text-white"
+                            className="bg-[#2568C1] hover:bg-[#1e56a6] shadow-md shadow-[#2568C1]/20 min-w-[120px]"
                         >
-                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm Assign"}
+                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Confirm Assign"}
                         </Button>
                     </div>
                 </DialogContent>
