@@ -62,10 +62,9 @@ export function ProjectCostSummaryDetailModal({ project, open, onOpenChange }: P
         return 'bg-slate-100 text-slate-500';
     };
 
-    const pmMember = projectDetails?.members?.find((m: any) => {
-        const role = m.role_in_project?.toLowerCase().replace(/\s+/g, '') || "";
-        return role === "projectmanager" || role === "pm";
-    });
+    const pmMember = projectDetails?.members?.find((m: any) => 
+        m.role_in_project?.trim().toLowerCase() === "project manager"
+    );
     const pmName = pmMember?.user?.full_name || "No PM Assigned";
 
     const salaryCost = project ? project.salary_cost : 0;

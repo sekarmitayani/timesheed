@@ -17,7 +17,6 @@ import {
 import { 
     Users, 
     Search, 
-    Crown, 
     Mail, 
     Phone, 
     Calendar,
@@ -82,7 +81,6 @@ export function PMTeamsTab({
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
                                     <span className="text-sm font-bold text-slate-800 truncate">{member.user?.full_name || `User #${member.user_id}`}</span>
-                                    {member.role_in_project === "Project Manager" && <Crown className="h-3 w-3 text-amber-500 shrink-0" />}
                                 </div>
                                 <span className="text-[11px] font-bold text-[#4B7BEC] uppercase tracking-wider block mt-0.5">
                                     {member.role_in_project}

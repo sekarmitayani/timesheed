@@ -9,7 +9,7 @@ import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, Trash2, Edit, Save, WalletCards, Calendar, Clock, AlertTriangle, Crown } from "lucide-react";
+import { Loader2, Trash2, Edit, Save, WalletCards, Calendar, Clock, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -318,8 +318,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                                                     className="text-[#2568C1] focus:ring-[#2568C1] cursor-pointer h-4 w-4"
                                                 />
                                                 <div className="flex flex-col">
-                                                    <span className={`text-sm font-semibold flex items-center gap-1.5 ${isPMSelected ? "text-[#2568C1]" : "text-slate-700"}`}>
-                                                        <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                                                    <span className={`text-sm font-semibold ${isPMSelected ? "text-[#2568C1]" : "text-slate-700"}`}>
                                                         Project Manager
                                                     </span>
                                                     <span className="text-xs text-slate-400 mt-0.5">Lead this project</span>

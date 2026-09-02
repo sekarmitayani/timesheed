@@ -2,7 +2,7 @@
 
 import { ApiProject, ProjectMember } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Banknote, Crown, CalendarDays, Clock, UserCheck } from "lucide-react";
+import { Banknote, CalendarDays, Clock, UserCheck } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { AdminAIForecastSection } from "./AdminAIForecastSection";
@@ -18,10 +18,8 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
     };
 
     const margin = (project.budget_revenue || 0) - (project.budget_cost || 0);
-    const pm = members.find(m => {
-        const role = m.role_in_project?.toLowerCase().replace(/\s+/g, '') || "";
-        return role === "projectmanager" || role === "pm";
-    })?.user?.full_name || "Not Assigned";
+    const pmMember = members.find(m => m.role_in_project?.trim().toLowerCase() === "project manager");
+    const pm = pmMember?.user?.full_name || "Not Assigned";
 
     return (
         <div className="space-y-4">
@@ -70,8 +68,11 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
-                                <Crown className="h-5 w-5" />
+                            <div className={cn(
+                                "h-10 w-10 rounded-xl flex items-center justify-center shrink-0",
+                                pm !== "Not Assigned" ? "bg-blue-50 text-[#2568C1]" : "bg-slate-100 text-slate-400"
+                            )}>
+                                <UserCheck className="h-5 w-5" />
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Assigned Project Manager</span>

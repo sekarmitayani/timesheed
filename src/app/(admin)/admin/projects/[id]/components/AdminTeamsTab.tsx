@@ -19,7 +19,6 @@ import {
     Search, 
     UserPlus, 
     Trash2, 
-    Crown, 
     Mail, 
     Phone, 
     Briefcase,
@@ -117,7 +116,6 @@ export function AdminTeamsTab({
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
                                     <span className="text-sm font-bold text-slate-800 truncate">{member.user?.full_name || `User #${member.user_id}`}</span>
-                                    {member.role_in_project === "Project Manager" && <Crown className="h-3 w-3 text-amber-500 shrink-0" />}
                                 </div>
                                 <span className="text-[11px] font-bold text-[#4B7BEC] uppercase tracking-wider block mt-0.5 truncate">
                                     {member.role_in_project}
@@ -307,8 +305,7 @@ export function AdminTeamsTab({
                                                     className="mt-0.5 text-[#2568C1] focus:ring-[#2568C1] cursor-pointer"
                                                 />
                                                 <div className="flex flex-col">
-                                                    <span className={`text-xs font-bold flex items-center gap-1.5 ${isPMSelected ? "text-[#2568C1]" : "text-slate-700"}`}>
-                                                        <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                                                    <span className={`text-xs font-bold ${isPMSelected ? "text-[#2568C1]" : "text-slate-700"}`}>
                                                         Project Manager
                                                     </span>
                                                     <span className="text-[10px] text-slate-400 mt-0.5 leading-tight">Lead this project</span>

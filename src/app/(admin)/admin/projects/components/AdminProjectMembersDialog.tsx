@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CurrencyInput } from "@/components/ui/currency-input";
-import { Loader2, UserPlus, X, Trash2, Crown, Check } from "lucide-react";
+import { Loader2, UserPlus, X, Trash2, Check } from "lucide-react";
 import { useState } from "react";
 import { adminContractService } from "@/lib/services/admin-contracts";
 import { toast } from "sonner";
@@ -181,7 +181,7 @@ export function AdminProjectMembersDialog({
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <Badge className={`text-[10px] font-bold px-2 py-0.5 border-none shadow-none ${m.role_in_project === "Project Manager" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-600"}`}>{m.role_in_project === "Project Manager" && <Crown className="h-3 w-3 mr-1" />}{m.role_in_project}</Badge>
+                                    <Badge className={`text-[10px] font-bold px-2 py-0.5 border-none shadow-none ${m.role_in_project === "Project Manager" ? "bg-blue-50 text-blue-700" : "bg-slate-100 text-slate-600"}`}>{m.role_in_project}</Badge>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 opacity-0 group-hover:opacity-100 hover:text-red-600 hover:bg-red-50 rounded-full transition-all" onClick={() => onRemove(m.id)} disabled={isSaving}><Trash2 className="h-3.5 w-3.5" /></Button>
                                 </div>
                             </div>
