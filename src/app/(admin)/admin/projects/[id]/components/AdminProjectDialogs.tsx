@@ -9,7 +9,7 @@ import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, Trash2, Edit, Save, WalletCards, Calendar, Clock, AlertTriangle } from "lucide-react";
+import { Loader2, Trash2, Edit, Save, WalletCards, Calendar, Clock, AlertTriangle, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -252,90 +252,258 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
 
             {/* ASSIGN MEMBER DIALOG */}
             <Dialog open={assignOpen} onOpenChange={o => !isSaving && actions.setAssignOpen(o)}>
-                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]">
-                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
-                        <DialogTitle className="text-lg font-bold text-slate-900">Assign Member</DialogTitle>
-                        <DialogDescription className="text-xs">Add a new user to this project and define their rate.</DialogDescription>
+                <DialogContent className="sm:max-w-[460px] max-h-[90vh] flex flex-col p-0 overflow-hidden border-[#e2e8f0]">
+                    {/* Modal Header */}
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 shrink-0">
+                        <DialogTitle className="text-lg font-bold text-[#0f172a]">
+                            Assign Member
+                        </DialogTitle>
+                        <DialogDescription className="text-xs text-slate-500 mt-0.5">
+                            Add a new user to this project and define their rate.
+                        </DialogDescription>
                     </div>
-                    <div className="px-6 py-5 space-y-4">
+
+                    {/* Modal Body */}
+                    <div className="px-6 py-4 space-y-3.5 overflow-y-auto flex-1 text-sm">
+                        {/* User Selection */}
                         <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Select User <span className="text-red-500">*</span></label>
-                            <Select value={String(state.assignForm.user_id || "")} onValueChange={v => actions.handleMemberUserSelect(Number(v))} disabled={isSaving}>
-                                <SelectTrigger className="h-10 text-sm"><SelectValue placeholder="Choose a user" /></SelectTrigger>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+                                User <span className="text-red-500">*</span>
+                            </label>
+                            <Select 
+                                value={String(state.assignForm.user_id || "")} 
+                                onValueChange={v => actions.handleMemberUserSelect(Number(v))} 
+                                disabled={isSaving}
+                            >
+                                <SelectTrigger className="bg-white border-slate-200 h-10 text-sm">
+                                    <SelectValue placeholder="Select user" />
+                                </SelectTrigger>
                                 <SelectContent>
                                     {allUsers.filter((u: any) => !state.members.find((m: any) => m.user_id === Number(u.id))).map((u: any) => (
-                                        <SelectItem key={u.id} value={String(u.id)}>{u.full_name || u.name}</SelectItem>
+                                        <SelectItem key={u.id} value={String(u.id)} className="text-sm">
+                                            {u.full_name || u.name} ({u.role})
+                                        </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Role in Project <span className="text-red-500">*</span></label>
-                            <Input placeholder="e.g. Backend Dev" value={state.assignForm.role_in_project} onChange={e => actions.setAssignForm({ ...state.assignForm, role_in_project: e.target.value })} className="h-10 text-sm" disabled={isSaving} />
-                        </div>
 
-                        {state.assignForm.user_id > 0 && (
-                            <div className="space-y-4 pt-3 border-t border-slate-100 animate-in fade-in duration-300">
+                        {/* Role in Project */}
+                        {state.assignForm.user_id > 0 && (() => {
+                            const selectedUser = allUsers.find((u: any) => Number(u.id) === Number(state.assignForm.user_id));
+                            const isSystemPM = selectedUser?.role === "projectmanager";
+
+                            if (isSystemPM) {
+                                const isPMSelected = state.assignForm.role_in_project === "Project Manager";
+                                return (
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+                                            Role in Project <span className="text-red-500">*</span>
+                                        </label>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div
+                                                onClick={() => !isSaving && actions.setAssignForm({ ...state.assignForm, role_in_project: "Project Manager" })}
+                                                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                                                    isPMSelected 
+                                                        ? "border-[#2568C1] bg-blue-50/50 shadow-sm" 
+                                                        : "border-slate-200 hover:bg-slate-50/80 bg-white"
+                                                }`}
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    name="pm_role_choice"
+                                                    checked={isPMSelected}
+                                                    onChange={() => actions.setAssignForm({ ...state.assignForm, role_in_project: "Project Manager" })}
+                                                    disabled={isSaving}
+                                                    className="text-[#2568C1] focus:ring-[#2568C1] cursor-pointer h-4 w-4"
+                                                />
+                                                <div className="flex flex-col">
+                                                    <span className={`text-sm font-semibold flex items-center gap-1.5 ${isPMSelected ? "text-[#2568C1]" : "text-slate-700"}`}>
+                                                        <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                                                        Project Manager
+                                                    </span>
+                                                    <span className="text-xs text-slate-400 mt-0.5">Lead this project</span>
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                onClick={() => {
+                                                    if (!isSaving && isPMSelected) {
+                                                        actions.setAssignForm({ ...state.assignForm, role_in_project: "" });
+                                                    }
+                                                }}
+                                                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                                                    !isPMSelected 
+                                                        ? "border-[#2568C1] bg-blue-50/50 shadow-sm" 
+                                                        : "border-slate-200 hover:bg-slate-50/80 bg-white"
+                                                }`}
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    name="pm_role_choice"
+                                                    checked={!isPMSelected}
+                                                    onChange={() => actions.setAssignForm({ ...state.assignForm, role_in_project: "" })}
+                                                    disabled={isSaving}
+                                                    className="text-[#2568C1] focus:ring-[#2568C1] cursor-pointer h-4 w-4"
+                                                />
+                                                <div className="flex flex-col">
+                                                    <span className={`text-sm font-semibold ${!isPMSelected ? "text-[#2568C1]" : "text-slate-700"}`}>
+                                                        Other Role
+                                                    </span>
+                                                    <span className="text-xs text-slate-400 mt-0.5">Custom team role</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {!isPMSelected && (
+                                            <div className="pt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                                                <Input 
+                                                    placeholder="Enter custom role (e.g. Technical Advisor, Co-Lead)..." 
+                                                    value={state.assignForm.role_in_project} 
+                                                    onChange={e => actions.setAssignForm({ ...state.assignForm, role_in_project: e.target.value })} 
+                                                    className="bg-white border-slate-200 h-10 text-sm" 
+                                                    disabled={isSaving}
+                                                    autoFocus
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            }
+
+                            // Non-PM user: Standard input
+                            return (
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Contract / Rate Plan</label>
+                                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+                                        Role in Project <span className="text-red-500">*</span>
+                                    </label>
+                                    <Input 
+                                        placeholder="e.g. Backend Dev, Designer, QA..." 
+                                        value={state.assignForm.role_in_project} 
+                                        onChange={e => actions.setAssignForm({ ...state.assignForm, role_in_project: e.target.value })} 
+                                        className="bg-white border-slate-200 h-10 text-sm" 
+                                        disabled={isSaving} 
+                                    />
+                                </div>
+                            );
+                        })()}
+
+                        {/* Contract / Rate Plan */}
+                        {state.assignForm.user_id > 0 && (
+                            <div className="space-y-3.5 pt-2 border-t border-slate-100 animate-in fade-in duration-300">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+                                        Contract / Rate Plan
+                                    </label>
                                     {state.memberLoadingContracts ? (
-                                        <div className="flex items-center gap-2 h-10 text-xs text-slate-400"><Loader2 className="h-3 w-3 animate-spin" /> Loading...</div>
+                                        <div className="flex items-center gap-2 h-10 text-xs text-slate-400">
+                                            <Loader2 className="h-4 w-4 animate-spin text-[#2568C1]" /> Loading contracts...
+                                        </div>
                                     ) : (
-                                        <Select value={state.memberSelectedContractId} onValueChange={actions.handleMemberContractSelect} disabled={isSaving}>
-                                            <SelectTrigger className="h-10 text-sm"><SelectValue placeholder="Select plan" /></SelectTrigger>
+                                        <Select 
+                                            value={state.memberSelectedContractId} 
+                                            onValueChange={actions.handleMemberContractSelect} 
+                                            disabled={isSaving}
+                                        >
+                                            <SelectTrigger className="bg-white border-slate-200 h-10 text-sm">
+                                                <SelectValue placeholder="Select plan" />
+                                            </SelectTrigger>
                                             <SelectContent>
                                                 {state.memberUserContracts.map((c: any) => (
-                                                    <SelectItem key={c.id} value={String(c.id)}>{`${c.contract_type} - Rp ${c.rate_amount.toLocaleString()} (${c.payment_scheme})`}</SelectItem>
+                                                    <SelectItem key={c.id} value={String(c.id)} className="text-sm">
+                                                        {`${c.contract_type} - Rp ${c.rate_amount.toLocaleString()} (${c.payment_scheme})`}
+                                                    </SelectItem>
                                                 ))}
-                                                <SelectItem value="custom">Custom Rate</SelectItem>
+                                                <SelectItem value="custom" className="text-sm">Custom Rate</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     )}
                                 </div>
 
                                 {state.memberAssignRateMode === "custom" && (
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 animate-in slide-in-from-top-2 duration-300">
-                                        <div className="space-y-1.5">
-                                            <label className="text-[10px] font-bold uppercase text-slate-500">Rate (Rp)</label>
-                                            <CurrencyInput className="h-10 bg-white" placeholder="0" value={state.assignForm.custom_rate || ""} onChange={(v: any) => actions.setAssignForm({ ...state.assignForm, custom_rate: Number(v) || null })} disabled={isSaving} />
+                                    <div className="space-y-3.5 animate-in slide-in-from-top-2 duration-300">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div className="space-y-1.5">
+                                                <label className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+                                                    Contract Type <span className="text-red-500">*</span>
+                                                </label>
+                                                <Select 
+                                                    value={state.assignForm.contract_type || ""} 
+                                                    onValueChange={v => actions.setAssignForm({ ...state.assignForm, contract_type: v })} 
+                                                    disabled={isSaving}
+                                                >
+                                                    <SelectTrigger className="bg-white border-slate-200 h-10 text-sm">
+                                                        <SelectValue placeholder="Select type" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="timesheet">Timesheet</SelectItem>
+                                                        <SelectItem value="mandays">Mandays</SelectItem>
+                                                        <SelectItem value="monthly">Monthly</SelectItem>
+                                                        <SelectItem value="yearly">Yearly</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <label className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+                                                    Payment Scheme <span className="text-red-500">*</span>
+                                                </label>
+                                                <Select 
+                                                    value={state.assignForm.payment_scheme || ""} 
+                                                    onValueChange={v => actions.setAssignForm({ ...state.assignForm, payment_scheme: v })} 
+                                                    disabled={isSaving}
+                                                >
+                                                    <SelectTrigger className="bg-white border-slate-200 h-10 text-sm">
+                                                        <SelectValue placeholder="Select scheme" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="monthly">Monthly</SelectItem>
+                                                        <SelectItem value="termin">Termin</SelectItem>
+                                                        <SelectItem value="back_to_back">Back-to-back</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] font-bold uppercase text-slate-500">Type</label>
-                                            <Select value={state.assignForm.contract_type || ""} onValueChange={v => actions.setAssignForm({ ...state.assignForm, contract_type: v })} disabled={isSaving}>
-                                                <SelectTrigger className="h-10 bg-white text-sm"><SelectValue placeholder="Type" /></SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="timesheet">Timesheet</SelectItem>
-                                                    <SelectItem value="mandays">Mandays</SelectItem>
-                                                    <SelectItem value="monthly">Monthly</SelectItem>
-                                                    <SelectItem value="yearly">Yearly</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="space-y-1.5">
-                                            <label className="text-[10px] font-bold uppercase text-slate-500">Scheme</label>
-                                            <Select value={state.assignForm.payment_scheme || ""} onValueChange={v => actions.setAssignForm({ ...state.assignForm, payment_scheme: v })} disabled={isSaving}>
-                                                <SelectTrigger className="h-10 bg-white text-sm"><SelectValue placeholder="Scheme" /></SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="monthly">Monthly</SelectItem>
-                                                    <SelectItem value="termin">Termin</SelectItem>
-                                                    <SelectItem value="back_to_back">Back-to-back</SelectItem>
-                                                </SelectContent>
-                                            </Select>
+                                            <label className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+                                                Rate Amount (Rp) <span className="text-red-500">*</span>
+                                            </label>
+                                            <CurrencyInput 
+                                                placeholder="e.g. 5.000.000" 
+                                                value={state.assignForm.custom_rate || ""} 
+                                                onChange={(v: any) => actions.setAssignForm({ ...state.assignForm, custom_rate: Number(v) || null })} 
+                                                disabled={isSaving}
+                                                className="bg-white border-slate-200 h-10 text-sm"
+                                            />
                                         </div>
                                     </div>
                                 )}
                             </div>
                         )}
                     </div>
-                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
-                        <Button variant="ghost" onClick={() => actions.setAssignOpen(false)} disabled={isSaving}>Cancel</Button>
-                        <Button onClick={() => {
-                            if (!state.assignForm.user_id || !state.assignForm.role_in_project?.trim()) {
-                                toast.error("Please fill in all required fields");
-                                return;
-                            }
-                            actions.handleAssignSave();
-                        }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] text-white min-w-[120px] font-bold">
+
+                    {/* Modal Footer */}
+                    <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5 shrink-0">
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => actions.setAssignOpen(false)} 
+                            disabled={isSaving} 
+                            className="text-xs font-medium"
+                        >
+                            Cancel
+                        </Button>
+                        <Button 
+                            size="sm"
+                            onClick={() => {
+                                if (!state.assignForm.user_id || !state.assignForm.role_in_project?.trim()) {
+                                    toast.error("Please fill in all required fields");
+                                    return;
+                                }
+                                actions.handleAssignSave();
+                            }} 
+                            disabled={isSaving} 
+                            className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[120px] transition-all duration-200 shadow-sm text-xs font-semibold text-white"
+                        >
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm Assign"}
                         </Button>
                     </div>

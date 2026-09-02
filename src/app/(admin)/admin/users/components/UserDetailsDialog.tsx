@@ -62,7 +62,7 @@ export function UserDetailsDialog({
 
     return (
         <Dialog open={open} onOpenChange={(val) => !isSavingContract && onOpenChange(val)}>
-            <DialogContent className="sm:max-w-[1050px] w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0] bg-white rounded-2xl">
+            <DialogContent className="sm:max-w-[1050px] w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0] bg-white">
                 {/* Header */}
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 flex items-center gap-4">
                     <Avatar className="h-12 w-12 border-2 border-white shadow-md">

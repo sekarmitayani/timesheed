@@ -157,7 +157,12 @@ function SelectContent({
         {...props}
       >
         {showSearch && (
-          <div className="flex items-center px-3 border-b sticky top-0 bg-popover z-10">
+          <div 
+            className="flex items-center px-3 border-b sticky top-0 bg-popover z-10"
+            onPointerDown={(e) => e.stopPropagation()}
+            onPointerDownCapture={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
             <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
             <input
               className="flex h-9 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
@@ -165,6 +170,12 @@ function SelectContent({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.stopPropagation()}
+              onKeyDownCapture={(e) => e.stopPropagation()}
+              onKeyUp={(e) => e.stopPropagation()}
+              onKeyUpCapture={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              onPointerDownCapture={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             />
           </div>
         )}

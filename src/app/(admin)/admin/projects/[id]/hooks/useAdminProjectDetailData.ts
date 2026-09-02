@@ -297,7 +297,9 @@ export function useAdminProjectDetailData(projectId: string) {
     };
 
     const handleMemberUserSelect = async (uid: number) => {
-        setAssignForm({ ...assignForm, user_id: uid, custom_rate: null, contract_type: "", payment_scheme: "" });
+        const selectedUser = allUsers.find((u: any) => Number(u.id) === uid);
+        const defaultRole = selectedUser?.role === "projectmanager" ? "Project Manager" : "";
+        setAssignForm({ ...assignForm, user_id: uid, role_in_project: defaultRole, custom_rate: null, contract_type: "", payment_scheme: "" });
         setMemberSelectedContractId("");
         setMemberAssignRateMode("contract");
         setMemberUserContracts([]);
