@@ -22,7 +22,7 @@ export function DashboardHeader({ userName, todoCount }: DashboardHeaderProps) {
     else if (hour >= 12 && hour < 17) greeting = "Good afternoon";
 
     return (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
                 <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
                     {greeting}, {userName}

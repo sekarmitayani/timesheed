@@ -52,7 +52,7 @@ export default function PMResourcesPage() {
             >
                 <Button 
                     size="sm" 
-                    className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] shadow-md shadow-[#2568C1]/20 font-bold h-9 rounded-lg text-white" 
+                    className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] shadow-md shadow-[#2568C1]/20 rounded-[6px]" 
                     onClick={() => setCreateOpen(true)}
                 >
                     <Plus className="h-4 w-4" /> New Request

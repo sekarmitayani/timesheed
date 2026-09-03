@@ -21,7 +21,7 @@ export default function EmployeeDashboard() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-in fade-in duration-500">
             {/* Header with greeting and live clock */}
             <DashboardHeader userName={state.user?.full_name || "User"} todoCount={computed.todoCount} />
 
@@ -45,7 +45,7 @@ export default function EmployeeDashboard() {
             </div>
 
             {/* Bottom Row: Analytics & Recent Logs */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <WeeklyHoursChart 
                     timesheets={state.timesheets} 
                     className="h-[450px]" 

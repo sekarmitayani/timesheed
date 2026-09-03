@@ -101,57 +101,55 @@ export function TeamsTab({ members, totalCount, search, setSearch }: TeamsTabPro
             </div>
 
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-                <DialogContent className="sm:max-w-[425px] p-0 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden">
-                    <div className="p-6">
-                        <DialogHeader className="flex flex-row items-start gap-4 space-y-0 pb-4 border-b border-slate-100">
-                            <Avatar className="h-16 w-16 border-2 border-slate-50 shadow-sm">
-                                <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
-                                    {getInitials(selectedMember?.user?.full_name || "")}
-                                </AvatarFallback>
-                            </Avatar>
-                            <div className="flex flex-col pt-1">
-                                <DialogTitle className="text-lg font-bold text-slate-800">
-                                    {selectedMember?.user?.full_name}
-                                </DialogTitle>
-                                <DialogDescription className="text-xs font-bold text-[#2568C1] uppercase tracking-widest mt-1">
-                                    {selectedMember?.role_in_project}
-                                </DialogDescription>
-                            </div>
-                        </DialogHeader>
+                <DialogContent className="sm:max-w-[425px] p-6 bg-white border border-[#e2e8f0] shadow-lg">
+                    <DialogHeader className="flex flex-row items-start gap-4 space-y-0 pb-4 border-b border-slate-100">
+                        <Avatar className="h-16 w-16 border-2 border-slate-50 shadow-sm">
+                            <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                {getInitials(selectedMember?.user?.full_name || "")}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col pt-1">
+                            <DialogTitle className="text-lg font-bold text-slate-800">
+                                {selectedMember?.user?.full_name}
+                            </DialogTitle>
+                            <DialogDescription className="text-xs font-bold text-[#2568C1] uppercase tracking-widest mt-1">
+                                {selectedMember?.role_in_project}
+                            </DialogDescription>
+                        </div>
+                    </DialogHeader>
 
-                        <div className="space-y-3 py-4">
-                            <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
-                                <div className="flex items-center gap-3">
-                                    <Mail className="h-4 w-4 text-slate-400" />
-                                    <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.email || "No email"}</span>
-                                </div>
+                    <div className="space-y-3 py-2">
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Mail className="h-4 w-4 text-slate-400" />
+                                <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.email || "No email"}</span>
                             </div>
+                        </div>
 
-                            <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
-                                <div className="flex items-center gap-3">
-                                    <Phone className="h-4 w-4 text-slate-400" />
-                                    <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.phone_number || "No phone"}</span>
-                                </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Phone className="h-4 w-4 text-slate-400" />
+                                <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.phone_number || "No phone"}</span>
                             </div>
+                        </div>
 
-                            <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
-                                <div className="flex items-center gap-3">
-                                    <Star className="h-4 w-4 text-slate-400" />
-                                    <span className="text-xs font-semibold text-slate-700">
-                                        {selectedMember?.user?.skill_level === 1 ? "Junior" : 
-                                         selectedMember?.user?.skill_level === 2 ? "Mid-Level" : 
-                                         selectedMember?.user?.skill_level === 3 ? "Senior" : "Skill Not Set"}
-                                    </span>
-                                </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Star className="h-4 w-4 text-slate-400" />
+                                <span className="text-xs font-semibold text-slate-700">
+                                    {selectedMember?.user?.skill_level === 1 ? "Junior" : 
+                                     selectedMember?.user?.skill_level === 2 ? "Mid-Level" : 
+                                     selectedMember?.user?.skill_level === 3 ? "Senior" : "Skill Not Set"}
+                                </span>
                             </div>
+                        </div>
 
-                            <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
-                                <div className="flex items-center gap-3">
-                                    <Calendar className="h-4 w-4 text-slate-400" />
-                                    <div className="flex flex-col">
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Assigned On</span>
-                                        <span className="text-xs font-semibold text-slate-700">{selectedMember?.joined_at ? new Date(selectedMember.joined_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : "Unknown"}</span>
-                                    </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Calendar className="h-4 w-4 text-slate-400" />
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Assigned On</span>
+                                    <span className="text-xs font-semibold text-slate-700">{selectedMember?.joined_at ? new Date(selectedMember.joined_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : "Unknown"}</span>
                                 </div>
                             </div>
                         </div>

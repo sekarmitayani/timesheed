@@ -43,42 +43,37 @@ export function ResourceFormDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0] shadow-2xl rounded-md bg-white flex flex-col text-slate-900">
-                <DialogDescription className="sr-only">Form to submit a new resource request.</DialogDescription>
+            <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden border-[#e2e8f0]">
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                     <DialogTitle className="text-lg font-bold text-slate-900">New Resource Request</DialogTitle>
-                    <DialogDescription className="text-xs">Submit a new request for project resources.</DialogDescription>
+                    <DialogDescription className="text-xs text-slate-500 mt-0.5">Submit a new request for project resources.</DialogDescription>
                 </div>
                 <div className="px-6 py-5 space-y-4">
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase text-slate-400 ml-1">Project <span className="text-red-500">*</span></label>
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Select Project <span className="text-red-500">*</span></label>
                         <Select value={form.project_id ? String(form.project_id) : undefined} onValueChange={v => setForm({ ...form, project_id: Number(v) })}>
-                            <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
-                                <SelectValue placeholder="Choose a project" />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-md">
+                            <SelectTrigger className="h-11"><SelectValue placeholder="Choose a project" /></SelectTrigger>
+                            <SelectContent>
                                 {projects.map(p => <SelectItem key={p.id} value={String(p.id)} className="text-sm">{p.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Type <span className="text-red-500">*</span></label>
+                        <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Type</label>
                         <Select value={form.type} onValueChange={v => setForm({ ...form, type: v })}>
-                            <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
-                                <SelectValue placeholder="Select type" />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-md">
-                                <SelectItem value="manpower" className="text-sm font-medium">Manpower</SelectItem>
-                                <SelectItem value="tools" className="text-sm font-medium">Tools</SelectItem>
-                                <SelectItem value="infrastructure" className="text-sm font-medium">Infrastructure</SelectItem>
-                                <SelectItem value="accommodation" className="text-sm font-medium">Accommodation</SelectItem>
+                            <SelectTrigger className="h-11"><SelectValue placeholder="Select type" /></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="manpower" className="text-sm">Manpower</SelectItem>
+                                <SelectItem value="tools" className="text-sm">Tools</SelectItem>
+                                <SelectItem value="infrastructure" className="text-sm">Infrastructure</SelectItem>
+                                <SelectItem value="accommodation" className="text-sm">Accommodation</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Details <span className="text-red-500">*</span></label>
+                        <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Details <span className="text-red-500">*</span></label>
                         <textarea
-                            className="w-full min-h-[120px] p-3 rounded-md border border-slate-200 text-sm font-medium focus:ring-1 focus:ring-[#4B7BEC] focus:outline-none custom-scrollbar shadow-sm bg-white"
+                            className="w-full min-h-[120px] p-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none"
                             placeholder="Describe the resource needed, quantity, and reason..."
                             value={form.details}
                             onChange={e => setForm({ ...form, details: e.target.value })}
@@ -86,12 +81,12 @@ export function ResourceFormDialog({
                         />
                     </div>
                 </div>
-                <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2.5">
+                <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
                     <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isProcessing} className="text-slate-500">
                         Cancel
                     </Button>
-                    <Button onClick={handleSave} disabled={isProcessing} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[120px] text-white shadow-md shadow-blue-100">
-                        {isProcessing ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
+                    <Button onClick={handleSave} disabled={isProcessing} className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[120px] text-white">
+                        {isProcessing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Submit Request"}
                     </Button>
                 </div>
             </DialogContent>

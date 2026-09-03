@@ -101,43 +101,44 @@ export function TaskFormDialog({
 
     return (
         <Dialog open={isOpen} onOpenChange={open => !isSaving && onClose(open)}>
-            <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0] shadow-2xl rounded-md bg-white flex flex-col text-slate-900">
+            <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden border-[#e2e8f0]">
                 <DialogDescription className="sr-only">Form to create or edit a task.</DialogDescription>
                 <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                     <DialogTitle className="text-lg font-bold text-slate-900">
                         {editingTask ? "Edit Task" : "New Task"}
                     </DialogTitle>
-                    <DialogDescription className="text-xs">{editingTask ? `Editing "${editingTask.title}"` : "Create a new task"}</DialogDescription>
+                    <DialogDescription className="text-xs text-slate-500 mt-0.5">{editingTask ? `Editing "${editingTask.title}"` : "Create a new task"}</DialogDescription>
                 </div>
                 <div className="px-6 py-5 space-y-4 max-h-[65vh] overflow-y-auto custom-scrollbar">
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase text-slate-400 ml-1">Project <span className="text-red-500">*</span></label>
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Project <span className="text-red-500">*</span></label>
                         <Select 
                             value={String(form.project_id || "")} 
                             onValueChange={v => setForm({ ...form, project_id: Number(v), assigned_to_id: 0 })} 
                             disabled={!!editingTask}
                         >
-                            <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
+                            <SelectTrigger className="h-11">
                                 <SelectValue placeholder="Select project" />
                             </SelectTrigger>
-                            <SelectContent className="rounded-md">
+                            <SelectContent>
                                 {projects.map(p => <SelectItem key={p.id} value={String(p.id)} className="text-sm">{p.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Title <span className="text-red-500">*</span></label>
+                        <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Title <span className="text-red-500">*</span></label>
                         <Input 
                             value={form.title} 
                             onChange={e => setForm({ ...form, title: e.target.value })} 
                             disabled={isSaving} 
-                            className="border-slate-200 h-9 shadow-sm rounded-md text-sm font-bold focus:ring-1 focus:ring-[#4B7BEC]" 
+                            placeholder="Enter task title..."
+                            className="h-11 border-slate-200 text-sm" 
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Description</label>
-                        <div className="border border-[#e2e8f0] rounded-md overflow-hidden bg-white">
-                            <div className="flex items-center gap-1 border-b border-[#e2e8f0] p-1.5 bg-[#f8fafc]">
+                        <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Description</label>
+                        <div className="border border-slate-200 rounded-md overflow-hidden bg-white">
+                            <div className="flex items-center gap-1 border-b border-slate-200 p-1.5 bg-[#f8fafc]">
                                 <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-600 hover:bg-slate-200" onClick={(e) => { e.preventDefault(); handleFormat('bold'); }} disabled={isSaving}><Bold className="h-3.5 w-3.5" /></Button>
                                 <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-600 hover:bg-slate-200" onClick={(e) => { e.preventDefault(); handleFormat('italic'); }} disabled={isSaving}><Italic className="h-3.5 w-3.5" /></Button>
                                 <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-600 hover:bg-slate-200" onClick={(e) => { e.preventDefault(); handleFormat('underline'); }} disabled={isSaving}><Underline className="h-3.5 w-3.5" /></Button>
@@ -154,17 +155,17 @@ export function TaskFormDialog({
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Due Date <span className="text-red-500">*</span></label>
+                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Due Date <span className="text-red-500">*</span></label>
                             <CustomDatePicker 
                                 date={form.due_date || undefined} 
                                 onDateChange={(d) => setForm({ ...form, due_date: d })} 
                                 placeholder="Select due date" 
                                 disabled={isSaving} 
-                                className="h-10 text-sm w-full" 
+                                className="h-11 text-sm w-full border border-slate-200" 
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">
                                 Complexity (1-5) <span className="text-red-500">*</span>
                             </label>
                             <Input 
@@ -174,7 +175,7 @@ export function TaskFormDialog({
                                 onChange={e => setForm({ ...form, complexity: Number(e.target.value) })} 
                                 disabled={isSaving} 
                                 placeholder="1 = Very Easy, 5 = Very Hard"
-                                className="border-slate-200 h-9 shadow-sm rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]" 
+                                className="h-11 border-slate-200 text-sm" 
                             />
                             <div className="flex items-center justify-between mt-1">
                                 <Button 
@@ -195,16 +196,16 @@ export function TaskFormDialog({
                             </div>
                         </div>
                     {!isEmployee && (
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Assign To <span className="text-red-500">*</span></label>
+                        <div className="space-y-1.5 sm:col-span-2">
+                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Assign To <span className="text-red-500">*</span></label>
                             <Select 
                                 value={String(form.assigned_to_id || "")} 
                                 onValueChange={v => setForm({ ...form, assigned_to_id: Number(v) })}
                             >
-                                <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
+                                <SelectTrigger className="h-11">
                                     <SelectValue placeholder="Select member" />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-md">
+                                <SelectContent>
                                     {members.map(m => (
                                         <SelectItem key={m.user_id} value={String(m.user_id)} className="text-sm font-medium">
                                             {m.user?.full_name}
@@ -215,13 +216,13 @@ export function TaskFormDialog({
                         </div>
                     )}
                     {editingTask && (
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Status <span className="text-red-500">*</span></label>
+                        <div className="space-y-1.5 sm:col-span-2">
+                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Status <span className="text-red-500">*</span></label>
                             <Select value={form.status} onValueChange={v => setForm({ ...form, status: v })}>
-                                <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
+                                <SelectTrigger className="h-11">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-md">
+                                <SelectContent>
                                     <SelectItem value="todo" className="text-sm font-medium">To Do</SelectItem>
                                     <SelectItem value="in_progress" className="text-sm font-medium">In Progress</SelectItem>
                                     <SelectItem value="done" className="text-sm font-medium">Done</SelectItem>
@@ -231,7 +232,7 @@ export function TaskFormDialog({
                     )}
                     </div>
                 </div>
-                <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2.5">
+                <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
                     <Button variant="ghost" onClick={() => onClose(false)} disabled={isSaving} className="text-slate-500">
                         Cancel
                     </Button>
@@ -241,8 +242,8 @@ export function TaskFormDialog({
                             return;
                         }
                         onSave();
-                    }} disabled={isSaving} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[120px] text-white shadow-md shadow-blue-100">
-                        {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
+                    }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[120px] text-white shadow-md shadow-[#2568C1]/20">
+                        {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Save Task"}
                     </Button>
                 </div>
             </DialogContent>

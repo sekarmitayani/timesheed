@@ -102,7 +102,7 @@ export function PMTeamsTab({
             </div>
 
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-                <DialogContent className="sm:max-w-[425px] p-6 bg-white rounded-xl shadow-xl border border-slate-100">
+                <DialogContent className="sm:max-w-[425px] p-6 bg-white border border-[#e2e8f0] shadow-lg">
                     <DialogHeader className="flex flex-row items-start gap-4 space-y-0 pb-4 border-b border-slate-100">
                         <Avatar className="h-16 w-16 border-2 border-slate-50 shadow-sm">
                             <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">

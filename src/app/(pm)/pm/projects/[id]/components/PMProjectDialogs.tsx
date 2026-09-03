@@ -93,13 +93,13 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
                     </div>
                     <div className="px-6 py-5 space-y-4 max-h-[65vh] overflow-y-auto custom-scrollbar">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Title <span className="text-red-500">*</span></label>
-                            <Input value={taskForm.title} onChange={e => actions.setTaskForm({ ...taskForm, title: e.target.value })} className="h-10 text-sm" disabled={isSaving} placeholder="Enter task title" />
+                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Title <span className="text-red-500">*</span></label>
+                            <Input value={taskForm.title} onChange={e => actions.setTaskForm({ ...taskForm, title: e.target.value })} className="h-11 border-slate-200 text-sm" disabled={isSaving} placeholder="Enter task title..." />
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Description</label>
-                            <div className="border border-[#e2e8f0] rounded-md overflow-hidden bg-white">
-                                <div className="flex items-center gap-1 border-b border-[#e2e8f0] p-1.5 bg-[#f8fafc]">
+                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Description</label>
+                            <div className="border border-slate-200 rounded-md overflow-hidden bg-white">
+                                <div className="flex items-center gap-1 border-b border-slate-200 p-1.5 bg-[#f8fafc]">
                                     <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-600 hover:bg-slate-200" onClick={(e) => { e.preventDefault(); handleFormat('bold'); }} disabled={isSaving}><Bold className="h-3.5 w-3.5" /></Button>
                                     <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-600 hover:bg-slate-200" onClick={(e) => { e.preventDefault(); handleFormat('italic'); }} disabled={isSaving}><Italic className="h-3.5 w-3.5" /></Button>
                                     <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-600 hover:bg-slate-200" onClick={(e) => { e.preventDefault(); handleFormat('underline'); }} disabled={isSaving}><Underline className="h-3.5 w-3.5" /></Button>
@@ -116,9 +116,9 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Assign To</label>
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Assign To</label>
                                 <Select value={String(taskForm.assigned_to_id || "")} onValueChange={v => actions.setTaskForm({ ...taskForm, assigned_to_id: Number(v) })} disabled={isSaving}>
-                                    <SelectTrigger className="h-10 text-sm"><SelectValue placeholder="Select member" /></SelectTrigger>
+                                    <SelectTrigger className="h-11"><SelectValue placeholder="Select member" /></SelectTrigger>
                                     <SelectContent>
                                         {members.map((m: any) => (
                                             <SelectItem key={m.user_id} value={String(m.user_id)}>{m.user?.full_name || `User #${m.user_id}`}</SelectItem>
@@ -127,20 +127,20 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
                                 </Select>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Due Date</label>
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Due Date</label>
                                 <CustomDatePicker 
                                     date={taskForm.due_date || undefined} 
                                     onDateChange={(d) => actions.setTaskForm({ ...taskForm, due_date: d })} 
                                     placeholder="Select due date" 
                                     disabled={isSaving} 
-                                    className="h-10 text-sm w-full" 
+                                    className="h-11 text-sm w-full border border-slate-200" 
                                 />
                             </div>
                             {taskEditing && (
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Status</label>
+                                <div className="space-y-1.5 sm:col-span-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Status</label>
                                     <Select value={taskForm.status || "todo"} onValueChange={v => actions.setTaskForm({ ...taskForm, status: v })} disabled={isSaving}>
-                                        <SelectTrigger className="h-10 text-sm"><SelectValue /></SelectTrigger>
+                                        <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="todo">To Do</SelectItem>
                                             <SelectItem value="in_progress">In Progress</SelectItem>
@@ -151,16 +151,16 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
                             )}
                         </div>
                     </div>
-                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
-                        <Button variant="ghost" onClick={() => actions.setTaskDialogOpen(false)} disabled={isSaving}>Cancel</Button>
+                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
+                        <Button variant="ghost" onClick={() => actions.setTaskDialogOpen(false)} disabled={isSaving} className="text-slate-500">Cancel</Button>
                         <Button onClick={() => {
                             if (!taskForm.title?.trim()) {
                                 toast.error("Please fill in all required fields");
                                 return;
                             }
                             actions.handleSaveTask();
-                        }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] font-bold">
-                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Task"}
+                        }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[120px] text-white shadow-md shadow-[#2568C1]/20">
+                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Save Task"}
                         </Button>
                     </div>
                 </DialogContent>
@@ -168,16 +168,16 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
 
             {/* RESOURCE CREATE / EDIT DIALOG */}
             <Dialog open={resDialogOpen} onOpenChange={o => !isSaving && actions.setResDialogOpen(o)}>
-                <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden border-[#e2e8f0]">
+                <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden border-[#e2e8f0]">
                     <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
                         <DialogTitle className="text-lg font-bold text-slate-900">{resEditing ? "Edit Request" : "New Resource Request"}</DialogTitle>
-                        <DialogDescription className="text-xs">{resEditing ? "Update your resource request details" : "Submit a request for resources"}</DialogDescription>
+                        <DialogDescription className="text-xs text-slate-500 mt-0.5">{resEditing ? "Update your resource request details" : "Submit a new request for project resources."}</DialogDescription>
                     </div>
                     <div className="px-6 py-5 space-y-4">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Type</label>
+                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Type</label>
                             <Select value={resForm.type} onValueChange={v => actions.setResForm({ ...resForm, type: v })} disabled={isSaving}>
-                                <SelectTrigger className="h-10 text-sm"><SelectValue placeholder="Select type" /></SelectTrigger>
+                                <SelectTrigger className="h-11"><SelectValue placeholder="Select type" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="manpower">Manpower</SelectItem>
                                     <SelectItem value="tools">Tools</SelectItem>
@@ -187,20 +187,20 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Details <span className="text-red-500">*</span></label>
-                            <Textarea value={resForm.details} onChange={e => actions.setResForm({ ...resForm, details: e.target.value })} className="min-h-[100px] text-sm" placeholder="Describe what is needed..." disabled={isSaving} />
+                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Details <span className="text-red-500">*</span></label>
+                            <Textarea value={resForm.details} onChange={e => actions.setResForm({ ...resForm, details: e.target.value })} className="min-h-[120px] p-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none" placeholder="Describe the resource needed, quantity, and reason..." disabled={isSaving} />
                         </div>
                     </div>
-                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
-                        <Button variant="ghost" onClick={() => actions.setResDialogOpen(false)} disabled={isSaving}>Cancel</Button>
+                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
+                        <Button variant="ghost" onClick={() => actions.setResDialogOpen(false)} disabled={isSaving} className="text-slate-500">Cancel</Button>
                         <Button onClick={() => {
                             if (!resForm.details?.trim()) {
                                 toast.error("Please fill in all required fields");
                                 return;
                             }
                             actions.handleSaveRes();
-                        }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px]">
-                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit Request"}
+                        }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[120px] text-white">
+                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Submit Request"}
                         </Button>
                     </div>
                 </DialogContent>
