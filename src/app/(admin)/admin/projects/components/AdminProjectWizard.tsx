@@ -44,7 +44,11 @@ export function AdminProjectWizard({
 
     const stepLabels = ["Project Info", "Assign PM", "Assign Employees"];
     const pmUsers = allUsers.filter(u => u.role === "projectmanager");
-    const availableEmployees = allUsers.filter(u => String(u.id) !== selectedPmId && !pendingEmployees.find(e => String(e.user.id) === String(u.id)));
+    const availableEmployees = allUsers.filter(u => 
+        (u.role === "employee" || u.role === "projectmanager") &&
+        String(u.id) !== selectedPmId && 
+        !pendingEmployees.find(e => String(e.user.id) === String(u.id))
+    );
 
     const handleUserSelect = async (uid: string) => {
         setEmpForm({ ...empForm, userId: uid, selectedContractId: "", rateMode: "contract", customRate: null, contractType: "", paymentScheme: "", startDate: new Date().toISOString() });
@@ -179,7 +183,13 @@ export function AdminProjectWizard({
                                         <label className="text-[10px] font-bold text-slate-500 uppercase">User</label>
                                         <Select value={empForm.userId} onValueChange={handleUserSelect}>
                                             <SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Select" /></SelectTrigger>
-                                            <SelectContent>{availableEmployees.map(u => <SelectItem key={u.id} value={String(u.id)}>{u.full_name || u.name}</SelectItem>)}</SelectContent>
+                                            <SelectContent>
+                                                {availableEmployees.map(u => (
+                                                    <SelectItem key={u.id} value={String(u.id)}>
+                                                        {u.full_name || u.name} ({u.role === "projectmanager" ? "Project Manager" : "Employee"})
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
                                         </Select>
                                     </div>
                                     <div className="space-y-1.5">

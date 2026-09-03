@@ -279,11 +279,16 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                                     <SelectValue placeholder="Select user" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {allUsers.filter((u: any) => !state.members.find((m: any) => m.user_id === Number(u.id))).map((u: any) => (
-                                        <SelectItem key={u.id} value={String(u.id)} className="text-sm">
-                                            {u.full_name || u.name} ({u.role})
-                                        </SelectItem>
-                                    ))}
+                                    {allUsers
+                                        .filter((u: any) => 
+                                            (u.role === "projectmanager" || u.role === "employee") &&
+                                            !state.members.find((m: any) => m.user_id === Number(u.id))
+                                        )
+                                        .map((u: any) => (
+                                            <SelectItem key={u.id} value={String(u.id)} className="text-sm">
+                                                {u.full_name || u.name} ({u.role === "projectmanager" ? "Project Manager" : "Employee"})
+                                            </SelectItem>
+                                        ))}
                                 </SelectContent>
                             </Select>
                         </div>

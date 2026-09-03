@@ -114,7 +114,18 @@ export function AdminProjectMembersDialog({
                                     <label className="text-[10px] font-bold uppercase text-slate-500">User <span className="text-red-500">*</span></label>
                                     <Select value={String(assignForm.user_id || "")} onValueChange={v => handleUserSelect(Number(v))}>
                                         <SelectTrigger className="h-9 bg-white"><SelectValue placeholder="Choose" /></SelectTrigger>
-                                        <SelectContent>{allUsers.filter(u => !members.find(m => m.user_id === Number(u.id))).map(u => <SelectItem key={u.id} value={String(u.id)}>{u.full_name || u.name}</SelectItem>)}</SelectContent>
+                                        <SelectContent>
+                                            {allUsers
+                                                .filter(u => 
+                                                    (u.role === "projectmanager" || u.role === "employee") && 
+                                                    !members.find(m => m.user_id === Number(u.id))
+                                                )
+                                                .map(u => (
+                                                    <SelectItem key={u.id} value={String(u.id)}>
+                                                        {u.full_name || u.name} ({u.role === "projectmanager" ? "Project Manager" : "Employee"})
+                                                    </SelectItem>
+                                                ))}
+                                        </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-1.5">
