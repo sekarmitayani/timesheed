@@ -20,6 +20,7 @@ export function ChatbotWidget() {
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const widgetRef = useRef<HTMLDivElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const x = useMotionValue(0);
     const y = useMotionValue(0);
     const [bounds, setBounds] = useState({ left: 0, right: 0, top: 0, bottom: 0 });
@@ -97,17 +98,20 @@ export function ChatbotWidget() {
     const handleSend = async () => {
         if (!input.trim()) return;
 
-        const userText = input.trim();
+        const currentInput = input;
         setInput("");
+        if (textareaRef.current) {
+            textareaRef.current.style.height = "auto";
+        }
         
-        const newUserMsg: Message = { id: Date.now().toString(), role: "user", content: userText };
+        const newUserMsg: Message = { id: Date.now().toString(), role: "user", content: currentInput };
         setMessages(prev => [...prev, newUserMsg]);
         setIsLoading(true);
 
         try {
             const data = await fetchApi("/chat", {
                 method: "POST",
-                body: JSON.stringify({ message: userText })
+                body: JSON.stringify({ message: currentInput })
             });
 
             const botMsg: Message = { id: (Date.now() + 1).toString(), role: "bot", content: data.reply || "Sorry, the response format is invalid." };
@@ -124,6 +128,14 @@ export function ChatbotWidget() {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handleSend();
+        }
+    };
+
+    const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setInput(e.target.value);
+        if (textareaRef.current) {
+            textareaRef.current.style.height = "auto";
+            textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 150)}px`;
         }
     };
 
@@ -206,22 +218,25 @@ export function ChatbotWidget() {
 
                         {/* Input */}
                         <div className="p-3 bg-white border-t border-slate-100">
-                            <div className="relative">
+                            <div className="relative flex items-end bg-slate-50 border border-slate-200 rounded-xl focus-within:ring-1 focus-within:ring-[#2568C1] transition-shadow">
                                 <textarea
+                                    ref={textareaRef}
                                     value={input}
-                                    onChange={(e) => setInput(e.target.value)}
+                                    onChange={handleInput}
                                     onKeyDown={handleKeyDown}
                                     placeholder="Ask anything about the system..."
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-[#2568C1] resize-none"
+                                    className="w-full bg-transparent py-2.5 pl-3 pr-2 text-sm focus:outline-none resize-none max-h-[150px] overflow-y-auto"
                                     rows={1}
                                 />
-                                <button
-                                    onClick={handleSend}
-                                    disabled={!input.trim() || isLoading}
-                                    className="absolute right-2 top-2 p-1.5 text-[#2568C1] hover:bg-[#2568C1]/10 rounded-lg disabled:opacity-50 transition-colors"
-                                >
-                                    <Send size={16} />
-                                </button>
+                                <div className="p-1.5 shrink-0">
+                                    <button
+                                        onClick={handleSend}
+                                        disabled={!input.trim() || isLoading}
+                                        className="p-1.5 text-[#2568C1] hover:bg-[#2568C1]/10 rounded-lg disabled:opacity-50 transition-colors"
+                                    >
+                                        <Send size={16} />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </motion.div>
