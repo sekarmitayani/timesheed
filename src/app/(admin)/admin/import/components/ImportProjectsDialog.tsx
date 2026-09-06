@@ -157,9 +157,9 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
 
     return (
         <Dialog open={open} onOpenChange={handleClose}>
-            <DialogContent className="sm:max-w-[850px] w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0] rounded-md shadow-xl bg-white">
+            <DialogContent className="sm:max-w-[1050px] w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0] rounded-md shadow-xl bg-white">
                 {/* Modal Header */}
-                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-12 flex items-center justify-between">
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] pl-6 pr-16 py-4 flex items-center justify-between">
                     <div>
                         <DialogTitle className="text-base font-bold text-slate-900">
                             Import Projects (Excel / CSV)
@@ -170,7 +170,7 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                     </div>
 
                     {/* Step Indicator Badges with safe margin from close button */}
-                    <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold mr-8">
+                    <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold">
                         <span className={`px-2.5 py-1 rounded-md text-[11px] ${step === "upload" ? "bg-[#2568C1] text-white" : "bg-slate-100 text-slate-600"}`}>
                             1. Upload
                         </span>
@@ -304,8 +304,8 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                             </div>
 
                             {/* Table Preview */}
-                            <div className="border border-[#e2e8f0] rounded-md overflow-hidden max-h-[320px] overflow-y-auto">
-                                <table className="w-full text-left text-xs">
+                            <div className="border border-[#e2e8f0] rounded-md overflow-x-auto max-h-[360px] overflow-y-auto">
+                                <table className="w-full min-w-[950px] text-left text-xs">
                                     <thead className="bg-slate-50 border-b border-[#e2e8f0] sticky top-0 z-10 text-slate-500 uppercase tracking-wider font-semibold text-[10px]">
                                         <tr>
                                             <th className="py-2.5 px-3 w-12 text-center">Row</th>
@@ -316,7 +316,7 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                                             <th className="py-2.5 px-3">Planned Cost</th>
                                             <th className="py-2.5 px-3">Deadline</th>
                                             <th className="py-2.5 px-3">PM Email</th>
-                                            <th className="py-2.5 px-3">Validation Notes</th>
+                                            <th className="py-2.5 px-3 min-w-[260px]">Validation Notes</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 bg-white">
@@ -348,11 +348,11 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                                                         <span className="text-slate-300 italic">None</span>
                                                     )}
                                                 </td>
-                                                <td className="py-2 px-3">
+                                                <td className="py-2 px-3 min-w-[260px]">
                                                     {r.errors.length > 0 ? (
-                                                        <span className="text-rose-600 font-medium text-[11px] flex items-center gap-1">
-                                                            <AlertCircle className="h-3 w-3 shrink-0" />
-                                                            {r.errors.join(", ")}
+                                                        <span className="text-rose-600 font-medium text-[11px] flex items-start gap-1.5 leading-snug break-words">
+                                                            <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                                                            <span>{r.errors.join("; ")}</span>
                                                         </span>
                                                     ) : (
                                                         <span className="text-slate-400 text-[11px]">Ready to import</span>
