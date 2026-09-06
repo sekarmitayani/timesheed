@@ -48,6 +48,8 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
         {
             title: "WORK SPACE",
             items: [
+                { label: "Tasks", href: "/pm/tasks", icon: ListTodo },
+                { label: "Projects", href: "/pm/projects", icon: FolderKanban },
                 { label: "Timesheet", href: "/pm/timesheet", icon: ClipboardClock },
                 { label: "Earnings", href: "/pm/earnings", icon: Wallet },
             ]
@@ -55,8 +57,6 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
         {
             title: "MANAGEMENT",
             items: [
-                { label: "My Projects", href: "/pm/projects", icon: FolderKanban },
-                { label: "Tasks", href: "/pm/tasks", icon: ListTodo },
                 { label: "Resource Request", href: "/pm/resources", icon: Package },
                 { label: "Approvals", href: "/pm/approvals", icon: Inbox, badge: "AI" },
             ]
