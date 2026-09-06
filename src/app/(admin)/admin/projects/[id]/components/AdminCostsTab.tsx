@@ -22,16 +22,17 @@ interface AdminCostsTabProps {
 
 const formatDate = (dateStr: string) => {
     if (!dateStr) return "-";
-    const cleanDate = dateStr.split("T")[0];
-    const parts = cleanDate.split("-");
-    if (parts.length === 3) {
-        const [year, month, day] = parts;
-        return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year.slice(-2)}`;
-    }
     try {
+        const cleanDate = dateStr.split("T")[0];
+        const parts = cleanDate.split("-");
+        if (parts.length === 3) {
+            const [year, month, day] = parts;
+            const d = new Date(Number(year), Number(month) - 1, Number(day));
+            return format(d, "dd MMM yyyy");
+        }
         const d = new Date(dateStr);
         if (isNaN(d.getTime())) return dateStr;
-        return format(d, "dd/MM/yy");
+        return format(d, "dd MMM yyyy");
     } catch {
         return dateStr;
     }
