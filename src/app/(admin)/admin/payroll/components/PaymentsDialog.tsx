@@ -13,6 +13,7 @@ import {
     ChevronDown, ChevronUp, CheckCircle2, Clock, AlertTriangle
 } from "lucide-react";
 import { toast } from "sonner";
+import { format } from "date-fns";
 import { 
     ContractPayment, ContractSummary, PayrollSummaryItem, 
     MonthlyBreakdownItem 
@@ -46,13 +47,12 @@ const fmtDate = (d?: string) => {
     if (!d) return "-";
     const date = new Date(d);
     if (isNaN(date.getTime())) return "-";
-    const dateStr = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
     const hours = date.getHours();
     const minutes = date.getMinutes();
     if (d.includes("T") && (hours !== 0 || minutes !== 0)) {
-        return `${dateStr} ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        return format(date, "dd MMM yyyy, HH:mm");
     }
-    return dateStr;
+    return format(date, "dd MMM yyyy");
 };
 
 const summaryStatusColor = (s: string) => {

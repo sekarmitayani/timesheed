@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Loader2, Mail, Phone, Briefcase, Calendar, Plus, Trash2, FolderKanban, Star, ExternalLink } from "lucide-react";
 import { User, ApiProject } from "@/lib/types";
 import { Contract } from "@/lib/services/admin-contracts";
+import { format } from "date-fns";
 
 interface UserDetailsDialogProps {
     open: boolean;
@@ -33,7 +34,7 @@ interface UserDetailsDialogProps {
 const fmtDate = (d?: string) => {
     if (!d) return "-";
     const date = new Date(d);
-    return isNaN(date.getTime()) ? "-" : `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    return isNaN(date.getTime()) ? "-" : format(date, "dd MMM yyyy");
 };
 
 export function UserDetailsDialog({

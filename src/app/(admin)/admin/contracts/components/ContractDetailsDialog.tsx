@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { FileText, Briefcase, Calendar } from "lucide-react";
 import { Contract } from "@/lib/services/admin-contracts";
 import { User, ApiProject } from "@/lib/types";
+import { format } from "date-fns";
 
 interface ContractDetailsDialogProps {
     open: boolean;
@@ -21,7 +22,7 @@ const fmtDate = (d?: string) => {
     if (!d) return "-";
     const date = new Date(d);
     if (isNaN(date.getTime())) return "-";
-    return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    return format(date, "dd MMM yyyy");
 };
 
 const formatNumber = (value: number | string): string => {

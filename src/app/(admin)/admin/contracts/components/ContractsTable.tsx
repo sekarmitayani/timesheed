@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Loader2, Eye, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Contract } from "@/lib/services/admin-contracts";
 import { User } from "@/lib/types";
+import { format } from "date-fns";
 
 interface ContractsTableProps {
     contracts: Contract[];
@@ -28,7 +29,7 @@ const fmtDate = (d?: string) => {
     if (!d) return "-";
     const date = new Date(d);
     if (isNaN(date.getTime())) return "-";
-    return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    return format(date, "dd MMM yyyy");
 };
 
 const formatNumber = (value: number | string): string => {
