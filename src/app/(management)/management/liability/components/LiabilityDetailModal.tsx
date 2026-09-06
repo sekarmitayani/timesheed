@@ -4,8 +4,8 @@ import { useLiabilityContractDetail } from "../hooks/useLiabilityData";
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
     DialogTitle,
+    DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -24,12 +24,11 @@ import {
     Briefcase,
     CheckCircle2,
     Clock,
-    FileText,
     TrendingUp,
     AlertCircle,
-    Wallet
+    Wallet,
+    Loader2
 } from "lucide-react";
-import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface LiabilityDetailModalProps {
@@ -48,20 +47,17 @@ export function LiabilityDetailModal({ contractId, open, onOpenChange }: Liabili
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-3xl md:max-w-4xl lg:max-w-5xl max-h-[90vh] overflow-y-auto bg-white p-0 gap-0 border-none shadow-xl rounded-xl">
-                <DialogHeader className="p-6 pb-4 sticky top-0 bg-white/95 backdrop-blur z-10 border-b border-slate-100 flex flex-row items-center justify-between">
-                    <DialogTitle className="text-xl font-bold flex items-center gap-2 text-slate-800">
-                        <FileText className="w-5 h-5 text-[#4B7BEC]" />
-                        Contract Liability Detail
-                    </DialogTitle>
-                    <button 
-                        onClick={() => onOpenChange(false)}
-                        className="p-2 text-slate-500 focus:outline-none"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                        <span className="sr-only">Close</span>
-                    </button>
-                </DialogHeader>
+            <DialogContent className="sm:max-w-3xl md:max-w-4xl lg:max-w-5xl max-h-[90vh] overflow-y-auto bg-white p-0 gap-0 border-[#e2e8f0] shadow-xl rounded-md">
+                <div className="px-6 pr-12 py-4 sticky top-0 bg-[#f8fafc] z-10 border-b border-[#e2e8f0] flex flex-row items-center justify-between">
+                    <div className="flex flex-col gap-0.5 min-w-0">
+                        <DialogTitle className="text-base font-bold text-slate-800">
+                            Contract Liability Detail
+                        </DialogTitle>
+                        <DialogDescription className="text-xs text-slate-500 font-medium">
+                            Overview of employee contract liabilities, period earnings, and payment logs
+                        </DialogDescription>
+                    </div>
+                </div>
 
                 {isLoading && (
                     <div className="p-12 flex flex-col items-center justify-center text-slate-500">
@@ -78,68 +74,68 @@ export function LiabilityDetailModal({ contractId, open, onOpenChange }: Liabili
                 )}
 
                 {!isLoading && !error && detail && (
-                    <div className="p-6 space-y-8">
+                    <div className="px-6 pt-3.5 pb-6 space-y-6">
                         {/* 1. Identity & Contract Info */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Profile Info */}
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest">User Identity</h3>
-                                <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                                    <div className="flex gap-4 items-start">
-                                        <Avatar className="h-12 w-12 border-none shadow-sm bg-gradient-to-br from-[#2568C1] to-[#1a4f99]">
-                                            <AvatarFallback className="bg-transparent text-white font-bold text-lg">
+                                <div className="bg-white p-4 rounded-md border border-slate-200 shadow-sm space-y-3">
+                                    <div className="flex gap-3 items-start">
+                                        <Avatar className="h-10 w-10 border-none shadow-sm bg-gradient-to-br from-[#2568C1] to-[#1a4f99]">
+                                            <AvatarFallback className="bg-transparent text-white font-bold text-base">
                                                 {getInitials(detail.user_name)}
                                             </AvatarFallback>
                                         </Avatar>
                                         <div className="pt-0.5">
-                                            <p className="font-bold text-slate-800 text-lg leading-none mb-1.5">{detail.user_name}</p>
-                                            <div className="flex items-center gap-1.5 text-sm text-slate-500">
-                                                <Mail className="w-4 h-4" /> 
+                                            <p className="font-bold text-slate-800 text-base leading-none mb-1">{detail.user_name}</p>
+                                            <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                                                <Mail className="w-3.5 h-3.5" /> 
                                                 <span>{detail.user_email}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="pt-3 border-t border-slate-100 flex items-center gap-2 text-sm text-slate-600 font-medium">
-                                        <Phone className="w-4 h-4 text-slate-400" /> 
+                                    <div className="pt-2.5 border-t border-slate-100 flex items-center gap-2 text-xs text-slate-600 font-medium">
+                                        <Phone className="w-3.5 h-3.5 text-slate-400" /> 
                                         <span>{detail.user_phone || "-"}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Contract Info */}
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest">Contract Details</h3>
-                                <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm grid grid-cols-2 gap-y-5 gap-x-4">
+                                <div className="bg-white p-4 rounded-md border border-slate-200 shadow-sm grid grid-cols-2 gap-y-3 gap-x-4">
                                     <div>
-                                        <p className="text-[11px] font-medium text-slate-400 mb-1 flex items-center gap-1.5">
-                                            <Briefcase className="w-3.5 h-3.5" /> Project
+                                        <p className="text-[10px] font-medium text-slate-400 mb-1 flex items-center gap-1">
+                                            <Briefcase className="w-3 h-3" /> Project
                                         </p>
-                                        <p className="font-bold text-slate-800 text-sm">{detail.project_name}</p>
+                                        <p className="font-bold text-slate-800 text-xs">{detail.project_name}</p>
                                     </div>
                                     <div>
-                                        <p className="text-[11px] font-medium text-slate-400 mb-1 flex items-center gap-1.5">
-                                            <Calendar className="w-3.5 h-3.5" /> Started On
+                                        <p className="text-[10px] font-medium text-slate-400 mb-1 flex items-center gap-1">
+                                            <Calendar className="w-3 h-3" /> Started On
                                         </p>
-                                        <p className="font-bold text-slate-800 text-sm">
+                                        <p className="font-bold text-slate-800 text-xs">
                                             {format(new Date(detail.start_date), "dd MMM yyyy")}
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-[11px] font-medium text-slate-400 mb-1.5">Type & Scheme</p>
-                                        <div className="flex flex-col items-start gap-1.5">
-                                            <Badge variant="outline" className="bg-white text-slate-500 text-[9px] uppercase font-bold border-slate-200 px-2 py-0">
+                                        <p className="text-[10px] font-medium text-slate-400 mb-1">Type & Scheme</p>
+                                        <div className="flex flex-col items-start gap-1">
+                                            <Badge variant="outline" className="bg-white text-slate-500 text-[9px] uppercase font-bold border-slate-200 px-1.5 py-0">
                                                 {detail.contract_type.replace(/_/g, " ")}
                                             </Badge>
-                                            <Badge variant="outline" className="bg-white text-[#4B7BEC] text-[9px] uppercase font-bold border-blue-100 px-2 py-0">
+                                            <Badge variant="outline" className="bg-white text-[#4B7BEC] text-[9px] uppercase font-bold border-blue-100 px-1.5 py-0">
                                                 {detail.payment_scheme.replace(/_/g, " ")}
                                             </Badge>
                                         </div>
                                     </div>
                                     <div>
-                                        <p className="text-[11px] font-medium text-slate-400 mb-1 flex items-center gap-1.5">
-                                            <TrendingUp className="w-3.5 h-3.5" /> Rate
+                                        <p className="text-[10px] font-medium text-slate-400 mb-1 flex items-center gap-1">
+                                            <TrendingUp className="w-3 h-3" /> Rate
                                         </p>
-                                        <p className="font-bold text-[#4B7BEC] text-lg leading-none mt-1">{formatRupiah(detail.rate_amount)}</p>
+                                        <p className="font-bold text-[#4B7BEC] text-base leading-none mt-0.5">{formatRupiah(detail.rate_amount)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -147,66 +143,66 @@ export function LiabilityDetailModal({ contractId, open, onOpenChange }: Liabili
 
                         {/* 2. Financial Summary */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="bg-white p-4 py-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-center min-w-0">
-                                <p className="text-xs font-medium text-slate-500 mb-1.5 truncate">Target Earned</p>
-                                <h4 className="text-xl lg:text-2xl font-bold text-slate-900 break-words">{formatRupiah(detail.calculated_target)}</h4>
+                            <div className="bg-white p-4 py-4 rounded-md border border-slate-200 shadow-sm flex flex-col justify-center min-w-0">
+                                <p className="text-xs font-medium text-slate-500 mb-1 truncate">Target Earned</p>
+                                <h4 className="text-xl font-bold text-slate-900 break-words">{formatRupiah(detail.calculated_target)}</h4>
                             </div>
-                            <div className="bg-emerald-50/30 p-4 py-5 rounded-xl border border-emerald-100 shadow-sm flex flex-col justify-center min-w-0">
-                                <p className="text-xs font-medium text-emerald-600 mb-1.5 flex items-center gap-1.5 truncate">
+                            <div className="bg-emerald-50/30 p-4 py-4 rounded-md border border-emerald-100 shadow-sm flex flex-col justify-center min-w-0">
+                                <p className="text-xs font-medium text-emerald-600 mb-1 flex items-center gap-1.5 truncate">
                                     <CheckCircle2 className="w-4 h-4 shrink-0" /> Total Released
                                 </p>
-                                <h4 className="text-xl lg:text-2xl font-bold text-emerald-700 break-words">{formatRupiah(detail.total_paid)}</h4>
+                                <h4 className="text-xl font-bold text-emerald-700 break-words">{formatRupiah(detail.total_paid)}</h4>
                             </div>
-                            <div className="bg-amber-50/30 p-4 py-5 rounded-xl border border-amber-100 shadow-sm flex flex-col justify-center min-w-0">
-                                <p className="text-xs font-medium text-amber-600 mb-1.5 flex items-center gap-1.5 truncate">
+                            <div className="bg-amber-50/30 p-4 py-4 rounded-md border border-amber-100 shadow-sm flex flex-col justify-center min-w-0">
+                                <p className="text-xs font-medium text-amber-600 mb-1 flex items-center gap-1.5 truncate">
                                     <Clock className="w-4 h-4 shrink-0" /> Pending Liability
                                 </p>
-                                <h4 className="text-xl lg:text-2xl font-bold text-amber-700 break-words">{formatRupiah(detail.remaining)}</h4>
+                                <h4 className="text-xl font-bold text-amber-700 break-words">{formatRupiah(detail.remaining)}</h4>
                             </div>
                         </div>
 
                         <Separator className="bg-slate-100" />
 
                         {/* 3. Payment Breakdown */}
-                        <div className="space-y-3">
+                        <div className="space-y-2.5">
                             <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest flex items-center gap-2">
                                 <TrendingUp className="w-4 h-4 text-slate-400" />
                                 Period Breakdown
                             </h3>
-                            <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div className="border border-slate-200 rounded-md overflow-hidden shadow-sm">
                                 <Table>
                                     <TableHeader className="bg-slate-50/80">
                                         <TableRow>
-                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 pl-5">Period</TableHead>
-                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 text-right">Earned</TableHead>
-                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 text-right">Paid</TableHead>
-                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 text-center pr-5">Status</TableHead>
+                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-9 pl-4">Period</TableHead>
+                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-9 text-right">Earned</TableHead>
+                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-9 text-right">Paid</TableHead>
+                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-9 text-center pr-4">Status</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         {(!detail.monthly_breakdown || detail.monthly_breakdown.length === 0) ? (
                                             <TableRow>
-                                                <TableCell colSpan={4} className="text-center py-6 text-slate-500 text-sm">
+                                                <TableCell colSpan={4} className="text-center py-6 text-slate-500 text-xs">
                                                     No periods recorded yet.
                                                 </TableCell>
                                             </TableRow>
                                         ) : (
                                             detail.monthly_breakdown.map((b, i) => (
                                                 <TableRow key={i} className="hover:bg-slate-50/50">
-                                                    <TableCell className="font-semibold text-slate-800 text-sm pl-5">
+                                                    <TableCell className="font-semibold text-slate-800 text-xs pl-4">
                                                         {b.period_name}
                                                     </TableCell>
-                                                    <TableCell className="text-right font-medium text-slate-800 text-sm">
+                                                    <TableCell className="text-right font-medium text-slate-800 text-xs">
                                                         {formatRupiah(b.earned)}
                                                     </TableCell>
-                                                    <TableCell className="text-right font-bold text-emerald-600 text-sm">
+                                                    <TableCell className="text-right font-bold text-emerald-600 text-xs">
                                                         {formatRupiah(b.paid)}
                                                     </TableCell>
-                                                    <TableCell className="text-center pr-5">
+                                                    <TableCell className="text-center pr-4">
                                                         <Badge variant="outline" className={
-                                                            b.status === 'paid' ? "bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px]" :
-                                                            b.status === 'pending' ? "bg-amber-50 text-amber-600 border-amber-200 text-[10px]" :
-                                                            "bg-blue-50 text-[#4B7BEC] border-blue-200 text-[10px]"
+                                                            b.status === 'paid' ? "bg-emerald-50 text-emerald-600 border-emerald-200 text-[9px]" :
+                                                            b.status === 'pending' ? "bg-amber-50 text-amber-600 border-amber-200 text-[9px]" :
+                                                            "bg-blue-50 text-[#4B7BEC] border-blue-200 text-[9px]"
                                                         }>
                                                             {b.status.replace(/_/g, " ")}
                                                         </Badge>
@@ -220,42 +216,42 @@ export function LiabilityDetailModal({ contractId, open, onOpenChange }: Liabili
                         </div>
 
                         {/* 4. Payment Logs */}
-                        <div className="space-y-3 pb-4">
+                        <div className="space-y-2.5 pb-2">
                             <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest flex items-center gap-2">
                                 <Wallet className="w-4 h-4 text-slate-400" />
                                 Payment Logs
                             </h3>
-                            <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div className="border border-slate-200 rounded-md overflow-hidden shadow-sm">
                                 <Table>
                                     <TableHeader className="bg-slate-50/80">
                                         <TableRow>
-                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 pl-5">Date</TableHead>
-                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Name</TableHead>
-                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Description</TableHead>
-                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10 text-right pr-5">Amount</TableHead>
+                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-9 pl-4">Date</TableHead>
+                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-9">Name</TableHead>
+                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-9">Description</TableHead>
+                                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-9 text-right pr-4">Amount</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         {(!detail.payment_log || detail.payment_log.length === 0) ? (
                                             <TableRow>
-                                                <TableCell colSpan={4} className="text-center py-6 text-slate-500 text-sm">
+                                                <TableCell colSpan={4} className="text-center py-6 text-slate-500 text-xs">
                                                     No payment history found.
                                                 </TableCell>
                                             </TableRow>
                                         ) : (
                                             detail.payment_log.map((log) => (
                                                 <TableRow key={log.id} className="hover:bg-slate-50/50">
-                                                    <TableCell className="text-slate-500 font-medium text-sm pl-5 whitespace-nowrap">
+                                                    <TableCell className="text-slate-500 font-medium text-xs pl-4 whitespace-nowrap">
                                                         {format(new Date(log.paid_at), "dd MMM yyyy")}
-                                                        <span className="text-slate-400 text-xs ml-2">{format(new Date(log.paid_at), "HH:mm")}</span>
+                                                        <span className="text-slate-400 text-[10px] ml-2">{format(new Date(log.paid_at), "HH:mm")}</span>
                                                     </TableCell>
-                                                    <TableCell className="font-semibold text-slate-800 text-sm">
+                                                    <TableCell className="font-semibold text-slate-800 text-xs">
                                                         {log.name}
                                                     </TableCell>
-                                                    <TableCell className="text-slate-500 text-sm max-w-[200px] truncate" title={log.description}>
+                                                    <TableCell className="text-slate-500 text-xs max-w-[200px] truncate" title={log.description}>
                                                         {log.description || "-"}
                                                     </TableCell>
-                                                    <TableCell className="text-right font-bold text-emerald-600 text-sm pr-5 whitespace-nowrap">
+                                                    <TableCell className="text-right font-bold text-emerald-600 text-xs pr-4 whitespace-nowrap">
                                                         {formatRupiah(log.amount)}
                                                     </TableCell>
                                                 </TableRow>

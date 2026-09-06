@@ -1,5 +1,6 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AuditLog } from "@/lib/services/audit-service";
 import { cn } from "@/lib/utils";
@@ -54,40 +55,43 @@ export function AuditDetailDialog({ open, onOpenChange, log }: AuditDetailDialog
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-[#e2e8f0]">
-                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-14">
-                    <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="text-[10px] uppercase font-bold bg-white text-[#2568C1] border-blue-100">
+            <DialogContent className="sm:max-w-[700px] p-0 gap-0 overflow-hidden border-[#e2e8f0] rounded-md shadow-xl">
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 pr-12 py-4 flex flex-col gap-1">
+                    <div className="flex items-center gap-2 mb-1">
+                        <Badge variant="outline" className="text-[10px] uppercase font-bold bg-white text-[#2568C1] border-blue-100 rounded-md">
                             {log.target_table.replace(/s$/i, '')} #{log.record_id}
                         </Badge>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                             {log.action}
                         </span>
                     </div>
-                    <DialogTitle className="text-lg font-bold text-slate-900 leading-tight">Audit Log Detail</DialogTitle>
+                    <DialogTitle className="text-base font-bold text-slate-900 leading-tight">Audit Log Detail</DialogTitle>
                     <DialogDescription className="text-slate-500 font-medium text-xs">
                         Action performed by {log.performer?.full_name || `User #${log.user_id}`} on {format(new Date(log.created_at), "dd/MM/yyyy HH:mm")}
                     </DialogDescription>
                 </div>
 
-                <div className="px-6 py-6 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-3">
+                <div className="px-6 pt-3.5 pb-5 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
                             <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-1">Old Value</h4>
-                            <ScrollArea className="h-[300px] w-full border border-slate-100 bg-slate-50 p-4">
+                            <ScrollArea className="h-[300px] w-full border border-slate-100 bg-slate-50 p-4 rounded-md">
                                 <DataViewer data={oldData} emptyMessage="No previous data" />
                             </ScrollArea>
                         </div>
 
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                             <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-1">New Value</h4>
-                            <ScrollArea className="h-[300px] w-full border border-blue-50/50 bg-blue-50/30 p-4">
+                            <ScrollArea className="h-[300px] w-full border border-blue-50/50 bg-blue-50/30 p-4 rounded-md">
                                 <DataViewer data={newData} emptyMessage="Data was removed" />
                             </ScrollArea>
                         </div>
                     </div>
                 </div>
 
+                <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end">
+                    <Button variant="outline" className="px-6 rounded-md" onClick={() => onOpenChange(false)}>Close</Button>
+                </div>
             </DialogContent>
         </Dialog>
     );

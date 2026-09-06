@@ -87,14 +87,14 @@ export function AdminProjectWizard({
 
     return (
         <Dialog open={open} onOpenChange={o => !isSaving && onOpenChange(o)}>
-            <DialogContent className="sm:max-w-[650px] max-w-[95vw] p-0 overflow-hidden border-[#e2e8f0]">
-                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
-                    <DialogTitle className="text-lg text-[#0f172a] font-bold">Create New Project</DialogTitle>
-                    <DialogDescription className="text-xs">{`Step ${step} of 3 - ${stepLabels[step - 1]}`}</DialogDescription>
+            <DialogContent className="sm:max-w-[650px] max-w-[95vw] p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md shadow-xl">
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-12 flex flex-col gap-1">
+                    <DialogTitle className="text-base text-[#0f172a] font-bold">Create New Project</DialogTitle>
+                    <DialogDescription className="text-xs text-slate-500">{`Step ${step} of 3 - ${stepLabels[step - 1]}`}</DialogDescription>
                 </div>
                 
                 {/* Progress Bar */}
-                <div className="px-6 pt-4 pb-2 flex items-center gap-2">
+                <div className="px-6 pt-3.5 pb-2 flex items-center gap-2">
                     {stepLabels.map((label, i) => (
                         <div key={i} className="flex items-center gap-2 flex-1">
                             <div className={`flex items-center justify-center h-7 w-7 rounded-full text-xs font-bold shrink-0 transition-all duration-300 ${i + 1 < step ? "bg-emerald-500 text-white" : i + 1 === step ? "bg-[#2568C1] text-white shadow-md shadow-[#2568C1]/20" : "bg-slate-100 text-slate-400"}`}>
@@ -106,12 +106,12 @@ export function AdminProjectWizard({
                     ))}
                 </div>
 
-                <div className="px-6 py-4 space-y-4 max-h-[55vh] overflow-y-auto">
+                <div className="px-6 pt-2 pb-5 space-y-4 max-h-[55vh] overflow-y-auto custom-scrollbar">
                     {step === 1 && (
                         <>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Project Name <span className="text-red-500">*</span></label>
-                                <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Website Revamp" disabled={isSaving} className="h-10" />
+                                <label className="text-sm font-medium text-[#0f172a]">Project Name <span className="text-red-500">*</span></label>
+                                <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Website Revamp" disabled={isSaving} className="h-10 rounded-md" />
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
@@ -280,9 +280,9 @@ export function AdminProjectWizard({
                     )}
                 </div>
 
-                <div className="px-6 py-4 border-t border-slate-100 bg-[#f8fafc] flex items-center justify-between">
+                <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex items-center justify-between">
                     {step > 1 ? (
-                        <Button variant="ghost" onClick={() => setStep(step - 1)} disabled={isSaving} className="gap-1.5">
+                        <Button variant="ghost" onClick={() => setStep(step - 1)} disabled={isSaving} className="gap-1.5 rounded-md">
                             <ArrowLeft className="h-4 w-4" /> Back
                         </Button>
                     ) : (
@@ -290,7 +290,7 @@ export function AdminProjectWizard({
                     )}
                     <div className="flex items-center gap-2">
                         {step === 1 && (
-                            <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isSaving}>
+                            <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isSaving} className="rounded-md">
                                 Cancel
                             </Button>
                         )}
@@ -311,11 +311,11 @@ export function AdminProjectWizard({
                                     }
                                     setStep(step + 1);
                                 }} 
-                                className="gap-1.5 bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px]"
+                                className="gap-1.5 bg-[#2568C1] hover:bg-[#1a4f99] min-w-[120px] rounded-md"
                             >
                                 Next <ArrowRight className="h-4 w-4" />
                             </Button> :
-                            <Button onClick={onSave} disabled={isSaving} className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 min-w-[160px]">
+                            <Button onClick={onSave} disabled={isSaving} className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 min-w-[160px] rounded-md">
                                 {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4" /> Create Project</>}
                             </Button>
                         }

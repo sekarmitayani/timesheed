@@ -20,23 +20,26 @@ export function ConfirmDeleteDialog({
 }: ConfirmDeleteDialogProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-sm">
-                <div className="flex flex-col items-center gap-4 py-4">
-                    <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-                        <AlertTriangle className="h-6 w-6" />
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md shadow-xl">
+                <div className="bg-red-50/60 border-b border-red-100 px-6 py-4 pr-12 flex items-center gap-3.5">
+                    <div className="p-2 bg-white rounded-md shadow-sm border border-red-200 text-red-600">
+                        <AlertTriangle className="h-5 w-5" />
                     </div>
-                    <DialogTitle>Delete Request?</DialogTitle>
-                    <DialogDescription className="text-center text-slate-500">
-                        This action cannot be undone. Permanent removal of Request #{requestId}.
-                    </DialogDescription>
-                    <div className="flex gap-3 w-full mt-2">
-                        <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)} disabled={isProcessing}>
-                            Cancel
-                        </Button>
-                        <Button variant="destructive" className="flex-1" onClick={onConfirm} disabled={isProcessing}>
-                            {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
-                        </Button>
+                    <div>
+                        <DialogTitle className="text-base font-semibold text-[#0f172a]">Delete Request?</DialogTitle>
+                        <p className="text-xs text-red-600/80">Permanent action</p>
                     </div>
+                </div>
+                <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
+                    This action cannot be undone. You are about to permanently delete Request #{requestId}.
+                </div>
+                <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
+                    <Button variant="outline" className="rounded-md" onClick={() => onOpenChange(false)} disabled={isProcessing}>
+                        Cancel
+                    </Button>
+                    <Button variant="destructive" className="rounded-md min-w-[100px]" onClick={onConfirm} disabled={isProcessing}>
+                        {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
+                    </Button>
                 </div>
             </DialogContent>
         </Dialog>

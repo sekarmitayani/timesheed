@@ -38,10 +38,10 @@ export function ProxyTable({
             ? "bg-amber-50 text-amber-700 border-amber-200"
             : role === "projectmanager"
                 ? "bg-indigo-50 text-indigo-700 border-indigo-200"
-                : role === "finance"
+                : (role === "management" || role === "finance")
                     ? "bg-purple-50 text-purple-700 border-purple-200"
                     : "bg-blue-50 text-[#2568C1] border-blue-200";
-        const label = role === "projectmanager" ? "Project Manager" : role === "finance" ? "Management" : role;
+        const label = role === "projectmanager" ? "Project Manager" : (role === "management" || role === "finance") ? "Management" : role;
         return (
             <Badge variant="outline" className={`capitalize text-[11px] font-bold rounded-full px-2.5 py-0.5 border-none ${cls}`}>
                 {label}

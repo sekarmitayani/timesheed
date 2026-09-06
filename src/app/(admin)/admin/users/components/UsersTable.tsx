@@ -80,12 +80,12 @@ export function UsersTable({
                                                     ? "bg-amber-50 text-amber-600"
                                                     : user.role === "projectmanager"
                                                         ? "bg-indigo-50 text-indigo-600"
-                                                        : user.role === "finance"
+                                                        : (user.role === "management" || user.role === "finance")
                                                             ? "bg-purple-50 text-purple-600"
                                                             : "bg-blue-50 text-[#2568C1]"
                                                     }`}
                                             >
-                                                {user.role === "projectmanager" ? "Project Manager" : user.role === "finance" ? "Management" : user.role}
+                                                {user.role === "projectmanager" ? "Project Manager" : (user.role === "management" || user.role === "finance") ? "Management" : user.role}
                                             </Badge>
                                         </TableCell>
                                         <TableCell>

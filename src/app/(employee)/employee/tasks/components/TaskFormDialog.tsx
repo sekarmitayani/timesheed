@@ -101,23 +101,23 @@ export function TaskFormDialog({
 
     return (
         <Dialog open={isOpen} onOpenChange={open => !isSaving && onClose(open)}>
-            <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0] shadow-2xl rounded-md bg-white flex flex-col text-slate-900">
+            <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0] shadow-xl rounded-md bg-white flex flex-col text-slate-900 gap-0">
                 <DialogDescription className="sr-only">Form to create or edit a task.</DialogDescription>
-                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-12">
                     <DialogTitle className="text-lg font-bold text-slate-900">
                         {editingTask ? "Edit Task" : "New Task"}
                     </DialogTitle>
-                    <DialogDescription className="text-xs">{editingTask ? `Editing "${editingTask.title}"` : "Create a new task"}</DialogDescription>
+                    <DialogDescription className="text-xs text-slate-500 mt-0.5">{editingTask ? `Editing "${editingTask.title}"` : "Create a new task"}</DialogDescription>
                 </div>
-                <div className="px-6 py-5 space-y-4 max-h-[65vh] overflow-y-auto custom-scrollbar">
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase text-slate-400 ml-1">Project <span className="text-red-500">*</span></label>
+                <div className="px-6 pt-3.5 pb-5 space-y-4 max-h-[65vh] overflow-y-auto custom-scrollbar">
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-[#0f172a]">Project <span className="text-red-500">*</span></label>
                         <Select 
                             value={String(form.project_id || "")} 
                             onValueChange={v => setForm({ ...form, project_id: Number(v), assigned_to_id: 0 })} 
                             disabled={!!editingTask}
                         >
-                            <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
+                            <SelectTrigger className="h-10 bg-white border-input rounded-md text-sm">
                                 <SelectValue placeholder="Select project" />
                             </SelectTrigger>
                             <SelectContent className="rounded-md">
@@ -126,16 +126,16 @@ export function TaskFormDialog({
                         </Select>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Title <span className="text-red-500">*</span></label>
+                        <label className="text-sm font-medium text-[#0f172a]">Title <span className="text-red-500">*</span></label>
                         <Input 
                             value={form.title} 
                             onChange={e => setForm({ ...form, title: e.target.value })} 
                             disabled={isSaving} 
-                            className="border-slate-200 h-9 shadow-sm rounded-md text-sm font-bold focus:ring-1 focus:ring-[#4B7BEC]" 
+                            className="h-10 bg-white border-input rounded-md text-sm" 
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Description</label>
+                        <label className="text-sm font-medium text-[#0f172a]">Description</label>
                         <div className="border border-[#e2e8f0] rounded-md overflow-hidden bg-white">
                             <div className="flex items-center gap-1 border-b border-[#e2e8f0] p-1.5 bg-[#f8fafc]">
                                 <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-600 hover:bg-slate-200" onClick={(e) => { e.preventDefault(); handleFormat('bold'); }} disabled={isSaving}><Bold className="h-3.5 w-3.5" /></Button>
@@ -231,8 +231,8 @@ export function TaskFormDialog({
                     )}
                     </div>
                 </div>
-                <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2.5">
-                    <Button variant="ghost" onClick={() => onClose(false)} disabled={isSaving} className="text-slate-500">
+                <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
+                    <Button variant="ghost" onClick={() => onClose(false)} disabled={isSaving} className="text-[#64748b] hover:text-[#0f172a] rounded-md">
                         Cancel
                     </Button>
                     <Button onClick={() => {
@@ -241,8 +241,8 @@ export function TaskFormDialog({
                             return;
                         }
                         onSave();
-                    }} disabled={isSaving} className="bg-[#4B7BEC] hover:bg-[#3b60c0] min-w-[120px] text-white shadow-md shadow-blue-100">
-                        {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
+                    }} disabled={isSaving} className="bg-[#2568C1] hover:bg-[#1e56a6] min-w-[120px] text-white font-semibold rounded-md shadow-sm">
+                        {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Save Task"}
                     </Button>
                 </div>
             </DialogContent>

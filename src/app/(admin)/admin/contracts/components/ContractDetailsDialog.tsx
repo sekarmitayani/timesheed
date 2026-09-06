@@ -53,16 +53,16 @@ export function ContractDetailsDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[550px] max-h-[90vh] p-0 overflow-hidden border-[#e2e8f0] flex flex-col">
-                <div className="bg-gradient-to-r from-slate-50 to-[#f8fafc] border-b border-[#e2e8f0] px-5 py-4 shrink-0">
-                    <DialogTitle className="text-base text-[#0f172a] mb-0.5">Contract Intelligence</DialogTitle>
-                    <DialogDescription className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <DialogContent className="sm:max-w-[550px] max-h-[90vh] p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md shadow-xl flex flex-col">
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 pr-12 py-4 flex flex-col gap-1 shrink-0">
+                    <DialogTitle className="text-base text-[#0f172a] font-bold">Contract Intelligence</DialogTitle>
+                    <DialogDescription className="text-xs text-slate-500 font-medium">
                         Detailed specification overview
                     </DialogDescription>
                 </div>
 
-                <div className="px-5 pt-3 pb-5 space-y-4 bg-slate-50/30 overflow-y-auto">
-                    <Card className="p-4 shadow-sm border-slate-200 bg-white space-y-3">
+                <div className="px-6 pt-3.5 pb-5 space-y-4 bg-slate-50/30 overflow-y-auto">
+                    <Card className="p-4 shadow-sm border-slate-200 bg-white space-y-3 rounded-md">
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Assigned Identity</div>
                         <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10 border border-[#e2e8f0] shadow-sm">
@@ -77,10 +77,10 @@ export function ContractDetailsDialog({
                         </div>
                     </Card>
 
-                    <Card className="p-4 shadow-sm border-slate-200 bg-white space-y-3">
+                    <Card className="p-4 shadow-sm border-slate-200 bg-white space-y-3 rounded-md">
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Origin Binding Node</div>
                         <div className="flex items-center gap-3">
-                            <div className={`p-2.5 rounded-lg ${contract.project_id ? "bg-purple-100 text-purple-700" : "bg-[#2568C1]/10 text-[#2568C1]"}`}>
+                            <div className={`p-2.5 rounded-md ${contract.project_id ? "bg-purple-100 text-purple-700" : "bg-[#2568C1]/10 text-[#2568C1]"}`}>
                                 <Briefcase className="h-4 w-4" />
                             </div>
                             <div className="flex flex-col">
@@ -94,39 +94,41 @@ export function ContractDetailsDialog({
                         </div>
                     </Card>
 
-                    <Card className="p-5 shadow-sm border-slate-200 bg-white border-l-4 border-l-[#2568C1]">
+                    <Card className="p-5 shadow-sm border-slate-200 bg-white border-l-4 border-l-[#2568C1] rounded-md">
                         <h4 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">Contract Data Block</h4>
                         <div className="grid grid-cols-2 gap-y-4 gap-x-4">
                             <div>
-                                <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">Contract Status</div>
-                                <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5 border-none ${contract.is_active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-500"}`}>
-                                    {contract.is_active ? "Active" : "Historical"}
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Type Format</div>
+                                <Badge variant="outline" className="text-xs font-bold capitalize rounded-full px-2.5 py-0.5 border-slate-200 text-slate-700">
+                                    {contract.contract_type}
                                 </Badge>
                             </div>
                             <div>
-                                <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">Agreement Type</div>
-                                <div className="text-sm font-semibold capitalize text-slate-800">{contract.contract_type}</div>
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Clearance Protocol</div>
+                                <span className="text-xs font-bold text-slate-700">
+                                    {paymentSchemeLabel(contract.payment_scheme || "")}
+                                </span>
                             </div>
                             <div>
-                                <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">Scheme Sequence</div>
-                                <div className="text-sm font-semibold capitalize text-slate-800">{paymentSchemeLabel(contract.payment_scheme || "")}</div>
-                            </div>
-                            <div>
-                                <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">Value Payload</div>
-                                <div className="text-sm font-bold text-[#2568C1] font-mono tracking-tight">Rp {formatNumber(contract.rate_amount)}</div>
-                            </div>
-                        </div>
-                        <div className="mt-5 pt-5 border-t border-slate-100 grid grid-cols-2 gap-4">
-                            <div>
-                                <div className="text-[10px] uppercase font-bold text-slate-400 mb-1 flex items-center gap-1">
-                                    <Calendar className="h-3 w-3" /> Period Start
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Contract Valuation</div>
+                                <div className="text-base font-black text-[#2568C1]">
+                                    Rp {formatNumber(contract.rate_amount)}
                                 </div>
+                            </div>
+                            <div>
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Operational State</div>
+                                <Badge variant="outline" className={`text-[10px] font-bold uppercase rounded-full px-2.5 py-0.5 border-none ${
+                                    contract.is_active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"
+                                }`}>
+                                    {contract.is_active ? "Active" : "Archived"}
+                                </Badge>
+                            </div>
+                            <div>
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Binding Epoch</div>
                                 <div className="text-sm font-semibold text-slate-800">{fmtDate(contract.start_date)}</div>
                             </div>
                             <div>
-                                <div className="text-[10px] uppercase font-bold text-slate-400 mb-1 flex items-center gap-1">
-                                    <Calendar className="h-3 w-3" /> Period End
-                                </div>
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Termination Horizon</div>
                                 <div className="text-sm font-semibold text-slate-800">{contract.end_date ? fmtDate(contract.end_date) : "Ongoing / Open"}</div>
                             </div>
                         </div>
@@ -138,9 +140,9 @@ export function ContractDetailsDialog({
                     </div>
                 </div>
 
-                <DialogFooter className="border-t border-slate-200 bg-white p-4">
+                <DialogFooter className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc]">
                     <Button 
-                        className="w-full bg-[#0f172a] hover:bg-slate-800 transition-colors shadow-sm h-10" 
+                        className="w-full bg-[#2568C1] hover:bg-[#1e56a6] text-white transition-colors shadow-sm h-10 rounded-md font-semibold" 
                         onClick={() => onOpenChange(false)}
                     >
                         Acknowledge & Close

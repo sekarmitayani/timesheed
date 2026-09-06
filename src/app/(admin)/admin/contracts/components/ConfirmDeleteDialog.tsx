@@ -27,26 +27,29 @@ export function ConfirmDeleteDialog({
 
     return (
         <Dialog open={open} onOpenChange={v => !isDeleting && onOpenChange(v)}>
-            <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                    <div className="mx-auto w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                        <AlertTriangle className="h-6 w-6 text-red-600" />
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md shadow-xl">
+                <div className="bg-red-50/60 border-b border-red-100 px-6 py-4 pr-12 flex items-center gap-3.5">
+                    <div className="p-2 bg-white rounded-md shadow-sm border border-red-200 text-red-600">
+                        <AlertTriangle className="h-5 w-5" />
                     </div>
-                    <DialogTitle className="text-center">Delete Contract Data?</DialogTitle>
-                </DialogHeader>
-                <div className="text-center text-sm text-slate-500 py-2">
-                    This will permanently remove the contract block for <b>{user?.full_name || user?.name || `User #${contract?.user_id}`}</b>. 
-                    This action represents data destruction and cannot be undone.
+                    <div>
+                        <DialogTitle className="text-base font-semibold text-[#0f172a]">Delete Contract Data?</DialogTitle>
+                        <p className="text-xs text-red-600/80">Permanent data destruction</p>
+                    </div>
                 </div>
-                <DialogFooter className="sm:justify-center gap-2 pt-4">
-                    <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isDeleting}>Cancel</Button>
+                <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
+                    This will permanently remove the contract block for <b className="text-slate-800">{user?.full_name || user?.name || `User #${contract?.user_id}`}</b>. 
+                    This action represents permanent data destruction and cannot be undone.
+                </div>
+                <DialogFooter className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
+                    <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isDeleting} className="rounded-md">Cancel</Button>
                     <Button 
                         variant="destructive" 
                         onClick={onConfirm} 
                         disabled={isDeleting} 
-                        className="min-w-[120px]"
+                        className="min-w-[120px] rounded-md"
                     >
-                        {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete Identity"}
+                        {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete Contract"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

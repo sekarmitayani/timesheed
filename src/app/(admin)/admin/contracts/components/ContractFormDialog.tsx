@@ -101,9 +101,9 @@ export function ContractFormDialog({
 
     return (
         <Dialog open={open} onOpenChange={v => !isSaving && onOpenChange(v)}>
-            <DialogContent className="sm:max-w-[550px] max-h-[90vh] flex flex-col p-0 overflow-hidden border-[#e2e8f0]">
+            <DialogContent className="sm:max-w-[550px] max-h-[90vh] flex flex-col p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md">
                 {/* Modal Header */}
-                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 shrink-0">
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 pr-12 py-4 shrink-0">
                     <DialogTitle className="text-lg font-bold text-[#0f172a]">
                         {editId ? "Edit Contract Data" : "New Contract Setup"}
                     </DialogTitle>
@@ -113,7 +113,7 @@ export function ContractFormDialog({
                 </div>
 
                 {/* Modal Body */}
-                <div className="px-6 py-4 space-y-3.5 overflow-y-auto flex-1 text-sm">
+                <div className="px-6 pt-3.5 pb-4 space-y-3.5 overflow-y-auto flex-1 text-sm">
                     {/* User Selection */}
                     {!editId && (
                         <div className="space-y-1.5">

@@ -62,9 +62,9 @@ export function UserDetailsDialog({
 
     return (
         <Dialog open={open} onOpenChange={(val) => !isSavingContract && onOpenChange(val)}>
-            <DialogContent className="sm:max-w-[1050px] w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0] bg-white">
+            <DialogContent className="sm:max-w-[1050px] w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0] bg-white rounded-md shadow-xl">
                 {/* Header */}
-                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 flex items-center gap-4">
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 pr-12 py-4 flex items-center gap-4">
                     <Avatar className="h-12 w-12 border-2 border-white shadow-md">
                         <AvatarFallback className="text-sm font-semibold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                             {user.name?.split(" ").slice(0, 2).map(n => n[0]).join("")}
@@ -74,7 +74,7 @@ export function UserDetailsDialog({
                         <DialogTitle className="text-xl text-[#0f172a]">{user.name}</DialogTitle>
                         <div className="text-sm flex gap-2 items-center mt-1">
                             <span className="capitalize text-muted-foreground font-medium">
-                                {user.role === "projectmanager" ? "Project Manager" : user.role === "finance" ? "Management" : user.role}
+                                {user.role === "projectmanager" ? "Project Manager" : (user.role === "management" || user.role === "finance") ? "Management" : user.role}
                             </span>
                             •
                             <Badge 
@@ -162,7 +162,7 @@ export function UserDetailsDialog({
                                         </div>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                             {contracts.filter(c => !c.project_id).length === 0 ? (
-                                                <p className="text-sm text-muted-foreground py-4 w-full col-span-2 border border-dashed border-slate-200 rounded-lg text-center bg-slate-50">
+                                                <p className="text-sm text-muted-foreground py-4 w-full col-span-2 border border-dashed border-slate-200 rounded-md text-center bg-slate-50">
                                                     No general base contracts found. Employee uses default or project-specific rates.
                                                 </p>
                                             ) : (
@@ -228,12 +228,12 @@ export function UserDetailsDialog({
                                         <div className="grid grid-cols-1 gap-3">
                                             {(() => {
                                                 const pIds = [...new Set(contracts.filter(c => c.project_id).map(c => c.project_id))];
-                                                if (pIds.length === 0) return <div className="text-center py-6 border border-slate-200 border-dashed rounded-xl bg-slate-50">No project assignments linked to explicit rates.</div>;
+                                                if (pIds.length === 0) return <div className="text-center py-6 border border-slate-200 border-dashed rounded-md bg-slate-50 text-xs text-slate-500">No project assignments linked to explicit rates.</div>;
                                                 return pIds.map(pid => {
                                                     const pData = projects.find(p => p.id === pid);
                                                     const pContracts = contracts.filter(c => c.project_id === pid);
                                                     return (
-                                                        <div key={pid} className="border border-slate-200 rounded-lg overflow-hidden flex flex-col">
+                                                        <div key={pid} className="border border-slate-200 rounded-md overflow-hidden flex flex-col">
                                                             <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex justify-between items-center">
                                                                 <div>
                                                                     <div className="font-semibold text-sm text-slate-800">{pData?.name || `Project #${pid}`}</div>

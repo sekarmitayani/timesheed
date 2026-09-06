@@ -28,8 +28,8 @@ import {
     Star,
     Edit2,
     Check,
-    X,
-    AlertTriangle
+    AlertTriangle,
+    Shield
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { adminContractService } from "@/lib/services/admin-contracts";
@@ -163,39 +163,41 @@ export function AdminTeamsTab({
             </div>
 
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-                <DialogContent className="sm:max-w-[425px] p-6 bg-white border border-[#e2e8f0] shadow-lg">
-                    <DialogHeader className="flex flex-row items-start gap-4 space-y-0 pb-4 border-b border-slate-100">
-                        <Avatar className="h-16 w-16 border-2 border-slate-50 shadow-sm">
-                            <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
-                                {getInitials(selectedMember?.user?.full_name || "")}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col pt-1">
-                            <DialogTitle className="text-lg font-bold text-slate-800">
-                                {selectedMember?.user?.full_name}
-                            </DialogTitle>
-                            <DialogDescription className="text-xs font-bold text-[#4B7BEC] uppercase tracking-widest mt-1">
-                                {selectedMember?.role_in_project}
-                            </DialogDescription>
+                <DialogContent className="sm:max-w-[440px] p-0 gap-0 overflow-hidden border-[#e2e8f0] rounded-md shadow-xl bg-white">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 pr-12 py-4 flex flex-row items-center justify-between">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <Avatar className="h-12 w-12 border border-slate-200 shadow-sm shrink-0">
+                                <AvatarFallback className="text-base font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                    {getInitials(selectedMember?.user?.full_name || "")}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col min-w-0">
+                                <DialogTitle className="text-base font-bold text-slate-800 truncate">
+                                    {selectedMember?.user?.full_name}
+                                </DialogTitle>
+                                <DialogDescription className="text-xs font-bold text-[#4B7BEC] uppercase tracking-wider">
+                                    {selectedMember?.role_in_project}
+                                </DialogDescription>
+                            </div>
                         </div>
-                    </DialogHeader>
+                    </div>
 
-                    <div className="space-y-3 py-2">
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                    <div className="px-6 pt-3.5 pb-5 space-y-2.5">
+                        <div className="flex items-center justify-between p-3 rounded-md border border-slate-100 bg-slate-50/50">
                             <div className="flex items-center gap-3">
                                 <Mail className="h-4 w-4 text-slate-400" />
                                 <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.email || "No email"}</span>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                        <div className="flex items-center justify-between p-3 rounded-md border border-slate-100 bg-slate-50/50">
                             <div className="flex items-center gap-3">
                                 <Phone className="h-4 w-4 text-slate-400" />
                                 <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.phone_number || "No phone"}</span>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                        <div className="flex items-center justify-between p-3 rounded-md border border-slate-100 bg-slate-50/50">
                             <div className="flex items-center gap-3">
                                 <Star className="h-4 w-4 text-slate-400" />
                                 <span className="text-xs font-semibold text-slate-700">
@@ -206,7 +208,7 @@ export function AdminTeamsTab({
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                        <div className="flex items-center justify-between p-3 rounded-md border border-slate-100 bg-slate-50/50">
                             <div className="flex items-center gap-3">
                                 <Calendar className="h-4 w-4 text-slate-400" />
                                 <div className="flex flex-col">
@@ -219,7 +221,7 @@ export function AdminTeamsTab({
                         </div>
 
                         {/* Contract & Rate (Admin Only) */}
-                        <div className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-blue-50/20">
+                        <div className="flex items-start gap-3 p-3 rounded-md border border-slate-200 bg-blue-50/20">
                             <WalletCards className="h-4 w-4 text-[#4B7BEC] mt-0.5 shrink-0" />
                             <div className="flex flex-col flex-1 gap-1">
                                 <span className="text-[10px] font-bold text-[#4B7BEC] uppercase tracking-widest leading-none">Contract & Rate</span>
@@ -260,18 +262,24 @@ export function AdminTeamsTab({
                             </div>
                         </div>
                     </div>
+
+                    <div className="px-6 py-3 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end">
+                        <Button variant="outline" size="sm" onClick={() => setIsDetailOpen(false)} className="rounded-md">
+                            Close
+                        </Button>
+                    </div>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen}>
-                <DialogContent className="sm:max-w-[460px] p-0 overflow-hidden border-[#e2e8f0]">
-                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
-                        <DialogTitle className="text-lg font-bold text-slate-900">Edit Member Role</DialogTitle>
+                <DialogContent className="sm:max-w-[460px] p-0 gap-0 overflow-hidden border-[#e2e8f0] rounded-md shadow-xl bg-white">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 pr-12 py-4">
+                        <DialogTitle className="text-base font-bold text-slate-900">Edit Member Role</DialogTitle>
                         <DialogDescription className="text-xs text-slate-500 mt-0.5">
                             Update the project role for {members.find(m => m.id === editingRoleMemberId)?.user?.full_name || "this member"}.
                         </DialogDescription>
                     </div>
-                    <div className="px-6 py-5 space-y-4">
+                    <div className="px-6 pt-3.5 pb-5 space-y-4">
                         {(() => {
                             const currentEditingMember = members.find(m => m.id === editingRoleMemberId);
                             const isEditingSystemPM = currentEditingMember?.user?.role === "projectmanager";
@@ -286,7 +294,7 @@ export function AdminTeamsTab({
                                         <div className="grid grid-cols-2 gap-2.5">
                                             <div
                                                 onClick={() => !isSaving && setEditingRoleValue("Project Manager")}
-                                                className={`flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition-all ${
+                                                className={`flex items-start gap-2.5 p-3 rounded-md border cursor-pointer transition-all ${
                                                     isPMSelected 
                                                         ? "border-[#2568C1] bg-blue-50/50 shadow-sm" 
                                                         : "border-slate-200 hover:bg-slate-50/80 bg-white"
@@ -314,7 +322,7 @@ export function AdminTeamsTab({
                                                         setEditingRoleValue("");
                                                     }
                                                 }}
-                                                className={`flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition-all ${
+                                                className={`flex items-start gap-2.5 p-3 rounded-md border cursor-pointer transition-all ${
                                                     !isPMSelected 
                                                         ? "border-[#2568C1] bg-blue-50/50 shadow-sm" 
                                                         : "border-slate-200 hover:bg-slate-50/80 bg-white"
@@ -343,7 +351,7 @@ export function AdminTeamsTab({
                                                     placeholder="Enter new role (e.g. Former PM, Advisor)..." 
                                                     value={editingRoleValue} 
                                                     onChange={e => setEditingRoleValue(e.target.value)} 
-                                                    className="h-11 rounded-xl border border-slate-200 text-sm bg-white" 
+                                                    className="h-10 rounded-md border border-slate-200 text-sm bg-white" 
                                                     disabled={isSaving}
                                                     autoFocus
                                                 />
@@ -360,7 +368,7 @@ export function AdminTeamsTab({
                                         value={editingRoleValue} 
                                         onChange={e => setEditingRoleValue(e.target.value)} 
                                         placeholder="e.g. Frontend Developer"
-                                        className="h-11 rounded-xl border border-slate-200 text-sm bg-white"
+                                        className="h-10 rounded-md border border-slate-200 text-sm bg-white"
                                         disabled={isSaving}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter" && editingRoleValue.trim() && editingRoleMemberId) {
@@ -373,16 +381,18 @@ export function AdminTeamsTab({
                             );
                         })()}
                     </div>
-                    <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-3">
+                    <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2">
                         <Button 
-                            variant="ghost" 
+                            variant="outline" 
+                            size="sm"
                             onClick={() => setIsRoleModalOpen(false)} 
                             disabled={isSaving}
-                            className="text-[#64748b]"
+                            className="rounded-md"
                         >
                             Cancel
                         </Button>
                         <Button 
+                            size="sm"
                             disabled={!editingRoleValue.trim() || isSaving}
                             onClick={() => {
                                 if (editingRoleValue.trim() && editingRoleMemberId) {
@@ -390,9 +400,9 @@ export function AdminTeamsTab({
                                     setIsRoleModalOpen(false);
                                 }
                             }}
-                            className="bg-[#2568C1] hover:bg-[#1e56a6] shadow-md shadow-[#2568C1]/20 min-w-[120px]"
+                            className="bg-[#2568C1] hover:bg-[#1e56a6] shadow-sm rounded-md min-w-[110px]"
                         >
-                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                            {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : null}
                             Save Changes
                         </Button>
                     </div>
@@ -401,16 +411,21 @@ export function AdminTeamsTab({
 
             {/* Remove Member Confirmation Dialog */}
             <Dialog open={memberToDelete !== null} onOpenChange={(open) => !open && setMemberToDelete(null)}>
-                <DialogContent className="sm:max-w-md bg-white border-[#e2e8f0]">
-                    <DialogHeader>
-                        <div className="mx-auto w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-2">
-                            <AlertTriangle className="h-6 w-6 text-red-600" />
+                <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden border-[#e2e8f0] rounded-md shadow-xl bg-white">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 pr-12 py-4 flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-md bg-red-100 flex items-center justify-center shrink-0">
+                            <AlertTriangle className="h-5 w-5 text-red-600" />
                         </div>
-                        <DialogTitle className="text-center text-lg font-bold text-slate-800">
-                            Remove Team Member?
-                        </DialogTitle>
-                    </DialogHeader>
-                    <div className="text-center text-sm text-slate-500 py-2 space-y-2">
+                        <div>
+                            <DialogTitle className="text-base font-bold text-slate-800">
+                                Remove Team Member
+                            </DialogTitle>
+                            <DialogDescription className="text-xs text-slate-500 font-medium">
+                                Confirmation to remove member from project team
+                            </DialogDescription>
+                        </div>
+                    </div>
+                    <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 space-y-2">
                         <p>
                             Are you sure you want to remove <span className="font-semibold text-slate-800">{memberToDelete?.user?.full_name || "this member"}</span> {memberToDelete?.role_in_project ? `(${memberToDelete.role_in_project})` : ""} from this project?
                         </p>
@@ -418,15 +433,17 @@ export function AdminTeamsTab({
                             This will unassign them from the project team and revoke their project-level permissions.
                         </p>
                     </div>
-                    <div className="flex flex-col sm:flex-row justify-center gap-2 pt-2">
+                    <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2">
                         <Button 
-                            variant="ghost" 
+                            variant="outline" 
+                            size="sm"
                             onClick={() => setMemberToDelete(null)} 
-                            className="text-slate-500"
+                            className="rounded-md"
                         >
                             Cancel
                         </Button>
                         <Button 
+                            size="sm"
                             variant="destructive" 
                             onClick={() => {
                                 if (memberToDelete) {
@@ -435,9 +452,9 @@ export function AdminTeamsTab({
                                 }
                             }}
                             disabled={isSaving}
-                            className="bg-red-600 hover:bg-red-700 text-white min-w-[130px]"
+                            className="bg-red-600 hover:bg-red-700 text-white rounded-md min-w-[120px]"
                         >
-                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                            {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : null}
                             Remove Member
                         </Button>
                     </div>

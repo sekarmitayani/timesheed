@@ -101,39 +101,41 @@ export function TeamsTab({ members, totalCount, search, setSearch }: TeamsTabPro
             </div>
 
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-                <DialogContent className="sm:max-w-[425px] p-6 bg-white border border-[#e2e8f0] shadow-lg">
-                    <DialogHeader className="flex flex-row items-start gap-4 space-y-0 pb-4 border-b border-slate-100">
-                        <Avatar className="h-16 w-16 border-2 border-slate-50 shadow-sm">
-                            <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
-                                {getInitials(selectedMember?.user?.full_name || "")}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col pt-1">
-                            <DialogTitle className="text-lg font-bold text-slate-800">
-                                {selectedMember?.user?.full_name}
-                            </DialogTitle>
-                            <DialogDescription className="text-xs font-bold text-[#2568C1] uppercase tracking-widest mt-1">
-                                {selectedMember?.role_in_project}
-                            </DialogDescription>
+                <DialogContent className="sm:max-w-[440px] p-0 gap-0 overflow-hidden border-[#e2e8f0] rounded-md shadow-xl bg-white">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 pr-12 py-4 flex flex-row items-center justify-between">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <Avatar className="h-12 w-12 border border-slate-200 shadow-sm shrink-0">
+                                <AvatarFallback className="text-base font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
+                                    {getInitials(selectedMember?.user?.full_name || "")}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col min-w-0">
+                                <DialogTitle className="text-base font-bold text-slate-800 truncate">
+                                    {selectedMember?.user?.full_name}
+                                </DialogTitle>
+                                <DialogDescription className="text-xs font-bold text-[#4B7BEC] uppercase tracking-wider">
+                                    {selectedMember?.role_in_project}
+                                </DialogDescription>
+                            </div>
                         </div>
-                    </DialogHeader>
+                    </div>
 
-                    <div className="space-y-3 py-2">
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                    <div className="px-6 pt-3.5 pb-5 space-y-2.5">
+                        <div className="flex items-center justify-between p-3 rounded-md border border-slate-100 bg-slate-50/50">
                             <div className="flex items-center gap-3">
                                 <Mail className="h-4 w-4 text-slate-400" />
                                 <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.email || "No email"}</span>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                        <div className="flex items-center justify-between p-3 rounded-md border border-slate-100 bg-slate-50/50">
                             <div className="flex items-center gap-3">
                                 <Phone className="h-4 w-4 text-slate-400" />
                                 <span className="text-xs font-semibold text-slate-700">{selectedMember?.user?.phone_number || "No phone"}</span>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                        <div className="flex items-center justify-between p-3 rounded-md border border-slate-100 bg-slate-50/50">
                             <div className="flex items-center gap-3">
                                 <Star className="h-4 w-4 text-slate-400" />
                                 <span className="text-xs font-semibold text-slate-700">
@@ -144,7 +146,7 @@ export function TeamsTab({ members, totalCount, search, setSearch }: TeamsTabPro
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                        <div className="flex items-center justify-between p-3 rounded-md border border-slate-100 bg-slate-50/50">
                             <div className="flex items-center gap-3">
                                 <Calendar className="h-4 w-4 text-slate-400" />
                                 <div className="flex flex-col">
@@ -153,6 +155,12 @@ export function TeamsTab({ members, totalCount, search, setSearch }: TeamsTabPro
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="px-6 py-3 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end">
+                        <Button variant="outline" size="sm" onClick={() => setIsDetailOpen(false)} className="rounded-md">
+                            Close
+                        </Button>
                     </div>
                 </DialogContent>
             </Dialog>

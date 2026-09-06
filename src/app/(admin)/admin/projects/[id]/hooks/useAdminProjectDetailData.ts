@@ -13,7 +13,23 @@ export type CostEntry = {
     name: string;
     amount: number;
     date: string;
+    timestamp?: number;
     user: string;
+};
+
+const sortCostsDescending = (a: CostEntry, b: CostEntry) => {
+    // 1. Newest transaction date first
+    if (a.date !== b.date) {
+        return b.date.localeCompare(a.date);
+    }
+    // 2. Newest creation/update time first for same date
+    const timeA = a.timestamp || 0;
+    const timeB = b.timestamp || 0;
+    if (timeB !== timeA) {
+        return timeB - timeA;
+    }
+    // 3. Fallback ID descending
+    return b.id.localeCompare(a.id);
 };
 
 export function useAdminProjectDetailData(projectId: string) {
@@ -90,48 +106,73 @@ export function useAdminProjectDetailData(projectId: string) {
         queryFn: async () => {
             let allCosts: CostEntry[] = [];
             
-            // 1. Get Gaji Costs
-            const contractPromises = (members as ProjectMember[]).map(m => adminContractService.getUserContracts(m.user_id).catch(() => []));
-            const contractsArrays = await Promise.all(contractPromises);
-            const projectContracts = contractsArrays.flat().filter(c => c.project_id === Number(projectId));
+            // 1. Fetch members & resources concurrently inside queryFn to avoid race conditions and stale closure states
+            const [membersList, resResponse] = await Promise.all([
+                projectService.getProjectMembers(projectId).catch(() => [] as ProjectMember[]),
+                resourceService.getResourceRequests({ project_id: projectId }).catch(() => ({ data: [] }))
+            ]);
 
-            const paymentPromises = projectContracts.map(c => adminContractService.getPayments(c.id).then(pays => ({ contract: c, pays })).catch(() => null));
-            const paymentsResults = await Promise.all(paymentPromises);
+            const projectMembers: ProjectMember[] = Array.isArray(membersList) ? membersList : [];
+            const projectResources = Array.isArray(resResponse?.data) 
+                ? resResponse.data 
+                : (Array.isArray(resResponse) ? resResponse : []);
 
-            paymentsResults.forEach(res => {
-                if (!res || !res.pays.data) return;
-                const member = members.find((m: any) => m.user_id === res.contract.user_id);
-                res.pays.data.forEach((p: any) => {
-                    let d = p.paid_at || p.created_at || "";
-                    if (d.includes("T")) d = d.split("T")[0];
-                    allCosts.push({
-                        id: `gaji-${p.id}`,
-                        type: "Salary",
-                        name: p.name || res.contract.contract_type,
-                        amount: p.amount,
-                        date: d,
-                        user: member?.user?.full_name || `User #${res.contract.user_id}`
+            // 2. Get Gaji (Salary) Costs
+            if (projectMembers.length > 0) {
+                const contractPromises = projectMembers.map(m => 
+                    adminContractService.getUserContracts(m.user_id).catch(() => [])
+                );
+                const contractsArrays = await Promise.all(contractPromises);
+                const projectContracts = contractsArrays.flat().filter(c => c && c.project_id === Number(projectId));
+
+                const paymentPromises = projectContracts.map(c => 
+                    adminContractService.getPayments(c.id)
+                        .then(pays => ({ contract: c, pays }))
+                        .catch(() => null)
+                );
+                const paymentsResults = await Promise.all(paymentPromises);
+
+                paymentsResults.forEach(res => {
+                    if (!res || !res.pays?.data || !Array.isArray(res.pays.data)) return;
+                    const member = projectMembers.find(m => m.user_id === res.contract.user_id);
+                    res.pays.data.forEach((p: any) => {
+                        let d = p.paid_at || p.created_at || "";
+                        if (d.includes("T")) d = d.split("T")[0];
+                        const rawTime = p.created_at || p.paid_at || d;
+                        const timestamp = new Date(rawTime).getTime() || (d ? new Date(d).getTime() : 0);
+                        allCosts.push({
+                            id: `gaji-${p.id}`,
+                            type: "Salary",
+                            name: p.name || res.contract.contract_type,
+                            amount: p.amount,
+                            date: d,
+                            timestamp,
+                            user: member?.user?.full_name || `User #${res.contract.user_id}`
+                        });
                     });
                 });
-            });
+            }
 
-            // 2. Get Resource Costs
-            resources.filter((r: any) => r.status === "approved").forEach((r: any) => {
+            // 3. Get Resource Costs (independent of whether members exist)
+            projectResources.filter((r: any) => r.status?.toLowerCase() === "approved").forEach((r: any) => {
                 let d = r.updated_at || r.created_at || "";
                 if (d.includes("T")) d = d.split("T")[0];
+                const rawTime = r.updated_at || r.created_at || d;
+                const timestamp = new Date(rawTime).getTime() || (d ? new Date(d).getTime() : 0);
                 allCosts.push({
                     id: `res-${r.id}`,
                     type: "Resource",
                     name: r.details || r.type,
                     amount: r.amount,
                     date: d,
+                    timestamp,
                     user: r.user?.full_name || `User #${r.user_id}`
                 });
             });
 
-            return allCosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            return allCosts.sort(sortCostsDescending);
         },
-        enabled: !!projectId && members.length > 0,
+        enabled: !!projectId,
     });
 
     const isLoading = isLoadingProject || isLoadingMembers || isLoadingResources;
@@ -230,12 +271,14 @@ export function useAdminProjectDetailData(projectId: string) {
     }, [members, teamSearch]);
 
     const filteredCosts = useMemo(() => {
-        return costs.filter(c => {
-            if (costFilterType !== "all" && c.type !== costFilterType) return false;
-            if (costFilterStart && c.date < costFilterStart) return false;
-            if (costFilterEnd && c.date > costFilterEnd) return false;
-            return true;
-        });
+        return costs
+            .filter(c => {
+                if (costFilterType !== "all" && c.type !== costFilterType) return false;
+                if (costFilterStart && c.date < costFilterStart) return false;
+                if (costFilterEnd && c.date > costFilterEnd) return false;
+                return true;
+            })
+            .sort(sortCostsDescending);
     }, [costs, costFilterType, costFilterStart, costFilterEnd]);
 
     const filteredResources = useMemo(() => {

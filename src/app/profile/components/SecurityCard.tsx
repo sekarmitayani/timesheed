@@ -82,27 +82,22 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
                                     Change Password
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[440px] p-0 overflow-hidden bg-white border border-slate-100 rounded-xl shadow-xl">
+                            <DialogContent className="sm:max-w-[440px] p-0 overflow-hidden bg-white border border-[#e2e8f0] rounded-md shadow-xl gap-0">
                                 <form onSubmit={handleSubmit}>
-                                    <DialogHeader className="px-6 py-5 border-b border-slate-100 flex flex-row items-center justify-between">
-                                        <div className="flex items-center gap-2.5">
-                                            <Lock className="h-5 w-5 text-[#4B7BEC] shrink-0" />
-                                            <div className="flex flex-col">
-                                                <DialogTitle className="text-sm font-bold text-slate-800 uppercase tracking-wide leading-none">Change Password</DialogTitle>
-                                                <DialogDescription className="text-[10px] text-slate-400 font-medium leading-none mt-1">
-                                                    Enter your current and new secure password
-                                                </DialogDescription>
-                                            </div>
-                                        </div>
-                                    </DialogHeader>
-                                    <div className="p-6 space-y-4">
+                                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-12 flex flex-col gap-1">
+                                        <DialogTitle className="text-base font-bold text-[#0f172a] leading-none">Change Password</DialogTitle>
+                                        <DialogDescription className="text-xs text-slate-500 font-medium">
+                                            Enter your current and new secure password
+                                        </DialogDescription>
+                                    </div>
+                                    <div className="px-6 pt-3.5 pb-5 space-y-4">
                                         {error && (
-                                            <div className="p-3 text-xs text-red-600 bg-red-50 rounded-lg border border-red-100 font-medium">
+                                            <div className="p-3 text-xs text-red-600 bg-red-50 rounded-md border border-red-100 font-medium">
                                                 {error}
                                             </div>
                                         )}
                                         <div className="space-y-1.5">
-                                            <Label htmlFor="old_password" className="text-xs font-semibold text-slate-700">Current Password</Label>
+                                            <Label htmlFor="old_password" className="text-sm font-medium text-[#0f172a]">Current Password</Label>
                                             <div className="relative">
                                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                                                 <Input
@@ -110,13 +105,13 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
                                                     type="password"
                                                     value={formData.current_password}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, current_password: e.target.value }))}
-                                                    className="pl-9 h-9 text-xs focus-visible:ring-[#4B7BEC]"
+                                                    className="pl-9 h-9 text-xs focus-visible:ring-[#4B7BEC] rounded-md"
                                                     placeholder="Enter current password"
                                                 />
                                             </div>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <Label htmlFor="new_password" className="text-xs font-semibold text-slate-700">New Password</Label>
+                                            <Label htmlFor="new_password" className="text-sm font-medium text-[#0f172a]">New Password</Label>
                                             <div className="relative">
                                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                                                 <Input
@@ -124,13 +119,13 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
                                                     type="password"
                                                     value={formData.new_password}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, new_password: e.target.value }))}
-                                                    className="pl-9 h-9 text-xs focus-visible:ring-[#4B7BEC]"
+                                                    className="pl-9 h-9 text-xs focus-visible:ring-[#4B7BEC] rounded-md"
                                                     placeholder="Enter new password"
                                                 />
                                             </div>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <Label htmlFor="confirm_password" className="text-xs font-semibold text-slate-700">Confirm New Password</Label>
+                                            <Label htmlFor="confirm_password" className="text-sm font-medium text-[#0f172a]">Confirm New Password</Label>
                                             <div className="relative">
                                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                                                 <Input
@@ -138,17 +133,17 @@ export function SecurityCard({ onChangePassword, isChangingPassword }: SecurityC
                                                     type="password"
                                                     value={formData.confirm_password}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, confirm_password: e.target.value }))}
-                                                    className="pl-9 h-9 text-xs focus-visible:ring-[#4B7BEC]"
+                                                    className="pl-9 h-9 text-xs focus-visible:ring-[#4B7BEC] rounded-md"
                                                     placeholder="Confirm new password"
                                                 />
                                             </div>
                                         </div>
                                     </div>
-                                    <DialogFooter className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-2">
-                                        <Button type="button" variant="outline" size="sm" onClick={() => setIsOpen(false)} disabled={isChangingPassword} className="h-8 text-xs font-semibold text-slate-600">
+                                    <DialogFooter className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
+                                        <Button type="button" variant="outline" size="sm" onClick={() => setIsOpen(false)} disabled={isChangingPassword} className="h-8 text-xs font-semibold text-slate-600 rounded-md">
                                             Cancel
                                         </Button>
-                                        <Button type="submit" size="sm" disabled={isChangingPassword} className="h-8 text-xs font-bold bg-[#4B7BEC] hover:bg-[#385bb5] text-white">
+                                        <Button type="submit" size="sm" disabled={isChangingPassword} className="h-8 text-xs font-bold bg-[#4B7BEC] hover:bg-[#385bb5] text-white rounded-md">
                                             {isChangingPassword ? "Updating..." : "Update Password"}
                                         </Button>
                                     </DialogFooter>

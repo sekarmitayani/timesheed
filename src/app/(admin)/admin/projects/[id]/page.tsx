@@ -98,6 +98,7 @@ export default function AdminProjectDetailPage() {
                     {state.activeTab === "Costs" && (
                         <AdminCostsTab
                             costs={state.filteredCosts}
+                            isLoading={state.isLoadingCosts}
                             filterType={state.costFilterType}
                             setFilterType={actions.setCostFilterType}
                             filterStart={state.costFilterStart}

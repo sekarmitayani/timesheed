@@ -196,7 +196,7 @@ export function IndicatorComparisonView({
     const rawDataset = useMemo(() => {
         if (scope === "projects") {
             return projects.map((p, idx) => ({
-                id: String(p.id || `project-${idx}`),
+                id: String(p.id ? `project-${p.id}-${idx}` : `project-${idx}`),
                 name: p.name,
                 secondary: p.client_name,
                 x: (p as any)[xAxisKey] || 0,
@@ -206,7 +206,7 @@ export function IndicatorComparisonView({
         }
         if (scope === "members") {
             return members.map((m, idx) => ({
-                id: String(m.user_id ? `${m.user_id}-${m.project_name || "p"}` : `member-${idx}`),
+                id: String(m.user_id ? `member-${m.user_id}-${m.project_name || "p"}-${idx}` : `member-${idx}`),
                 name: m.full_name,
                 secondary: `${m.role} • ${m.project_name}`,
                 x: (m as any)[xAxisKey] || 0,
@@ -585,11 +585,11 @@ export function IndicatorComparisonView({
                                             {filteredEntitiesForPicker.length === 0 ? (
                                                 <div className="py-4 text-center text-xs text-slate-400">No entities match search.</div>
                                             ) : (
-                                                filteredEntitiesForPicker.map((entry) => {
+                                                filteredEntitiesForPicker.map((entry, idx) => {
                                                     const isChecked = !hasCustomSelection || selectedEntityIds.includes(entry.id);
                                                     return (
                                                         <label
-                                                            key={`entity-picker-${entry.id}`}
+                                                            key={`entity-picker-${entry.id}-${idx}`}
                                                             className="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer text-xs transition-colors"
                                                         >
                                                             <input

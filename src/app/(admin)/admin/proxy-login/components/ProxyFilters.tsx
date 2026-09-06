@@ -44,7 +44,7 @@ export function ProxyFilters({
                         <SelectItem value="employee">Employee</SelectItem>
                         <SelectItem value="projectmanager">Project Manager</SelectItem>
                         <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="finance">Management</SelectItem>
+                        <SelectItem value="management">Management</SelectItem>
                     </SelectContent>
                 </Select>
 

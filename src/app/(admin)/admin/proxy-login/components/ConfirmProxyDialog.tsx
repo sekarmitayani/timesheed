@@ -30,10 +30,10 @@ export function ConfirmProxyDialog({
             ? "bg-amber-50 text-amber-700 border-amber-200"
             : role === "projectmanager"
                 ? "bg-indigo-50 text-indigo-700 border-indigo-200"
-                : role === "finance"
+                : (role === "management" || role === "finance")
                     ? "bg-purple-50 text-purple-700 border-purple-200"
                     : "bg-blue-50 text-[#2568C1] border-blue-200";
-        const label = role === "projectmanager" ? "Project Manager" : role === "finance" ? "Management" : role;
+        const label = role === "projectmanager" ? "Project Manager" : (role === "management" || role === "finance") ? "Management" : role;
         return (
             <Badge variant="outline" className={`capitalize text-[11px] font-bold rounded-full px-2.5 py-0.5 border-none ${cls}`}>
                 {label}
@@ -43,9 +43,9 @@ export function ConfirmProxyDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden border-[#e2e8f0]">
-                <div className="bg-amber-50 border-b border-amber-200 px-6 py-5 flex items-center gap-3">
-                    <div className="p-2.5 bg-white rounded-xl shadow-sm border border-amber-200">
+            <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md shadow-xl bg-white">
+                <div className="bg-amber-50 border-b border-amber-200 px-6 py-5 pr-12 flex items-center gap-3">
+                    <div className="p-2.5 bg-white rounded-md shadow-sm border border-amber-200">
                         <Shield className="h-5 w-5 text-amber-600" />
                     </div>
                     <div>
@@ -56,8 +56,8 @@ export function ConfirmProxyDialog({
                     </div>
                 </div>
 
-                <div className="px-6 py-5 space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <div className="px-6 pt-3.5 pb-5 space-y-4">
+                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-md border border-slate-200">
                         <Avatar className="h-10 w-10 border border-[#e2e8f0] shadow-sm">
                             <AvatarFallback className="text-xs font-semibold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                 {getInitials(name)}
@@ -76,12 +76,12 @@ export function ConfirmProxyDialog({
                     </p>
                 </div>
 
-                <DialogFooter className="px-6 py-4 border-t border-slate-100 bg-slate-50/50">
-                    <Button variant="ghost" onClick={() => onOpenChange(false)}>
+                <DialogFooter className="px-6 py-3.5 border-t border-slate-100 bg-slate-50/50">
+                    <Button variant="ghost" onClick={() => onOpenChange(false)} className="rounded-md">
                         Cancel
                     </Button>
                     <Button
-                        className="gap-1.5 bg-[#2568C1] hover:bg-[#1a4f99] text-white shadow-sm h-10 px-6 transition-all duration-200"
+                        className="gap-1.5 bg-[#2568C1] hover:bg-[#1a4f99] text-white shadow-sm h-9 px-5 rounded-md transition-all duration-200"
                         onClick={onConfirm}
                     >
                         <LogIn className="h-4 w-4" />

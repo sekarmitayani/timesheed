@@ -72,7 +72,7 @@ export function useProxyLoginData() {
                 // Route based on role
                 const route = targetUser.role === "projectmanager" 
                     ? "/pm/dashboard" 
-                    : targetUser.role === "finance" 
+                    : (targetUser.role === "management" || targetUser.role === "finance")
                         ? "/management/dashboard" 
                         : `/${targetUser.role}/dashboard`;
                 

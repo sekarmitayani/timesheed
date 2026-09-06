@@ -94,7 +94,10 @@ export function TaskDetailDialog({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[1100px] p-0 gap-0 overflow-hidden border-none shadow-2xl rounded-md max-h-[90vh] flex flex-col bg-white">
+            <DialogContent 
+                showCloseButton={false}
+                className="sm:max-w-[1100px] p-0 gap-0 overflow-hidden border-none shadow-2xl rounded-md max-h-[90vh] flex flex-col bg-white"
+            >
                 <DialogDescription className="sr-only">Detailed information about the task, including description, timesheets, comments, and activity history.</DialogDescription>
                 
                 <div className="flex items-center justify-between px-8 py-4 border-b border-slate-100 bg-white z-30 shrink-0">

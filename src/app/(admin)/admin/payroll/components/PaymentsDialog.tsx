@@ -125,11 +125,11 @@ export function PaymentsDialog({
     return (
         <>
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[800px] p-0 gap-0 overflow-hidden border-[#e2e8f0] bg-white">
-                <div className="bg-gradient-to-r from-emerald-50 to-white border-b border-emerald-100 px-6 py-5">
-                    <DialogTitle className="text-lg text-[#0f172a] mb-1">Ledger Distribution Window</DialogTitle>
-                    <DialogDescription className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                        User: <span className="text-slate-700">{selectedContract?.full_name || "..."}</span>
+            <DialogContent className="sm:max-w-[800px] p-0 gap-0 overflow-hidden border-[#e2e8f0] bg-white rounded-md shadow-xl">
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 pr-12 py-4 flex flex-col gap-1">
+                    <DialogTitle className="text-base text-[#0f172a] font-bold">Ledger Distribution Window</DialogTitle>
+                    <DialogDescription className="text-xs text-slate-500">
+                        User: <span className="font-semibold text-slate-700">{selectedContract?.full_name || "..."}</span>
                     </DialogDescription>
                 </div>
 
@@ -180,7 +180,7 @@ export function PaymentsDialog({
                             <div className="pt-2">
                                 <button
                                     onClick={() => setShowBreakdown(!showBreakdown)}
-                                    className="w-full flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors shadow-sm"
+                                    className="w-full flex items-center justify-between p-2.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors shadow-sm"
                                 >
                                     <div className="flex items-center gap-2">
                                         <Calendar className="h-3.5 w-3.5 text-[#2568C1]" />
@@ -190,7 +190,7 @@ export function PaymentsDialog({
                                 </button>
 
                                 {showBreakdown && (
-                                    <div className="mt-2 rounded-lg border border-slate-200 bg-white overflow-hidden animate-in fade-in slide-in-from-top-1 duration-200">
+                                    <div className="mt-2 rounded-md border border-slate-200 bg-white overflow-hidden animate-in fade-in slide-in-from-top-1 duration-200">
                                         <table className="w-full text-left border-collapse">
                                             <thead>
                                                 <tr className="bg-slate-50/50 border-b border-slate-100">
@@ -332,20 +332,23 @@ export function PaymentsDialog({
 
         {/* Overpayment Warning Confirmation Modal */}
         <Dialog open={overpayConfirmOpen} onOpenChange={setOverpayConfirmOpen}>
-            <DialogContent className="sm:max-w-md bg-white border-[#e2e8f0]">
-                <DialogHeader>
-                    <div className="mx-auto w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-2">
-                        <AlertTriangle className="h-6 w-6 text-amber-600" />
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md shadow-xl bg-white">
+                <div className="bg-amber-50/70 border-b border-amber-200/60 px-6 pr-12 py-4 flex items-center gap-3.5">
+                    <div className="p-2 bg-white rounded-md shadow-sm border border-amber-200 text-amber-600">
+                        <AlertTriangle className="h-5 w-5" />
                     </div>
-                    <DialogTitle className="text-center text-lg font-bold text-slate-800">
-                        Disbursement Exceeds Required Amount
-                    </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-3 py-2 text-sm text-slate-600">
-                    <p className="text-center text-xs text-slate-500">
+                    <div>
+                        <DialogTitle className="text-base font-semibold text-[#0f172a]">
+                            Disbursement Exceeds Required Amount
+                        </DialogTitle>
+                        <p className="text-xs text-amber-700/80">Excess payment warning</p>
+                    </div>
+                </div>
+                <div className="px-6 pt-3.5 pb-5 space-y-3 text-sm text-slate-600">
+                    <p className="text-xs text-slate-500">
                         The entered amount exceeds the remaining unpaid ledger for this contract. Please review the financial breakdown below:
                     </p>
-                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2 text-xs">
+                    <div className="p-3 bg-slate-50 rounded-md border border-slate-200 space-y-2 text-xs">
                         <div className="flex justify-between">
                             <span className="text-slate-500 font-medium">Contract Target:</span>
                             <span className="font-bold text-slate-700">Rp {formatNumber(targetAmount)}</span>
@@ -367,15 +370,15 @@ export function PaymentsDialog({
                             <span>+ Rp {formatNumber(excessAmount)}</span>
                         </div>
                     </div>
-                    <p className="text-center text-xs font-semibold text-slate-700">
+                    <p className="text-xs font-semibold text-slate-700">
                         Are you sure you want to proceed with this disbursement?
                     </p>
                 </div>
-                <DialogFooter className="sm:justify-center gap-2 pt-2">
-                    <Button variant="outline" onClick={() => setOverpayConfirmOpen(false)} className="border-slate-200">
+                <DialogFooter className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
+                    <Button variant="outline" onClick={() => setOverpayConfirmOpen(false)} className="rounded-md">
                         Cancel
                     </Button>
-                    <Button onClick={handleOverpayConfirm} className="bg-amber-600 hover:bg-amber-700 text-white min-w-[140px]">
+                    <Button onClick={handleOverpayConfirm} className="bg-amber-600 hover:bg-amber-700 text-white min-w-[140px] rounded-md">
                         Confirm & Disburse
                     </Button>
                 </DialogFooter>
@@ -384,21 +387,24 @@ export function PaymentsDialog({
 
         {/* Delete Confirmation Modal */}
         <Dialog open={deleteConfirmId !== null} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
-            <DialogContent className="sm:max-w-md bg-white border-[#e2e8f0]">
-                <DialogHeader>
-                    <div className="mx-auto w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                        <AlertTriangle className="h-6 w-6 text-red-600" />
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md shadow-xl bg-white">
+                <div className="bg-red-50/60 border-b border-red-100 px-6 pr-12 py-4 flex items-center gap-3.5">
+                    <div className="p-2 bg-white rounded-md shadow-sm border border-red-200 text-red-600">
+                        <AlertTriangle className="h-5 w-5" />
                     </div>
-                    <DialogTitle className="text-center text-xl font-bold text-slate-800">Delete Ledger Entry?</DialogTitle>
-                </DialogHeader>
-                <div className="text-center text-sm text-slate-500 py-2">
-                    This will permanently remove the payment record. 
-                    This action represents data destruction and cannot be undone.
+                    <div>
+                        <DialogTitle className="text-base font-semibold text-[#0f172a]">Delete Ledger Entry?</DialogTitle>
+                        <p className="text-xs text-red-600/80">Permanent data destruction</p>
+                    </div>
                 </div>
-                <DialogFooter className="sm:justify-center gap-2 pt-4">
-                    <Button variant="outline" onClick={() => setDeleteConfirmId(null)} className="border-slate-200">Cancel</Button>
-                    <Button variant="destructive" onClick={handleDeleteConfirm} className="bg-red-400/90 hover:bg-red-500 min-w-[120px]">
-                        Delete Identity
+                <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
+                    This will permanently remove the payment record. 
+                    This action represents permanent data destruction and cannot be undone.
+                </div>
+                <DialogFooter className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
+                    <Button variant="outline" onClick={() => setDeleteConfirmId(null)} className="rounded-md">Cancel</Button>
+                    <Button variant="destructive" onClick={handleDeleteConfirm} className="min-w-[120px] rounded-md">
+                        Delete Record
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -406,19 +412,22 @@ export function PaymentsDialog({
 
         {/* Edit Confirmation Modal */}
         <Dialog open={editConfirmOpen} onOpenChange={setEditConfirmOpen}>
-            <DialogContent className="sm:max-w-md bg-white border-[#e2e8f0]">
-                <DialogHeader>
-                    <div className="mx-auto w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
-                        <AlertTriangle className="h-6 w-6 text-amber-600" />
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md shadow-xl bg-white">
+                <div className="bg-amber-50/70 border-b border-amber-200/60 px-6 pr-12 py-4 flex items-center gap-3.5">
+                    <div className="p-2 bg-white rounded-md shadow-sm border border-amber-200 text-amber-600">
+                        <AlertTriangle className="h-5 w-5" />
                     </div>
-                    <DialogTitle className="text-center text-xl font-bold text-slate-800">Confirm Changes?</DialogTitle>
-                </DialogHeader>
-                <div className="text-center text-sm text-slate-500 py-2">
+                    <div>
+                        <DialogTitle className="text-base font-semibold text-[#0f172a]">Confirm Changes?</DialogTitle>
+                        <p className="text-xs text-amber-700/80">Update payment transaction</p>
+                    </div>
+                </div>
+                <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
                     Are you sure you want to commit these changes to the existing payment record?
                 </div>
-                <DialogFooter className="sm:justify-center gap-2 pt-4">
-                    <Button variant="outline" onClick={() => setEditConfirmOpen(false)} className="border-slate-200">Cancel</Button>
-                    <Button onClick={handleSaveConfirm} className="bg-amber-500 hover:bg-amber-600 min-w-[120px]">
+                <DialogFooter className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
+                    <Button variant="outline" onClick={() => setEditConfirmOpen(false)} className="rounded-md">Cancel</Button>
+                    <Button onClick={handleSaveConfirm} className="bg-amber-500 hover:bg-amber-600 min-w-[120px] rounded-md text-white">
                         Commit Changes
                     </Button>
                 </DialogFooter>

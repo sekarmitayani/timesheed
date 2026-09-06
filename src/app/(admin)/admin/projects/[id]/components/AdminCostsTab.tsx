@@ -4,11 +4,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { CustomDateRangePicker } from "@/app/(pm)/pm/approvals/components/CustomDateRangePicker";
+import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { CostEntry } from "../hooks/useAdminProjectDetailData";
+import { Loader2 } from "lucide-react";
+import { format } from "date-fns";
 
 interface AdminCostsTabProps {
     costs: CostEntry[];
+    isLoading?: boolean;
     filterType: string;
     setFilterType: (v: any) => void;
     filterStart: string;
@@ -17,8 +20,25 @@ interface AdminCostsTabProps {
     setFilterEnd: (v: string) => void;
 }
 
+const formatDate = (dateStr: string) => {
+    if (!dateStr) return "-";
+    const cleanDate = dateStr.split("T")[0];
+    const parts = cleanDate.split("-");
+    if (parts.length === 3) {
+        const [year, month, day] = parts;
+        return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year.slice(-2)}`;
+    }
+    try {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return format(d, "dd/MM/yy");
+    } catch {
+        return dateStr;
+    }
+};
+
 export function AdminCostsTab({
-    costs, filterType, setFilterType, filterStart, setFilterStart, filterEnd, setFilterEnd
+    costs, isLoading, filterType, setFilterType, filterStart, setFilterStart, filterEnd, setFilterEnd
 }: AdminCostsTabProps) {
     const total = costs.reduce((sum, c) => sum + c.amount, 0);
 
@@ -66,7 +86,13 @@ export function AdminCostsTab({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {costs.length === 0 ? (
+                            {isLoading ? (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="h-48 text-center">
+                                        <Loader2 className="h-8 w-8 animate-spin mx-auto text-[#2568C1]" />
+                                    </TableCell>
+                                </TableRow>
+                            ) : costs.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={6} className="h-32 text-slate-400 text-center">
                                         No records found for the selected filters.
@@ -80,7 +106,7 @@ export function AdminCostsTab({
                                                 {index + 1}
                                             </TableCell>
                                             <TableCell>
-                                                <span className="text-sm font-semibold text-slate-700">{c.date}</span>
+                                                <span className="text-sm font-semibold text-slate-700">{formatDate(c.date)}</span>
                                             </TableCell>
                                             <TableCell>
                                                 <Badge variant="outline" className={`capitalize text-[10px] font-bold px-2.5 py-0.5 tracking-wider w-fit rounded-full border-none 

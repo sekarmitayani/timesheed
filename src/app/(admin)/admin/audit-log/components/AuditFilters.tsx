@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search } from "lucide-react";
-import { CustomDateRangePicker } from "@/app/(pm)/pm/approvals/components/CustomDateRangePicker";
+import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 
 interface AuditFiltersProps {
     search: string;

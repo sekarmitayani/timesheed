@@ -43,12 +43,12 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
         <>
             {/* EDIT PROJECT DIALOG */}
             <Dialog open={editOpen} onOpenChange={o => !isSaving && actions.setEditOpen(o)}>
-                <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden border-[#e2e8f0]">
-                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
+                <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-12">
                         <DialogTitle className="text-lg font-bold text-slate-900">Edit Project Information</DialogTitle>
-                        <DialogDescription className="text-xs">Update project details and budget thresholds.</DialogDescription>
+                        <DialogDescription className="text-xs text-slate-500 mt-0.5">Update project details and budget thresholds.</DialogDescription>
                     </div>
-                    <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+                    <div className="px-6 pt-3.5 pb-5 space-y-4 max-h-[70vh] overflow-y-auto">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Project Name <span className="text-red-500">*</span></label>
@@ -115,12 +115,12 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
 
             {/* RESOURCE CREATE DIALOG */}
             <Dialog open={resCreateOpen} onOpenChange={actions.setResCreateOpen}>
-                <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden border-[#e2e8f0]">
-                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
+                <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-12">
                         <DialogTitle className="text-lg font-bold text-slate-900">Request Resource</DialogTitle>
-                        <DialogDescription className="text-xs">Submit a new resource request for this project.</DialogDescription>
+                        <DialogDescription className="text-xs text-slate-500 mt-0.5">Submit a new resource request for this project.</DialogDescription>
                     </div>
-                    <div className="px-6 py-5 space-y-4">
+                    <div className="px-6 pt-3.5 pb-5 space-y-4">
                         <div className="space-y-1.5">
                             <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Type</label>
                             <Select value={resCreateForm.type} onValueChange={v => actions.setResCreateForm({...resCreateForm, type: v})}>
@@ -136,7 +136,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                         <div className="space-y-1.5">
                             <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Details <span className="text-red-500">*</span></label>
                             <Textarea 
-                                className="w-full min-h-[120px] p-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-[#2568C1]/20 outline-none" 
+                                className="w-full min-h-[120px] p-3 rounded-md border border-slate-200 text-sm focus:ring-2 focus:ring-[#2568C1]/20 outline-none" 
                                 placeholder="Describe the resource needed..."
                                 value={resCreateForm.details} 
                                 onChange={e => actions.setResCreateForm({...resCreateForm, details: e.target.value})} 
@@ -160,12 +160,12 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
 
             {/* RESOURCE DETAIL & EDIT DIALOG */}
             <Dialog open={resDetailOpen} onOpenChange={o => !isSaving && actions.setResDetailOpen(o)}>
-                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0]">
-                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4">
+                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-12">
                         <DialogTitle className="text-lg font-bold text-slate-900">Resource Request Details</DialogTitle>
-                        <DialogDescription className="text-xs">Detailed information and management for this request.</DialogDescription>
+                        <DialogDescription className="text-xs text-slate-500 mt-0.5">Detailed information and management for this request.</DialogDescription>
                     </div>
-                    <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+                    <div className="px-6 pt-3.5 pb-5 space-y-4 max-h-[70vh] overflow-y-auto">
                         {resEditMode ? (
                             <div className="space-y-4 animate-in fade-in duration-300">
                                 <div className="space-y-1.5">
@@ -212,7 +212,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                                     </div>
                                     <div className="space-y-2">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Details</p>
-                                        <p className="text-sm text-slate-700 font-bold bg-slate-50 p-4 rounded-xl border border-slate-100 whitespace-pre-wrap leading-relaxed">{selectedRes.details}</p>
+                                        <p className="text-sm text-slate-700 font-bold bg-slate-50 p-4 rounded-md border border-slate-100 whitespace-pre-wrap leading-relaxed">{selectedRes.details}</p>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1">
@@ -252,9 +252,9 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
 
             {/* ASSIGN MEMBER DIALOG */}
             <Dialog open={assignOpen} onOpenChange={o => !isSaving && actions.setAssignOpen(o)}>
-                <DialogContent className="sm:max-w-[460px] max-h-[90vh] flex flex-col p-0 overflow-hidden border-[#e2e8f0]">
+                <DialogContent className="sm:max-w-[460px] max-h-[90vh] flex flex-col p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md">
                     {/* Modal Header */}
-                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 shrink-0">
+                    <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-12 shrink-0">
                         <DialogTitle className="text-lg font-bold text-[#0f172a]">
                             Assign Member
                         </DialogTitle>
@@ -264,7 +264,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                     </div>
 
                     {/* Modal Body */}
-                    <div className="px-6 py-4 space-y-3.5 overflow-y-auto flex-1 text-sm">
+                    <div className="px-6 pt-3.5 pb-4 space-y-3.5 overflow-y-auto flex-1 text-sm">
                         {/* User Selection */}
                         <div className="space-y-1.5">
                             <label className="text-xs font-semibold uppercase tracking-wider text-slate-700">
@@ -514,15 +514,22 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
 
             {/* DELETE RESOURCE CONFIRMATION */}
             <Dialog open={deleteConfirmOpen} onOpenChange={actions.setDeleteConfirmOpen}>
-                <DialogContent className="sm:max-w-[400px]">
-                    <div className="pt-4 text-center">
-                        <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4"><WalletCards className="h-6 w-6" /></div>
-                        <DialogTitle className="text-xl font-bold text-slate-900">Confirm Delete</DialogTitle>
-                        <DialogDescription className="mt-2 text-slate-500">Are you sure you want to delete this resource request? This action cannot be undone.</DialogDescription>
+                <DialogContent className="sm:max-w-md p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md shadow-xl bg-white">
+                    <div className="bg-red-50/60 border-b border-red-100 px-6 py-4 pr-12 flex items-center gap-3.5">
+                        <div className="p-2 bg-white rounded-md shadow-sm border border-red-200 text-red-600">
+                            <AlertTriangle className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <DialogTitle className="text-base font-semibold text-[#0f172a]">Delete Resource Request?</DialogTitle>
+                            <p className="text-xs text-red-600/80">Permanent action</p>
+                        </div>
                     </div>
-                    <div className="flex gap-3 mt-6">
-                        <Button variant="outline" className="flex-1" onClick={() => actions.setDeleteConfirmOpen(false)} disabled={isSaving}>Cancel</Button>
-                        <Button variant="destructive" className="flex-1 font-bold" onClick={actions.handleDeleteRes} disabled={isSaving}>
+                    <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
+                        Are you sure you want to delete this resource request? This action cannot be undone.
+                    </div>
+                    <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
+                        <Button variant="outline" className="rounded-md" onClick={() => actions.setDeleteConfirmOpen(false)} disabled={isSaving}>Cancel</Button>
+                        <Button variant="destructive" className="rounded-md min-w-[110px]" onClick={actions.handleDeleteRes} disabled={isSaving}>
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete Request"}
                         </Button>
                     </div>
@@ -531,15 +538,24 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
 
             {/* ZERO AMOUNT CONFIRMATION */}
             <Dialog open={zeroConfirmOpen} onOpenChange={actions.setZeroConfirmOpen}>
-                <DialogContent className="sm:max-w-[420px]">
-                    <div className="pt-4 text-center">
-                        <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4"><WalletCards className="h-6 w-6" /></div>
-                        <DialogTitle className="text-xl font-bold text-slate-900">Confirm Zero Amount</DialogTitle>
-                        <DialogDescription className="mt-2 text-slate-500">You are setting the amount to 0 for a non-manpower resource. Proceed?</DialogDescription>
+                <DialogContent className="sm:max-w-md p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md shadow-xl bg-white">
+                    <div className="bg-amber-50/60 border-b border-amber-100 px-6 py-4 pr-12 flex items-center gap-3.5">
+                        <div className="p-2 bg-white rounded-md shadow-sm border border-amber-200 text-amber-600">
+                            <WalletCards className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <DialogTitle className="text-base font-semibold text-[#0f172a]">Confirm Zero Amount</DialogTitle>
+                            <p className="text-xs text-amber-600/80">Action confirmation</p>
+                        </div>
                     </div>
-                    <div className="flex gap-3 mt-6">
-                        <Button variant="outline" className="flex-1" onClick={() => actions.setZeroConfirmOpen(false)} disabled={isSaving}>Cancel</Button>
-                        <Button className="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold" onClick={() => actions.handleSaveResEdit(true)} disabled={isSaving}>Confirm & Save</Button>
+                    <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
+                        You are setting the amount to 0 for a non-manpower resource. Proceed?
+                    </div>
+                    <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
+                        <Button variant="outline" className="rounded-md" onClick={() => actions.setZeroConfirmOpen(false)} disabled={isSaving}>Cancel</Button>
+                        <Button className="rounded-md bg-amber-600 hover:bg-amber-700 text-white min-w-[110px]" onClick={() => actions.handleSaveResEdit(true)} disabled={isSaving}>
+                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm & Save"}
+                        </Button>
                     </div>
                 </DialogContent>
             </Dialog>

@@ -27,15 +27,15 @@ export function DayTasksDialog({
 }: DayTasksDialogProps) {
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[380px] rounded-md p-0 overflow-hidden border-none shadow-2xl bg-white text-slate-900">
+            <DialogContent className="sm:max-w-[380px] rounded-md p-0 overflow-hidden border border-[#e2e8f0] shadow-xl bg-white text-slate-900 gap-0">
                 <DialogDescription className="sr-only">List of tasks for the selected day.</DialogDescription>
-                <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+                <div className="px-6 pr-12 py-4 border-b border-[#e2e8f0] bg-[#f8fafc]">
                     <DialogTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
                         <CalendarDays className="h-4 w-4 text-[#4B7BEC]" /> 
                         {selectedDate && format(selectedDate, "MMMM d, yyyy")}
                     </DialogTitle>
                 </div>
-                <div className="p-4 max-h-[350px] overflow-y-auto space-y-2.5">
+                <div className="px-6 pt-3.5 pb-5 max-h-[350px] overflow-y-auto space-y-2.5">
                     {selectedDate && dayTasks.length === 0 ? (
                         <p className="text-center py-12 text-slate-300 font-bold text-[10px] uppercase">No Assignments</p>
                     ) : (

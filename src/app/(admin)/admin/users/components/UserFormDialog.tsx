@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CustomDatePicker } from "@/components/ui/custom-date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, UserCog, ShieldX, FolderKanban } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Role } from "@/lib/types";
 import { CreateContractPayload } from "@/lib/services/admin-contracts";
@@ -28,19 +28,19 @@ export function UserFormDialog({
 }: UserFormDialogProps) {
     return (
         <Dialog open={open} onOpenChange={(open) => !isSaving && onOpenChange(open)}>
-            <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden border-[#e2e8f0]">
-                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 flex flex-col gap-1">
+            <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md">
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 pr-12 py-4 flex flex-col gap-1">
                     <DialogTitle className="text-xl text-[#0f172a]">{editId ? "Edit User Profile" : "Register New User"}</DialogTitle>
                     <DialogDescription className="text-sm">
                         {editId ? "Update account status, access role, and credentials." : "Create a new employee or admin account for the system."}
                     </DialogDescription>
                 </div>
 
-                <div className="px-6 py-6 space-y-6 max-h-[60vh] overflow-y-auto">
+                <div className="px-6 pt-3.5 pb-6 space-y-6 max-h-[60vh] overflow-y-auto">
                     {/* Account Basics Section */}
                     <div className="space-y-4">
-                        <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                            <UserCog className="h-3.5 w-3.5" /> Account Details
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                            Account Details
                         </h4>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5 flex-1 col-span-2 sm:col-span-1">
@@ -64,19 +64,19 @@ export function UserFormDialog({
 
                     {/* Role & Access Section */}
                     <div className="space-y-4 pt-2 border-t border-[#e2e8f0]">
-                        <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                            <ShieldX className="h-3.5 w-3.5" /> Access & Employment
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                            Access & Employment
                         </h4>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-sm font-medium text-[#0f172a]">System Role <span className="text-red-500">*</span></label>
-                                <Select value={form.role} onValueChange={(v: Role) => setForm({ ...form, role: v })} disabled={isSaving}>
+                                <Select value={form.role === "finance" ? "management" : form.role} onValueChange={(v: Role) => setForm({ ...form, role: v })} disabled={isSaving}>
                                     <SelectTrigger className="bg-white"><SelectValue placeholder="Select role" /></SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="employee">Employee</SelectItem>
                                         <SelectItem value="projectmanager">Project Manager</SelectItem>
                                         <SelectItem value="admin">Admin</SelectItem>
-                                        <SelectItem value="finance">Management</SelectItem>
+                                        <SelectItem value="management">Management</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -126,7 +126,7 @@ export function UserFormDialog({
                     </div>
 
                     {editId && (
-                        <div className="flex items-center justify-between p-4 rounded-lg border border-amber-200 bg-amber-50 mt-4">
+                        <div className="flex items-center justify-between p-4 rounded-md border border-amber-200 bg-amber-50 mt-4">
                             <div className="space-y-0.5">
                                 <h5 className="text-sm font-medium text-amber-800">Account Status</h5>
                                 <p className="text-xs text-amber-600">Disabling an account revokes all access immediately.</p>
@@ -148,8 +148,8 @@ export function UserFormDialog({
 
                     {!editId && form.role !== 'admin' && (
                         <div className="space-y-4 pt-4 border-t border-[#e2e8f0]">
-                            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                                <FolderKanban className="h-3.5 w-3.5" /> Set Initial Contract (Optional)
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                Set Initial Contract (Optional)
                             </h4>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5 flex-1 col-span-2 sm:col-span-1">

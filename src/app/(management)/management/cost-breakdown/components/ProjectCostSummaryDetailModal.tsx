@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { X, Calendar, User, FileText, Loader2, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Calendar, User, Loader2, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { ProjectCostItem } from "@/lib/services/management-service";
 import { useQuery } from "@tanstack/react-query";
 import { projectService } from "@/lib/services/project-service";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { CustomDateRangePicker } from "@/app/(pm)/pm/approvals/components/CustomDateRangePicker";
+import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { Badge } from "@/components/ui/badge";
 
 interface ProjectCostSummaryDetailModalProps {
@@ -74,41 +74,38 @@ export function ProjectCostSummaryDetailModal({ project, open, onOpenChange }: P
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-3xl md:max-w-5xl lg:max-w-6xl max-h-[90vh] overflow-y-auto bg-white p-0 gap-0 border-none shadow-xl rounded-xl flex flex-col">
-                <DialogHeader className="p-6 pb-4 sticky top-0 bg-white/95 backdrop-blur z-10 border-b border-slate-100 flex flex-row items-center justify-between shrink-0">
-                    <DialogTitle className="text-xl font-bold flex items-center gap-2 text-slate-800">
-                        <FileText className="w-5 h-5 text-[#4B7BEC]" />
-                        Project Cost Summary Detail
-                    </DialogTitle>
-                    <button 
-                        onClick={() => onOpenChange(false)}
-                        className="p-2 text-slate-500 focus:outline-none"
-                    >
-                        <X className="w-5 h-5" />
-                        <span className="sr-only">Close</span>
-                    </button>
-                </DialogHeader>
+            <DialogContent className="sm:max-w-3xl md:max-w-5xl lg:max-w-6xl max-h-[90vh] overflow-y-auto bg-white p-0 gap-0 border-[#e2e8f0] shadow-xl rounded-md flex flex-col">
+                <div className="px-6 pr-12 py-4 sticky top-0 bg-[#f8fafc] z-10 border-b border-[#e2e8f0] flex flex-row items-center justify-between shrink-0">
+                    <div className="flex flex-col gap-0.5 min-w-0">
+                        <DialogTitle className="text-base font-bold text-slate-800">
+                            Project Cost Summary Detail
+                        </DialogTitle>
+                        <DialogDescription className="text-xs text-slate-500 font-medium">
+                            Comprehensive financial breakdown, revenue, and itemized cost logs
+                        </DialogDescription>
+                    </div>
+                </div>
 
                 {!project ? (
                     <div className="p-12 flex items-center justify-center text-slate-500">
                         <Loader2 className="w-8 h-8 animate-spin" />
                     </div>
                 ) : (
-                    <div className="p-6 space-y-6 bg-[#F8FAFC]">
+                    <div className="px-6 pt-3.5 pb-6 space-y-5 bg-[#F8FAFC]">
                         {/* 1. Project Info */}
-                        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="bg-white p-4 rounded-md border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
                             <div>
-                                <h2 className="text-xl font-bold text-slate-900 mb-1">{project.project_name}</h2>
-                                <div className="flex items-center gap-3 text-sm text-slate-500 font-medium">
-                                    <Badge variant="outline" className={`uppercase tracking-wider text-[11px] font-bold px-2 py-0.5 rounded-sm border-none ${getStatusBadge(project.status)}`}>
+                                <h2 className="text-lg font-bold text-slate-900 mb-1">{project.project_name}</h2>
+                                <div className="flex items-center gap-3 text-xs text-slate-500 font-medium">
+                                    <Badge variant="outline" className={`uppercase tracking-wider text-[10px] font-bold px-2 py-0.5 rounded-sm border-none ${getStatusBadge(project.status)}`}>
                                         {project.status.replace(/[_-]/g, ' ')}
                                     </Badge>
                                     {isLoadingDetails ? (
                                         <Loader2 className="w-3 h-3 animate-spin" />
                                     ) : (
                                         <>
-                                            <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" /> {pmName}</span>
-                                            <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> Created At: {projectDetails?.created_at ? new Date(projectDetails.created_at).toLocaleDateString() : '-'}</span>
+                                            <span className="flex items-center gap-1"><User className="w-3 h-3" /> {pmName}</span>
+                                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Created At: {projectDetails?.created_at ? new Date(projectDetails.created_at).toLocaleDateString() : '-'}</span>
                                         </>
                                     )}
                                 </div>
@@ -116,23 +113,23 @@ export function ProjectCostSummaryDetailModal({ project, open, onOpenChange }: P
                         </div>
 
                         {/* 2. KPI Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-center">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                            <div className="bg-white p-3.5 rounded-md border border-slate-200 shadow-sm flex flex-col justify-center">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Contract / Revenue</span>
-                                <span className="text-xl font-black text-slate-800">{projectDetails?.budget_revenue ? fmtCurrencyShort(projectDetails.budget_revenue) : '-'}</span>
+                                <span className="text-lg font-black text-slate-800">{projectDetails?.budget_revenue ? fmtCurrencyShort(projectDetails.budget_revenue) : '-'}</span>
                             </div>
-                            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-center">
+                            <div className="bg-white p-3.5 rounded-md border border-slate-200 shadow-sm flex flex-col justify-center">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Cost</span>
-                                <span className="text-xl font-black text-[#4B7BEC]">{fmtCurrencyShort(project.total_cost)}</span>
+                                <span className="text-lg font-black text-[#4B7BEC]">{fmtCurrencyShort(project.total_cost)}</span>
                             </div>
-                            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-center">
+                            <div className="bg-white p-3.5 rounded-md border border-slate-200 shadow-sm flex flex-col justify-center">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Cost: Salary</span>
-                                <span className="text-xl font-black text-slate-800">{fmtCurrencyShort(salaryCost)}</span>
+                                <span className="text-lg font-black text-slate-800">{fmtCurrencyShort(salaryCost)}</span>
                                 <span className="text-xs font-bold text-slate-400 mt-0.5">({project.salary_percent}%)</span>
                             </div>
-                            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-center">
+                            <div className="bg-white p-3.5 rounded-md border border-slate-200 shadow-sm flex flex-col justify-center">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Cost: Resources</span>
-                                <span className="text-xl font-black text-amber-600">{fmtCurrencyShort(resourceCost)}</span>
+                                <span className="text-lg font-black text-amber-600">{fmtCurrencyShort(resourceCost)}</span>
                                 <span className="text-xs font-bold text-amber-700/60 mt-0.5">({project.resource_percent}%)</span>
                             </div>
                         </div>
@@ -141,7 +138,7 @@ export function ProjectCostSummaryDetailModal({ project, open, onOpenChange }: P
                         <AdminAIForecastSection projectId={project.project_id.toString()} className="mt-0" compact={true} />
 
                         {/* 4. Cost Logs Table */}
-                        <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
+                        <div className="bg-white rounded-md border border-slate-200 shadow-sm flex flex-col">
                             <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
                                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Cost Details</h3>
                                 <div className="flex gap-2 w-full sm:w-auto">

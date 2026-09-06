@@ -157,14 +157,14 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
 
     return (
         <Dialog open={open} onOpenChange={handleClose}>
-            <DialogContent className="sm:max-w-[850px] w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0]">
+            <DialogContent className="sm:max-w-[850px] w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0] rounded-md shadow-xl bg-white">
                 {/* Modal Header */}
-                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 flex items-center justify-between">
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-12 flex items-center justify-between">
                     <div>
-                        <DialogTitle className="text-xl text-[#0f172a]">
+                        <DialogTitle className="text-base font-bold text-slate-900">
                             Import Projects (Excel / CSV)
                         </DialogTitle>
-                        <DialogDescription className="text-sm mt-0.5">
+                        <DialogDescription className="text-xs text-slate-500 mt-0.5">
                             Bulk import and migrate project portfolios and financial budgets
                         </DialogDescription>
                     </div>
@@ -186,14 +186,14 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                 </div>
 
                 {/* Modal Body */}
-                <div className="p-6">
+                <div className="px-6 pt-3.5 pb-5">
                     {/* ========================================================= */}
                     {/* STEP 1: UPLOAD & TEMPLATE DOWNLOAD */}
                     {/* ========================================================= */}
                     {step === "upload" && (
                         <div className="space-y-5">
                             {/* Download Template Banner */}
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-md bg-[#f8fafc] border border-[#e2e8f0]">
                                 <div className="space-y-1">
                                     <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                                         <Info className="h-3.5 w-3.5 text-[#2568C1]" /> Official Project Template
@@ -219,7 +219,7 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                                 onDragOver={(e) => e.preventDefault()}
                                 onDrop={handleDrop}
                                 onClick={() => fileInputRef.current?.click()}
-                                className="border-2 border-dashed border-[#cbd5e1] hover:border-[#2568C1] hover:bg-[#2568C1]/5 transition-all duration-200 rounded-lg p-8 text-center cursor-pointer flex flex-col items-center justify-center gap-3"
+                                className="border-2 border-dashed border-[#cbd5e1] hover:border-[#2568C1] hover:bg-[#2568C1]/5 transition-all duration-200 rounded-md p-8 text-center cursor-pointer flex flex-col items-center justify-center gap-3"
                             >
                                 <input
                                     type="file"
@@ -228,7 +228,7 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                                     accept=".xlsx,.xls,.csv"
                                     className="hidden"
                                 />
-                                <div className="h-12 w-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:text-[#2568C1]">
+                                <div className="h-12 w-12 rounded-md bg-slate-100 flex items-center justify-center text-slate-500 group-hover:text-[#2568C1]">
                                     <Upload className="h-6 w-6 text-[#2568C1]" />
                                 </div>
                                 <div className="space-y-1">
@@ -242,7 +242,7 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                             </div>
 
                             {/* Prerequisite & Validation Notice */}
-                            <div className="flex items-start gap-2.5 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-900 text-xs">
+                            <div className="flex items-start gap-2.5 p-3 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-900 text-xs">
                                 <Info className="h-4 w-4 shrink-0 text-[#2568C1] mt-0.5" />
                                 <div>
                                     <span className="font-semibold text-[#1e56a6]">Project Manager Assignment Note:</span>
@@ -260,7 +260,7 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                     {step === "preview" && (
                         <div className="space-y-4">
                             {/* Summary Bar */}
-                            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
+                            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-md bg-[#f8fafc] border border-[#e2e8f0]">
                                 <div className="flex items-center gap-2 text-xs">
                                     <span className="font-bold text-slate-700">
                                         File: <span className="text-[#2568C1] font-semibold">{selectedFile?.name}</span>
@@ -304,7 +304,7 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                             </div>
 
                             {/* Table Preview */}
-                            <div className="border border-[#e2e8f0] rounded-lg overflow-hidden max-h-[320px] overflow-y-auto">
+                            <div className="border border-[#e2e8f0] rounded-md overflow-hidden max-h-[320px] overflow-y-auto">
                                 <table className="w-full text-left text-xs">
                                     <thead className="bg-slate-50 border-b border-[#e2e8f0] sticky top-0 z-10 text-slate-500 uppercase tracking-wider font-semibold text-[10px]">
                                         <tr>
@@ -380,19 +380,19 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                         <div className="space-y-5">
                             {/* KPI Highlights */}
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <div className="p-4 rounded-lg bg-emerald-50/70 border border-emerald-100 flex flex-col items-center justify-center text-center">
+                                <div className="p-4 rounded-md bg-emerald-50/70 border border-emerald-100 flex flex-col items-center justify-center text-center">
                                     <CheckCircle2 className="h-6 w-6 text-emerald-600 mb-1" />
                                     <span className="text-2xl font-black text-emerald-800">{importResult.success_count}</span>
                                     <span className="text-xs font-semibold text-emerald-700">Successfully Imported</span>
                                 </div>
 
-                                <div className="p-4 rounded-lg bg-amber-50/70 border border-amber-100 flex flex-col items-center justify-center text-center">
+                                <div className="p-4 rounded-md bg-amber-50/70 border border-amber-100 flex flex-col items-center justify-center text-center">
                                     <AlertTriangle className="h-6 w-6 text-amber-600 mb-1" />
                                     <span className="text-2xl font-black text-amber-800">{importResult.skipped_count}</span>
                                     <span className="text-xs font-semibold text-amber-700">Skipped / Duplicates</span>
                                 </div>
 
-                                <div className="p-4 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex flex-col items-center justify-center text-center">
+                                <div className="p-4 rounded-md bg-[#f8fafc] border border-[#e2e8f0] flex flex-col items-center justify-center text-center">
                                     <Info className="h-6 w-6 text-slate-500 mb-1" />
                                     <span className="text-2xl font-black text-slate-800">{importResult.total_rows}</span>
                                     <span className="text-xs font-semibold text-slate-600">Total Rows Processed</span>
@@ -405,7 +405,7 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                                     <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                         Skipped Rows & Warnings ({importResult.errors.length}):
                                     </h4>
-                                    <div className="border border-[#e2e8f0] rounded-lg overflow-hidden max-h-[200px] overflow-y-auto divide-y divide-slate-100 bg-white">
+                                    <div className="border border-[#e2e8f0] rounded-md overflow-hidden max-h-[200px] overflow-y-auto divide-y divide-slate-100 bg-white">
                                         {importResult.errors.map((err, idx) => (
                                             <div key={idx} className="p-2.5 px-3.5 flex items-start gap-2 text-xs">
                                                 <Badge variant="outline" className="text-[10px] shrink-0 font-mono">
@@ -421,7 +421,7 @@ export function ImportProjectsDialog({ open, onOpenChange, onSuccess }: ImportPr
                             )}
 
                             {/* Success Notification message */}
-                            <div className="p-3 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-xs text-slate-600 flex items-center gap-2">
+                            <div className="p-3 rounded-md bg-[#f8fafc] border border-[#e2e8f0] text-xs text-slate-600 flex items-center gap-2">
                                 <Check className="h-4 w-4 text-emerald-600 shrink-0" />
                                 <span>All imported projects are active in the network. You can add additional team members from the project detail page.</span>
                             </div>
