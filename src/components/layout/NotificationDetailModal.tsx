@@ -8,7 +8,7 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Notification } from "@/lib/types";
+import { Notification, Role } from "@/lib/types";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -20,6 +20,68 @@ interface NotificationDetailModalProps {
     onDelete: (id: number) => void;
 }
 
+function getNotificationDetailUrl(notification: Notification, role: Role): string | null {
+    const basePath = role === "projectmanager" ? "/pm" : (role === "management" || role === "finance") ? "/management" : `/${role}`;
+    const refType = notification.reference_type;
+    const notifType = notification.type;
+
+    // 1. Approvals / Timesheet Review
+    if (notifType === "timesheet_review") {
+        if (role === "admin" || role === "projectmanager") {
+            return `${basePath}/approvals`;
+        }
+        return null;
+    }
+
+    // 2. Timesheet Status / Clock Out / Loose Timesheet
+    if (refType === "timesheet" || notifType === "timesheet_status" || notifType === "forgot_clock_out") {
+        if (role === "employee" || role === "projectmanager" || role === "management" || role === "finance") {
+            return `${basePath}/timesheet`;
+        }
+        if (role === "admin") {
+            return "/admin/approvals";
+        }
+        return null;
+    }
+
+    // 3. Task assignment / deadline / task reference
+    if (refType === "task" || notifType === "task_assignment" || notifType === "task_deadline") {
+        if (role === "employee" || role === "projectmanager") {
+            return `${basePath}/tasks`;
+        }
+        return null; // Admin & Management don't have task lists
+    }
+
+    // 4. Project assignment / budget alert / project reference
+    if (refType === "project" || notifType === "project_assignment" || notifType === "project_budget_alert") {
+        if (role === "employee" || role === "projectmanager" || role === "admin") {
+            return notification.reference_id ? `${basePath}/projects/${notification.reference_id}` : `${basePath}/projects`;
+        }
+        return null; // Management does not have /projects
+    }
+
+    // 5. Resource requests
+    if (refType === "resource_request" || refType === "resource" || notifType === "resource_request_new" || notifType === "resource_request_status") {
+        if (role === "admin" || role === "projectmanager" || role === "management" || role === "finance") {
+            return `${basePath}/resources`;
+        }
+        return null; // Employee does not have /resources
+    }
+
+    // 6. Payroll / Earnings
+    if (refType === "payroll" || notifType === "payroll_disbursed") {
+        if (role === "admin") {
+            return "/admin/payroll";
+        }
+        if (role === "employee" || role === "projectmanager" || role === "management" || role === "finance") {
+            return `${basePath}/earnings`;
+        }
+        return null;
+    }
+
+    return null;
+}
+
 export function NotificationDetailModal({
     notification,
     open,
@@ -27,28 +89,17 @@ export function NotificationDetailModal({
     onDelete
 }: NotificationDetailModalProps) {
     const router = useRouter();
-
     const { user } = useAuthStore();
 
     if (!notification) return null;
 
-    const handleActionClick = () => {
-        const role = user?.role || "employee";
-        const basePath = role === "projectmanager" ? "/pm" : role === "finance" ? "/management" : `/${role}`;
+    const detailUrl = user?.role ? getNotificationDetailUrl(notification, user.role) : null;
 
-        // Basic routing logic based on reference_type
-        if (notification.reference_type === "timesheet") {
-            router.push(`${basePath}/approvals`);
-        } else if (notification.reference_type === "task" || notification.type.includes("task")) {
-            router.push(`${basePath}/tasks`); 
-        } else if (notification.reference_type === "project") {
-            router.push(`${basePath}/projects/${notification.reference_id}`);
-        } else if (notification.reference_type === "resource_request") {
-            router.push(`${basePath}/resources`);
-        } else {
-            router.push(`${basePath}/dashboard`);
+    const handleActionClick = () => {
+        if (detailUrl) {
+            router.push(detailUrl);
+            onOpenChange(false);
         }
-        onOpenChange(false);
     };
 
     const handleDelete = () => {
@@ -64,7 +115,7 @@ export function NotificationDetailModal({
                         {notification.title}
                     </DialogTitle>
                     <DialogDescription className="text-xs text-slate-500 font-medium">
-                        Received on {format(new Date(notification.created_at), "PPp")}
+                        Received on {format(new Date(notification.created_at), "dd MMM yyyy, HH:mm")}
                     </DialogDescription>
                 </div>
                 
@@ -77,7 +128,7 @@ export function NotificationDetailModal({
                         Delete
                     </Button>
                     <div className="flex gap-2">
-                        {notification.reference_type && (
+                        {detailUrl && (
                             <Button size="sm" onClick={handleActionClick} className="bg-[#2568C1] hover:bg-[#1e56a6] text-white rounded-md">
                                 View Details
                             </Button>
