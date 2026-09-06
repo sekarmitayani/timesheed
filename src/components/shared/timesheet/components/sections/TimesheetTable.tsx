@@ -81,8 +81,8 @@ export function TimesheetTable({
                                     </TableCell>
                                     <TableCell className="py-3">
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-semibold text-slate-700">{new Date(l.clock_in).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}</span>
-                                            <span className="text-[11px] text-slate-400 uppercase font-medium tracking-tight">{new Date(l.clock_in).toLocaleDateString("en-US", { weekday: "long" })}</span>
+                                            <span className="text-sm font-semibold text-slate-700">{new Date(l.clock_in).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</span>
+                                            <span className="text-[11px] text-slate-400 uppercase font-medium tracking-tight">{new Date(l.clock_in).toLocaleDateString("en-GB", { weekday: "long" })}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>

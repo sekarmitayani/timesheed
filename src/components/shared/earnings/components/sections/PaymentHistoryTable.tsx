@@ -37,7 +37,7 @@ export function PaymentHistoryTable({ payments = [], paymentStatus = "pending" }
   };
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("en-US", { 
+    return new Date(date).toLocaleDateString("en-GB", { 
       day: '2-digit',
       month: 'short', 
       year: 'numeric' 

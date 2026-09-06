@@ -46,8 +46,8 @@ export function ContractOverview({ contracts }: ContractOverviewProps) {
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    {new Date(contract.start_date).toLocaleDateString("en-US", { month: 'short', year: 'numeric' })} - 
-                    {contract.end_date ? new Date(contract.end_date).toLocaleDateString("en-US", { month: 'short', year: 'numeric' }) : "Present"}
+                    {new Date(contract.start_date).toLocaleDateString("en-GB", { month: 'short', year: 'numeric' })} - 
+                    {contract.end_date ? new Date(contract.end_date).toLocaleDateString("en-GB", { month: 'short', year: 'numeric' }) : "Present"}
                   </span>
                   <span className="flex items-center gap-1 uppercase">
                     <Info className="h-3 w-3" />

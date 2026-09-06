@@ -67,7 +67,7 @@ export function AuditDetailDialog({ open, onOpenChange, log }: AuditDetailDialog
                     </div>
                     <DialogTitle className="text-base font-bold text-slate-900 leading-tight">Audit Log Detail</DialogTitle>
                     <DialogDescription className="text-slate-500 font-medium text-xs">
-                        Action performed by {log.performer?.full_name || `User #${log.user_id}`} on {format(new Date(log.created_at), "dd/MM/yyyy HH:mm")}
+                        Action performed by {log.performer?.full_name || `User #${log.user_id}`} on {format(new Date(log.created_at), "dd MMM yyyy, HH:mm")}
                     </DialogDescription>
                 </div>
 

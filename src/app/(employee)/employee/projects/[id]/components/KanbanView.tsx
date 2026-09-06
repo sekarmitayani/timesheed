@@ -158,7 +158,7 @@ export function KanbanView({ projectId, tasks, members, onTaskClick, currentUser
                                                                             <div className="flex items-center justify-between">
                                                                                 <div className="flex items-center gap-1">
                                                                                     <CalendarIcon className="h-3 w-3 text-slate-400" />
-                                                                                    <span className="text-[10px] font-bold text-slate-500">Due: <span className="text-slate-700">{task.due_date ? format(new Date(task.due_date), "MMM d") : "No date"}</span></span>
+                                                                                    <span className="text-[10px] font-bold text-slate-500">Due: <span className="text-slate-700">{task.due_date ? format(new Date(task.due_date), "dd MMM") : "No date"}</span></span>
                                                                                 </div>
                                                                                 <div className="flex items-center gap-1 px-1.5 py-0.5 bg-slate-50 rounded-md text-slate-400 group-hover:text-[#2568C1] transition-all">
                                                                                     <MessageSquare className="h-3 w-3" />
@@ -168,7 +168,7 @@ export function KanbanView({ projectId, tasks, members, onTaskClick, currentUser
                                                                             <div className="flex items-center justify-between">
                                                                                 <div className="flex items-center gap-1">
                                                                                     <Clock className="h-3 w-3 text-slate-300" />
-                                                                                    <span className="text-[10px] font-medium text-slate-400">Created at {format(new Date(task.created_at), "MMM d, HH:mm")}</span>
+                                                                                    <span className="text-[10px] font-medium text-slate-400">Created at {format(new Date(task.created_at), "dd MMM, HH:mm")}</span>
                                                                                 </div>
                                                                                 {daysLeft !== null && (
                                                                                     <Badge className={cn("text-[9px] font-black px-1.5 py-0 rounded-[4px] h-4 border-none", daysLeft <= 2 ? "bg-red-50 text-red-600" : "bg-blue-50 text-[#2568C1]")}>

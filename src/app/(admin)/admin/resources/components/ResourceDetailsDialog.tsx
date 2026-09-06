@@ -158,11 +158,11 @@ export function ResourceDetailsDialog({
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="space-y-1">
                                             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Requested At</p>
-                                            <p className="text-xs font-semibold text-slate-900">{request.created_at ? new Date(request.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-'}</p>
+                                            <p className="text-xs font-semibold text-slate-900">{request.created_at ? new Date(request.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</p>
                                         </div>
                                         <div className="space-y-1">
                                             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Last Update</p>
-                                            <p className="text-xs font-semibold text-slate-900">{request.updated_at ? new Date(request.updated_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-'}</p>
+                                            <p className="text-xs font-semibold text-slate-900">{request.updated_at ? new Date(request.updated_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</p>
                                         </div>
                                     </div>
                                 </div>

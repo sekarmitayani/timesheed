@@ -289,7 +289,7 @@ export function PresetExecutiveReports({
                     project_name: r.project_name || "General Overhead",
                     amount_str: fmtIDR(r.amount),
                     status_str: (r.status || "Pending").toUpperCase(),
-                    date_str: r.created_at ? new Date(r.created_at).toLocaleDateString("id-ID") : "-"
+                    date_str: r.created_at ? new Date(r.created_at).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' }) : "-"
                 })),
                 fileName: `Haerarchy_Resource_Asset_Outflows_${new Date().toISOString().split("T")[0]}.pdf`
             });

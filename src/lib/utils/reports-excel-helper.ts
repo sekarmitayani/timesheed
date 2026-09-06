@@ -497,7 +497,7 @@ export function generatePresetResourceExcelWorkbook(resources: any[]): XLSX.Work
             r.project_name || "General Overhead",
             fmtIDR(r.amount),
             (r.status || "Pending").toUpperCase(),
-            r.created_at ? new Date(r.created_at).toLocaleDateString("id-ID") : "-"
+            r.created_at ? new Date(r.created_at).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' }) : "-"
         ]);
     });
 

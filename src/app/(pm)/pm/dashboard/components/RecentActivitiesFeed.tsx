@@ -66,7 +66,7 @@ export function RecentActivitiesFeed({ recentTasks, teamStats, projects }: Recen
                                             <div className="flex items-center gap-1.5 shrink-0">
                                                 <Calendar className="h-3 w-3" />
                                                 {task.updated_at 
-                                                    ? new Date(task.updated_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) 
+                                                    ? new Date(task.updated_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) 
                                                     : '-'}
                                             </div>
                                         </div>

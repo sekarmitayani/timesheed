@@ -28,7 +28,7 @@ export function WeeklyHoursChart({ timesheets, className }: WeeklyHoursChartProp
             
             return {
                 day: format(day, "EEE"),
-                date: format(day, "MMM d"),
+                date: format(day, "dd MMM"),
                 hours: totalHours
             };
         });

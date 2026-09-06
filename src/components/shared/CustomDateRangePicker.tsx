@@ -129,12 +129,12 @@ export function CustomDateRangePicker({ dateFrom, dateTo, onDateChange, align = 
     const formatDateRange = () => {
         if (dateFrom && dateTo) {
             if (dateFrom === dateTo) {
-                return format(new Date(dateFrom), "MMM d, yyyy");
+                return format(new Date(dateFrom), "dd MMM yyyy");
             }
-            return `${format(new Date(dateFrom), "MMM d, yyyy")} - ${format(new Date(dateTo), "MMM d, yyyy")}`;
+            return `${format(new Date(dateFrom), "dd MMM yyyy")} - ${format(new Date(dateTo), "dd MMM yyyy")}`;
         }
         if (dateFrom) {
-            return `${format(new Date(dateFrom), "MMM d, yyyy")} - ...`;
+            return `${format(new Date(dateFrom), "dd MMM yyyy")} - ...`;
         }
         return "Select Date Range";
     };

@@ -253,8 +253,8 @@ export function useTimesheetData(rolePrefix: string = "timesheet") {
             
             days.push({
                 date: d,
-                label: d.toLocaleDateString("en-US", { weekday: "short" }),
-                dateDisplay: d.toLocaleDateString("en-US", { day: "numeric", month: "short" }),
+                label: d.toLocaleDateString("en-GB", { weekday: "short" }),
+                dateDisplay: d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }),
                 minutes: totalMinutes,
                 hours: (totalMinutes / 60).toFixed(1),
                 isToday: i === 0

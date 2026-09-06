@@ -14,7 +14,7 @@ export function AccountDetailsCard({ profile }: AccountDetailsCardProps) {
     const formatDate = (dateString?: string) => {
         if (!dateString) return "—";
         try {
-            return format(new Date(dateString), "MMM dd, yyyy");
+            return format(new Date(dateString), "dd MMM yyyy");
         } catch {
             return dateString;
         }

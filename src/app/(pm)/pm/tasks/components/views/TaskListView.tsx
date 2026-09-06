@@ -99,7 +99,7 @@ export function TaskListView({
                                                             </span>
                                                         </div>
                                                     </TableCell>
-                                                    <TableCell className="px-4 py-4"><span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">{task.due_date ? format(new Date(task.due_date), "MMM d, yyyy") : "—"}</span></TableCell>
+                                                    <TableCell className="px-4 py-4"><span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">{task.due_date ? format(new Date(task.due_date), "dd MMM yyyy") : "—"}</span></TableCell>
                                                     <TableCell className="px-6 py-4 text-right"><Badge className="bg-[#4B7BEC]/5 text-[#4B7BEC] border-none text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-tighter whitespace-nowrap">{getProjectName(task.project_id)}</Badge></TableCell>
                                                 </TableRow>
                                             );

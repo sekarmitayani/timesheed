@@ -79,7 +79,7 @@ export function TaskOverviewCard({ tasks, projects, className }: TaskOverviewCar
                                     </TableCell>
                                     <TableCell className="px-4 py-2">
                                         <span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">
-                                            {task.due_date ? format(new Date(task.due_date), "MMM d, yyyy") : "—"}
+                                            {task.due_date ? format(new Date(task.due_date), "dd MMM yyyy") : "—"}
                                         </span>
                                     </TableCell>
                                     <TableCell className="px-4 py-2 text-right">

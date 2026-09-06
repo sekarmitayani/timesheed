@@ -12,8 +12,8 @@ interface ContractMetadataProps {
 
 export function ContractMetadata({ type, scheme, rate, rateType, startDate, endDate, projectName }: ContractMetadataProps) {
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("en-US", { 
-      day: 'numeric',
+    return new Date(date).toLocaleDateString("en-GB", { 
+      day: '2-digit',
       month: 'short', 
       year: 'numeric' 
     });

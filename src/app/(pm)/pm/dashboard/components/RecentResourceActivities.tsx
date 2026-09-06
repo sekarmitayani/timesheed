@@ -58,7 +58,7 @@ export function RecentResourceActivities({ activities }: RecentResourceActivitie
                                         <span className="shrink-0">·</span>
                                         <span className="flex items-center gap-1 shrink-0">
                                             <Calendar className="h-2.5 w-2.5" />
-                                            {new Date(r.updated_at || r.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                                            {new Date(r.updated_at || r.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                         </span>
                                     </div>
                                 </div>

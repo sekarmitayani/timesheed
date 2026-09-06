@@ -9,6 +9,7 @@ import { TaskFilters } from "./components/sections/TaskFilters";
 import { TaskKanbanView } from "./components/views/TaskKanbanView";
 import { TaskListView } from "./components/views/TaskListView";
 import { TaskCalendarView } from "./components/views/TaskCalendarView";
+import { format } from "date-fns";
 
 // Dynamic Imports for Modals
 const TaskDetailDialog = dynamic(() => import("./components/TaskDetailDialog").then(mod => mod.TaskDetailDialog), { loading: () => null });
@@ -27,8 +28,7 @@ export default function PMTasksPage() {
 
     const formatDateTime = (dateStr: string | null) => {
         if (!dateStr) return "-";
-        const d = new Date(dateStr);
-        return `${d.getDate()} ${d.toLocaleString("en-US", { month: "short" })} ${d.getFullYear()}, ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+        return format(new Date(dateStr), "dd MMM yyyy, HH:mm");
     };
 
     return (

@@ -68,7 +68,7 @@ export function CustomDatePicker({ date, onDateChange, placeholder = "Select Dat
 
     const formatDate = () => {
         if (date) {
-            return format(new Date(date), "MMM d, yyyy");
+            return format(new Date(date), "dd MMM yyyy");
         }
         return placeholder;
     };

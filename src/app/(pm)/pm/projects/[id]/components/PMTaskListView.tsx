@@ -112,7 +112,7 @@ export function PMTaskListView({
                                                         </div>
                                                     </TableCell>
                                                     <TableCell className="px-4 py-4">
-                                                        <span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">{task.due_date ? format(new Date(task.due_date), "MMM d, yyyy") : "—"}</span>
+                                                        <span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">{task.due_date ? format(new Date(task.due_date), "dd MMM yyyy") : "—"}</span>
                                                     </TableCell>
                                                 </TableRow>
                                             );

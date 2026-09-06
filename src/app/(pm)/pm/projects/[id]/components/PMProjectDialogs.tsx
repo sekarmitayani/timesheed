@@ -257,14 +257,14 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Created At</p>
                                         <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
                                             <Calendar className="h-3.5 w-3.5 text-slate-300" />
-                                            {selectedRes.created_at ? new Date(selectedRes.created_at).toLocaleDateString('en-GB') : '-'}
+                                            {selectedRes.created_at ? new Date(selectedRes.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
                                         </div>
                                     </div>
                                     <div className="space-y-1 text-right">
                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last Update</p>
                                         <div className="flex items-center gap-2 text-xs text-slate-600 font-medium justify-end">
                                             <Clock className="h-3.5 w-3.5 text-slate-300" />
-                                            {selectedRes.updated_at ? new Date(selectedRes.updated_at).toLocaleDateString('en-GB') : '-'}
+                                            {selectedRes.updated_at ? new Date(selectedRes.updated_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
                                         </div>
                                     </div>
                                 </div>

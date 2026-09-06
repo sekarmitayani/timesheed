@@ -182,7 +182,7 @@ export function TaskDetailDialog({
                                                         <div className="flex-1 space-y-1">
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-xs font-bold text-slate-800">{comm.user?.full_name}</span>
-                                                                <span className="text-[10px] font-medium text-slate-400">{format(new Date(comm.created_at), "MMM d, HH:mm")}</span>
+                                                                <span className="text-[10px] font-medium text-slate-400">{format(new Date(comm.created_at), "dd MMM, HH:mm")}</span>
                                                             </div>
                                                             <div className="bg-slate-50 rounded-md p-3 text-sm text-slate-600 border border-slate-100 shadow-sm">{comm.comment}</div>
                                                         </div>
@@ -229,7 +229,7 @@ export function TaskDetailDialog({
                                                     <TableBody>
                                                         {taskLogs.map(log => (
                                                             <TableRow key={log.id} className="h-12 text-[11px] border-b border-slate-50 last:border-0 hover:bg-slate-50/30 transition-colors">
-                                                                <TableCell className="py-2 px-4 font-bold text-slate-700">{format(new Date(log.clock_in), "MMM d, yyyy")}</TableCell>
+                                                                <TableCell className="py-2 px-4 font-bold text-slate-700">{format(new Date(log.clock_in), "dd MMM yyyy")}</TableCell>
                                                                 <TableCell className="py-2 px-4 font-medium text-slate-500">{format(new Date(log.clock_in), "HH:mm")} - {log.clock_out ? format(new Date(log.clock_out), "HH:mm") : "..."}</TableCell>
                                                                 <TableCell className="py-2 px-4 text-right font-bold text-[#4B7BEC]">{log.duration_minutes}m</TableCell>
                                                             </TableRow>
@@ -257,7 +257,7 @@ export function TaskDetailDialog({
                                                             <p className="text-xs font-medium text-slate-600">
                                                                 <span className="font-bold text-slate-900">{log.user?.full_name || `User #${log.user_id}`}</span> {log.action.toLowerCase()}d task
                                                             </p>
-                                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{format(new Date(log.created_at), "MMM d, yyyy · HH:mm")}</p>
+                                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{format(new Date(log.created_at), "dd MMM yyyy, HH:mm")}</p>
                                                         </div>
                                                     </div>
                                                 ))
@@ -312,7 +312,7 @@ export function TaskDetailDialog({
                                     <label className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 flex items-center gap-2"><CalendarDays className="h-3 w-3" /> Due Date</label>
                                     <div className="bg-white p-3 rounded-md border border-slate-100 shadow-sm flex items-center gap-3">
                                         <div className="h-8 w-8 rounded-md bg-amber-50 flex items-center justify-center text-amber-500"><CalendarIcon className="h-4 w-4" /></div>
-                                        <span className="text-sm font-bold text-slate-700">{selectedTask.due_date ? format(new Date(selectedTask.due_date), "MMM d, yyyy") : "None"}</span>
+                                        <span className="text-sm font-bold text-slate-700">{selectedTask.due_date ? format(new Date(selectedTask.due_date), "dd MMM yyyy") : "None"}</span>
                                     </div>
                                 </div>
                                 <div className="space-y-2">

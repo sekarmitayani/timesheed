@@ -99,9 +99,9 @@ export function PMTaskCalendarView({ tasks, onTaskClick }: PMTaskCalendarViewPro
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-3 border-b border-slate-100 bg-white shrink-0 z-20">
                 <h3 className="text-lg font-bold text-slate-800 tracking-tight">
                     {calView === "day"
-                        ? format(currentMonth, "EEEE, MMMM d, yyyy")
+                        ? format(currentMonth, "EEEE, dd MMMM yyyy")
                         : calView === "week"
-                            ? `${format(startOfWeek(currentMonth), "MMM d")} – ${format(endOfWeek(currentMonth), "MMM d, yyyy")}`
+                            ? `${format(startOfWeek(currentMonth), "dd MMM")} – ${format(endOfWeek(currentMonth), "dd MMM yyyy")}`
                             : format(currentMonth, "MMMM yyyy")}
                 </h3>
                 <div className="flex flex-wrap items-center gap-3">

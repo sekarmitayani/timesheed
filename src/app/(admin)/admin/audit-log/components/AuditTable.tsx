@@ -78,7 +78,7 @@ export function AuditTable({
                                     </TableCell>
                                     <TableCell>
                                         <p className="text-xs font-semibold text-slate-900">
-                                            {format(new Date(log.created_at), "dd/MM/yyyy")}
+                                            {format(new Date(log.created_at), "dd MMM yyyy")}
                                         </p>
                                         <p className="text-[10px] text-slate-400">
                                             {format(new Date(log.created_at), "HH:mm")}

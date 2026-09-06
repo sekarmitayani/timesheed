@@ -105,7 +105,7 @@ export function ProjectCostSummaryDetailModal({ project, open, onOpenChange }: P
                                     ) : (
                                         <>
                                             <span className="flex items-center gap-1"><User className="w-3 h-3" /> {pmName}</span>
-                                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Created At: {projectDetails?.created_at ? new Date(projectDetails.created_at).toLocaleDateString() : '-'}</span>
+                                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Created At: {projectDetails?.created_at ? new Date(projectDetails.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</span>
                                         </>
                                     )}
                                 </div>

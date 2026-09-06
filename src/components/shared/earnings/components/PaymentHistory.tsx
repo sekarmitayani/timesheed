@@ -56,7 +56,7 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
+    return new Date(dateStr).toLocaleDateString("en-GB", {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
@@ -203,8 +203,8 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
                   >
                     <TableCell className="py-2 pl-6">
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-[#0f172a]">{new Date(payment.date).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}</span>
-                        <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-tight">{new Date(payment.date).toLocaleDateString("en-US", { weekday: "long" })}</span>
+                        <span className="text-xs font-bold text-[#0f172a]">{new Date(payment.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</span>
+                        <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-tight">{new Date(payment.date).toLocaleDateString("en-GB", { weekday: "long" })}</span>
                       </div>
                     </TableCell>
                     <TableCell className="py-2">
