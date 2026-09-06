@@ -7,6 +7,7 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -47,8 +48,8 @@ export function LiabilityDetailModal({ contractId, open, onOpenChange }: Liabili
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-3xl md:max-w-4xl lg:max-w-5xl max-h-[90vh] overflow-y-auto bg-white p-0 gap-0 border-[#e2e8f0] shadow-xl rounded-md">
-                <div className="px-6 pr-12 py-4 sticky top-0 bg-[#f8fafc] z-10 border-b border-[#e2e8f0] flex flex-row items-center justify-between">
+            <DialogContent className="sm:max-w-3xl md:max-w-4xl lg:max-w-5xl max-h-[90vh] overflow-hidden bg-white p-0 gap-0 border-[#e2e8f0] shadow-xl rounded-md flex flex-col">
+                <div className="px-6 pr-12 py-4 bg-[#f8fafc] border-b border-[#e2e8f0] flex flex-row items-center justify-between shrink-0">
                     <div className="flex flex-col gap-0.5 min-w-0">
                         <DialogTitle className="text-base font-bold text-slate-800">
                             Contract Liability Detail
@@ -58,6 +59,8 @@ export function LiabilityDetailModal({ contractId, open, onOpenChange }: Liabili
                         </DialogDescription>
                     </div>
                 </div>
+
+                <div className="flex-1 overflow-y-auto">
 
                 {isLoading && (
                     <div className="p-12 flex flex-col items-center justify-center text-slate-500">
@@ -264,6 +267,11 @@ export function LiabilityDetailModal({ contractId, open, onOpenChange }: Liabili
 
                     </div>
                 )}
+                </div>
+
+                <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end shrink-0">
+                    <Button variant="outline" size="sm" onClick={() => onOpenChange(false)} className="rounded-md">Close</Button>
+                </div>
             </DialogContent>
         </Dialog>
     );
