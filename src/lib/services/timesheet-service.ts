@@ -4,7 +4,8 @@ import { fetchApi } from "../api";
 export interface TimesheetLog {
     id: number;
     user_id: number;
-    project_id: number;
+    title?: string;
+    project_id?: number | null;
     task_id: number | null;
     task_description: string;
     face_similarity_score: number | null;
@@ -27,13 +28,17 @@ export interface TimesheetLog {
 }
 
 export interface ClockInPayload {
-    project_id: number;
+    title?: string;
+    project_id?: number | null;
     task_id?: number | null;
     face_similarity_score?: number | null;
 }
 
 export interface ClockOutPayload {
+    title?: string;
     task_description: string;
+    project_id?: number | null;
+    task_id?: number | null;
 }
 
 // ---- Service ----

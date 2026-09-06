@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/api";
 import { EnrichedContract } from "../types";
 
-export function useEarningsData(userId: string | undefined) {
+export function useEarningsData(userId: string | undefined, rolePrefix: string = "earnings") {
     const { data: response, isLoading } = useQuery({
-        queryKey: ['employee', 'earnings', userId],
+        queryKey: [rolePrefix, 'earnings', userId],
         queryFn: async () => {
             if (!userId) return null;
             return fetchApi("/my-earnings");

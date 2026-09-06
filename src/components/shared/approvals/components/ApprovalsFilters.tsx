@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search } from "lucide-react";
 import { ApiProject } from "@/lib/types";
-import { CustomDateRangePicker } from "./CustomDateRangePicker";
+import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 
 interface ApprovalsFiltersProps {
     search: string;
@@ -72,6 +72,7 @@ export function ApprovalsFilters({
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Projects</SelectItem>
+                            <SelectItem value="none">No Project (Daily Attendance)</SelectItem>
                             {projects.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}
                         </SelectContent>
                     </Select>

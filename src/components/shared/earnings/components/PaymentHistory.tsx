@@ -2,15 +2,11 @@ import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
-  Wallet,
   ChevronLeft,
   ChevronRight,
-  Search,
-  Clock,
-  CreditCard,
-  FileText
+  Search
 } from "lucide-react";
-import { CustomDateRangePicker } from "@/app/(pm)/pm/approvals/components/CustomDateRangePicker";
+import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -272,26 +268,26 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
       </CardContent>
 
       <Dialog open={!!selectedPayment} onOpenChange={(open) => !open && setSelectedPayment(null)}>
-        <DialogContent className="max-w-md bg-white border-none rounded-[6px] shadow-lg">
-          <DialogHeader>
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden border-[#e2e8f0] gap-0 rounded-md shadow-xl bg-white">
+          <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-6 py-4 pr-12 flex flex-col gap-1">
             <DialogTitle className="text-base font-bold text-slate-800">Payment Detail</DialogTitle>
-            <DialogDescription className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">
+            <DialogDescription className="text-xs text-slate-500 font-medium">
               Transaction ID: #{selectedPayment?.id.slice(0, 8)}
             </DialogDescription>
-          </DialogHeader>
+          </div>
           
           {selectedPayment && (
-            <div className="py-4 space-y-5">
+            <div className="px-6 pt-3.5 pb-5 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold flex items-center gap-1">
-                    <Clock className="h-3 w-3 text-[#4B7BEC]" /> Date & Time
+                  <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+                    Date & Time
                   </p>
                   <p className="text-xs font-bold text-slate-700">{formatDateTime(selectedPayment.date)}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold flex items-center gap-1">
-                    <CreditCard className="h-3 w-3 text-[#4B7BEC]" /> Project
+                  <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+                    Project
                   </p>
                   <p className="text-xs font-bold text-slate-800">{selectedPayment.projectName}</p>
                 </div>
@@ -299,13 +295,13 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold flex items-center gap-1">
-                    <Wallet className="h-3 w-3 text-[#4B7BEC]" /> Amount
+                  <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+                    Amount
                   </p>
                   <p className="text-sm font-bold text-[#4B7BEC]">{formatCurrency(selectedPayment.amount)}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold">Contract Type</p>
+                  <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Contract Type</p>
                   <span className={`inline-block text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${selectedPayment.contractType === 'Project'
                     ? 'bg-blue-50 text-blue-600 border-blue-100'
                     : 'bg-slate-50 text-slate-500 border-slate-100'
@@ -316,10 +312,10 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
               </div>
 
               <div className="space-y-2">
-                <p className="text-[10px] text-muted-foreground uppercase font-bold flex items-center gap-1">
-                  <FileText className="h-3 w-3 text-[#4B7BEC]" /> Description
+                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+                  Description
                 </p>
-                <div className="p-3 bg-slate-50 rounded-[4px] border border-[#E2E8F0]">
+                <div className="p-3 bg-slate-50 rounded-md border border-[#E2E8F0]">
                   <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap">
                     {selectedPayment.description || "No description provided for this payment."}
                   </p>
@@ -328,11 +324,11 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
             </div>
           )}
 
-          <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setSelectedPayment(null)} className="h-8 rounded-[4px] font-bold text-[11px] uppercase">
+          <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end">
+            <Button variant="outline" size="sm" onClick={() => setSelectedPayment(null)} className="rounded-md font-bold text-[11px] uppercase">
               Close
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </Card>

@@ -45,7 +45,7 @@ export function downloadUserExcelTemplate() {
             "full_name": "Ahmad Fauzi",
             "email": "ahmad.fauzi@company.com",
             "phone_number": "081234567892",
-            "role": "finance",
+            "role": "management",
             "employee_type": "fulltime",
             "skill_level": 2
         },
@@ -94,7 +94,7 @@ export function downloadUserExcelTemplate() {
             "Field": "role",
             "Required": "YES (Mandatory)",
             "Format / Type": "Enum",
-            "Valid Options / Example": "admin, projectmanager, employee, finance",
+            "Valid Options / Example": "admin, projectmanager, employee, management",
             "Description": "System access role. Lowercase letters only."
         },
         {
@@ -102,7 +102,7 @@ export function downloadUserExcelTemplate() {
             "Required": "YES (Except admin role)",
             "Format / Type": "Enum",
             "Valid Options / Example": "fulltime, parttime, freelance",
-            "Description": "Required for employee, projectmanager, and finance roles. Leave empty for admin."
+            "Description": "Required for employee, projectmanager, and management roles. Leave empty for admin."
         },
         {
             "Field": "skill_level",
@@ -168,7 +168,7 @@ export async function parseAndValidateUserFile(file: File): Promise<ParseResult>
     const csvString = XLSX.utils.sheet_to_csv(ws);
     const csvBlob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
 
-    const validRoles = ["admin", "projectmanager", "employee", "finance"];
+    const validRoles = ["admin", "projectmanager", "employee", "management", "finance"];
     const validEmpTypes = ["fulltime", "parttime", "freelance"];
 
     const seenEmails = new Set<string>();
@@ -198,7 +198,10 @@ export async function parseAndValidateUserFile(file: File): Promise<ParseResult>
         const fullName = getField(["full_name", "fullname", "name", "nama"]);
         const email = getField(["email", "mail", "email_address"]).toLowerCase();
         const phoneNumber = getField(["phone_number", "phone", "phonenumber", "telepon", "no_hp", "nohp"]);
-        const role = getField(["role", "role_type"]).toLowerCase();
+        let role = getField(["role", "role_type"]).toLowerCase();
+        if (role === "finance") {
+            role = "management";
+        }
         const employeeType = getField(["employee_type", "employeetype", "type", "tipe"]).toLowerCase();
         const skillLevelRaw = getField(["skill_level", "skilllevel", "skill"]);
 
@@ -239,7 +242,7 @@ export async function parseAndValidateUserFile(file: File): Promise<ParseResult>
         if (!role) {
             errors.push("Role is required");
         } else if (!validRoles.includes(role)) {
-            errors.push(`Invalid role '${role}' (options: ${validRoles.join(", ")})`);
+            errors.push(`Invalid role '${role}' (options: admin, projectmanager, employee, management)`);
         }
 
         // Validate Employee Type

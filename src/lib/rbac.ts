@@ -46,6 +46,13 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             ]
         },
         {
+            title: "WORK SPACE",
+            items: [
+                { label: "Timesheet", href: "/pm/timesheet", icon: ClipboardClock },
+                { label: "Earnings", href: "/pm/earnings", icon: Wallet },
+            ]
+        },
+        {
             title: "MANAGEMENT",
             items: [
                 { label: "My Projects", href: "/pm/projects", icon: FolderKanban },
@@ -75,6 +82,7 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             items: [
                 { label: "Projects", href: "/admin/projects", icon: FolderKanban },
                 { label: "Resource Request", href: "/admin/resources", icon: Package },
+                { label: "Approvals", href: "/admin/approvals", icon: Inbox, badge: "AI" },
             ]
         },
         {
@@ -86,11 +94,48 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             ]
         }
     ],
+    management: [
+        {
+            title: "MAIN MENU",
+            items: [
+                { label: "Executive Dashboard", href: "/management/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            title: "WORK SPACE",
+            items: [
+                { label: "Timesheet", href: "/management/timesheet", icon: ClipboardClock },
+                { label: "Earnings", href: "/management/earnings", icon: Wallet },
+            ]
+        },
+        {
+            title: "OVERSIGHT",
+            items: [
+                { label: "Profitability", href: "/management/profitability", icon: TrendingUp },
+                { label: "Cost Breakdown", href: "/management/cost-breakdown", icon: PieChart },
+                { label: "Liability Monitor", href: "/management/liability", icon: Scale },
+                { label: "Resources", href: "/management/resources", icon: Package },
+            ]
+        },
+        {
+            title: "REPORTS",
+            items: [
+                { label: "Reports & Export", href: "/management/reports", icon: FileSpreadsheet },
+            ]
+        }
+    ],
     finance: [
         {
             title: "MAIN MENU",
             items: [
                 { label: "Executive Dashboard", href: "/management/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            title: "WORK SPACE",
+            items: [
+                { label: "Timesheet", href: "/management/timesheet", icon: ClipboardClock },
+                { label: "Earnings", href: "/management/earnings", icon: Wallet },
             ]
         },
         {
@@ -115,6 +160,7 @@ export const roleLabels: Record<Role, string> = {
     employee: "Employee",
     projectmanager: "Project Manager",
     admin: "Admin",
+    management: "Management",
     finance: "Management",
 };
 
@@ -122,6 +168,7 @@ export const roleColors: Record<Role, string> = {
     employee: "bg-blue-600",
     projectmanager: "bg-blue-600",
     admin: "bg-blue-600",
+    management: "bg-blue-600",
     finance: "bg-blue-600",
 };
 
@@ -132,6 +179,6 @@ export function canAccess(userRole: Role, requiredRole: Role | Role[]): boolean 
 
 export function getDefaultRoute(role: Role): string {
     if (role === "projectmanager") return "/pm/dashboard";
-    if (role === "finance") return "/management/dashboard";
+    if (role === "management" || role === "finance") return "/management/dashboard";
     return `/${role}/dashboard`;
 }

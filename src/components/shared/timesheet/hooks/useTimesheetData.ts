@@ -6,7 +6,7 @@ import { projectService } from "@/lib/services/project-service";
 import { taskService, ApiTask } from "@/lib/services/task-service";
 import { ApiProject } from "@/lib/types";
 
-export function useTimesheetData() {
+export function useTimesheetData(rolePrefix: string = "timesheet") {
     const queryClient = useQueryClient();
 
     // Filter State (Pure UI)
@@ -21,7 +21,10 @@ export function useTimesheetData() {
 
     // Clock In/Out UI Dialogs
     const [clockOutOpen, setClockOutOpen] = useState(false);
+    const [clockOutTitle, setClockOutTitle] = useState("");
     const [clockOutDesc, setClockOutDesc] = useState("");
+    const [selectedProjectId, setSelectedProjectId] = useState<string>("none");
+    const [selectedTaskId, setSelectedTaskId] = useState<string>("none");
 
     // Detail Modal UI
     const [selectedLog, setSelectedLog] = useState<TimesheetLog | null>(null);
@@ -31,14 +34,14 @@ export function useTimesheetData() {
 
     // 1. Fetch Projects
     const { data: projectsData } = useQuery({
-        queryKey: ['employee', 'timesheets', 'projects'],
+        queryKey: [rolePrefix, 'timesheets', 'projects'],
         queryFn: () => projectService.getProjects(1, 100),
     });
     const projects: ApiProject[] = projectsData?.data || [];
 
     // 2. Fetch Timesheet Logs
     const { data: rawLogs, isLoading: isLoadingLogs } = useQuery({
-        queryKey: ['employee', 'timesheets', 'logs'],
+        queryKey: [rolePrefix, 'timesheets', 'logs'],
         queryFn: () => timesheetService.getMyLogs(),
         staleTime: 0,
         refetchOnMount: "always",
@@ -54,10 +57,15 @@ export function useTimesheetData() {
     const activeLog = useMemo(() => logs.find(l => l.clock_in && !l.clock_out), [logs]);
 
     // 3. Dependent Mapping Query (Task & User Map)
-    const projectIds = useMemo(() => Array.from(new Set(logs.map(l => l.project_id))), [logs]);
+    const projectIds = useMemo(() => {
+        const validIds = logs
+            .map(l => l.project_id)
+            .filter((id): id is number => typeof id === "number" && id > 0);
+        return Array.from(new Set(validIds));
+    }, [logs]);
 
     const { data: mapsData, isLoading: isLoadingMaps } = useQuery({
-        queryKey: ['employee', 'timesheets', 'maps', projectIds],
+        queryKey: [rolePrefix, 'timesheets', 'maps', projectIds],
         queryFn: async () => {
             const newTaskMap: Record<number, ApiTask> = {};
             const newUserMap: Record<number, string> = {};
@@ -86,19 +94,50 @@ export function useTimesheetData() {
     const taskMap = mapsData?.taskMap || {};
     const userMap = mapsData?.userMap || {};
 
+    // 4. Project Tasks for Modal Dropdown
+    const { data: projectTasks = [], isLoading: isLoadingProjectTasks } = useQuery({
+        queryKey: [rolePrefix, 'timesheets', 'projectTasks', selectedProjectId],
+        queryFn: () => taskService.getProjectTasks(selectedProjectId),
+        enabled: !!selectedProjectId && selectedProjectId !== "none",
+    });
+
     const isLoading = isLoadingLogs || (projectIds.length > 0 && isLoadingMaps);
 
     // --- Mutations ---
 
-    const clockOutMutation = useMutation({
-        mutationFn: (desc: string) => timesheetService.clockOut({ task_description: desc }),
+    const clockInMutation = useMutation({
+        mutationFn: async (payload?: { title?: string; project_id?: number | null; task_id?: number | null }) => {
+            const todayStr = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+            return timesheetService.clockIn({
+                title: payload?.title || `Daily Attendance - ${todayStr}`,
+                project_id: payload?.project_id || null,
+                task_id: payload?.task_id || null,
+            });
+        },
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets', 'logs'] });
+            queryClient.invalidateQueries({ queryKey: [rolePrefix, 'timesheets', 'logs'] });
+        },
+        onSuccess: (res) => {
+            toast.success(res.message || "Clock In successful!");
+        },
+        onError: (e: any) => {
+            toast.error(e.message || "Clock In failed");
+        }
+    });
+
+    const clockOutMutation = useMutation({
+        mutationFn: (payload: { title?: string; task_description: string; project_id?: number | null; task_id?: number | null }) => 
+            timesheetService.clockOut(payload),
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: [rolePrefix, 'timesheets', 'logs'] });
         },
         onSuccess: (res) => {
             toast.success(res.message || "Clock Out successful!");
             setClockOutOpen(false);
             setClockOutDesc("");
+            setClockOutTitle("");
+            setSelectedProjectId("none");
+            setSelectedTaskId("none");
         },
         onError: (e: any) => {
             toast.error(e.message || "Clock Out failed");
@@ -108,7 +147,7 @@ export function useTimesheetData() {
     const pauseMutation = useMutation({
         mutationFn: () => timesheetService.pauseSession(),
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets', 'logs'] });
+            queryClient.invalidateQueries({ queryKey: [rolePrefix, 'timesheets', 'logs'] });
         },
         onSuccess: () => {
             toast.success("Timesheet session paused");
@@ -121,7 +160,7 @@ export function useTimesheetData() {
     const resumeMutation = useMutation({
         mutationFn: () => timesheetService.resumeSession(),
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['employee', 'timesheets', 'logs'] });
+            queryClient.invalidateQueries({ queryKey: [rolePrefix, 'timesheets', 'logs'] });
         },
         onSuccess: () => {
             toast.success("Timesheet session resumed");
@@ -131,9 +170,31 @@ export function useTimesheetData() {
         }
     });
 
+    const handleClockIn = () => {
+        clockInMutation.mutate({});
+    };
+
+    const openClockOutDialog = () => {
+        if (activeLog) {
+            const todayStr = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+            setClockOutTitle(activeLog.title || `Daily Attendance - ${todayStr}`);
+            setSelectedProjectId(activeLog.project_id ? String(activeLog.project_id) : "none");
+            setSelectedTaskId(activeLog.task_id ? String(activeLog.task_id) : "none");
+        }
+        setClockOutOpen(true);
+    };
+
     const handleClockOut = async () => {
-        if (!clockOutDesc.trim()) { toast.error("Description is required"); return; }
-        clockOutMutation.mutate(clockOutDesc);
+        if (!clockOutDesc.trim()) { 
+            toast.error("Description is required"); 
+            return; 
+        }
+        clockOutMutation.mutate({
+            title: clockOutTitle.trim() || undefined,
+            task_description: clockOutDesc.trim(),
+            project_id: selectedProjectId && selectedProjectId !== "none" ? Number(selectedProjectId) : null,
+            task_id: selectedTaskId && selectedTaskId !== "none" ? Number(selectedTaskId) : null,
+        });
     };
 
     const handlePause = () => {
@@ -285,11 +346,17 @@ export function useTimesheetData() {
             currentPage,
             limit,
             clockOutOpen,
+            isClockingIn: clockInMutation.isPending,
             isClocking: clockOutMutation.isPending,
             isPausing: pauseMutation.isPending,
             isResuming: resumeMutation.isPending,
             projects,
+            clockOutTitle,
             clockOutDesc,
+            selectedProjectId,
+            selectedTaskId,
+            projectTasks,
+            isLoadingProjectTasks,
             selectedLog,
             liveElapsed,
         },
@@ -308,8 +375,13 @@ export function useTimesheetData() {
             setCurrentPage,
             setLimit,
             setClockOutOpen,
+            setClockOutTitle,
             setClockOutDesc,
+            setSelectedProjectId,
+            setSelectedTaskId,
             setSelectedLog,
+            handleClockIn,
+            openClockOutDialog,
             handleClockOut,
             handlePause,
             handleResume,

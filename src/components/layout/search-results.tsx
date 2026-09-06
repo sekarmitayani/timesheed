@@ -75,6 +75,13 @@ function getShortcuts(query: string, role: Role): SearchResult[] {
             { keys: ["timesheet", "waktu"], href: "/employee/timesheet", title: "Timesheet" },
             { keys: ["earning", "pendapatan", "gaji"], href: "/employee/earnings", title: "Earnings" },
         ],
+        management: [
+            { keys: ["profit", "keuntungan"], href: "/management/profitability", title: "Profitability" },
+            { keys: ["cost", "biaya"], href: "/management/cost-breakdown", title: "Cost Breakdown" },
+            { keys: ["liability", "tanggungan"], href: "/management/liability-monitor", title: "Liability Monitor" },
+            { keys: ["resource", "request", "permintaan"], href: "/management/resources", title: "Resources" },
+            { keys: ["report", "laporan"], href: "/management/reports", title: "Reports" },
+        ],
         finance: [
             { keys: ["profit", "keuntungan"], href: "/management/profitability", title: "Profitability" },
             { keys: ["cost", "biaya"], href: "/management/cost-breakdown", title: "Cost Breakdown" },

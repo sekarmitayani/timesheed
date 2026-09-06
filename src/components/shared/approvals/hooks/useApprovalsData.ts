@@ -6,7 +6,7 @@ import { TimesheetLog } from "@/lib/services/timesheet-service";
 import { ApiProject } from "@/lib/types";
 import { toast } from "sonner";
 
-export function useApprovalsData() {
+export function useApprovalsData(rolePrefix: string = "approvals") {
     const queryClient = useQueryClient();
 
     // --- UI States ---
@@ -28,12 +28,12 @@ export function useApprovalsData() {
 
     // --- Queries ---
     const { data: inboxRaw = [], isLoading: isLoadingInbox } = useQuery({
-        queryKey: ['pm', 'approvals', 'inbox', filterStatus],
+        queryKey: [rolePrefix, 'approvals', 'inbox', filterStatus],
         queryFn: () => approvalService.getInbox(filterStatus),
     });
 
     const { data: projectsData } = useQuery({
-        queryKey: ['pm', 'approvals', 'projects'],
+        queryKey: [rolePrefix, 'approvals', 'projects'],
         queryFn: () => projectService.getProjects(1, 100),
     });
     const projects = projectsData?.data || [];
@@ -43,7 +43,7 @@ export function useApprovalsData() {
         mutationFn: ({ id, payload }: { id: number, payload: ReviewTimesheetPayload }) => 
             approvalService.reviewTimesheet(id, payload),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['pm', 'approvals', 'inbox'] });
+            queryClient.invalidateQueries({ queryKey: [rolePrefix, 'approvals', 'inbox'] });
             toast.success("Timesheet updated successfully");
             setRejectOpen(false);
             setSelectedLog(null);
@@ -54,7 +54,7 @@ export function useApprovalsData() {
     const bulkMutation = useMutation({
         mutationFn: (payload: BulkActionPayload) => approvalService.bulkAction(payload),
         onSuccess: (res) => {
-            queryClient.invalidateQueries({ queryKey: ['pm', 'approvals', 'inbox'] });
+            queryClient.invalidateQueries({ queryKey: [rolePrefix, 'approvals', 'inbox'] });
             toast.success(`${res.rows_affected} timesheets processed`);
             setSelectedIds(new Set());
         },
@@ -66,7 +66,11 @@ export function useApprovalsData() {
         let result = [...inboxRaw];
 
         if (filterProject !== "all") {
-            result = result.filter(l => l.project_id === Number(filterProject));
+            if (filterProject === "none") {
+                result = result.filter(l => !l.project_id);
+            } else {
+                result = result.filter(l => l.project_id === Number(filterProject));
+            }
         }
 
         if (filterStatus !== "all") {

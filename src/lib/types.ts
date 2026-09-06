@@ -2,7 +2,7 @@
 // GLOBAL TYPES FOR AI-ENHANCED TIMESHEET SYSTEM
 // ============================================================
 
-export type Role = "employee" | "projectmanager" | "admin" | "finance";
+export type Role = "employee" | "projectmanager" | "admin" | "management" | "finance";
 
 export type RiskLevel = "low" | "medium" | "high";
 export type WorkloadStatus = "overloaded" | "balanced" | "underutilized";

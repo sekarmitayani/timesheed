@@ -88,10 +88,10 @@ export function TimesheetTable({
                                     <TableCell>
                                         <div className="flex flex-col">
                                             <span className="text-sm font-semibold text-slate-700 truncate max-w-[250px] group-hover:text-[#2568C1] transition-colors">
-                                                {getTaskTitle(l.task_id)}
+                                                {l.title || getTaskTitle(l.task_id)}
                                             </span>
                                             <span className="text-[11px] text-slate-400 font-medium capitalize">
-                                                {l.project?.name || `#${l.project_id}`}
+                                                {l.project?.name || (l.project_id ? `Project #${l.project_id}` : "Daily Timesheet")}
                                             </span>
                                         </div>
                                     </TableCell>

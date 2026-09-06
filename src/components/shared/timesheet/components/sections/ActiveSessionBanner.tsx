@@ -7,8 +7,10 @@ interface ActiveSessionBannerProps {
     activeLog: TimesheetLog | undefined;
     liveElapsed: string;
     onClockOut: () => void;
+    onClockIn?: () => void;
     onPause?: () => void;
     onResume?: () => void;
+    isClockingIn?: boolean;
     isPausing?: boolean;
     isResuming?: boolean;
     getTaskTitle: (taskId: number | null) => string;
@@ -19,14 +21,60 @@ export function ActiveSessionBanner({
     activeLog,
     liveElapsed,
     onClockOut,
+    onClockIn,
     onPause,
     onResume,
+    isClockingIn = false,
     isPausing = false,
     isResuming = false,
     getTaskTitle,
     formatTime24
 }: ActiveSessionBannerProps) {
-    if (!activeLog) return null;
+    if (!activeLog) {
+        return (
+            <Card className="bg-white rounded-[6px] shadow-none shrink-0 overflow-hidden border-[#E2E8F0]">
+                <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3.5">
+                        <div className="flex flex-col items-center justify-center bg-[#F8FAFC] border border-[#E2E8F0] rounded-[4px] px-3 py-2 min-w-[56px] shrink-0">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide leading-none">
+                                {new Date().toLocaleDateString("en-US", { month: "short" })}
+                            </span>
+                            <span className="text-xl sm:text-2xl font-bold text-[#0f172a] leading-tight mt-0.5">
+                                {new Date().getDate()}
+                            </span>
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-2 mb-0.5">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="inline-flex rounded-full h-2 w-2 bg-slate-300" />
+                                </span>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                                    No Active Session
+                                </span>
+                            </div>
+                            <p className="text-sm font-bold text-[#0f172a]">
+                                Ready to start your work?
+                            </p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">
+                                Click Clock In to record your daily attendance and start tracking your productivity.
+                            </p>
+                        </div>
+                    </div>
+
+                    {onClockIn && (
+                        <Button
+                            onClick={onClockIn}
+                            disabled={isClockingIn}
+                            className="w-full sm:w-auto gap-2 bg-[#4B7BEC] hover:bg-[#385bb5] text-white shadow-none border-none rounded-[4px] px-5 h-10 font-bold text-xs transition-all shrink-0"
+                        >
+                            {isClockingIn ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4 fill-current" />}
+                            Clock In
+                        </Button>
+                    )}
+                </CardContent>
+            </Card>
+        );
+    }
 
     const isPaused = !!activeLog.is_paused;
 
@@ -75,12 +123,12 @@ export function ActiveSessionBanner({
                                 )}
                             </div>
                             <p className="text-sm font-bold text-[#0f172a] truncate">
-                                {getTaskTitle(activeLog.task_id)}
+                                {activeLog.title || getTaskTitle(activeLog.task_id)}
                             </p>
                             <div className="flex items-center gap-1.5 mt-0.5">
                                 <Briefcase className="h-3 w-3 text-muted-foreground shrink-0" />
                                 <span className="text-[11px] text-muted-foreground font-medium truncate">
-                                    {activeLog.project?.name || `Project #${activeLog.project_id}`}
+                                    {activeLog.project?.name || (activeLog.project_id ? `Project #${activeLog.project_id}` : "Daily Timesheet (No Project)")}
                                 </span>
                             </div>
                         </div>

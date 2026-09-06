@@ -137,8 +137,8 @@ export function ApprovalsTable({
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex flex-col gap-0.5">
-                                                <span className="text-sm font-bold text-slate-700">{l.project?.name || `Project #${l.project_id}`}</span>
-                                                <span className="text-[10px] text-slate-400 font-medium">ID: {l.id}</span>
+                                                <span className="text-sm font-bold text-slate-700">{l.title || l.project?.name || (l.project_id ? `Project #${l.project_id}` : "Daily Timesheet")}</span>
+                                                <span className="text-[10px] text-slate-400 font-medium">{l.project?.name ? l.project.name : (l.project_id ? `Project #${l.project_id}` : "No Project")} • ID: {l.id}</span>
                                             </div>
                                         </TableCell>
                                         <TableCell>
