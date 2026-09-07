@@ -20,7 +20,7 @@ export function ProfileSidebar({ profile }: ProfileSidebarProps) {
         .toUpperCase();
 
     return (
-        <Card className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm flex flex-col items-center text-center w-full">
+        <Card className="bg-white rounded-xl border border-slate-100 p-5 py-5 gap-0 shadow-sm flex flex-col items-center text-center w-full">
             <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-slate-100 mb-2 bg-gradient-to-br from-[#2568C1] to-[#1a4f99] flex items-center justify-center shrink-0 shadow-sm">
                 <span className="text-xl font-bold text-white tracking-wide">
                     {initials}

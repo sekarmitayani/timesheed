@@ -33,13 +33,12 @@ export function ConfirmDeleteDialog({
                         <AlertTriangle className="h-5 w-5" />
                     </div>
                     <div>
-                        <DialogTitle className="text-base font-semibold text-[#0f172a]">Delete Contract Data?</DialogTitle>
-                        <p className="text-xs text-red-600/80">Permanent data destruction</p>
+                        <DialogTitle className="text-base font-semibold text-[#0f172a]">Delete Contract?</DialogTitle>
+                        <p className="text-xs text-red-600/80">Confirm Deletion</p>
                     </div>
                 </div>
                 <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
-                    This will permanently remove the contract block for <b className="text-slate-800">{user?.full_name || user?.name || `User #${contract?.user_id}`}</b>. 
-                    This action represents permanent data destruction and cannot be undone.
+                    Are you sure you want to delete the contract for <b className="text-slate-800">{user?.full_name || user?.name || `User #${contract?.user_id}`}</b>? This contract will be moved to Trash &amp; Restore.
                 </div>
                 <DialogFooter className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
                     <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isDeleting} className="rounded-md">Cancel</Button>

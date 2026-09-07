@@ -90,7 +90,7 @@ export function PersonalInfoCard({ profile, onSave, isSaving }: PersonalInfoCard
                 )}
             </CardHeader>
             <CardContent className="p-4 sm:p-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
                     {/* Full Name */}
                     <div className="space-y-1">
                         <Label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Full Name</Label>

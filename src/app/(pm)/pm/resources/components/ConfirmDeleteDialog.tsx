@@ -27,11 +27,11 @@ export function ConfirmDeleteDialog({
                     </div>
                     <div>
                         <DialogTitle className="text-base font-semibold text-[#0f172a]">Delete Request?</DialogTitle>
-                        <p className="text-xs text-red-600/80">Permanent action</p>
+                        <p className="text-xs text-red-600/80">Confirm Deletion</p>
                     </div>
                 </div>
                 <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
-                    This action cannot be undone. You are about to permanently delete Request #{requestId}.
+                    Are you sure you want to delete Request #{requestId}?
                 </div>
                 <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
                     <Button variant="outline" className="rounded-md" onClick={() => onOpenChange(false)} disabled={isProcessing}>

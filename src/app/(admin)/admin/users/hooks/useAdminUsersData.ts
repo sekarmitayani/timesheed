@@ -119,18 +119,15 @@ export function useAdminUsersData() {
 
     const deleteUserMutation = useMutation({
         mutationFn: (id: string | number) => adminUserService.deleteUser(id),
-        onSuccess: () => {
-            toast.success("User permanently deleted");
+        onSuccess: (res: any) => {
+            toast.success(res?.message || "User moved to trash");
             queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'list'] });
+            queryClient.invalidateQueries({ queryKey: ['trash'] });
             setDeleteOpen(false);
             setDeleteRelationReasons(null);
         },
         onError: (err: any) => {
-            if (err?.data?.has_relations && Array.isArray(err?.data?.reasons)) {
-                setDeleteRelationReasons(err.data.reasons);
-            } else {
-                toast.error(err.message || "Failed to delete user");
-            }
+            toast.error(err.message || "Failed to delete user");
         }
     });
 

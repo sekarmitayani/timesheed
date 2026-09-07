@@ -393,13 +393,12 @@ export function PaymentsDialog({
                         <AlertTriangle className="h-5 w-5" />
                     </div>
                     <div>
-                        <DialogTitle className="text-base font-semibold text-[#0f172a]">Delete Ledger Entry?</DialogTitle>
-                        <p className="text-xs text-red-600/80">Permanent data destruction</p>
+                        <DialogTitle className="text-base font-semibold text-[#0f172a]">Delete Payment Record?</DialogTitle>
+                        <p className="text-xs text-red-600/80">Confirm Deletion</p>
                     </div>
                 </div>
                 <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
-                    This will permanently remove the payment record. 
-                    This action represents permanent data destruction and cannot be undone.
+                    Are you sure you want to delete this payment record?
                 </div>
                 <DialogFooter className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
                     <Button variant="outline" onClick={() => setDeleteConfirmId(null)} className="rounded-md">Cancel</Button>

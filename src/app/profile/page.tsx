@@ -20,27 +20,26 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="flex flex-col gap-4 animate-in fade-in duration-500 pb-6">
+        <div className="flex flex-col gap-4 animate-in fade-in duration-500">
             <PageHeader 
                 title="User Profile" 
                 description="Manage your personal information and security settings." 
             />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-1">
-                {/* Left Column - Sidebar profile */}
-                <div className="lg:col-span-1">
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 lg:gap-6 pt-1">
+                {/* Left Column - Sidebar profile & Account metadata */}
+                <div className="sm:col-span-5 lg:col-span-4 flex flex-col gap-4">
                     <ProfileSidebar profile={profile} />
+                    <AccountDetailsCard profile={profile} />
                 </div>
 
-                {/* Right Column - Details */}
-                <div className="lg:col-span-2 flex flex-col gap-4">
+                {/* Right Column - Details & Security */}
+                <div className="sm:col-span-7 lg:col-span-8 flex flex-col gap-4">
                     <PersonalInfoCard 
                         profile={profile} 
                         onSave={updateProfile}
                         isSaving={isUpdatingProfile}
                     />
-                    
-                    <AccountDetailsCard profile={profile} />
                     
                     <SecurityCard 
                         onChangePassword={changePassword}

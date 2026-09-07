@@ -521,11 +521,11 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                         </div>
                         <div>
                             <DialogTitle className="text-base font-semibold text-[#0f172a]">Delete Resource Request?</DialogTitle>
-                            <p className="text-xs text-red-600/80">Permanent action</p>
+                            <p className="text-xs text-red-600/80">Confirm Deletion</p>
                         </div>
                     </div>
                     <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
-                        Are you sure you want to delete this resource request? This action cannot be undone.
+                        Are you sure you want to delete this resource request? It will be moved to Trash &amp; Restore.
                     </div>
                     <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
                         <Button variant="outline" className="rounded-md" onClick={() => actions.setDeleteConfirmOpen(false)} disabled={isSaving}>Cancel</Button>

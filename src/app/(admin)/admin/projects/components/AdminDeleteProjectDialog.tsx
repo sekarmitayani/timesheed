@@ -24,11 +24,11 @@ export function AdminDeleteProjectDialog({
                     </div>
                     <div>
                         <DialogTitle className="text-base font-semibold text-[#0f172a]">Delete Project?</DialogTitle>
-                        <p className="text-xs text-red-600/80">Soft delete action</p>
+                        <p className="text-xs text-red-600/80">Confirm Deletion</p>
                     </div>
                 </div>
                 <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
-                    This will soft-delete <b className="text-slate-900">{projectName}</b>. This action can be undone by system administrators if needed.
+                    Are you sure you want to delete <b className="text-slate-900">{projectName}</b>? This project will be moved to Trash &amp; Restore.
                 </div>
                 <DialogFooter className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
                     <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isDeleting} className="rounded-md">

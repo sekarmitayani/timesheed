@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } f
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Shield, LogIn } from "lucide-react";
+import { Shield } from "lucide-react";
 import { User } from "@/lib/types";
 
 interface ConfirmProxyDialogProps {
@@ -81,10 +81,9 @@ export function ConfirmProxyDialog({
                         Cancel
                     </Button>
                     <Button
-                        className="gap-1.5 bg-[#2568C1] hover:bg-[#1a4f99] text-white shadow-sm h-9 px-5 rounded-md transition-all duration-200"
+                        className="bg-[#2568C1] hover:bg-[#1a4f99] text-white shadow-sm h-9 px-5 rounded-md transition-all duration-200"
                         onClick={onConfirm}
                     >
-                        <LogIn className="h-4 w-4" />
                         Yes, Continue
                     </Button>
                 </DialogFooter>

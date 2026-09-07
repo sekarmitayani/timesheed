@@ -295,11 +295,11 @@ export function PMProjectDialogs({ state, actions }: PMProjectDialogsProps) {
                             <DialogTitle className="text-base font-semibold text-[#0f172a]">
                                 Delete {deleteTarget?.type === "task" ? "Task" : "Resource Request"}?
                             </DialogTitle>
-                            <p className="text-xs text-red-600/80">Permanent action</p>
+                            <p className="text-xs text-red-600/80">Confirm Deletion</p>
                         </div>
                     </div>
                     <div className="px-6 pt-3.5 pb-5 text-sm text-slate-600 leading-relaxed">
-                        Are you sure you want to delete <span className="font-semibold text-slate-900">&ldquo;{deleteTarget?.title}&rdquo;</span>? This action cannot be undone.
+                        Are you sure you want to delete <span className="font-semibold text-slate-900">&ldquo;{deleteTarget?.title}&rdquo;</span>?
                     </div>
                     <div className="px-6 py-3.5 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-end gap-2.5">
                         <Button variant="outline" className="rounded-md" onClick={() => actions.setDeleteTarget(null)} disabled={isDeleting}>Cancel</Button>
