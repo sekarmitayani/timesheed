@@ -4,6 +4,7 @@ import { ApiProject, ProjectMember } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface ProjectHeaderProps {
     project: ApiProject;
@@ -14,7 +15,7 @@ interface ProjectHeaderProps {
 
 const statusConfig: Record<string, { label: string; bg: string; text: string; dot: string }> = {
     active: { label: "Active", bg: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500" },
-    completed: { label: "Completed", bg: "bg-blue-50/50", text: "text-[#2568C1]", dot: "bg-[#2568C1]" },
+    completed: { label: "Completed", bg: "bg-blue-50/50", text: "text-[#4B7BEC]", dot: "bg-[#4B7BEC]" },
     "on-hold": { label: "On Hold", bg: "bg-amber-50", text: "text-amber-600", dot: "bg-amber-500" },
     cancelled: { label: "Cancelled", bg: "bg-red-50", text: "text-red-600", dot: "bg-red-500" },
 };
@@ -68,7 +69,7 @@ export function ProjectHeader({ project, members, activeTab, setActiveTab }: Pro
                                 })}
                                 {extraMembers > 0 && (
                                     <div className="h-8 w-8 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center z-10">
-                                        <span className="text-[10px] font-bold text-[#2568C1]">
+                                        <span className="text-[10px] font-bold text-[#4B7BEC]">
                                             +{extraMembers}
                                         </span>
                                     </div>
@@ -85,15 +86,19 @@ export function ProjectHeader({ project, members, activeTab, setActiveTab }: Pro
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={cn(
-                            "pb-3 text-sm font-semibold transition-all relative whitespace-nowrap",
+                            "pb-3 text-sm font-semibold transition-colors relative whitespace-nowrap",
                             activeTab === tab
-                                ? "text-[#2568C1]"
+                                ? "text-[#4B7BEC]"
                                 : "text-slate-500 hover:text-slate-700"
                         )}
                     >
                         {tab}
                         {activeTab === tab && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2568C1] rounded-t-full" />
+                            <motion.div
+                                layoutId="employeeProjectTabIndicator"
+                                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4B7BEC] rounded-t-full"
+                                transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                            />
                         )}
                     </button>
                 ))}

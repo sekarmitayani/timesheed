@@ -4,6 +4,7 @@ import { ApiProject, ProjectMember } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface AdminProjectHeaderProps {
     project: ApiProject;
@@ -85,7 +86,7 @@ export function AdminProjectHeader({ project, members, activeTab, setActiveTab }
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={cn(
-                            "pb-3 text-sm font-semibold transition-all relative whitespace-nowrap",
+                            "pb-3 text-sm font-semibold transition-colors relative whitespace-nowrap",
                             activeTab === tab
                                 ? "text-[#4B7BEC]"
                                 : "text-slate-500 hover:text-slate-700"
@@ -93,7 +94,11 @@ export function AdminProjectHeader({ project, members, activeTab, setActiveTab }
                     >
                         {tab}
                         {activeTab === tab && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4B7BEC] rounded-t-full" />
+                            <motion.div
+                                layoutId="adminProjectTabIndicator"
+                                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4B7BEC] rounded-t-full"
+                                transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                            />
                         )}
                     </button>
                 ))}
