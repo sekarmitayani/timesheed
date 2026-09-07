@@ -160,7 +160,7 @@ export function ApprovalsTable({
                                                 )}>
                                                     {l.status}
                                                 </Badge>
-                                                {l.is_anomaly && (
+                                                {l.is_anomaly && l.status === "pending" && (
                                                     <Badge variant="outline" className="uppercase text-[9px] font-black px-2 py-0.5 tracking-wider rounded-full border border-red-200 bg-red-50 text-red-700 shadow-none">
                                                         Suspicious
                                                     </Badge>

@@ -55,7 +55,7 @@ export function TimesheetDetailModal({
                 </div>
 
                 <div className="max-h-[70vh] overflow-y-auto custom-scrollbar">
-                    {isPMView && selectedLog.is_anomaly && (
+                    {isPMView && selectedLog.is_anomaly && selectedLog.status === "pending" && (
                         <div className="bg-rose-50 border-b border-rose-100 px-6 py-3 flex items-center gap-2.5">
                             <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
                             <p className="text-xs font-bold text-rose-700 uppercase tracking-wider">Anomaly Detected</p>

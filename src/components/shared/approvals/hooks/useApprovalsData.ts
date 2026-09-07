@@ -126,7 +126,7 @@ export function useApprovalsData(rolePrefix: string = "approvals") {
 
     const handleApprove = (id: number) => {
         const log = filteredInbox.find(l => l.id === id);
-        if (log?.is_anomaly) {
+        if (log?.is_anomaly && log?.status === "pending") {
             setPendingApprovalAction(() => () => reviewMutation.mutate({ id, payload: { status: "approved" } }));
             setAnomalyWarningOpen(true);
             return;
@@ -142,7 +142,7 @@ export function useApprovalsData(rolePrefix: string = "approvals") {
 
     const handleBulkApprove = () => {
         if (selectedIds.size === 0) return;
-        const hasAnomaly = filteredInbox.some(l => selectedIds.has(l.id) && l.is_anomaly);
+        const hasAnomaly = filteredInbox.some(l => selectedIds.has(l.id) && l.is_anomaly && l.status === "pending");
         
         if (hasAnomaly) {
             setPendingApprovalAction(() => () => bulkMutation.mutate({ timesheet_ids: Array.from(selectedIds), status: "approved" }));
@@ -170,7 +170,7 @@ export function useApprovalsData(rolePrefix: string = "approvals") {
         state: {
             inbox: paginatedInbox,
             totalCount: filteredInbox.length,
-            totalAnomalyCount: filteredInbox.filter(l => l.is_anomaly).length,
+            totalAnomalyCount: filteredInbox.filter(l => l.is_anomaly && l.status === "pending").length,
             isLoading: isLoadingInbox,
             isProcessing: reviewMutation.isPending || bulkMutation.isPending,
             page,
