@@ -193,7 +193,7 @@ export function TaskDetailDialog({
                                                 value={commentText} 
                                                 onChange={(e) => setCommentText(e.target.value)} 
                                                 placeholder="Write a comment..." 
-                                                className="min-h-[100px] rounded-md border-slate-200 focus:ring-[#4B7BEC] focus:border-[#4B7BEC] pr-12 text-sm font-medium pt-3 resize-none shadow-sm" 
+                                                className="min-h-[100px] rounded-md border-slate-200 focus:ring-2 focus:ring-[#2568C1] focus:border-[#2568C1] pr-12 text-sm font-medium pt-3 resize-none shadow-xs transition-all duration-200" 
                                             />
                                             <Button 
                                                 size="icon" 

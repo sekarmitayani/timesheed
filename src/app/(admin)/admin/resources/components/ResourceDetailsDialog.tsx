@@ -80,7 +80,7 @@ export function ResourceDetailsDialog({
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-sm font-medium text-[#0f172a]">Details</label>
-                                <textarea className="w-full min-h-[100px] p-3 rounded-md border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none" value={editForm.details} onChange={e => setEditForm({ ...editForm, details: e.target.value })} />
+                                <textarea className="w-full min-h-[100px] p-3 rounded-md border border-slate-200 text-sm transition-all duration-200 outline-none focus:border-[#2568C1] focus:ring-2 focus:ring-[#2568C1]" value={editForm.details} onChange={e => setEditForm({ ...editForm, details: e.target.value })} />
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-sm font-medium text-[#0f172a]">Realization Cost (Rp)</label>

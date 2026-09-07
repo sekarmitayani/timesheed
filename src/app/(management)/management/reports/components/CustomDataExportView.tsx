@@ -513,14 +513,14 @@ export function CustomDataExportView({
                                     Quick Search Query
                                 </label>
                             </div>
-                            <div className="relative">
-                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                            <div className="relative p-0.5">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                                 <Input
                                     type="text"
                                     placeholder="Search by project, client, member..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-8 pr-8 h-9 text-xs border-slate-200 bg-white shadow-xs"
+                                    className="pl-8 pr-8 h-9 text-xs border-slate-200 bg-white shadow-xs focus-visible:ring-2 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                                 />
                                 {searchQuery && (
                                     <button

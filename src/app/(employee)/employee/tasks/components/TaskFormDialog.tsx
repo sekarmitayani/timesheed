@@ -174,7 +174,7 @@ export function TaskFormDialog({
                                 onChange={e => setForm({ ...form, complexity: Number(e.target.value) })} 
                                 disabled={isSaving} 
                                 placeholder="1 = Very Easy, 5 = Very Hard"
-                                className="border-slate-200 h-9 shadow-sm rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]" 
+                                className="border-slate-200 h-9 shadow-xs rounded-md text-sm font-semibold" 
                             />
                             <div className="flex items-center justify-between mt-1">
                                 <Button 
@@ -201,7 +201,7 @@ export function TaskFormDialog({
                                 value={String(form.assigned_to_id || "")} 
                                 onValueChange={v => setForm({ ...form, assigned_to_id: Number(v) })}
                             >
-                                <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
+                                <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold">
                                     <SelectValue placeholder="Select member" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-md">
@@ -218,7 +218,7 @@ export function TaskFormDialog({
                         <div className="space-y-1.5">
                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Status</label>
                             <Select value={form.status} onValueChange={v => setForm({ ...form, status: v })}>
-                                <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold focus:ring-1 focus:ring-[#4B7BEC]">
+                                <SelectTrigger className="border-slate-200 h-9 rounded-md text-sm font-semibold">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-md">

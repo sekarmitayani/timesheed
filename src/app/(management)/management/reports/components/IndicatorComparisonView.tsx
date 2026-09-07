@@ -561,14 +561,14 @@ export function IndicatorComparisonView({
                                             </div>
                                         </div>
 
-                                        <div className="relative">
-                                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                                        <div className="relative p-0.5">
+                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                                             <Input
                                                 type="text"
                                                 placeholder={`Search ${scope}...`}
                                                 value={entitySearchQuery}
                                                 onChange={(e) => setEntitySearchQuery(e.target.value)}
-                                                className="pl-8 pr-7 h-8 text-xs bg-white border-slate-200 focus-visible:ring-[#4B7BEC]"
+                                                className="pl-8 pr-7 h-8 text-xs bg-white border-slate-200 focus-visible:ring-2 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                                             />
                                             {entitySearchQuery && (
                                                 <button
@@ -722,8 +722,8 @@ export function IndicatorComparisonView({
                     {/* ========================================================================= */}
                     <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
                         <div className="flex items-center gap-2 flex-1 w-full sm:w-auto max-w-md">
-                            <div className="relative w-full">
-                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                            <div className="relative w-full p-0.5">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                                 <Input
                                     type="text"
                                     placeholder={`Search & highlight specific ${scope === "projects" ? "project" : scope === "members" ? "member" : "month"}...`}
@@ -732,7 +732,7 @@ export function IndicatorComparisonView({
                                         setHighlightQuery(e.target.value);
                                         setSelectedHighlight(null);
                                     }}
-                                    className="pl-8 pr-8 h-8 text-xs border-slate-200 bg-white shadow-xs focus-visible:ring-[#4B7BEC]"
+                                    className="pl-8 pr-8 h-8 text-xs border-slate-200 bg-white shadow-xs focus-visible:ring-2 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                                 />
                                 {highlightQuery && (
                                     <button
@@ -1104,8 +1104,8 @@ export function IndicatorComparisonView({
 
                     {/* Table Toolbar (Search & Show Rows) */}
                     <div className="flex items-center gap-2">
-                        <div className="relative w-48">
-                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                        <div className="relative w-48 p-0.5">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                             <Input
                                 type="text"
                                 placeholder="Search matrix..."
@@ -1114,7 +1114,7 @@ export function IndicatorComparisonView({
                                     setTableSearch(e.target.value);
                                     setPage(1);
                                 }}
-                                className="pl-8 pr-7 h-8 text-xs border-slate-200 bg-white shadow-xs focus-visible:ring-[#4B7BEC]"
+                                className="pl-8 pr-7 h-8 text-xs border-slate-200 bg-white shadow-xs focus-visible:ring-2 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                             />
                             {tableSearch && (
                                 <button

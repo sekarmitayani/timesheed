@@ -37,13 +37,13 @@ export function ResourceFilters({
         <div className="flex flex-col md:flex-row gap-2.5 items-stretch md:items-center justify-between pt-1">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
                 {/* Search Bar */}
-                <div className="relative w-full sm:w-[240px] md:w-[260px] shrink-0">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <div className="relative w-full sm:w-[240px] md:w-[260px] shrink-0 p-0.5">
+                    <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground pointer-events-none" />
                     <Input 
                         placeholder="Search resources..." 
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 h-10 w-full bg-white border-slate-200 text-sm focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
+                        className="pl-9 h-10 w-full bg-white border-slate-200 text-sm focus-visible:ring-2 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                     />
                 </div>
 

@@ -144,11 +144,11 @@ export function ProjectCostSummaryDetailModal({ project, open, onOpenChange }: P
                             <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
                                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Cost Details</h3>
                                 <div className="flex gap-2 w-full sm:w-auto">
-                                    <div className="relative w-full sm:w-[250px]">
-                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <div className="relative w-full sm:w-[250px] p-0.5">
+                                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                                         <Input 
                                             placeholder="Search details or user..." 
-                                            className="pl-9 bg-slate-50 border-slate-200 h-9 text-sm"
+                                            className="pl-9 bg-slate-50 border-slate-200 h-9 text-sm focus-visible:ring-2 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                                             value={search}
                                             onChange={(e) => setSearch(e.target.value)}
                                         />

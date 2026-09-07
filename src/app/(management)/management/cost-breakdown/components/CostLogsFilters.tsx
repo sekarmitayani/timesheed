@@ -26,11 +26,11 @@ export function CostLogsFilters({
             </div>
             
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                <div className="relative w-full sm:w-[250px] shrink-0">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <div className="relative w-full sm:w-[250px] shrink-0 p-0.5">
+                    <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 pointer-events-none" />
                     <Input
                         placeholder="Search logs..."
-                        className="pl-9 h-9 w-full bg-white border-slate-200 text-sm focus-visible:ring-[#4B7BEC]"
+                        className="pl-9 h-9 w-full bg-white border-slate-200 text-sm focus-visible:ring-2 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                         value={search}
                         onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                     />
