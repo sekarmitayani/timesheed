@@ -105,24 +105,26 @@ export function Topbar() {
                         transition={{ duration: 0.3 }}
                         className="bg-amber-500 text-white shadow-lg relative z-50"
                     >
-                        <div className="flex items-center justify-between px-6 py-2.5">
-                            <div className="flex items-center gap-2.5">
-                                <div className="p-1 bg-white/20 rounded-md">
-                                    <Shield className="h-4 w-4" />
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 sm:px-6 py-2 sm:py-2.5">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <div className="p-1 bg-white/20 rounded-md shrink-0">
+                                    <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                 </div>
-                                <div className="flex items-center gap-1.5">
-                                    <span className="text-xs font-bold uppercase tracking-wider">Proxy Session Active</span>
-                                    <span className="text-xs font-medium opacity-90">— Viewing as <span className="font-bold">{user.name}</span></span>
+                                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs min-w-0">
+                                    <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider whitespace-nowrap">Proxy Session Active</span>
+                                    <span className="text-[11px] sm:text-xs font-medium opacity-90 truncate max-w-[180px] sm:max-w-none">
+                                        — Viewing as <span className="font-bold">{user.name}</span>
+                                    </span>
                                 </div>
                             </div>
                             <Button
                                 size="sm"
                                 variant="ghost"
-                                className="gap-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-semibold h-7 rounded-md px-3 border border-white/30"
+                                className="gap-1.5 bg-white/20 hover:bg-white/30 text-white text-[11px] sm:text-xs font-semibold h-7 rounded-md px-2.5 sm:px-3 border border-white/30 shrink-0 self-start sm:self-auto"
                                 onClick={handleExitProxy}
                             >
                                 <ArrowLeft className="h-3 w-3" />
-                                Back to Admin
+                                <span>Back to Admin</span>
                             </Button>
                         </div>
                     </motion.div>

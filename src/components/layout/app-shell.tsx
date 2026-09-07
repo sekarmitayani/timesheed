@@ -9,6 +9,7 @@ import { Topbar } from "./topbar";
 import { Role } from "@/lib/types";
 import { getDefaultRoute } from "@/lib/rbac";
 import { ChatbotWidget } from "@/components/chat/ChatbotWidget";
+import { cn } from "@/lib/utils";
 
 interface AppShellProps {
     children: React.ReactNode;
@@ -54,8 +55,13 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
         return null;
     }
 
+    const isFixedPage = Boolean(
+        pathname?.endsWith("/tasks") ||
+        pathname?.match(/\/(admin|pm|employee)\/projects\/[^/]+$/)
+    );
+
     return (
-        <div className="min-h-screen bg-background">
+        <div className={cn("bg-background", isFixedPage ? "h-screen overflow-hidden" : "min-h-screen")}>
             {/* Mobile overlay */}
             {mobileSidebarOpen && (
                 <div
@@ -70,15 +76,19 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
                 initial={false}
                 animate={{ paddingLeft: sidebarCollapsed ? 72 : 260 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                className="hidden lg:flex flex-col min-h-screen will-change-[padding-left]"
+                className={cn(
+                    "hidden lg:flex flex-col will-change-[padding-left]",
+                    isFixedPage ? "h-screen overflow-hidden" : "min-h-screen"
+                )}
             >
                 <Topbar />
-                <main className="flex-1 p-4 sm:p-6">
+                <main className={cn("flex-1", isFixedPage ? "p-4 sm:px-6 sm:pt-5 sm:pb-3 overflow-hidden flex flex-col min-h-0" : "p-4 sm:p-6")}>
                     <motion.div
                         key={pathname}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={isFixedPage ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                        animate={isFixedPage ? { opacity: 1 } : { opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
+                        className={isFixedPage ? "h-full flex-1 flex flex-col min-h-0" : ""}
                     >
                         {children}
                     </motion.div>
@@ -86,14 +96,15 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
             </motion.div>
 
             {/* Mobile content area */}
-            <div className="flex flex-col min-h-screen lg:hidden w-full">
+            <div className={cn("flex flex-col lg:hidden w-full", isFixedPage ? "h-screen overflow-hidden" : "min-h-screen")}>
                 <Topbar />
-                <main className="flex-1 p-3 sm:p-4">
+                <main className={cn("flex-1", isFixedPage ? "p-3 sm:px-4 sm:pt-4 sm:pb-2 overflow-hidden flex flex-col min-h-0" : "p-3 sm:p-4")}>
                     <motion.div
                         key={pathname}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={isFixedPage ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                        animate={isFixedPage ? { opacity: 1 } : { opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
+                        className={isFixedPage ? "h-full flex-1 flex flex-col min-h-0" : ""}
                     >
                         {children}
                     </motion.div>
