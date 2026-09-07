@@ -2,9 +2,9 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { projectService } from "@/lib/services/project-service";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, TrendingUp, AlertTriangle, ShieldCheck, Info } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 
 interface AdminAIForecastSectionProps {
     projectId: string;
@@ -26,10 +26,10 @@ export function AdminAIForecastSection({ projectId, className, compact }: AdminA
 
     if (isLoading) {
         return (
-            <Card className={cn("border-[#E2E8F0] shadow-sm rounded-xl overflow-hidden mt-6", className)}>
-                <CardContent className="flex flex-col items-center justify-center p-8 gap-4 min-h-[200px]">
-                    <Loader2 className="h-8 w-8 animate-spin text-[#2568C1]" />
-                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Running AI Prophet Forecast...</p>
+            <Card className={cn("bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0", className)}>
+                <CardContent className="p-4 sm:p-5 flex items-center justify-center gap-2 text-slate-500">
+                    <Loader2 className="h-4 w-4 animate-spin text-[#4B7BEC]" />
+                    <span className="text-xs font-medium">Analyzing historical spend patterns & generating forecast...</span>
                 </CardContent>
             </Card>
         );
@@ -37,13 +37,24 @@ export function AdminAIForecastSection({ projectId, className, compact }: AdminA
 
     if (error || !forecast) {
         return (
-            <Card className={cn("border-[#E2E8F0] shadow-sm rounded-xl overflow-hidden mt-6 bg-slate-50", className)}>
-                <CardContent className="flex flex-col items-center justify-center p-8 gap-2 min-h-[200px]">
-                    <AlertTriangle className="h-8 w-8 text-amber-500 mb-2" />
-                    <p className="text-sm font-bold text-slate-600">AI Forecast Unavailable</p>
-                    <p className="text-xs text-slate-500 text-center max-w-md">
-                        Not enough historical data to generate a reliable forecast, or the AI engine is currently offline.
-                    </p>
+            <Card className={cn("bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0", className)}>
+                <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                        <TrendingUp className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                        <div className="flex flex-col">
+                            <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                                AI Budget Forecast
+                            </CardTitle>
+                            <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
+                                Predictive analytics powered by Facebook Prophet
+                            </p>
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent className="p-0">
+                    <div className="p-4 sm:p-5 text-center text-xs text-slate-400 font-medium">
+                        Could not generate forecast: insufficient timesheet or budget data.
+                    </div>
                 </CardContent>
             </Card>
         );
@@ -53,75 +64,74 @@ export function AdminAIForecastSection({ projectId, className, compact }: AdminA
     const isCritical = forecast.status === "CRITICAL_OVER";
 
     return (
-        <Card className={cn("border-[#E2E8F0] shadow-sm rounded-xl overflow-hidden mt-6 bg-white", className)}>
-            <CardHeader className="border-b border-[#E2E8F0] pb-3 bg-white">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <CardTitle className="text-[15px] font-bold text-slate-800 flex items-center gap-2">
-                            <TrendingUp className="h-4 w-4 text-[#2568C1]" />
+        <Card className={cn("bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0", className)}>
+            <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <TrendingUp className="h-5 w-5 text-[#4B7BEC] shrink-0" />
+                    <div className="flex flex-col">
+                        <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
                             AI Budget Forecast
                         </CardTitle>
-                        <CardDescription className="text-xs text-slate-500 font-medium mt-1">
+                        <p className="text-[10px] text-slate-400 font-medium leading-none mt-1">
                             Predictive analytics powered by Facebook Prophet
-                        </CardDescription>
+                        </p>
                     </div>
-                    {isSafe ? (
-                        <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full">
-                            <ShieldCheck className="h-3.5 w-3.5" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">Safe</span>
+                </div>
+                {isSafe ? (
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100 shrink-0">
+                        <ShieldCheck className="h-3.5 w-3.5" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Safe</span>
+                    </div>
+                ) : isCritical ? (
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-600 rounded-full border border-red-100 shrink-0">
+                        <AlertTriangle className="h-3.5 w-3.5" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Critical Overbudget</span>
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-600 rounded-full border border-amber-100 shrink-0">
+                        <AlertTriangle className="h-3.5 w-3.5" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Warning</span>
+                    </div>
+                )}
+            </CardHeader>
+            <CardContent className="p-0 flex-1 flex flex-col justify-between">
+                <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3.5">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                        <div className="space-y-0.5">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Budget Spent</span>
+                            <p className="text-sm sm:text-base font-bold text-slate-800 tracking-tight">{formatCurrency(forecast.spent)}</p>
                         </div>
-                    ) : isCritical ? (
-                        <div className="flex items-center gap-1.5 px-3 py-1 bg-red-100 text-red-700 rounded-full">
-                            <AlertTriangle className="h-3.5 w-3.5" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">Critical Overbudget</span>
+                        <div className="space-y-0.5">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Spent Percentage</span>
+                            <p className={cn("text-sm sm:text-base font-bold tracking-tight", forecast.pct > 90 ? "text-red-600" : "text-slate-800")}>
+                                {forecast.pct.toFixed(1)}%
+                            </p>
                         </div>
-                    ) : (
-                        <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-full">
-                            <AlertTriangle className="h-3.5 w-3.5" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">Warning</span>
+                        <div className="space-y-0.5">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Estimated 30-Day Cost</span>
+                            <p className="text-sm sm:text-base font-bold text-[#4B7BEC] tracking-tight">{formatCurrency(forecast.forecast_30d)}</p>
+                        </div>
+                        <div className="space-y-0.5">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Estimated Runway</span>
+                            <p className={cn("text-sm sm:text-base font-bold tracking-tight", isCritical ? "text-red-600" : isSafe ? "text-emerald-600" : "text-slate-800")}>
+                                {isCritical ? "Budget Depleted" : (forecast.runway ? formatDate(forecast.runway) : "> 90 Days (Safe)")}
+                            </p>
+                        </div>
+                    </div>
+
+                    {forecast.explanation && (
+                        <div className="bg-slate-50/70 rounded-lg px-3.5 py-2.5 border border-slate-100 border-l-[3px] border-l-[#4B7BEC] text-xs text-slate-600 font-medium">
+                            &quot;{forecast.explanation}&quot;
                         </div>
                     )}
                 </div>
-            </CardHeader>
-            <CardContent className="p-5 pt-3 flex flex-col gap-5">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Budget Spent</span>
-                        <p className="text-sm font-bold text-slate-800">{formatCurrency(forecast.spent)}</p>
-                    </div>
-                    <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Spent Percentage</span>
-                        <p className={cn("text-sm font-bold", forecast.pct > 90 ? "text-red-600" : "text-slate-800")}>
-                            {forecast.pct.toFixed(1)}%
-                        </p>
-                    </div>
-                    <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Estimated 30-Day Cost</span>
-                        <p className="text-sm font-bold text-[#2568C1]">{formatCurrency(forecast.forecast_30d)}</p>
-                    </div>
-                    <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Estimated Runway</span>
-                        <p className={cn("text-sm font-bold", isCritical ? "text-red-600" : isSafe ? "text-emerald-600" : "text-slate-800")}>
-                            {isCritical ? "Budget Depleted" : (forecast.runway ? forecast.runway : "> 90 Days (Safe)")}
-                        </p>
-                    </div>
-                </div>
-
-                {forecast.explanation && (
-                    <div className="bg-[#F8FAFC] rounded-[8px] p-4 border border-[#E2E8F0] border-l-4 border-l-[#2568C1] text-sm text-slate-600 font-medium">
-                        &quot;{forecast.explanation}&quot;
-                    </div>
-                )}
 
                 {!compact && (
-                    <div className="flex items-start gap-3 pt-4 border-t border-slate-100">
-                        <Info className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
-                        <div className="space-y-1">
-                            <p className="text-xs font-bold text-slate-700">About this data</p>
-                            <p className="text-xs text-slate-500 leading-relaxed">
-                                This forecast is generated by analyzing historical spending patterns, including employee timesheets and approved resource requests. The machine learning model uses a time-series forecasting algorithm to predict future costs over the next 90 days. The "Runway" indicates the estimated date when the project's cumulative costs will exceed the defined budget threshold.
-                            </p>
-                        </div>
+                    <div className="px-5 py-2.5 mt-auto border-t border-slate-100 bg-slate-50/30 flex items-start sm:items-center gap-2 text-slate-400 shrink-0">
+                        <Info className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5 sm:mt-0" />
+                        <p className="text-[10px] text-slate-500 leading-relaxed">
+                            <span className="font-semibold text-slate-600">About this data:</span> This forecast is generated by analyzing historical spending patterns (timesheets & approved resources) using Facebook Prophet. The &quot;Runway&quot; indicates the estimated date when cumulative costs will exceed the budget threshold.
+                        </p>
                     </div>
                 )}
             </CardContent>
