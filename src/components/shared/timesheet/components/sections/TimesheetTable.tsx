@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
 import { cn } from "@/lib/utils";
 import { TimesheetLog } from "@/lib/services/timesheet-service";
 
@@ -55,14 +56,7 @@ export function TimesheetTable({
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={7} className="h-48 text-center">
-                                    <div className="flex flex-col items-center justify-center text-slate-400">
-                                        <Loader2 className="h-8 w-8 animate-spin text-[#2568C1] mb-4" />
-                                        <p>Loading timesheet logs...</p>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
+                            <TableSkeleton columns={7} rows={6} hasActions={true} />
                         ) : paginatedLogs.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={7} className="h-32 text-slate-400 text-center">

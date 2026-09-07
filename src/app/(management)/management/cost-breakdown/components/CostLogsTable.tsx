@@ -1,4 +1,5 @@
-import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -63,14 +64,7 @@ export function CostLogsTable({
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={7} className="h-64 text-center">
-                                    <div className="flex flex-col items-center justify-center text-slate-400">
-                                        <Loader2 className="h-8 w-8 animate-spin text-[#4B7BEC] mb-4" />
-                                        <p className="text-sm font-medium">Loading cost logs...</p>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
+                            <TableSkeleton columns={7} rows={6} />
                         ) : logs.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={7} className="h-32 text-slate-400 text-center font-medium text-sm">

@@ -1,7 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
 import { cn } from "@/lib/utils";
 import { AuditLog } from "@/lib/services/audit-service";
 import { format } from "date-fns";
@@ -59,11 +60,7 @@ export function AuditTable({
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={6} className="h-48 text-center">
-                                    <Loader2 className="h-8 w-8 animate-spin mx-auto text-[#2568C1]" />
-                                </TableCell>
-                            </TableRow>
+                            <TableSkeleton columns={6} rows={6} hasActions={true} />
                         ) : logs.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">

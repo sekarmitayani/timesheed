@@ -4,7 +4,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, CheckCircle2, XCircle, ChevronLeft, ChevronRight, Inbox } from "lucide-react";
+import { CheckCircle2, XCircle, ChevronLeft, ChevronRight, Inbox } from "lucide-react";
+import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
 import { TimesheetLog } from "@/lib/services/timesheet-service";
 import { cn } from "@/lib/utils";
 
@@ -80,14 +81,7 @@ export function ApprovalsTable({
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={7} className="h-64 text-center">
-                                    <div className="flex flex-col items-center justify-center text-slate-400">
-                                        <Loader2 className="h-8 w-8 animate-spin text-[#2568C1] mb-4" />
-                                        <p className="text-xs font-bold uppercase tracking-widest">Assembling timesheets...</p>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
+                            <TableSkeleton columns={7} rows={6} hasAvatar={true} hasActions={true} />
                         ) : inbox.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={7} className="h-64 text-center">

@@ -8,7 +8,8 @@ import {
     TableHeader,
     TableRow
 } from "@/components/ui/table";
-import { Loader2, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
 import { cn } from "@/lib/utils";
 import { ResourceRequest } from "@/lib/services/resource-service";
 
@@ -61,7 +62,7 @@ export function ResourcesTable({
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
-                            <TableRow><TableCell colSpan={7} className="h-48 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-[#2568C1]" /></TableCell></TableRow>
+                            <TableSkeleton columns={7} rows={5} hasActions={true} />
                         ) : paginatedRequests.length === 0 ? (
                             <TableRow><TableCell colSpan={7} className="h-32 text-center text-muted-foreground">No requests found.</TableCell></TableRow>
                         ) : (

@@ -1,5 +1,6 @@
-import { Eye, Edit, Trash2, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,14 +41,7 @@ export function UsersTable({
                         </TableHeader>
                         <TableBody>
                             {isLoading ? (
-                                <TableRow>
-                                    <TableCell colSpan={6} className="h-64 text-center">
-                                        <div className="flex flex-col items-center justify-center text-muted-foreground">
-                                            <Loader2 className="h-8 w-8 animate-spin text-[#2568C1] mb-4" />
-                                            <p>Syncing users from active directory...</p>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
+                                <TableSkeleton columns={6} rows={6} hasAvatar={true} hasActions={true} />
                             ) : users.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={6} className="h-32 text-muted-foreground text-center">

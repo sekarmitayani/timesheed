@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Loader2, LogIn, ChevronLeft, ChevronRight } from "lucide-react";
+import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
 import { User } from "@/lib/types";
 
 interface ProxyTableProps {
@@ -65,14 +66,7 @@ export function ProxyTable({
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={6} className="h-48 text-center">
-                                    <div className="flex flex-col items-center justify-center text-slate-400">
-                                        <Loader2 className="h-8 w-8 animate-spin text-[#2568C1] mb-4" />
-                                        <p>Loading user credentials...</p>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
+                            <TableSkeleton columns={6} rows={6} hasAvatar={true} hasActions={true} />
                         ) : users.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={6} className="h-32 text-slate-400 text-center">

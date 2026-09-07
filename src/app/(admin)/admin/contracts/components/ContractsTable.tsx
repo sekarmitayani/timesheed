@@ -4,7 +4,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, Eye, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
 import { Contract } from "@/lib/services/admin-contracts";
 import { User } from "@/lib/types";
 import { format } from "date-fns";
@@ -79,14 +80,7 @@ export function ContractsTable({
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={7} className="h-48 text-center">
-                                    <div className="flex flex-col items-center justify-center text-slate-400">
-                                        <Loader2 className="h-8 w-8 animate-spin text-[#2568C1] mb-4" />
-                                        <p>Gathering contracts records...</p>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
+                            <TableSkeleton columns={7} rows={6} hasAvatar={true} hasActions={true} />
                         ) : contracts.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={7} className="h-32 text-slate-400 text-center">

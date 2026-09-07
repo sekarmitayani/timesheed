@@ -24,6 +24,7 @@ import {
 import { downloadProjectMemberExcelTemplate, parseAndValidateProjectMemberFile, ParsedProjectMemberRow } from "@/lib/utils/excel-templates";
 import { importService, ImportSummary } from "@/lib/services/import-service";
 import { toast } from "sonner";
+import { LinearProgress } from "@/components/ui/linear-progress";
 
 interface ImportProjectMembersDialogProps {
     open: boolean;
@@ -184,6 +185,8 @@ export function ImportProjectMembersDialog({ open, onOpenChange, onSuccess }: Im
                         </span>
                     </div>
                 </div>
+
+                {isUploading && <LinearProgress indeterminate height="h-1" color="bg-[#2568C1]" />}
 
                 {/* Modal Body */}
                 <div className="px-6 pt-3.5 pb-5">
