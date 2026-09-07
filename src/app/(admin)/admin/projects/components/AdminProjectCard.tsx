@@ -40,7 +40,7 @@ export function AdminProjectCard({ data, onDelete }: AdminProjectCardProps) {
     const router = useRouter();
     const { project, members } = data;
     const status = statusConfig[project.status] || statusConfig.active;
-    
+
     const visibleMembers = members.slice(0, 3);
     const extraCount = Math.max(0, members.length - 3);
 
@@ -49,9 +49,9 @@ export function AdminProjectCard({ data, onDelete }: AdminProjectCardProps) {
     return (
         <Card
             onClick={() => router.push(`/admin/projects/${project.id}`)}
-            className="group border-[#E2E8F0] bg-white rounded-[8px] shadow-sm overflow-hidden transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/50 cursor-pointer"
+            className="group border-[#E2E8F0] bg-white rounded-md shadow-sm overflow-hidden transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/50 cursor-pointer p-0 py-0 gap-0"
         >
-            <CardContent className="p-0">
+            <CardContent className="p-0 flex flex-col h-full">
                 {/* Top accent bar */}
                 <div className={cn("h-[3px] w-full", status.accent)} />
 
@@ -90,7 +90,7 @@ export function AdminProjectCard({ data, onDelete }: AdminProjectCardProps) {
                 </div>
 
                 {/* Bottom Row: Members & Actions */}
-                <div className="flex items-center justify-between p-4 pt-3">
+                <div className="flex items-center justify-between px-4 py-3 mt-auto">
                     <TooltipProvider>
                         <div className="flex items-center -space-x-2" onClick={(e) => e.stopPropagation()}>
                             {visibleMembers.map((member) => (
@@ -138,9 +138,9 @@ export function AdminProjectCard({ data, onDelete }: AdminProjectCardProps) {
                     </TooltipProvider>
 
                     <div className="flex items-center gap-1">
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
+                        <Button
+                            variant="ghost"
+                            size="icon"
                             className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full"
                             onClick={(e) => { e.stopPropagation(); onDelete(project); }}
                             title="Delete Project"
