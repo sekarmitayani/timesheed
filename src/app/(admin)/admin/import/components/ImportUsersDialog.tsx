@@ -149,20 +149,25 @@ export function ImportUsersDialog({ open, onOpenChange, onSuccess }: ImportUsers
 
     return (
         <Dialog open={open} onOpenChange={handleClose}>
-            <DialogContent className="sm:max-w-[1050px] w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0] rounded-md shadow-xl bg-white">
-                {/* Modal Header matching UserFormDialog */}
-                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] pl-6 pr-16 py-4 flex items-center justify-between">
-                    <div>
-                        <DialogTitle className="text-base font-bold text-slate-900">
-                            Import Users (Excel / CSV)
-                        </DialogTitle>
-                        <DialogDescription className="text-xs text-slate-500 mt-0.5">
+            <DialogContent className="sm:max-w-[1050px] w-[96vw] max-w-[96vw] sm:w-[95vw] p-0 gap-0 overflow-hidden border-[#e2e8f0] rounded-xl shadow-xl bg-white max-h-[92vh] flex flex-col">
+                {/* Modal Header */}
+                <div className="bg-[#f8fafc] border-b border-[#e2e8f0] px-4 sm:px-6 py-3.5 sm:py-4 pr-12 sm:pr-16 flex items-center justify-between gap-3 shrink-0">
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                            <DialogTitle className="text-sm sm:text-base font-bold text-slate-900 truncate">
+                                Import Users (Excel / CSV)
+                            </DialogTitle>
+                            <span className="md:hidden px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#2568C1] border border-blue-100 shrink-0">
+                                {step === "upload" ? "1/3" : step === "preview" ? "2/3" : "3/3"}
+                            </span>
+                        </div>
+                        <DialogDescription className="text-xs text-slate-500 mt-0.5 truncate">
                             Bulk import and migrate user accounts into the system
                         </DialogDescription>
                     </div>
 
                     {/* Step Indicator Badges with safe margin from close button */}
-                    <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold">
+                    <div className="hidden md:flex items-center gap-1.5 text-xs font-semibold shrink-0">
                         <span className={`px-2.5 py-1 rounded-md text-[11px] ${step === "upload" ? "bg-[#2568C1] text-white" : "bg-slate-100 text-slate-600"}`}>
                             1. Upload
                         </span>
@@ -180,7 +185,7 @@ export function ImportUsersDialog({ open, onOpenChange, onSuccess }: ImportUsers
                 {isUploading && <LinearProgress indeterminate height="h-1" color="bg-[#2568C1]" />}
 
                 {/* Modal Body */}
-                <div className="px-6 pt-3.5 pb-5">
+                <div className="px-4 sm:px-6 pt-3.5 pb-5 overflow-y-auto min-w-0 flex-1 custom-scrollbar">
                     {/* ========================================================= */}
                     {/* STEP 1: UPLOAD & TEMPLATE DOWNLOAD */}
                     {/* ========================================================= */}
@@ -254,9 +259,9 @@ export function ImportUsersDialog({ open, onOpenChange, onSuccess }: ImportUsers
                     {step === "preview" && (
                         <div className="space-y-4">
                             {/* Summary Bar */}
-                            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-md bg-[#f8fafc] border border-[#e2e8f0]">
-                                <div className="flex items-center gap-2 text-xs">
-                                    <span className="font-bold text-slate-700">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-md bg-[#f8fafc] border border-[#e2e8f0]">
+                                <div className="flex flex-wrap items-center gap-2 text-xs">
+                                    <span className="font-bold text-slate-700 truncate max-w-[220px] sm:max-w-none">
                                         File: <span className="text-[#2568C1] font-semibold">{selectedFile?.name}</span>
                                     </span>
                                     <span className="text-slate-300">|</span>
@@ -264,7 +269,7 @@ export function ImportUsersDialog({ open, onOpenChange, onSuccess }: ImportUsers
                                 </div>
 
                                 {/* Filter Controls */}
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-1.5 flex-wrap">
                                     <button
                                         type="button"
                                         onClick={() => setFilterView("all")}
@@ -298,7 +303,7 @@ export function ImportUsersDialog({ open, onOpenChange, onSuccess }: ImportUsers
                             </div>
 
                             {/* Table Preview */}
-                            <div className="border border-[#e2e8f0] rounded-md overflow-x-auto max-h-[360px] overflow-y-auto">
+                            <div className="border border-[#e2e8f0] rounded-md overflow-x-auto max-h-[340px] overflow-y-auto w-full min-w-0 max-w-full">
                                 <table className="w-full min-w-[950px] text-left text-xs">
                                     <thead className="bg-slate-50 border-b border-[#e2e8f0] sticky top-0 z-10 text-slate-500 uppercase tracking-wider font-semibold text-[10px]">
                                         <tr>
@@ -417,11 +422,11 @@ export function ImportUsersDialog({ open, onOpenChange, onSuccess }: ImportUsers
                     )}
                 </div>
 
-                {/* Modal Footer matching UserFormDialog */}
-                <div className="px-6 py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex justify-between items-center">
+                {/* Modal Footer */}
+                <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-2.5 shrink-0">
                     {step === "upload" && (
                         <>
-                            <div className="text-xs text-slate-400 font-medium">
+                            <div className="text-[11px] sm:text-xs text-slate-400 font-medium truncate">
                                 Ensure column structure matches the official template
                             </div>
                             <Button 
@@ -429,7 +434,7 @@ export function ImportUsersDialog({ open, onOpenChange, onSuccess }: ImportUsers
                                 variant="ghost" 
                                 size="sm" 
                                 onClick={handleClose}
-                                className="text-[#64748b]"
+                                className="text-[#64748b] self-end sm:self-auto"
                             >
                                 Cancel
                             </Button>
@@ -444,18 +449,18 @@ export function ImportUsersDialog({ open, onOpenChange, onSuccess }: ImportUsers
                                 size="sm"
                                 onClick={() => setStep("upload")}
                                 disabled={isUploading}
-                                className="text-xs font-medium text-[#64748b]"
+                                className="text-xs font-medium text-[#64748b] justify-center sm:justify-start"
                             >
                                 Change File
                             </Button>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-end gap-2 sm:gap-3">
                                 <Button
                                     type="button"
                                     variant="ghost"
                                     size="sm"
                                     onClick={handleClose}
                                     disabled={isUploading}
-                                    className="text-[#64748b]"
+                                    className="text-[#64748b] text-xs"
                                 >
                                     Cancel
                                 </Button>
@@ -464,7 +469,7 @@ export function ImportUsersDialog({ open, onOpenChange, onSuccess }: ImportUsers
                                     size="sm"
                                     onClick={handleExecuteImport}
                                     disabled={validCount === 0 || isUploading}
-                                    className="gap-2 bg-[#2568C1] hover:bg-[#1e56a6] shadow-md shadow-[#2568C1]/20 min-w-[120px] text-white"
+                                    className="gap-2 bg-[#2568C1] hover:bg-[#1e56a6] shadow-md shadow-[#2568C1]/20 min-w-[120px] text-white text-xs flex-1 sm:flex-none"
                                 >
                                     {isUploading ? (
                                         <>
@@ -487,7 +492,7 @@ export function ImportUsersDialog({ open, onOpenChange, onSuccess }: ImportUsers
                                 type="button"
                                 size="sm"
                                 onClick={handleClose}
-                                className="bg-[#2568C1] hover:bg-[#1e56a6] shadow-md shadow-[#2568C1]/20 min-w-[120px] text-white"
+                                className="bg-[#2568C1] hover:bg-[#1e56a6] shadow-md shadow-[#2568C1]/20 w-full sm:w-auto min-w-[120px] text-white text-xs"
                             >
                                 Done & Close
                             </Button>
