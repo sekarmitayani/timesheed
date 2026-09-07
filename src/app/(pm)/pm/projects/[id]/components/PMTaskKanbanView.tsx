@@ -82,14 +82,14 @@ export function PMTaskKanbanView({ projectId, tasks, members, onTaskClick, onEdi
     };
 
     return (
-        <div className="flex-1 overflow-x-auto custom-scrollbar pb-4 pr-1">
+        <div className="flex-1 overflow-x-auto custom-scrollbar pb-2 pr-1">
             <DragDropContext onDragEnd={onDragEnd}>
                 <div className="flex gap-6 min-w-max h-full">
                     {(["todo", "in_progress", "done"] as const).map(col => {
                         const cfg = statusConfig[col];
                         const items = grouped[col] || [];
                         return (
-                            <div key={col} className="flex flex-col w-[350px] bg-slate-50/80 p-4 rounded-md border border-slate-100 min-h-[600px] space-y-3">
+                            <div key={col} className="flex flex-col w-[350px] bg-slate-50/80 p-4 rounded-md border border-slate-100 min-h-[440px] space-y-3">
                                 <div className="flex items-center justify-between px-1">
                                     <div className="flex items-center gap-2">
                                         <div className={`h-2 w-2 rounded-full ${cfg.color.replace('text-', 'bg-')}`} />

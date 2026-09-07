@@ -89,7 +89,7 @@ export function TaskCalendarView({
                             {calendarDays.map((day, idx) => {
                                 const dayTasks = getTasksForDay(day);
                                 return (
-                                    <div key={idx} className={cn("min-h-[130px] p-1.5 bg-white transition-colors cursor-pointer border-b border-slate-100", !isSameMonth(day, currentMonth) ? "bg-slate-50/40" : "hover:bg-blue-50/20")} onClick={() => handleDayClick(day)}>
+                                    <div key={idx} className={cn("min-h-[75px] sm:min-h-[85px] lg:min-h-[110px] p-1 sm:p-1.5 bg-white transition-colors cursor-pointer border-b border-slate-100", !isSameMonth(day, currentMonth) ? "bg-slate-50/40" : "hover:bg-blue-50/20")} onClick={() => handleDayClick(day)}>
                                         <div className="flex items-center justify-center mb-1">
                                             <span className={cn("text-[11px] font-bold w-6 h-6 flex items-center justify-center rounded-full", isToday(day) ? "bg-[#4B7BEC] text-white shadow-md shadow-blue-200" : isSameMonth(day, currentMonth) ? "text-slate-700" : "text-slate-300")}>{format(day, "d")}</span>
                                         </div>

@@ -3,7 +3,10 @@
 import dynamic from "next/dynamic";
 import { PageHeader } from "@/components/ai/ai-components";
 import { Button } from "@/components/ui/button";
-import { Plus, Loader2, Circle, PlayCircle, CheckCircle2 } from "lucide-react";
+import { Table, TableBody } from "@/components/ui/table";
+import { Plus, Circle, PlayCircle, CheckCircle2 } from "lucide-react";
+import { KanbanSkeleton } from "@/components/shared/loaders/KanbanSkeleton";
+import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
 import { usePMTasksData } from "./hooks/usePMTasksData";
 import { TaskFilters } from "./components/sections/TaskFilters";
 import { TaskKanbanView } from "./components/views/TaskKanbanView";
@@ -32,16 +35,18 @@ export default function PMTasksPage() {
     };
 
     return (
-        <div className="flex flex-col w-full gap-4 h-[calc(100dvh-115px)] lg:h-[calc(100dvh-120px)] overflow-hidden">
-            <PageHeader title="Project Tasks" description={`Monitoring ${state.tasks.length} total assignments`}>
-                <Button 
-                    size="sm" 
-                    className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] shadow-md shadow-[#2568C1]/20 rounded-[6px]" 
-                    onClick={actions.openCreate}
-                >
-                    <Plus className="h-4 w-4" /> New Task
-                </Button>
-            </PageHeader>
+        <div className="flex flex-col w-full h-full flex-1 min-h-0 gap-2.5 overflow-hidden">
+            <div className="shrink-0">
+                <PageHeader title="Project Tasks" description={`Monitoring ${state.tasks.length} total assignments`}>
+                    <Button 
+                        size="sm" 
+                        className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] shadow-md shadow-[#2568C1]/20 rounded-[6px]" 
+                        onClick={actions.openCreate}
+                    >
+                        <Plus className="h-4 w-4" /> New Task
+                    </Button>
+                </PageHeader>
+            </div>
 
             <TaskFilters 
                 isLoadingProjects={state.isLoadingProjects}
@@ -58,8 +63,18 @@ export default function PMTasksPage() {
             />
 
             {state.isLoadingTasks ? (
-                <div className="py-24 flex flex-col items-center">
-                    <Loader2 className="h-10 w-10 animate-spin text-[#4B7BEC] opacity-30" />
+                <div className="flex-1 min-h-0 pt-2">
+                    {state.view === "kanban" ? (
+                        <KanbanSkeleton columns={3} />
+                    ) : (
+                        <div className="bg-white border border-slate-100 rounded-md overflow-hidden shadow-xs">
+                            <Table>
+                                <TableBody>
+                                    <TableSkeleton columns={6} rows={6} />
+                                </TableBody>
+                            </Table>
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div className="flex-1 min-h-0 flex flex-col">

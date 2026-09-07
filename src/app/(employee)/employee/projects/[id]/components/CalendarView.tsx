@@ -134,20 +134,20 @@ export function CalendarView({ tasks, onTaskClick, currentUser }: CalendarViewPr
             </div>
 
             {/* Scrollable calendar body */}
-            <div ref={calendarScrollRef} className="flex-1 overflow-auto relative min-h-0 custom-scrollbar">
+            <div ref={calendarScrollRef} className="flex-1 overflow-y-auto overflow-x-auto relative min-h-0 custom-scrollbar">
                 {/* ========== MONTH VIEW ========== */}
                 {calView === "month" && (
-                    <div className="flex flex-col min-w-[800px]">
+                    <div className="flex flex-col min-w-[560px] sm:min-w-0 w-full">
                         <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50/80 sticky top-0 z-10">
                             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (
-                                <div key={day} className="py-2.5 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">{day}</div>
+                                <div key={day} className="py-2 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">{day}</div>
                             ))}
                         </div>
                         <div className="grid grid-cols-7 divide-x divide-slate-100 border-l border-slate-100">
                             {calendarDays.map((day, idx) => {
                                 const dayTasks = getTasksForDay(day);
                                 return (
-                                    <div key={idx} className={cn("min-h-[130px] p-1.5 bg-white transition-colors cursor-pointer border-b border-slate-100", !isSameMonth(day, currentMonth) ? "bg-slate-50/40" : "hover:bg-blue-50/20")}>
+                                    <div key={idx} className={cn("min-h-[75px] sm:min-h-[85px] lg:min-h-[110px] p-1 sm:p-1.5 bg-white transition-colors cursor-pointer border-b border-slate-100", !isSameMonth(day, currentMonth) ? "bg-slate-50/40" : "hover:bg-blue-50/20")}>
                                         <div className="flex items-center justify-center mb-1">
                                             <span className={cn("text-[11px] font-bold w-6 h-6 flex items-center justify-center rounded-full", isToday(day) ? "bg-[#2568C1] text-white shadow-md shadow-blue-200" : isSameMonth(day, currentMonth) ? "text-slate-700" : "text-slate-300")}>{format(day, "d")}</span>
                                         </div>

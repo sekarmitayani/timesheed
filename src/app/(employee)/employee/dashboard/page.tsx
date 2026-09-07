@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { KpiCardsSkeleton, DashboardCardSkeleton } from "@/components/shared/loaders/DashboardSkeleton";
 import { DashboardHeader } from "./components/DashboardHeader";
 import { QuickStatsRow } from "./components/QuickStatsRow";
 import { TaskOverviewCard } from "./components/TaskOverviewCard";
@@ -14,8 +14,17 @@ export default function EmployeeDashboard() {
 
     if (state.isLoading) {
         return (
-            <div className="flex h-[80vh] items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-[#4B7BEC] opacity-40" />
+            <div className="space-y-6">
+                <DashboardHeader userName={state.user?.full_name || "User"} todoCount={0} />
+                <KpiCardsSkeleton count={4} />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <DashboardCardSkeleton className="lg:col-span-2" bodyHeight="h-72" />
+                    <DashboardCardSkeleton className="lg:col-span-1" bodyHeight="h-72" />
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <DashboardCardSkeleton className="lg:col-span-1" bodyHeight="h-64" />
+                    <DashboardCardSkeleton className="lg:col-span-2" bodyHeight="h-64" />
+                </div>
             </div>
         );
     }
@@ -45,7 +54,7 @@ export default function EmployeeDashboard() {
             </div>
 
             {/* Bottom Row: Analytics & Recent Logs */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <WeeklyHoursChart 
                     timesheets={state.timesheets} 
                     className="h-[450px]" 

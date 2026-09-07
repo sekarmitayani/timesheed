@@ -42,11 +42,11 @@ export function AdminResourcesTab({
                     <p className="text-xs text-slate-500">Track and manage resource requests for this project.</p>
                 </div>
                 <div className="flex flex-wrap gap-2 items-center">
-                    <div className="relative w-full md:w-[220px]">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <div className="relative w-full md:w-[220px] p-0.5">
+                        <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground pointer-events-none" />
                         <Input
                             placeholder="Search requests..."
-                            className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#4B7BEC] focus-visible:border-[#4B7BEC]"
+                            className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-2 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />

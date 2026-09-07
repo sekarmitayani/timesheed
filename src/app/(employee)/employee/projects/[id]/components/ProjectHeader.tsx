@@ -37,8 +37,8 @@ export function ProjectHeader({ project, members, activeTab, setActiveTab }: Pro
     const tabs = ["Overview", "Kanban", "List", "Calendar", "Teams"];
 
     return (
-        <div className="flex flex-col border-b border-[#E2E8F0] bg-white pt-4 px-4 sm:px-8 mb-4 shadow-sm rounded-t-xl">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-5 mb-5">
+        <div className="flex flex-col bg-white pt-5 pb-0 px-5 sm:px-7 shadow-xs rounded-xl border border-[#E2E8F0] mb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 mb-4">
                 <div className="h-16 w-16 rounded-full border border-slate-100 shadow-sm flex items-center justify-center bg-white p-2 shrink-0">
                     <div className="w-full h-full rounded-full bg-slate-50 flex items-center justify-center text-xl font-black text-slate-400">
                         {project.name.charAt(0).toUpperCase()}

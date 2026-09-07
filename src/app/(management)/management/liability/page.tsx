@@ -7,7 +7,8 @@ import { LiabilityStats } from "./components/LiabilityStats";
 import { LiabilityFilters } from "./components/LiabilityFilters";
 import { LiabilityAccordion } from "./components/LiabilityAccordion";
 import { LiabilityDetailModal } from "./components/LiabilityDetailModal";
-import { Loader2 } from "lucide-react";
+import { KpiCardsSkeleton } from "@/components/shared/loaders/DashboardSkeleton";
+import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
 
 export default function LiabilityMonitorPage() {
     const { data, isLoading } = useLiabilityMonitor();
@@ -74,9 +75,9 @@ export default function LiabilityMonitorPage() {
             />
 
             {isLoading ? (
-                <div className="flex flex-col items-center justify-center h-64 text-slate-500 bg-white rounded-xl border border-slate-100 shadow-sm">
-                    <Loader2 className="w-8 h-8 animate-spin mb-3 text-[#2568C1]" />
-                    <p className="text-xs font-medium text-slate-500">Calculating financial liabilities & contract exposure...</p>
+                <div className="space-y-6">
+                    <KpiCardsSkeleton count={3} />
+                    <TableSkeleton rows={5} columns={5} />
                 </div>
             ) : data ? (
                 <>

@@ -47,7 +47,7 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Project Information */}
                 <Card className="border-[#E2E8F0] shadow-sm rounded-xl">
                     <CardHeader className="pb-4">

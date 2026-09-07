@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { KpiCardsSkeleton, DashboardCardSkeleton } from "@/components/shared/loaders/DashboardSkeleton";
 import { useAdminDashboardData } from "./hooks/useAdminDashboardData";
 import { QuickStatsRow } from "./components/QuickStatsRow";
 import { ProjectDistributionCard } from "./components/ProjectDistributionCard";
@@ -24,11 +24,14 @@ export default function AdminDashboard() {
         return (
             <div className="space-y-6">
                 <AdminDashboardHeader userName={user?.full_name || "Admin"} pendingCount={0} />
-                <div className="flex items-center justify-center py-32">
-                    <div className="text-center space-y-4">
-                        <Loader2 className="h-10 w-10 animate-spin text-[#4B7BEC] mx-auto" />
-                        <p className="text-sm text-slate-500">Aggregating data...</p>
-                    </div>
+                <KpiCardsSkeleton count={4} />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <DashboardCardSkeleton className="lg:col-span-2" bodyHeight="h-72" />
+                    <DashboardCardSkeleton className="lg:col-span-1" bodyHeight="h-72" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <DashboardCardSkeleton bodyHeight="h-64" />
+                    <DashboardCardSkeleton bodyHeight="h-64" />
                 </div>
             </div>
         );
@@ -48,7 +51,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Row 3: Needs Attention + Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <PendingApprovalsCard requests={pendingResourceList} />
                 <RecentActivityCard activities={recentResources} />
             </div>

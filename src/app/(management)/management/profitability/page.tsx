@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { DashboardCardSkeleton, ProjectCardsSkeleton } from "@/components/shared/loaders/DashboardSkeleton";
 import { useProfitabilityData } from "./hooks/useProfitabilityData";
 import { ProfitabilityHeader } from "./components/ProfitabilityHeader";
 import { MonthlyProfitChart } from "./components/MonthlyProfitChart";
@@ -15,11 +15,9 @@ export default function ProfitabilityPage() {
         <div className="space-y-6 animate-in fade-in duration-500">
             <ProfitabilityHeader />
             {isLoading ? (
-                <div className="flex items-center justify-center py-32">
-                    <div className="text-center space-y-4">
-                        <Loader2 className="h-10 w-10 animate-spin text-[#4B7BEC] mx-auto" />
-                        <p className="text-sm text-slate-500">Loading profitability data...</p>
-                    </div>
+                <div className="space-y-6">
+                    <DashboardCardSkeleton bodyHeight="h-72" />
+                    <ProjectCardsSkeleton count={4} />
                 </div>
             ) : (
                 <>

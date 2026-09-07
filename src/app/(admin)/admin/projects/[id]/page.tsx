@@ -1,8 +1,9 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { Loader2, ArrowLeft, Edit } from "lucide-react";
+import { ArrowLeft, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ProjectDetailSkeleton } from "@/components/shared/loaders/DashboardSkeleton";
 import { useAdminProjectDetailData } from "./hooks/useAdminProjectDetailData";
 import { AdminProjectHeader } from "./components/AdminProjectHeader";
 import { AdminOverviewTab } from "./components/AdminOverviewTab";
@@ -20,14 +21,7 @@ export default function AdminProjectDetailPage() {
     const { state, actions } = useAdminProjectDetailData(projectId);
 
     if (state.isLoading) {
-        return (
-            <div className="flex h-screen items-center justify-center bg-[#F8FAFC]">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="h-10 w-10 animate-spin text-[#2568C1] opacity-40" />
-                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Loading Intelligence...</p>
-                </div>
-            </div>
-        );
+        return <ProjectDetailSkeleton />;
     }
 
     if (!state.project) {
@@ -42,13 +36,13 @@ export default function AdminProjectDetailPage() {
     }
 
     return (
-        <div className="flex flex-col w-full gap-6 h-full overflow-hidden">
+        <div className="flex flex-col w-full gap-2.5 h-full flex-1 min-h-0 overflow-hidden">
             {/* Header Section */}
-            <div className="shrink-0 flex flex-col gap-4">
+            <div className="shrink-0 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                     <Button
                         variant="ghost"
-                        className="h-9 gap-2 text-slate-500 hover:text-[#2568C1] hover:bg-blue-50 px-2 font-bold"
+                        className="h-8 gap-2 text-slate-500 hover:text-[#2568C1] hover:bg-blue-50 px-2 font-bold"
                         onClick={() => router.push("/admin/projects")}
                     >
                         <ArrowLeft className="h-4 w-4" />
@@ -57,7 +51,7 @@ export default function AdminProjectDetailPage() {
 
                     <Button
                         size="sm"
-                        className="h-9 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] text-white font-bold rounded-[8px] shadow-sm shadow-blue-500/10"
+                        className="h-8 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] text-white font-bold rounded-[8px] shadow-sm shadow-blue-500/10"
                         onClick={actions.openEditProject}
                     >
                         <Edit className="h-3.5 w-3.5" /> Edit Project
@@ -73,8 +67,8 @@ export default function AdminProjectDetailPage() {
             </div>
 
             {/* Content Area (Scrollable) */}
-            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 pb-6 pt-1">
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 mt-2">
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 pb-2 flex flex-col">
+                <div className="animate-in fade-in duration-300 flex-1">
                     {state.activeTab === "Overview" && (
                         <AdminOverviewTab
                             project={state.project}

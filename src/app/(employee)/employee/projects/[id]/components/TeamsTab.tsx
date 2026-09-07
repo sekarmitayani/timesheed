@@ -52,11 +52,11 @@ export function TeamsTab({ members, totalCount, search, setSearch }: TeamsTabPro
                     <p className="text-xs text-slate-500">View team roles and project assignments.</p>
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto mr-4">
-                    <div className="relative flex-1 sm:w-[240px]">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <div className="relative flex-1 sm:w-[240px] p-0.5">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
                         <Input 
                             placeholder="Search team..." 
-                            className="pl-9 h-10 text-xs border-[#E2E8F0] rounded-[8px] bg-white shadow-none focus-visible:ring-[#2568C1]"
+                            className="pl-9 h-10 text-xs border-[#E2E8F0] rounded-[8px] bg-white shadow-none focus-visible:ring-2 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />

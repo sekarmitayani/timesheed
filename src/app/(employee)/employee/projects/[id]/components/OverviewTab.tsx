@@ -177,7 +177,7 @@ export function OverviewTab({ project, members, tasks = [] }: OverviewTabProps) 
             </div>
 
             {/* Row 1: General Information + Status Overview */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* General Information */}
                 <Card className="border-[#E2E8F0] shadow-sm rounded-xl">
                     <CardHeader className="pb-4 border-b border-slate-50">
@@ -274,7 +274,7 @@ export function OverviewTab({ project, members, tasks = [] }: OverviewTabProps) 
             </div>
 
             {/* Row 2: Team Workload + Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Team Workload */}
                 <Card className="border-[#E2E8F0] shadow-sm rounded-xl flex flex-col">
                     <CardHeader className="pb-4 border-b border-slate-50 shrink-0">

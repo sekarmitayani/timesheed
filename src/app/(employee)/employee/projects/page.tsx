@@ -1,7 +1,8 @@
 "use client";
 
 import { PageHeader } from "@/components/ai/ai-components";
-import { FolderKanban, Loader2 } from "lucide-react";
+import { ProjectCardsSkeleton } from "@/components/shared/loaders/DashboardSkeleton";
+import { FolderKanban } from "lucide-react";
 import { useProjectsData } from "./hooks/useProjectsData";
 import { ProjectFilters } from "./components/ProjectFilters";
 import { ProjectCard } from "./components/ProjectCard";
@@ -27,9 +28,7 @@ export default function EmployeeProjectsPage() {
 
             {/* Content */}
             {state.isLoading ? (
-                <div className="flex items-center justify-center py-20">
-                    <Loader2 className="h-8 w-8 animate-spin text-[#2568C1] opacity-40" />
-                </div>
+                <ProjectCardsSkeleton count={6} />
             ) : computed.filteredCards.length === 0 ? (
                 <div className="flex items-center justify-center py-20">
                     <div className="flex flex-col items-center gap-3 opacity-60">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { KpiCardsSkeleton, DashboardCardSkeleton } from "@/components/shared/loaders/DashboardSkeleton";
 import { usePMDashboardData } from "./hooks/usePMDashboardData";
 import { PMQuickStatsRow } from "./components/PMQuickStatsRow";
 import { ActiveProjectsTracker } from "./components/ActiveProjectsTracker";
@@ -18,9 +18,14 @@ export default function PMDashboard() {
         return (
             <div className="space-y-6">
                 <PMDashboardHeader userName={user?.full_name || "Manager"} activeProjectsCount={0} />
-                <div className="flex flex-col items-center justify-center py-32">
-                    <Loader2 className="h-10 w-10 animate-spin text-[#4B7BEC] mb-4" />
-                    <p className="text-sm font-medium text-slate-500">Syncing live dashboard data...</p>
+                <KpiCardsSkeleton count={4} />
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <DashboardCardSkeleton className="lg:col-span-3" bodyHeight="h-80" />
+                    <DashboardCardSkeleton className="lg:col-span-2" bodyHeight="h-80" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <DashboardCardSkeleton bodyHeight="h-64" />
+                    <DashboardCardSkeleton bodyHeight="h-64" />
                 </div>
             </div>
         );
@@ -61,7 +66,7 @@ export default function PMDashboard() {
             </div>
 
             {/* Row 3: Activity Cards (Bottom 2x2 Grid) */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <RecentActivitiesFeed 
                     recentTasks={data.recentTasks} 
                     teamStats={data.teamStats} 

@@ -79,11 +79,11 @@ export function AdminTeamsTab({
                     <p className="text-xs text-slate-500">Manage team roles and project access.</p>
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <div className="relative w-full sm:w-[240px] shrink-0">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <div className="relative w-full sm:w-[240px] shrink-0 p-0.5">
+                        <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground pointer-events-none" />
                         <Input 
                             placeholder="Search team..." 
-                            className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-[#4B7BEC] focus-visible:border-[#4B7BEC]"
+                            className="pl-9 h-10 w-full bg-white border-slate-200 focus-visible:ring-2 focus-visible:ring-[#2568C1] focus-visible:border-[#2568C1]"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />

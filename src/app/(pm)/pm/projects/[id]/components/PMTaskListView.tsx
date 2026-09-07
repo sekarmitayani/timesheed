@@ -46,7 +46,7 @@ export function PMTaskListView({
     const stripHtml = (html: string) => html ? html.replace(/<[^>]*>?/gm, '') : "";
 
     return (
-        <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar pb-10">
+        <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar pb-2">
             <div className="space-y-10">
                 {(["todo", "in_progress", "done"] as const).map(status => (
                     <div key={status} className="space-y-4">

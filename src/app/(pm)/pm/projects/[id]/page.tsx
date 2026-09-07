@@ -1,8 +1,9 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ProjectDetailSkeleton } from "@/components/shared/loaders/DashboardSkeleton";
 import { usePMProjectDetailData } from "./hooks/usePMProjectDetailData";
 import { PMProjectHeader } from "./components/PMProjectHeader";
 import { PMOverviewTab } from "./components/PMOverviewTab";
@@ -20,14 +21,7 @@ export default function PMProjectDetailPage() {
     const { state, actions } = usePMProjectDetailData(projectId);
 
     if (state.isLoading) {
-        return (
-            <div className="flex h-screen items-center justify-center bg-[#F8FAFC]">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="h-10 w-10 animate-spin text-[#2568C1] opacity-40" />
-                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Loading Project Data...</p>
-                </div>
-            </div>
-        );
+        return <ProjectDetailSkeleton />;
     }
 
     if (!state.project) {
@@ -41,17 +35,17 @@ export default function PMProjectDetailPage() {
         );
     }
 
-    const isFixedView = ["Kanban", "Calendar"].includes(state.activeTab);
+    const isFixedView = ["Kanban", "List", "Calendar"].includes(state.activeTab);
 
     return (
-        <div className="flex flex-col w-full gap-6 h-full overflow-hidden">
+        <div className="flex flex-col w-full gap-2.5 h-full flex-1 min-h-0 overflow-hidden">
             {/* Header Section */}
-            <div className="shrink-0 flex flex-col gap-4">
+            <div className="shrink-0 flex flex-col gap-2">
                 {/* Back Navigation */}
                 <div className="flex items-center justify-between">
                     <Button
                         variant="ghost"
-                        className="h-9 gap-2 text-slate-500 hover:text-[#2568C1] hover:bg-blue-50 px-2 font-bold"
+                        className="h-8 gap-2 text-slate-500 hover:text-[#2568C1] hover:bg-blue-50 px-2 font-bold"
                         onClick={() => router.push("/pm/projects")}
                     >
                         <ArrowLeft className="h-4 w-4" />
@@ -69,10 +63,10 @@ export default function PMProjectDetailPage() {
 
             {/* Main Content Area */}
             <div className={cn(
-                "flex-1 min-h-0 pt-1",
-                isFixedView ? "overflow-hidden flex flex-col" : "overflow-y-auto custom-scrollbar pb-6"
+                "flex-1 min-h-0 flex flex-col",
+                isFixedView ? "overflow-hidden" : "overflow-y-auto custom-scrollbar pb-2"
             )}>
-                <div className={cn("animate-in fade-in slide-in-from-bottom-2 duration-500 mt-2", isFixedView && "flex-1 flex flex-col min-h-0")}>
+                <div className={cn("animate-in fade-in duration-300", isFixedView ? "flex-1 flex flex-col min-h-0" : "flex-1")}>
                     {state.activeTab === "Overview" && (
                         <PMOverviewTab
                             project={state.project}

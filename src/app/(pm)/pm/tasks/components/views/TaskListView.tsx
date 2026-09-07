@@ -29,7 +29,7 @@ export function TaskListView({
     const stripHtml = (html: string) => html ? html.replace(/<[^>]*>?/gm, '') : "";
 
     return (
-        <div className="flex-1 overflow-y-auto pr-1 pb-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto pr-1 pb-2 custom-scrollbar">
             <div className="space-y-10">
                 {(["todo", "in_progress", "done"] as const).map(status => (
                     <div key={status} className="space-y-4">

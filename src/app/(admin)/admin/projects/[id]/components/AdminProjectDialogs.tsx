@@ -136,7 +136,7 @@ export function AdminProjectDialogs({ state, actions }: AdminProjectDialogsProps
                         <div className="space-y-1.5">
                             <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Details <span className="text-red-500">*</span></label>
                             <Textarea 
-                                className="w-full min-h-[120px] p-3 rounded-md border border-slate-200 text-sm focus:ring-2 focus:ring-[#2568C1]/20 outline-none" 
+                                className="w-full min-h-[120px] p-3 rounded-md border border-slate-200 text-sm focus:ring-2 focus:ring-[#2568C1] focus:border-[#2568C1] outline-none transition-all duration-200" 
                                 placeholder="Describe the resource needed..."
                                 value={resCreateForm.details} 
                                 onChange={e => actions.setResCreateForm({...resCreateForm, details: e.target.value})} 

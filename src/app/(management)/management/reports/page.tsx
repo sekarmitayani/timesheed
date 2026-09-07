@@ -7,7 +7,8 @@ import { IndicatorComparisonView } from "./components/IndicatorComparisonView";
 import { CustomDataExportView } from "./components/CustomDataExportView";
 import { PresetExecutiveReports } from "./components/PresetExecutiveReports";
 import { ReportsScreenRestricted } from "./components/ReportsScreenRestricted";
-import { Loader2 } from "lucide-react";
+import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
+import { KpiCardsSkeleton } from "@/components/shared/loaders/DashboardSkeleton";
 
 export default function ManagementReportsPage() {
     const [activeTab, setActiveTab] = useState<ReportActiveTab>("compare");
@@ -43,11 +44,9 @@ export default function ManagementReportsPage() {
 
                 {/* Loading Skeleton */}
                 {isLoading ? (
-                    <div className="flex flex-col items-center justify-center py-32 space-y-3 bg-white rounded-lg border border-[#e2e8f0] shadow-sm no-print">
-                        <Loader2 className="h-9 w-9 animate-spin text-[#2568C1]" />
-                        <p className="text-xs text-slate-500 font-medium tracking-wide">
-                            Aggregating multi-source management data & financial ledgers...
-                        </p>
+                    <div className="space-y-6 no-print animate-in fade-in duration-300">
+                        <KpiCardsSkeleton count={4} />
+                        <TableSkeleton rows={6} columns={6} />
                     </div>
                 ) : (
                     <>
