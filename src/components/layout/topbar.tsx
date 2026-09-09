@@ -94,7 +94,7 @@ export function Topbar() {
     };
 
     return (
-        <div className="sticky top-0 z-50 flex flex-col w-full">
+        <div className="sticky top-0 z-40 flex flex-col w-full bg-white/95 backdrop-blur-md">
             {/* Proxy Session Banner */}
             <AnimatePresence>
                 {isImpersonating && (
@@ -141,9 +141,9 @@ export function Topbar() {
                         {showSearch ? (
                             <motion.div
                                 initial={{ width: 0, opacity: 0 }}
-                                animate={{ width: 380, opacity: 1 }}
+                                animate={{ width: "100%", opacity: 1 }}
                                 exit={{ width: 0, opacity: 0 }}
-                                className="relative"
+                                className="relative w-full max-w-[calc(100vw-130px)] sm:max-w-[380px]"
                             >
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
                                 <Input

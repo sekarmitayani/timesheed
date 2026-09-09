@@ -89,11 +89,7 @@
   }
 }
 
-/* Prevent horizontal overflow globally on mobile */
-html, body {
-  overflow-x: clip;
-  max-width: 100vw;
-}
+/* Ensure root has natural overflow for sticky positioning */
 
 /* Custom scrollbar — only on desktop (mouse/trackpad devices) */
 @media (pointer: fine) {

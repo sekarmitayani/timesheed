@@ -157,7 +157,7 @@ export function ChatbotWidget() {
     return (
         <motion.div 
             ref={widgetRef}
-            className="fixed bottom-6 right-6 z-[100]"
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100]"
             drag
             dragMomentum={false}
             dragConstraints={bounds}
@@ -172,7 +172,7 @@ export function ChatbotWidget() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: panelPosition.vertical === 'top' ? -20 : 20, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className={`absolute ${panelPosition.vertical === 'top' ? 'top-16' : 'bottom-16'} ${panelPosition.horizontal === 'left' ? 'left-0' : 'right-0'} origin-${panelPosition.vertical}-${panelPosition.horizontal} w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[500px] max-h-[80vh]`}
+                        className={`fixed sm:absolute inset-x-3 sm:inset-x-auto ${panelPosition.vertical === 'top' ? 'top-16 sm:top-16' : 'bottom-20 sm:bottom-16'} ${panelPosition.horizontal === 'left' ? 'sm:left-0' : 'sm:right-0'} origin-${panelPosition.vertical}-${panelPosition.horizontal} w-auto sm:w-96 max-w-[420px] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[480px] max-h-[75vh]`}
                     >
                         {/* Header */}
                         <div className="bg-[#2568C1] px-4 py-3 flex items-center justify-between text-white">
@@ -185,6 +185,13 @@ export function ChatbotWidget() {
                                     <p className="text-xs text-white/80">Financial Assistant</p>
                                 </div>
                             </div>
+                            <button 
+                                onClick={() => setIsOpen(false)} 
+                                className="p-1 hover:bg-white/10 rounded-full text-white/80 hover:text-white transition-colors"
+                                title="Close Chat"
+                            >
+                                <X size={18} />
+                            </button>
                         </div>
 
                         {/* Messages */}
@@ -248,9 +255,9 @@ export function ChatbotWidget() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={toggleOpen}
-                className="w-14 h-14 bg-[#2568C1] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#2568C1]/30 hover:shadow-[#2568C1]/50 transition-shadow"
+                className="w-12 h-12 sm:w-14 sm:h-14 bg-[#2568C1] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#2568C1]/30 hover:shadow-[#2568C1]/50 transition-shadow"
             >
-                {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
+                {isOpen ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />}
             </motion.button>
         </motion.div>
     );
