@@ -37,7 +37,7 @@ export function PaymentStatusCard({ stats }: PaymentStatusCardProps) {
                         <span className="font-bold text-lg text-slate-800 leading-none">{stats.paymentProgress}%</span>
                     </div>
                     <Progress value={stats.paymentProgress} className="h-1.5 bg-slate-50 [&>div]:bg-[#4B7BEC]" />
-                    <div className="flex justify-between text-[9px] font-bold uppercase tracking-tighter text-slate-400 pt-0.5">
+                    <div className="flex flex-wrap items-center justify-between gap-1 text-[9px] font-bold uppercase tracking-tighter text-slate-400 pt-0.5">
                         <span>Paid: <span className="text-[#4B7BEC]">{fmtCurrency(stats.totalPaid)}</span></span>
                         <span>Unpaid: <span className="text-slate-500">{fmtCurrency(stats.totalUnpaid)}</span></span>
                     </div>

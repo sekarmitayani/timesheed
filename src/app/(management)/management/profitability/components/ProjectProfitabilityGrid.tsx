@@ -31,7 +31,7 @@ export function ProjectProfitabilityGrid({ projects }: ProjectProfitabilityGridP
     return (
         <div className="space-y-4">
             <h3 className="text-base font-bold text-slate-800 tracking-tight">Project Profitability</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {displayedProjects.map((project) => {
                     const isPositive = project.net_margin >= 0;
                     const marginAbs = Math.abs(project.margin_percent);

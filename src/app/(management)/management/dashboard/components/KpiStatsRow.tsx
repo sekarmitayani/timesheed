@@ -118,7 +118,7 @@ export function KpiStatsRow({ stats }: KpiStatsRowProps) {
     ];
 
     return (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2 sm:gap-3">
             {kpis.map((kpi) => (
                 <Card key={kpi.label} className={cardClass}>
                     <CardContent className="px-2.5 py-3 sm:px-3 sm:py-3 flex flex-row items-center gap-2.5 sm:gap-3 h-full">

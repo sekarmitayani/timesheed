@@ -30,7 +30,7 @@ export function TimesheetFilters({
 }: TimesheetFiltersProps) {
     return (
         <div className="flex flex-col md:flex-row gap-2.5 items-stretch md:items-center justify-between pt-1">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+            <div className="flex flex-wrap items-center gap-2 w-full">
                 {/* Unified Date Range & Frequency Picker */}
                 <div className="w-full sm:w-auto shrink-0">
                     <CustomDateRangePicker 

@@ -45,7 +45,7 @@ export default function AdminDashboard() {
             <QuickStatsRow stats={stats} />
 
             {/* Row 2: Financial Overview + Status */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 <ProjectDistributionCard projectFinancials={projectFinancials} />
                 <PaymentStatusCard stats={stats} />
             </div>

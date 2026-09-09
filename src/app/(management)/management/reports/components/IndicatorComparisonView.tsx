@@ -929,7 +929,7 @@ export function IndicatorComparisonView({
                                 </p>
                             </div>
                         ) : chartType === "scatter" ? (
-                            <ResponsiveContainer width="100%" height="100%">
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                                 <ScatterChart margin={{ top: 20, right: 30, bottom: 40, left: 40 }}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                                     <XAxis
@@ -1031,7 +1031,7 @@ export function IndicatorComparisonView({
                                 </ScatterChart>
                             </ResponsiveContainer>
                         ) : chartType === "grouped_bar" ? (
-                            <ResponsiveContainer width="100%" height="100%">
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                                 <BarChart data={activeDataset.slice(0, 15)} margin={{ top: 20, right: 30, bottom: 40, left: 20 }}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                                     <XAxis
@@ -1055,7 +1055,7 @@ export function IndicatorComparisonView({
                                 </BarChart>
                             </ResponsiveContainer>
                         ) : (
-                            <ResponsiveContainer width="100%" height="100%">
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                                 <BarChart
                                     layout="vertical"
                                     data={[...activeDataset].sort((a, b) => b.y - a.y).slice(0, 12)}

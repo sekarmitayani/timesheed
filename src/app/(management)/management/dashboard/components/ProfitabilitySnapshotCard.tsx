@@ -68,7 +68,7 @@ export function ProfitabilitySnapshotCard({ data, isLoading }: ProfitabilitySnap
                     
                     <div className="flex-1 min-h-[120px] w-full my-1">
                         {chartData.length > 0 ? (
-                            <ResponsiveContainer width="100%" height="100%">
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                                 <BarChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 0 }} barSize={14} barGap={4}>
                                     <XAxis 
                                         dataKey="monthLabel" 

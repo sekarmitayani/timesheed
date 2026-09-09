@@ -50,15 +50,15 @@ export default function PMDashboard() {
             <PMQuickStatsRow stats={data.stats} />
 
             {/* Row 2: Operation Cards */}
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                <div className="lg:col-span-3 flex flex-col">
+            <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+                <div className="xl:col-span-3 flex flex-col">
                     <ActiveProjectsTracker 
                         projects={data.activeProjects} 
                         tasks={data.tasks} 
                     />
                 </div>
                 
-                <div className="lg:col-span-2 flex flex-col">
+                <div className="xl:col-span-2 flex flex-col">
                     <TimesheetApprovalInbox 
                         pendingTimesheets={data.pendingTimesheets} 
                     />

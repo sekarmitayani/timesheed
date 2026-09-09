@@ -65,7 +65,7 @@ export function CostBreakdownMiniCard({ data, isLoading }: CostBreakdownMiniCard
                     <div className="flex items-center gap-4 my-auto">
                         <div className="w-[110px] h-[110px] shrink-0 relative">
                             {chartData.length > 0 ? (
-                                <ResponsiveContainer width="100%" height="100%">
+                                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                                     <PieChart>
                                         <Pie
                                             data={chartData}

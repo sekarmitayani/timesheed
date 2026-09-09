@@ -54,20 +54,22 @@ export default function ExecutiveDashboard() {
             <KpiStatsRow stats={kpiStats} />
 
             {/* Row 2: Financial Health + Profitability Sparkline */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 sm:gap-4">
                 <FinancialHealthCard data={financialHealth} />
                 <ProfitabilitySnapshotCard data={profitabilitySnapshot} isLoading={isLoading} />
             </div>
 
             {/* Row 3: Cost Breakdown Mini + Liability Snapshot + Resources Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
                 <CostBreakdownMiniCard data={costBreakdownMini} isLoading={isLoading} />
                 <LiabilitySnapshotCard data={liabilitySnapshot} isLoading={isLoading} />
-                <ResourcesOverviewCard data={resourcesOverview} isLoading={isLoading} />
+                <div className="sm:col-span-2 xl:col-span-1">
+                    <ResourcesOverviewCard data={resourcesOverview} isLoading={isLoading} />
+                </div>
             </div>
 
             {/* Row 4: Working Hours + Top Projects */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 <WorkingHoursCard
                     workingHours={workingHours}
                     projectEfficiency={projectEfficiency}

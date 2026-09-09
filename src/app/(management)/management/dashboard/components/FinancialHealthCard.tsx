@@ -38,7 +38,7 @@ export function FinancialHealthCard({ data }: FinancialHealthCardProps) {
         }));
 
     return (
-        <Card className="md:col-span-2 bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
+        <Card className="xl:col-span-2 bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
             <CardHeader className="px-5 py-5 border-b border-slate-100 [&.border-b]:pb-5 flex flex-row items-center justify-between">
                 <div className="flex items-center gap-2.5">
                     <PieIcon className="h-5 w-5 text-[#4B7BEC] shrink-0" />

@@ -26,7 +26,7 @@ export function QuickStatsRow({ stats }: QuickStatsRowProps) {
     const cardClass = "bg-white border border-slate-100 shadow-sm rounded-xl h-[100px] flex flex-col overflow-hidden hover:shadow-md transition-shadow cursor-pointer p-0 py-0 gap-0";
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             {/* 1. Total Users */}
             <Card className={cardClass} onClick={() => router.push("/admin/users")}>
                 <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">

@@ -37,9 +37,9 @@ export function LiabilityFilters({
 
     return (
         <div className="flex flex-col md:flex-row gap-2.5 items-stretch md:items-center justify-between pt-1">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+            <div className="flex flex-wrap items-center gap-2 w-full">
                 {/* Search Bar */}
-                <div className="relative w-full sm:w-[240px] md:w-[260px] shrink-0 p-0.5">
+                <div className="relative w-full sm:w-[240px] shrink-0 p-0.5">
                     <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground pointer-events-none" />
                     <Input
                         placeholder="Search personnel or project..."

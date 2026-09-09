@@ -61,7 +61,7 @@ export function CostStatsRow({ data, isLoading }: CostStatsRowProps) {
 
     if (isLoading || !data) {
         return (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
                 {[...Array(4)].map((_, i) => (
                     <Card key={i} className={cardClass}>
                         <CardContent className="px-3 py-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
@@ -117,7 +117,7 @@ export function CostStatsRow({ data, isLoading }: CostStatsRowProps) {
     ];
 
     return (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
             {stats.map((stat) => (
                 <Card key={stat.label} className={cardClass}>
                     <CardContent className="px-3 py-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">

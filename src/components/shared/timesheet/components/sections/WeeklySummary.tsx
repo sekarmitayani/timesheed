@@ -18,7 +18,7 @@ export function WeeklySummary({ dailySummary }: WeeklySummaryProps) {
     const maxMins = Math.max(...dailySummary.map(d => d.minutes), 480);
 
     return (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 shrink-0">
+        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-2 shrink-0">
             {dailySummary.map((day, idx) => {
                 const barHeight = Math.max(15, (day.minutes / maxMins) * 100);
                 

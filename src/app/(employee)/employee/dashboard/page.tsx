@@ -38,18 +38,18 @@ export default function EmployeeDashboard() {
             <QuickStatsRow timesheets={state.timesheets} />
 
             {/* Middle Row: Priority Tasks & Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 <TaskOverviewCard 
                     tasks={state.tasks} 
                     projects={state.projects} 
-                    className="lg:col-span-2 border-slate-100 shadow-sm" 
+                    className="xl:col-span-2 border-slate-100 shadow-sm" 
                 />
                 <RecentActivityCard 
                     auditLogs={state.auditLogs} 
                     tasks={state.tasks}
                     projects={state.projects}
                     currentUser={state.user || null}
-                    className="lg:col-span-1 border-slate-100 shadow-sm" 
+                    className="xl:col-span-1 border-slate-100 shadow-sm" 
                 />
             </div>
 
