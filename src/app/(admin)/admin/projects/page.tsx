@@ -55,7 +55,7 @@ export default function AdminProjectsPage() {
                     </div>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                     {state.cards.map((card) => (
                         <AdminProjectCard 
                             key={card.project.id} 

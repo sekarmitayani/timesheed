@@ -168,18 +168,20 @@ export function useAdminProjectsData() {
             result = result.filter(c => c.project.status === statusFilter.toLowerCase());
         }
 
-        const statusOrder: Record<string, number> = {
-            "active": 1,
-            "completed": 2,
-            "on-hold": 3,
-            "cancelled": 4
+        const getStatusPriority = (status: string) => {
+            const s = (status || "").toLowerCase().replace(/[-_\s]/g, "");
+            if (s === "active") return 1;
+            if (s === "completed") return 2;
+            if (s === "onhold") return 3;
+            if (s === "cancelled" || s === "canceled") return 4;
+            return 99;
         };
 
         result.sort((a, b) => {
-            const statusA = statusOrder[a.project.status] || 99;
-            const statusB = statusOrder[b.project.status] || 99;
-            if (statusA !== statusB) {
-                return statusA - statusB;
+            const pA = getStatusPriority(a.project.status);
+            const pB = getStatusPriority(b.project.status);
+            if (pA !== pB) {
+                return pA - pB;
             }
             return new Date(b.project.created_at).getTime() - new Date(a.project.created_at).getTime();
         });

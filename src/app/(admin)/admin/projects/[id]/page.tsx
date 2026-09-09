@@ -36,7 +36,7 @@ export default function AdminProjectDetailPage() {
     }
 
     return (
-        <div className="flex flex-col w-full gap-2.5 h-full flex-1 min-h-0 overflow-hidden">
+        <div className="flex flex-col w-full gap-2.5 flex-1 min-h-0 lg:h-full lg:overflow-hidden">
             {/* Header Section */}
             <div className="shrink-0 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
@@ -67,7 +67,7 @@ export default function AdminProjectDetailPage() {
             </div>
 
             {/* Content Area (Scrollable) */}
-            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 pb-2 flex flex-col">
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 pb-3 sm:pb-4 flex flex-col">
                 <div className="animate-in fade-in duration-300 flex-1">
                     {state.activeTab === "Overview" && (
                         <AdminOverviewTab

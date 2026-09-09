@@ -14,8 +14,10 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/comp
 export const statusConfig: Record<string, { label: string; bg: string; text: string; accent: string }> = {
     active: { label: "Active", bg: "bg-emerald-50/50", text: "text-emerald-700", accent: "bg-emerald-500" },
     completed: { label: "Completed", bg: "bg-blue-50/50", text: "text-blue-700", accent: "bg-blue-500" },
+    "on_hold": { label: "On Hold", bg: "bg-amber-50/50", text: "text-amber-700", accent: "bg-amber-500" },
     "on-hold": { label: "On Hold", bg: "bg-amber-50/50", text: "text-amber-700", accent: "bg-amber-500" },
     cancelled: { label: "Cancelled", bg: "bg-red-50/50", text: "text-red-700", accent: "bg-red-500" },
+    canceled: { label: "Cancelled", bg: "bg-red-50/50", text: "text-red-700", accent: "bg-red-500" },
 };
 
 const getInitials = (name: string) => {

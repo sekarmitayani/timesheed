@@ -43,7 +43,7 @@ export default function PMProjectsPage() {
                     </div>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                     {state.cards.map((card) => (
                         <PMProjectCard 
                             key={card.project.id} 

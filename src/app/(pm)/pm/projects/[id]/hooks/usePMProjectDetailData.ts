@@ -216,7 +216,7 @@ export function usePMProjectDetailData(projectId: string) {
             setTaskDialogOpen, setResDialogOpen, setResDetailOpen, setSelectedRes, setDeleteTarget,
             setTaskForm, setResForm,
             openCreateTask, openEditTask, openCreateRes, openEditRes,
-            handleSaveTask, handleSaveRes, confirmDelete
+            handleSaveTask, handleSaveRes, handleSaveResource: handleSaveRes, confirmDelete
         }
     };
 }

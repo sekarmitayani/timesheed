@@ -38,7 +38,7 @@ export default function PMProjectDetailPage() {
     const isFixedView = ["Kanban", "List", "Calendar"].includes(state.activeTab);
 
     return (
-        <div className="flex flex-col w-full gap-2.5 h-full flex-1 min-h-0 overflow-hidden">
+        <div className="flex flex-col w-full gap-2.5 flex-1 min-h-0 lg:h-full lg:overflow-hidden">
             {/* Header Section */}
             <div className="shrink-0 flex flex-col gap-2">
                 {/* Back Navigation */}
@@ -64,7 +64,9 @@ export default function PMProjectDetailPage() {
             {/* Main Content Area */}
             <div className={cn(
                 "flex-1 min-h-0 flex flex-col",
-                isFixedView ? "overflow-hidden" : "overflow-y-auto custom-scrollbar pb-2"
+                isFixedView 
+                    ? "flex flex-col lg:overflow-hidden" 
+                    : "overflow-y-auto custom-scrollbar pr-1 pb-3 sm:pb-4 flex flex-col"
             )}>
                 <div className={cn("animate-in fade-in duration-300", isFixedView ? "flex-1 flex flex-col min-h-0" : "flex-1")}>
                     {state.activeTab === "Overview" && (
