@@ -58,7 +58,8 @@ export default function PaymentsPage() {
         <div className="space-y-6 animate-in fade-in duration-500">
             <PageHeader title="Payroll Ledger" description="Authorize and record disbursements for all contract schemes" />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                 <Card className="bg-white border border-slate-100 shadow-sm rounded-xl h-[90px] flex flex-col overflow-hidden relative shadow-[0_0_15px_rgba(59,130,246,0.1)]">
                     <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">
                         <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#4B7BEC] shrink-0">

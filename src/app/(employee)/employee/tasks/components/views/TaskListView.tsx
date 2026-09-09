@@ -45,7 +45,8 @@ export function TaskListView({
                             </h3>
                         </div>
                         <div className="bg-white border border-slate-100 rounded-md overflow-hidden shadow-sm">
-                            <Table>
+                            <div className="overflow-x-auto">
+                                <Table className="min-w-[650px]">
                                 <TableHeader className="bg-slate-50/50">
                                     <TableRow className="h-10 hover:bg-transparent border-b border-slate-100">
                                         <TableHead className="text-[10px] font-bold uppercase text-slate-400 px-6 w-[25%]">Task Name</TableHead>
@@ -106,7 +107,8 @@ export function TaskListView({
                                         })
                                     )}
                                 </TableBody>
-                            </Table>
+                                </Table>
+                            </div>
                         </div>
                     </div>
                 ))}

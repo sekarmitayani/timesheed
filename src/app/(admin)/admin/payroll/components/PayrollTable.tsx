@@ -47,18 +47,17 @@ export function PayrollTable({
 }: PayrollTableProps) {
     return (
         <div className="bg-white border border-[#e2e8f0] rounded-lg shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-                <Table>
-                    <TableHeader>
-                        <TableRow className="hover:bg-transparent bg-slate-50/50">
-                            <TableHead className="pl-6 w-[60px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
-                            <TableHead className="w-[280px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">User</TableHead>
-                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Scheme / Project</TableHead>
-                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Unpaid Ledger / Rate</TableHead>
-                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Status</TableHead>
-                            <TableHead className="w-32 pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
+            <Table className="min-w-[760px]">
+                <TableHeader>
+                    <TableRow className="hover:bg-transparent bg-slate-50/50">
+                        <TableHead className="pl-6 w-[60px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
+                        <TableHead className="min-w-[170px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">User</TableHead>
+                        <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Scheme / Project</TableHead>
+                        <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Unpaid Ledger / Rate</TableHead>
+                        <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Status</TableHead>
+                        <TableHead className="w-32 pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
                     <TableBody>
                         {isLoading ? (
                             <TableSkeleton columns={6} rows={6} hasAvatar={true} hasActions={true} />
@@ -135,15 +134,14 @@ export function PayrollTable({
                         )}
                     </TableBody>
                 </Table>
-            </div>
 
             {/* Pagination */}
             {!isLoading && totalPages > 0 && (
-                <div className="border-t border-[#e2e8f0] bg-slate-50/30 px-6 py-4 flex items-center justify-between">
+                <div className="border-t border-[#e2e8f0] bg-slate-50/30 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div className="text-xs text-slate-500 font-medium">
                         Showing <span className="text-slate-900">{(page - 1) * limit + 1}</span> to <span className="text-slate-900">{Math.min(page * limit, totalFiltered)}</span> of <span className="text-slate-900">{totalFiltered}</span> entries
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 sm:pr-14 md:pr-0">
                         <Button 
                             variant="outline" 
                             size="sm" 

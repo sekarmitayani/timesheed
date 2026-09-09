@@ -35,7 +35,7 @@ export default function TasksPage() {
     };
 
     return (
-        <div className="flex flex-col w-full h-full flex-1 min-h-0 gap-2.5 overflow-hidden">
+        <div className="flex flex-col w-full flex-1 min-h-0 gap-2.5 lg:h-full lg:overflow-hidden">
             <div className="shrink-0">
                 <PageHeader title="My Tasks" description="Manage your assigned objectives">
                     <Button size="sm" className="gap-2 bg-gradient-to-r from-[#2568C1] to-[#1a4f99] shadow-md shadow-[#2568C1]/20 font-bold h-9 rounded-lg text-white" onClick={actions.openCreate}>

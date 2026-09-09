@@ -46,18 +46,17 @@ export function AuditTable({
 }: AuditTableProps) {
     return (
         <div className="bg-white border border-[#e2e8f0] rounded-lg shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-                <Table>
-                    <TableHeader>
-                        <TableRow className="hover:bg-transparent bg-slate-50/50">
-                            <TableHead className="pl-6 w-12 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
-                            <TableHead className="w-[180px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Timestamp</TableHead>
-                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actor</TableHead>
-                            <TableHead className="w-[140px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Action</TableHead>
-                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Module & Record ID</TableHead>
-                            <TableHead className="w-[100px] pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">View</TableHead>
-                        </TableRow>
-                    </TableHeader>
+            <Table className="min-w-[750px]">
+                <TableHeader>
+                    <TableRow className="hover:bg-transparent bg-slate-50/50">
+                        <TableHead className="pl-6 w-12 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
+                        <TableHead className="w-[180px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Timestamp</TableHead>
+                        <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actor</TableHead>
+                        <TableHead className="w-[140px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Action</TableHead>
+                        <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Module & Record ID</TableHead>
+                        <TableHead className="w-[100px] pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">View</TableHead>
+                    </TableRow>
+                </TableHeader>
                     <TableBody>
                         {isLoading ? (
                             <TableSkeleton columns={6} rows={6} hasActions={true} />
@@ -122,14 +121,13 @@ export function AuditTable({
                         )}
                     </TableBody>
                 </Table>
-            </div>
 
             {!isLoading && totalPages > 0 && (
                 <div className="border-t border-[#e2e8f0] bg-white px-4 py-3 flex items-center justify-between">
                     <div className="text-xs text-muted-foreground font-medium">
                         Showing <span className="text-slate-900">{(currentPage - 1) * limit + 1}</span> to <span className="text-slate-900">{Math.min(currentPage * limit, totalFiltered)}</span> of <span className="text-slate-900">{totalFiltered}</span> logs
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 sm:pr-14 md:pr-0">
                         <Button
                             variant="outline"
                             size="sm"

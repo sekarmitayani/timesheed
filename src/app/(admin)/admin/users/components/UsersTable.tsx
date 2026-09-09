@@ -27,18 +27,18 @@ export function UsersTable({
 
     return (
         <div className="bg-white border border-[#e2e8f0] rounded-lg shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="hover:bg-transparent bg-slate-50/50">
-                                <TableHead className="pl-6 w-12 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
-                                <TableHead className="w-[280px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">User</TableHead>
-                                <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Role & Access</TableHead>
-                                <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Type</TableHead>
-                                <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Status</TableHead>
-                                <TableHead className="w-[140px] pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
+            <Table className="min-w-[720px]">
+                <TableHeader>
+                    <TableRow className="hover:bg-transparent bg-slate-50/50">
+                        <TableHead className="pl-6 w-12 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
+                        <TableHead className="min-w-[170px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">User</TableHead>
+                        <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Role & Access</TableHead>
+                        <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Type</TableHead>
+                        <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Status</TableHead>
+                        <TableHead className="w-28 pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+
                         <TableBody>
                             {isLoading ? (
                                 <TableSkeleton columns={6} rows={6} hasAvatar={true} hasActions={true} />
@@ -100,7 +100,7 @@ export function UsersTable({
                                             </Badge>
                                         </TableCell>
                                         <TableCell>
-                                            <div className="flex justify-start gap-1">
+                                            <div className="flex justify-end gap-1">
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-[#64748b] hover:text-[#2568C1] hover:bg-[#2568C1]/10 rounded-full" onClick={() => onView(user)} title="View Detail">
                                                     <Eye className="h-4 w-4" />
                                                 </Button>
@@ -117,15 +117,13 @@ export function UsersTable({
                             )}
                         </TableBody>
                     </Table>
-                </div>
-
             {!isLoading && totalPages > 0 && (
-                <div className="border-t border-[#e2e8f0] bg-white px-4 py-3 flex items-center justify-between">
+                <div className="border-t border-[#e2e8f0] bg-white px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div className="text-xs text-muted-foreground">
                         Showing <span className="font-medium text-[#0f172a]">{(pagination.page - 1) * pagination.limit + 1}</span> to <span className="font-medium text-[#0f172a]">{Math.min(pagination.page * pagination.limit, pagination.total)}</span> of <span className="font-medium text-[#0f172a]">{pagination.total}</span> users
                     </div>
                     
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 sm:pr-14 md:pr-0">
                         <Button
                             variant="outline"
                             size="sm"

@@ -65,18 +65,18 @@ export function ContractsTable({
 
     return (
         <div className="bg-white border border-[#e2e8f0] rounded-lg shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-                <Table>
-                    <TableHeader>
-                        <TableRow className="hover:bg-transparent bg-slate-50/50">
-                            <TableHead className="pl-6 w-12 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
-                            <TableHead className="w-[280px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">User</TableHead>
-                            <TableHead className=" text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Type</TableHead>
-                            <TableHead className=" text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Payment Scheme</TableHead>
-                            <TableHead className=" text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Period & Rate</TableHead>
-                            <TableHead className=" text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Status</TableHead>
-                            <TableHead className="w-[140px] pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actions</TableHead>
+            <Table className="min-w-[780px]">
+                <TableHeader>
+                    <TableRow className="hover:bg-transparent bg-slate-50/50">
+                        <TableHead className="pl-6 w-12 text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">No</TableHead>
+                        <TableHead className="min-w-[170px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">User</TableHead>
+                        <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Type</TableHead>
+                        <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Payment Scheme</TableHead>
+                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Period & Rate</TableHead>
+                            <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Status</TableHead>
+                            <TableHead className="w-28 pr-6 text-right text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Actions</TableHead>
                         </TableRow>
+
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
@@ -162,20 +162,18 @@ export function ContractsTable({
                         )}
                     </TableBody>
                 </Table>
-            </div>
-
             {/* Pagination */}
             {!isLoading && pagination.totalPages > 0 && (
-                <div className="border-t border-[#e2e8f0] bg-slate-50/30 px-6 py-4 flex items-center justify-between">
+                <div className="border-t border-[#e2e8f0] bg-slate-50/30 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div className="text-xs text-slate-500 font-medium">
                         Showing <span className="text-slate-900">{(pagination.page - 1) * pagination.limit + 1}</span> to <span className="text-slate-900">{Math.min(pagination.page * pagination.limit, totalContracts)}</span> of <span className="text-slate-900">{totalContracts}</span> contracts
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="h-8 w-8 p-0 border-slate-200" 
-                            disabled={pagination.page <= 1} 
+                    <div className="flex items-center gap-2 sm:pr-14 md:pr-0">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 w-8 p-0 border-slate-200"
+                            disabled={pagination.page <= 1}
                             onClick={() => setPage(pagination.page - 1)}
                         >
                             <ChevronLeft className="h-4 w-4" />

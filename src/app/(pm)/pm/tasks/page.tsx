@@ -35,7 +35,7 @@ export default function PMTasksPage() {
     };
 
     return (
-        <div className="flex flex-col w-full h-full flex-1 min-h-0 gap-2.5 overflow-hidden">
+        <div className="flex flex-col w-full flex-1 min-h-0 gap-2.5 lg:h-full lg:overflow-hidden">
             <div className="shrink-0">
                 <PageHeader title="Project Tasks" description={`Monitoring ${state.tasks.length} total assignments`}>
                     <Button 

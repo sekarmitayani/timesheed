@@ -60,7 +60,7 @@ export function ApprovalsTable({
     return (
         <div className="bg-white border border-[#e2e8f0] rounded-lg shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
             <div className="overflow-x-auto flex-1 min-h-0 custom-scrollbar">
-                <Table>
+                <Table className="min-w-[780px]">
                     <TableHeader className="bg-slate-50/50 sticky top-0 z-10 shadow-[0_1px_0_0_rgba(226,232,240,1)]">
                         <TableRow className="hover:bg-transparent">
                             <TableHead className="pl-6 w-[50px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">
@@ -71,8 +71,9 @@ export function ApprovalsTable({
                                     onChange={onSelectAll} 
                                 />
                             </TableHead>
-                            <TableHead className="w-[280px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Employee</TableHead>
+                            <TableHead className="min-w-[170px] text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Employee</TableHead>
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Project / ID</TableHead>
+
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Session Time</TableHead>
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Duration</TableHead>
                             <TableHead className="text-[10px] uppercase font-bold tracking-wider text-slate-500 h-10">Status</TableHead>
@@ -214,11 +215,12 @@ export function ApprovalsTable({
 
             {/* Pagination */}
             {!isLoading && totalFiltered > 0 && (
-                <div className="border-t border-[#e2e8f0] bg-slate-50/30 px-6 py-4 flex items-center justify-between shrink-0">
+                <div className="border-t border-[#e2e8f0] bg-slate-50/30 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
                     <div className="text-xs text-slate-500 font-medium">
+
                         Showing <span className="text-slate-900">{(page - 1) * limit + 1}</span> to <span className="text-slate-900">{Math.min(page * limit, totalFiltered)}</span> of <span className="text-slate-900">{totalFiltered}</span> entries
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 sm:pr-14 md:pr-0">
                         <Button 
                             variant="outline" 
                             size="sm" 

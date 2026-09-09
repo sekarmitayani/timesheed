@@ -223,7 +223,7 @@ export default function AdminImportHubPage() {
                 <p className="text-xs text-slate-500">
                     To maintain relational integrity, follow the sequential order below when bootstrapping or migrating new data:
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2.5 pt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2.5 pt-1">
                     <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex items-start gap-2">
                         <span className="h-5.5 w-5.5 rounded-full bg-[#2568C1] text-white flex items-center justify-center text-[11px] font-bold shrink-0">1</span>
                         <div>
@@ -283,7 +283,7 @@ export default function AdminImportHubPage() {
             </div>
 
             {/* Grid of 7 Import Modules */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                 {importModules.map((module) => {
                     const IconComponent = module.icon;
                     return (

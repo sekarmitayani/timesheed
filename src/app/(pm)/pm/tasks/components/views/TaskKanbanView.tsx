@@ -32,14 +32,14 @@ export function TaskKanbanView({
     allMembers, currentUserId, currentUserFullName, statusConfig
 }: TaskKanbanViewProps) {
     return (
-        <div className="flex-1 overflow-y-auto pr-1 pb-2 custom-scrollbar">
+        <div className="flex-1 overflow-x-auto overflow-y-auto pr-1 pb-3 sm:pb-4 custom-scrollbar">
             <DragDropContext onDragEnd={onDragEnd}>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:flex md:gap-5 md:min-w-max xl:grid xl:grid-cols-3 xl:min-w-0 xl:gap-6 h-full">
                     {(["todo", "in_progress", "done"] as const).map(col => {
                         const cfg = statusConfig[col];
                         const items = grouped[col] || [];
                         return (
-                            <div key={col} className="flex flex-col space-y-3 bg-slate-50/80 p-4 rounded-md border border-slate-100 min-h-[440px]">
+                            <div key={col} className="flex flex-col space-y-3 bg-slate-50/80 p-4 rounded-md border border-slate-100 min-h-[440px] md:w-[320px] xl:w-auto">
                                 <div className="flex items-center justify-between px-1">
                                     <div className="flex items-center gap-2">
                                         <div className={`h-2 w-2 rounded-full ${cfg.color.replace('text-', 'bg-')}`} />
