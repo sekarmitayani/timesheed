@@ -9,6 +9,7 @@ import { LiabilityAccordion } from "./components/LiabilityAccordion";
 import { LiabilityDetailModal } from "./components/LiabilityDetailModal";
 import { KpiCardsSkeleton } from "@/components/shared/loaders/DashboardSkeleton";
 import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
+import { Table, TableBody } from "@/components/ui/table";
 
 export default function LiabilityMonitorPage() {
     const { data, isLoading } = useLiabilityMonitor();
@@ -77,7 +78,13 @@ export default function LiabilityMonitorPage() {
             {isLoading ? (
                 <div className="space-y-6">
                     <KpiCardsSkeleton count={3} />
-                    <TableSkeleton rows={5} columns={5} />
+                    <div className="bg-white border border-slate-100 rounded-lg overflow-hidden shadow-sm">
+                        <Table>
+                            <TableBody>
+                                <TableSkeleton rows={5} columns={5} />
+                            </TableBody>
+                        </Table>
+                    </div>
                 </div>
             ) : data ? (
                 <>

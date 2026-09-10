@@ -9,6 +9,7 @@ import { PresetExecutiveReports } from "./components/PresetExecutiveReports";
 import { ReportsScreenRestricted } from "./components/ReportsScreenRestricted";
 import { TableSkeleton } from "@/components/shared/loaders/TableSkeleton";
 import { KpiCardsSkeleton } from "@/components/shared/loaders/DashboardSkeleton";
+import { Table, TableBody } from "@/components/ui/table";
 
 export default function ManagementReportsPage() {
     const [activeTab, setActiveTab] = useState<ReportActiveTab>("compare");
@@ -30,8 +31,8 @@ export default function ManagementReportsPage() {
                 <ReportsScreenRestricted />
             </div>
 
-            {/* 2. Executive Reports Suite (Visible on Tablet portrait/landscape >= 768px and Desktop viewports) */}
-            <div className="hidden md:block space-y-3 animate-in fade-in duration-500">
+            {/* 2. Main Desktop View (Visible ONLY on md screens and above >= 768px) */}
+            <div className="hidden md:block space-y-6">
                 {/* Standard SaaS Navigation Header */}
                 <div className="no-print">
                     <ReportsHeader
@@ -46,7 +47,13 @@ export default function ManagementReportsPage() {
                 {isLoading ? (
                     <div className="space-y-6 no-print animate-in fade-in duration-300">
                         <KpiCardsSkeleton count={4} />
-                        <TableSkeleton rows={6} columns={6} />
+                        <div className="bg-white border border-slate-100 rounded-lg overflow-hidden shadow-sm">
+                            <Table>
+                                <TableBody>
+                                    <TableSkeleton rows={6} columns={6} />
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
                 ) : (
                     <>
