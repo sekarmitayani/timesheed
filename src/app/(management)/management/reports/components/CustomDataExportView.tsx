@@ -540,18 +540,18 @@ export function CustomDataExportView({
             {/* ========================================================================= */}
             {/* KPI STATS ROW (DASHBOARD STANDARD ARCHITECTURE) */}
             {/* ========================================================================= */}
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
                 {/* 1. Matched Records */}
                 <Card className={cardClass}>
-                    <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">
-                        <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#4B7BEC] shrink-0">
-                            <FolderKanban className="h-6 w-6" />
+                    <CardContent className="p-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#4B7BEC] shrink-0">
+                            <FolderKanban className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 truncate">
                                 Matched Records
                             </p>
-                            <span className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
+                            <span className="text-base sm:text-xl xl:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
                                 {summaryStats.count} Items
                             </span>
                             <span className="text-[10px] text-slate-400 font-medium truncate block">
@@ -563,15 +563,15 @@ export function CustomDataExportView({
 
                 {/* 2. Total Revenue */}
                 <Card className={cardClass}>
-                    <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">
-                        <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#4B7BEC] shrink-0">
-                            <Wallet className="h-6 w-6" />
+                    <CardContent className="p-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#4B7BEC] shrink-0">
+                            <Wallet className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 truncate">
                                 Total Revenue
                             </p>
-                            <span className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
+                            <span className="text-base sm:text-xl xl:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
                                 {fmtCurrencyShort(summaryStats.totalRevenue)}
                             </span>
                             <span className="text-[10px] text-slate-400 font-medium truncate block">
@@ -583,15 +583,15 @@ export function CustomDataExportView({
 
                 {/* 3. Total Expenses */}
                 <Card className={cardClass}>
-                    <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">
-                        <div className="h-12 w-12 rounded-xl bg-red-50 flex items-center justify-center text-red-500 shrink-0">
-                            <Receipt className="h-6 w-6" />
+                    <CardContent className="p-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-red-50 flex items-center justify-center text-red-500 shrink-0">
+                            <Receipt className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 truncate">
                                 Total Expenses
                             </p>
-                            <span className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
+                            <span className="text-base sm:text-xl xl:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
                                 {fmtCurrencyShort(summaryStats.totalExpenses)}
                             </span>
                             <span className="text-[10px] text-slate-400 font-medium truncate block">
@@ -603,15 +603,15 @@ export function CustomDataExportView({
 
                 {/* 4. Net Margin */}
                 <Card className={cardClass}>
-                    <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">
-                        <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
-                            <TrendingUp className="h-6 w-6" />
+                    <CardContent className="p-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                            <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 truncate">
                                 Net Margin
                             </p>
-                            <span className={`text-xl sm:text-2xl font-black tracking-tight leading-tight block truncate ${summaryStats.netProfit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                            <span className={`text-base sm:text-xl xl:text-2xl font-black tracking-tight leading-tight block truncate ${summaryStats.netProfit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                                 {fmtCurrencyShort(summaryStats.netProfit)}
                             </span>
                             <span className="text-[10px] text-slate-400 font-medium truncate block">

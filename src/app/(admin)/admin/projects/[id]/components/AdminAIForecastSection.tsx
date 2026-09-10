@@ -96,7 +96,7 @@ export function AdminAIForecastSection({ projectId, className, compact }: AdminA
             </CardHeader>
             <CardContent className="p-0 flex-1 flex flex-col justify-between">
                 <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3.5">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                    <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
                         <div className="space-y-0.5">
                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Budget Spent</span>
                             <p className="text-sm sm:text-base font-bold text-slate-800 tracking-tight">{formatCurrency(forecast.spent)}</p>

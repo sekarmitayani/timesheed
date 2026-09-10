@@ -19,7 +19,7 @@ export function DashboardHeaderSkeleton() {
 
 export function KpiCardsSkeleton({ count = 4 }: { count?: number }) {
     return (
-        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${count} gap-4`}>
+        <div className={`grid grid-cols-2 xl:grid-cols-${count} gap-3 sm:gap-4`}>
             {Array.from({ length: count }).map((_, i) => (
                 <div
                     key={i}

@@ -129,7 +129,7 @@ export function PMOverviewTab({ project, members, tasks = [] }: PMOverviewTabPro
     return (
         <div className="space-y-4">
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
                 <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
                     <CardContent className="p-4 sm:p-5 flex items-center gap-4">
                         <div className="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100/60 flex items-center justify-center text-emerald-600 shrink-0">

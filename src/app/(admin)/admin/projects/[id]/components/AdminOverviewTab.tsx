@@ -24,7 +24,7 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
     return (
         <div className="space-y-4">
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
                 {[
                     { label: "Revenue", value: project.budget_revenue, icon: "bg-blue-50 text-blue-600", color: "text-slate-900" },
                     { label: "Cost Threshold", value: project.budget_cost_threshold, icon: "bg-orange-50 text-orange-600", color: "text-slate-900" },

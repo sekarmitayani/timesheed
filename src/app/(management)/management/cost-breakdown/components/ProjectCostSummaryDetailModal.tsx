@@ -115,7 +115,7 @@ export function ProjectCostSummaryDetailModal({ project, open, onOpenChange }: P
                         </div>
 
                         {/* 2. KPI Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
                             <div className="bg-white p-3.5 rounded-md border border-slate-200 shadow-sm flex flex-col justify-center">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Contract / Revenue</span>
                                 <span className="text-lg font-black text-slate-800">{projectDetails?.budget_revenue ? fmtCurrencyShort(projectDetails.budget_revenue) : '-'}</span>

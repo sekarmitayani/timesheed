@@ -786,18 +786,18 @@ export function IndicatorComparisonView({
             {/* ========================================================================= */}
             {/* KPI STATS ROW (DASHBOARD STANDARD ARCHITECTURE) */}
             {/* ========================================================================= */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 {/* 1. Analyzed Entities */}
                 <Card className={cardClass}>
-                    <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">
-                        <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#4B7BEC] shrink-0">
-                            <FolderKanban className="h-6 w-6" />
+                    <CardContent className="p-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#4B7BEC] shrink-0">
+                            <FolderKanban className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 truncate">
                                 Analyzed Entities
                             </p>
-                            <span className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
+                            <span className="text-base sm:text-xl xl:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
                                 {activeDataset.length} Records
                             </span>
                             <span className="text-[10px] text-slate-400 font-medium truncate block capitalize">
@@ -809,15 +809,15 @@ export function IndicatorComparisonView({
 
                 {/* 2. Average Metric X */}
                 <Card className={cardClass}>
-                    <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">
-                        <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#4B7BEC] shrink-0">
-                            <BarChart2 className="h-6 w-6" />
+                    <CardContent className="p-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#4B7BEC] shrink-0">
+                            <BarChart2 className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 truncate">
                                 Avg {xMetricInfo.label}
                             </p>
-                            <span className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
+                            <span className="text-base sm:text-xl xl:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
                                 {formatValue(avgX, xMetricInfo.format)}
                             </span>
                             <span className="text-[10px] text-slate-400 font-medium truncate block">
@@ -829,15 +829,15 @@ export function IndicatorComparisonView({
 
                 {/* 3. Average Metric Y */}
                 <Card className={cardClass}>
-                    <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">
-                        <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
-                            <TrendingUp className="h-6 w-6" />
+                    <CardContent className="p-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                            <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 truncate">
                                 Avg {yMetricInfo.label}
                             </p>
-                            <span className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
+                            <span className="text-base sm:text-xl xl:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
                                 {formatValue(avgY, yMetricInfo.format)}
                             </span>
                             <span className="text-[10px] text-slate-400 font-medium truncate block">
@@ -849,15 +849,15 @@ export function IndicatorComparisonView({
 
                 {/* 4. Top Performer */}
                 <Card className={cardClass}>
-                    <CardContent className="px-4 py-3 flex flex-row items-center gap-4 h-full">
-                        <div className="h-12 w-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
-                            <Trophy className="h-6 w-6" />
+                    <CardContent className="p-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
+                            <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 truncate">
                                 Top Indicator
                             </p>
-                            <span className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
+                            <span className="text-base sm:text-xl xl:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
                                 {topPerformer?.name || "-"}
                             </span>
                             <span className="text-[10px] text-slate-400 font-medium truncate block">
