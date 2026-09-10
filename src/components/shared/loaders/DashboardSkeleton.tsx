@@ -23,12 +23,12 @@ export function KpiCardsSkeleton({ count = 4 }: { count?: number }) {
             {Array.from({ length: count }).map((_, i) => (
                 <div
                     key={i}
-                    className="bg-white border border-slate-100 shadow-xs rounded-xl h-[100px] px-4 py-3 flex flex-row items-center gap-4"
+                    className="bg-white border border-slate-100 shadow-xs rounded-xl h-[78px] px-3.5 sm:px-4 py-2.5 flex flex-row items-center gap-3 sm:gap-3.5"
                 >
-                    <Skeleton className="h-12 w-12 rounded-xl shrink-0 bg-slate-200/70" />
-                    <div className="space-y-2 flex-1">
-                        <Skeleton className="h-3 w-20 bg-slate-200/50" />
-                        <Skeleton className="h-6 w-24 bg-slate-200/70" />
+                    <Skeleton className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl shrink-0 bg-slate-200/70" />
+                    <div className="space-y-1.5 flex-1">
+                        <Skeleton className="h-2.5 w-20 bg-slate-200/50" />
+                        <Skeleton className="h-5 w-24 bg-slate-200/70" />
                     </div>
                 </div>
             ))}

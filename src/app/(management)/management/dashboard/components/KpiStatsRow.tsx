@@ -57,7 +57,7 @@ function TrendBadge({ change, invertColor = false }: TrendProps) {
 }
 
 const cardClass =
-    "bg-white border border-slate-100 shadow-sm rounded-xl flex flex-col overflow-hidden hover:shadow-md transition-shadow";
+    "bg-white border border-slate-100 shadow-sm rounded-xl h-[74px] sm:h-[76px] flex flex-col overflow-hidden hover:shadow-md transition-shadow p-0 py-0 gap-0";
 
 export function KpiStatsRow({ stats }: KpiStatsRowProps) {
     const kpis = [
@@ -121,11 +121,11 @@ export function KpiStatsRow({ stats }: KpiStatsRowProps) {
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2 sm:gap-3">
             {kpis.map((kpi) => (
                 <Card key={kpi.label} className={cardClass}>
-                    <CardContent className="px-2.5 py-3 sm:px-3 sm:py-3 flex flex-row items-center gap-2.5 sm:gap-3 h-full">
+                    <CardContent className="px-2.5 py-2 sm:px-3 sm:py-2 flex flex-row items-center gap-2.5 sm:gap-3 h-full">
                         <div
-                            className={`h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl ${kpi.iconBg} flex items-center justify-center ${kpi.iconColor} shrink-0`}
+                            className={`h-8 w-8 sm:h-9 sm:w-9 rounded-lg sm:rounded-xl ${kpi.iconBg} flex items-center justify-center ${kpi.iconColor} shrink-0`}
                         >
-                            <kpi.icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                            <kpi.icon className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 truncate">

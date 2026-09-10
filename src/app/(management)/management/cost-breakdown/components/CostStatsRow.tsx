@@ -57,18 +57,18 @@ function TrendBadge({ change, invertColor = false }: TrendProps) {
 }
 
 export function CostStatsRow({ data, isLoading }: CostStatsRowProps) {
-    const cardClass = "bg-white border border-slate-100 shadow-sm rounded-xl flex flex-col overflow-hidden hover:shadow-md transition-shadow";
+    const cardClass = "bg-white border border-slate-100 shadow-sm rounded-xl h-[78px] flex flex-col overflow-hidden hover:shadow-md transition-shadow p-0 py-0 gap-0";
 
     if (isLoading || !data) {
         return (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
                 {[...Array(4)].map((_, i) => (
                     <Card key={i} className={cardClass}>
-                        <CardContent className="px-3 py-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
-                            <Skeleton className="h-9 w-9 sm:h-12 sm:w-12 rounded-lg sm:rounded-xl shrink-0" />
-                            <div className="flex-1">
-                                <Skeleton className="h-2 sm:h-3 w-16 sm:w-20 mb-2" />
-                                <Skeleton className="h-5 sm:h-6 w-20 sm:w-24" />
+                        <CardContent className="px-3.5 sm:px-4 py-2.5 flex flex-row items-center gap-3 sm:gap-3.5 h-full">
+                            <Skeleton className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl shrink-0" />
+                            <div className="flex-1 space-y-1.5">
+                                <Skeleton className="h-2.5 w-16 sm:w-20" />
+                                <Skeleton className="h-5 w-20 sm:w-24" />
                             </div>
                         </CardContent>
                     </Card>
@@ -120,24 +120,26 @@ export function CostStatsRow({ data, isLoading }: CostStatsRowProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
             {stats.map((stat) => (
                 <Card key={stat.label} className={cardClass}>
-                    <CardContent className="px-3 py-3 sm:px-4 sm:py-3 flex flex-row items-center gap-3 sm:gap-4 h-full">
+                    <CardContent className="px-3.5 sm:px-4 py-2.5 flex flex-row items-center gap-3 sm:gap-3.5 h-full">
                         <div
-                            className={`h-9 w-9 sm:h-12 sm:w-12 rounded-lg sm:rounded-xl ${stat.iconBg} flex items-center justify-center ${stat.iconColor} shrink-0`}
+                            className={`h-10 w-10 sm:h-11 sm:w-11 rounded-xl ${stat.iconBg} flex items-center justify-center ${stat.iconColor} shrink-0`}
                         >
-                            <stat.icon className="h-4 w-4 sm:h-6 sm:w-6" />
+                            <stat.icon className="h-5 w-5 sm:h-5.5 sm:w-5.5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1 truncate">
                                 {stat.label}
                             </p>
-                            <span className="text-base sm:text-lg lg:text-2xl font-black text-slate-800 tracking-tight leading-tight block truncate">
-                                {fmtCurrencyShort(stat.value)}
-                            </span>
-                            <div className="mt-0.5">
-                                <TrendBadge
-                                    change={stat.change}
-                                    invertColor={stat.invertColor}
-                                />
+                            <div className="flex items-center gap-2">
+                                <span className="text-lg sm:text-xl font-black text-slate-800 tracking-tight leading-none truncate">
+                                    {fmtCurrencyShort(stat.value)}
+                                </span>
+                                {stat.change !== undefined && (
+                                    <TrendBadge
+                                        change={stat.change}
+                                        invertColor={stat.invertColor}
+                                    />
+                                )}
                             </div>
                         </div>
                     </CardContent>
