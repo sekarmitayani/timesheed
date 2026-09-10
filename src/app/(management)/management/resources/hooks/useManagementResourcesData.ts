@@ -75,7 +75,9 @@ export function useManagementResourcesData() {
         allProjects,
         stats: statsData,
         isLoadingStats,
-        paginatedRequests: tableData?.data || [],
+        paginatedRequests: (tableData?.data || []).filter(
+            (r: ResourceRequest) => !r.project?.name?.toLowerCase().includes("(deleted)")
+        ),
         isLoading: isLoadingTable,
         totalPages: tableData?.pagination?.total_pages || 1,
         totalFiltered: tableData?.pagination?.total_rows || 0,

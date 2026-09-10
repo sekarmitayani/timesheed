@@ -130,47 +130,47 @@ export function OverviewTab({ project, members, tasks = [] }: OverviewTabProps) 
         <div className="space-y-4">
             {/* KPI Cards */}
             <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
-                <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
-                    <CardContent className="p-4 sm:p-5 flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100/60 flex items-center justify-center text-emerald-600 shrink-0">
-                            <CheckCircle2 className="h-5 w-5" />
+                <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0 h-[76px]">
+                    <CardContent className="px-4 py-2.5 flex items-center gap-3.5 h-full">
+                        <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-emerald-50 border border-emerald-100/60 flex items-center justify-center text-emerald-600 shrink-0">
+                            <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
                         <div className="flex flex-col min-w-0">
                             <span className="text-sm sm:text-base font-bold text-slate-800 leading-tight truncate">{completedLast7Days} completed</span>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">in the last 7 days</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-none mt-1">in the last 7 days</span>
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
-                    <CardContent className="p-4 sm:p-5 flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-xl bg-blue-50 border border-blue-100/60 flex items-center justify-center text-[#4B7BEC] shrink-0">
-                            <Edit3 className="h-5 w-5" />
+                <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0 h-[76px]">
+                    <CardContent className="px-4 py-2.5 flex items-center gap-3.5 h-full">
+                        <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-blue-50 border border-blue-100/60 flex items-center justify-center text-[#4B7BEC] shrink-0">
+                            <Edit3 className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
                         <div className="flex flex-col min-w-0">
                             <span className="text-sm sm:text-base font-bold text-slate-800 leading-tight truncate">{updatedLast7Days} updated</span>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">in the last 7 days</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-none mt-1">in the last 7 days</span>
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
-                    <CardContent className="p-4 sm:p-5 flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-xl bg-purple-50 border border-purple-100/60 flex items-center justify-center text-purple-600 shrink-0">
-                            <Copy className="h-5 w-5" />
+                <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0 h-[76px]">
+                    <CardContent className="px-4 py-2.5 flex items-center gap-3.5 h-full">
+                        <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-purple-50 border border-purple-100/60 flex items-center justify-center text-purple-600 shrink-0">
+                            <Copy className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
                         <div className="flex flex-col min-w-0">
                             <span className="text-sm sm:text-base font-bold text-slate-800 leading-tight truncate">{createdLast7Days} created</span>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">in the last 7 days</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-none mt-1">in the last 7 days</span>
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
-                    <CardContent className="p-4 sm:p-5 flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-xl bg-amber-50 border border-amber-100/60 flex items-center justify-center text-amber-600 shrink-0">
-                            <CalendarDays className="h-5 w-5" />
+                <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0 h-[76px]">
+                    <CardContent className="px-4 py-2.5 flex items-center gap-3.5 h-full">
+                        <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-amber-50 border border-amber-100/60 flex items-center justify-center text-amber-600 shrink-0">
+                            <CalendarDays className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
                         <div className="flex flex-col min-w-0">
                             <span className="text-sm sm:text-base font-bold text-slate-800 leading-tight truncate">{dueSoon} due soon</span>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">in the next 7 days</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-none mt-1">in the next 7 days</span>
                         </div>
                     </CardContent>
                 </Card>

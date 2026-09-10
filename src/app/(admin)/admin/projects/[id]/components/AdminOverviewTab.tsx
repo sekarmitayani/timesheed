@@ -31,14 +31,14 @@ export function AdminOverviewTab({ project, members }: AdminOverviewTabProps) {
                     { label: "Planned Cost", value: project.budget_cost, icon: "bg-amber-50 text-amber-600", color: "text-slate-900" },
                     { label: "Actual Cost", value: project.actual_cost, icon: "bg-purple-50 text-purple-600", color: (project.actual_cost || 0) > (project.budget_cost_threshold || Infinity) ? "text-red-600" : "text-slate-900" },
                 ].map((item, i) => (
-                    <Card key={i} className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0">
-                        <CardContent className="p-4 sm:p-5 flex items-start gap-4">
-                            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0", item.icon)}>
-                                <Banknote className="h-5 w-5" />
+                    <Card key={i} className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col p-0 py-0 gap-0 h-[76px]">
+                        <CardContent className="px-4 py-2.5 flex items-center gap-3.5 h-full">
+                            <div className={cn("w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0", item.icon)}>
+                                <Banknote className="h-4 w-4 sm:h-5 sm:w-5" />
                             </div>
                             <div className="min-w-0">
-                                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{item.label}</p>
-                                <p className={cn("text-sm sm:text-base font-bold tracking-tight truncate", item.color)}>
+                                <p className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-none mb-1">{item.label}</p>
+                                <p className={cn("text-sm sm:text-base font-bold tracking-tight truncate leading-tight", item.color)}>
                                     {formatCurrency(item.value || 0)}
                                 </p>
                             </div>

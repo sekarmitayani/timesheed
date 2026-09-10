@@ -57,9 +57,10 @@ export function useAdminResourcesData() {
 
     // --- Memoized Filtered & Paginated Data ---
     const filteredRequests = useMemo(() => {
-        if (!searchQuery.trim()) return requests;
+        const nonDeleted = requests.filter(r => !r.project?.name?.toLowerCase().includes("(deleted)"));
+        if (!searchQuery.trim()) return nonDeleted;
         const q = searchQuery.toLowerCase();
-        return requests.filter(r => 
+        return nonDeleted.filter(r => 
             (r.details?.toLowerCase() || "").includes(q) ||
             (r.project?.name?.toLowerCase() || "").includes(q) ||
             (r.user?.full_name?.toLowerCase() || "").includes(q)

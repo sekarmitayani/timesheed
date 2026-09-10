@@ -127,6 +127,7 @@ export default function EmployeeProjectDetailPage() {
                 onConfirm={actions.handleDelete}
                 isDeleting={state.isDeleting}
                 taskTitle={state.taskToDelete?.title || ""}
+                taskId={state.taskToDelete?.id || null}
             />
         </div>
     );

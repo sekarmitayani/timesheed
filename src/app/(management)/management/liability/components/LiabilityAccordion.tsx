@@ -33,12 +33,14 @@ export function LiabilityAccordion({ groups, onViewDetail }: LiabilityAccordionP
         );
     }
 
-    // Sort to ensure Base Contract (project_id null) is always on top
-    const sortedGroups = [...groups].sort((a, b) => {
-        if (a.project_id === null) return -1;
-        if (b.project_id === null) return 1;
-        return 0;
-    });
+    // Filter out deleted projects and sort to ensure Base Contract (project_id null) is always on top
+    const sortedGroups = groups
+        .filter((g) => !g.project_name.toLowerCase().includes("(deleted)"))
+        .sort((a, b) => {
+            if (a.project_id === null) return -1;
+            if (b.project_id === null) return 1;
+            return 0;
+        });
 
     return (
         <div className="space-y-3">
