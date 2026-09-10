@@ -121,7 +121,7 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
                 </main>
             </div>
 
-            {(user.role === "admin" || user.role === "finance") && (
+            {(user.role === "admin" || user.role === "management") && (
                 <ChatbotWidget />
             )}
         </div>
