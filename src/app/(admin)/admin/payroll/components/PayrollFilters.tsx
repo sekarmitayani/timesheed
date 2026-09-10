@@ -61,6 +61,7 @@ export function PayrollFilters({
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Projects</SelectItem>
+                            <SelectItem value="base">Base Contract</SelectItem>
                             {allProjects.map(p => <SelectItem key={p.id} value={p.id.toString()}>{p.name}</SelectItem>)}
                         </SelectContent>
                     </Select>

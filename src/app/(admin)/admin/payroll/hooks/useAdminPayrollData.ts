@@ -98,12 +98,11 @@ export function useAdminPayrollData() {
                                   c.payment_scheme.toLowerCase().includes(search.toLowerCase());
             const matchesScheme = schemeFilter === "all" || c.payment_scheme === schemeFilter;
             
-            // Check project filter: either by ID or name if projectFilter is set
-            // In the summary, we might only have project_name, so we filter by that if it's not "all"
-            // If projectFilter is numeric ID, we'd need project_id in summary. 
-            // Looking at PayrollSummaryItem, it doesn't have project_id. 
-            // We'll assume projectFilter "all" or matching project_name for now or update filtered logic.
-            const matchesProject = projectFilter === "all" || c.project_name === allProjects.find(p => String(p.id) === projectFilter)?.name;
+            // Check project filter: "all", "base", or specific project ID
+            const matchesProject = 
+                projectFilter === "all" ? true :
+                projectFilter === "base" ? (!c.project_name || c.project_name === "Base Contract" || c.project_name.trim() === "") :
+                c.project_name === allProjects.find(p => String(p.id) === projectFilter)?.name;
             
             const matchesStatus = statusFilter === "all" || c.payment_status === statusFilter;
             return matchesSearch && matchesScheme && matchesProject && matchesStatus;
