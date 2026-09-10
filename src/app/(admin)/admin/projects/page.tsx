@@ -86,6 +86,7 @@ export default function AdminProjectsPage() {
             <AdminDeleteProjectDialog 
                 open={state.deleteOpen}
                 onOpenChange={actions.setDeleteOpen}
+                projectId={state.projectToDelete?.id || null}
                 projectName={state.projectToDelete?.name || ""}
                 isDeleting={state.isSaving}
                 onConfirm={actions.handleDeleteProject}

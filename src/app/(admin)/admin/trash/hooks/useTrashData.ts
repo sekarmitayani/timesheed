@@ -205,7 +205,7 @@ export function useTrashData() {
             setLimit(l);
             setPage(1);
         },
-        summary: summary || { users: 0, contracts: 0, projects: 0, resources: 0 },
+        summary: summary || { users: 0, contracts: 0, projects: 0, resources: 0, tasks: 0 },
         isLoadingSummary,
         // Paginated Data
         paginatedUsers,

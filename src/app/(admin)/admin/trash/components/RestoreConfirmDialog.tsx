@@ -59,6 +59,16 @@ export function RestoreConfirmDialog({
                     </p>
                     <p className="text-xs text-slate-500">
                         This record will be recovered from trash and returned to active tables immediately.
+                        {item.type === "projects" && (
+                            <span className="block mt-1 font-medium text-[#2568C1]">
+                                All associated members, tasks, timesheets, and contracts deleted with this project will also be restored.
+                            </span>
+                        )}
+                        {item.type === "users" && (
+                            <span className="block mt-1 font-medium text-[#2568C1]">
+                                All associated contracts and project assignments deleted with this user will also be restored.
+                            </span>
+                        )}
                     </p>
                 </div>
 

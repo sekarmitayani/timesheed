@@ -178,6 +178,7 @@ export default function TasksPage() {
                     onConfirm={actions.handleDelete}
                     isDeleting={state.isDeleting}
                     taskTitle={state.taskToDelete?.title || ""}
+                    taskId={state.taskToDelete?.id || null}
                 />
             )}
         </div>

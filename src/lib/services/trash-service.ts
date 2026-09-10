@@ -7,6 +7,7 @@ export interface TrashSummary {
     contracts: number;
     projects: number;
     resources: number;
+    tasks: number;
 }
 
 export interface TrashUser {
@@ -62,6 +63,40 @@ export interface TrashResource {
     deleted_at: string;
 }
 
+export interface TrashTask {
+    id: number;
+    project_id: number;
+    project_name: string;
+    title: string;
+    description: string;
+    status: string;
+    complexity: number;
+    due_date?: string;
+    created_at: string;
+    deleted_at: string;
+}
+
+export interface ImpactDetail {
+    key: string;
+    label: string;
+    count: number;
+}
+
+export interface DeleteImpactResponse {
+    entity: string;
+    id: number;
+    name: string;
+    total_impacted: number;
+    impacts: ImpactDetail[];
+}
+
+export interface EntityCheckResponse {
+    exists: boolean;
+    deleted: boolean;
+    name: string;
+    type?: string;
+}
+
 export const trashService = {
     async getSummary(): Promise<TrashSummary> {
         return (await fetchApi("/admin/trash/summary")) as TrashSummary;
@@ -97,5 +132,19 @@ export const trashService = {
         return (await fetchApi(`/admin/trash/resources/${id}/restore`, {
             method: "POST"
         })) as { message: string; id: number };
+    },
+    async getDeletedTasks(): Promise<TrashTask[]> {
+        return (await fetchApi("/admin/trash/tasks")) as TrashTask[];
+    },
+    async restoreTask(id: number): Promise<{ message: string; id: number }> {
+        return (await fetchApi(`/admin/trash/tasks/${id}/restore`, {
+            method: "POST"
+        })) as { message: string; id: number };
+    },
+    async getDeleteImpact(entity: string, id: number | string): Promise<DeleteImpactResponse> {
+        return (await fetchApi(`/delete-impact/${entity}/${id}`)) as DeleteImpactResponse;
+    },
+    async checkEntityStatus(type: string, id: number | string): Promise<EntityCheckResponse> {
+        return (await fetchApi(`/entity-check/${type}/${id}`)) as EntityCheckResponse;
     }
 };

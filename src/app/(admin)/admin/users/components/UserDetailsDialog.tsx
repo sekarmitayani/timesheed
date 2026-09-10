@@ -138,7 +138,7 @@ export function UserDetailsDialog({
 
                     {/* Right Panel: Contracts & History */}
                     <div className="md:col-span-8 bg-white flex flex-col h-full max-h-[75vh]">
-                        <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                        <div className="flex-1 overflow-y-auto p-5 space-y-5">
                             {isLoadingDetails ? (
                                 <div className="py-12 flex flex-col items-center justify-center text-muted-foreground">
                                     <Loader2 className="h-8 w-8 animate-spin text-[#2568C1] mb-4" />
@@ -147,7 +147,7 @@ export function UserDetailsDialog({
                             ) : (
                                 <>
                                     {/* Base Rates Section */}
-                                    <div className="space-y-4">
+                                    <div className="space-y-3">
                                         <div className="flex justify-between items-center pb-2 border-b border-[#e2e8f0]">
                                             <h4 className="text-xs font-bold uppercase tracking-wider text-[#0f172a] flex items-center gap-2">
                                                 <Briefcase className="h-4 w-4 text-[#2568C1]" /> General Contracts (Default Rates)
@@ -163,14 +163,14 @@ export function UserDetailsDialog({
                                         </div>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                             {contracts.filter(c => !c.project_id).length === 0 ? (
-                                                <p className="text-sm text-muted-foreground py-4 w-full col-span-2 border border-dashed border-slate-200 rounded-md text-center bg-slate-50">
+                                                <p className="text-xs text-muted-foreground py-3 w-full col-span-2 border border-dashed border-slate-200 rounded-md text-center bg-slate-50">
                                                     No general base contracts found. Employee uses default or project-specific rates.
                                                 </p>
                                             ) : (
                                                 contracts.filter(c => !c.project_id).map((c) => (
-                                                    <Card 
+                                                    <div 
                                                         key={c.id} 
-                                                        className={`p-3 space-y-2 cursor-pointer transition-all border-l-4 ${c.is_active ? 'border-l-[#2568C1] border-y-[#e2e8f0] border-r-[#e2e8f0] shadow-sm hover:shadow-md' : 'border-l-slate-300 border-y-[#e2e8f0] border-r-[#e2e8f0] opacity-80'}`}
+                                                        className={`p-3 space-y-2 cursor-pointer transition-all rounded-lg bg-white border border-[#e2e8f0] border-l-4 ${c.is_active ? 'border-l-[#2568C1] shadow-2xs hover:shadow-xs' : 'border-l-slate-300 opacity-80'}`}
                                                         onClick={() => handleViewContractInAdmin(c.id)}
                                                     >
                                                         <div className="flex justify-between items-start">
@@ -213,14 +213,14 @@ export function UserDetailsDialog({
                                                             </div>
                                                             <ExternalLink className="h-3 w-3 text-slate-400" />
                                                         </div>
-                                                    </Card>
+                                                    </div>
                                                 ))
                                             )}
                                         </div>
                                     </div>
 
                                     {/* Projects History Section */}
-                                    <div className="space-y-4 pt-6 mt-4">
+                                    <div className="space-y-3 pt-3 mt-1">
                                         <div className="flex justify-between items-center pb-2 border-b border-[#e2e8f0]">
                                             <h4 className="text-xs font-bold uppercase tracking-wider text-[#0f172a] flex items-center gap-2">
                                                 <FolderKanban className="h-4 w-4 text-emerald-600" /> Project History & Assignments
@@ -229,7 +229,7 @@ export function UserDetailsDialog({
                                         <div className="grid grid-cols-1 gap-3">
                                             {(() => {
                                                 const pIds = [...new Set(contracts.filter(c => c.project_id).map(c => c.project_id))];
-                                                if (pIds.length === 0) return <div className="text-center py-6 border border-slate-200 border-dashed rounded-md bg-slate-50 text-xs text-slate-500">No project assignments linked to explicit rates.</div>;
+                                                if (pIds.length === 0) return <div className="text-center py-3.5 border border-slate-200 border-dashed rounded-md bg-slate-50 text-xs text-slate-500">No project assignments linked to explicit rates.</div>;
                                                 return pIds.map(pid => {
                                                     const pData = projects.find(p => p.id === pid);
                                                     const pContracts = contracts.filter(c => c.project_id === pid);
