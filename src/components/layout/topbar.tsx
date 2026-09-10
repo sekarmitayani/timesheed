@@ -134,7 +134,7 @@ export function Topbar() {
             <header className="flex h-14 sm:h-16 items-center justify-between border-b border-border bg-white/80 backdrop-blur-xl px-3 sm:px-6 relative z-40">
                 {/* Left: Mobile Hamburger + Search */}
                 <div className="flex items-center gap-2 sm:gap-3 flex-1">
-                    <Button variant="ghost" size="icon" className="h-9 w-9 lg:hidden" onClick={toggleMobileSidebar}>
+                    <Button variant="ghost" size="icon" className="h-9 w-9 xl:hidden" onClick={toggleMobileSidebar}>
                         <Menu className="h-5 w-5" />
                     </Button>
                     <AnimatePresence mode="wait">

@@ -32,12 +32,10 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
         }
     }, [isAuthenticated, router, mounted]);
 
-    // Close mobile sidebar on route change
     useEffect(() => {
         closeMobileSidebar();
     }, [pathname, closeMobileSidebar]);
 
-    // Move role redirect into useEffect to avoid setState-during-render error
     useEffect(() => {
         if (!mounted || !isAuthenticated || !user || isImpersonating) return;
 
@@ -61,50 +59,62 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
     );
 
     return (
-        <div className={cn("bg-background w-full", isFixedPage ? "lg:h-screen lg:overflow-hidden min-h-screen" : "min-h-screen")}>
-            {/* Mobile overlay */}
+        /* 1. ROOT ABSOLUTE: Kunci mati ke batas layar perangkat */
+        <div className="fixed inset-0 w-full h-full bg-background overflow-hidden">
             {mobileSidebarOpen && (
                 <div
-                    className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm lg:hidden"
+                    className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm xl:hidden"
                     onClick={closeMobileSidebar}
                 />
             )}
 
             <Sidebar />
 
+            {/* 2. DESKTOP WRAPPER */}
             <motion.div
                 initial={false}
                 animate={{ paddingLeft: sidebarCollapsed ? 72 : 260 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                className={cn(
-                    "hidden lg:flex flex-col will-change-[padding-left] w-full min-w-0",
-                    isFixedPage ? "h-screen overflow-hidden" : "min-h-screen"
-                )}
+                className="hidden xl:flex flex-col absolute inset-0 w-full h-full overflow-hidden"
             >
-                <Topbar />
-                <main className={cn("flex-1 w-full min-w-0", isFixedPage ? "p-4 sm:px-6 sm:pt-5 sm:pb-3 overflow-hidden flex flex-col min-h-0" : "px-4 sm:px-6 pt-4 sm:pt-6 pb-6 sm:pb-8")}>
+                <div className="w-full shrink-0 z-30">
+                    <Topbar />
+                </div>
+                <main className={cn(
+                    "flex-1 w-full min-w-0 min-h-0",
+                    isFixedPage
+                        ? "p-4 sm:px-6 sm:pt-5 sm:pb-3 overflow-hidden flex flex-col"
+                        : "px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-3.5 overflow-y-auto"
+                )}>
                     <motion.div
                         key={pathname}
                         initial={isFixedPage ? { opacity: 0 } : { opacity: 0, y: 8 }}
                         animate={isFixedPage ? { opacity: 1 } : { opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
-                        className={cn("w-full min-w-0", isFixedPage ? "h-full flex-1 flex flex-col min-h-0" : "")}
+                        className={cn("w-full", isFixedPage ? "h-full flex-1 flex flex-col min-h-0" : "")}
                     >
                         {children}
                     </motion.div>
                 </main>
             </motion.div>
 
-            {/* Mobile / Tablet content area - always scrollable so content never gets cut off */}
-            <div className="flex flex-col lg:hidden w-full min-w-0 min-h-screen">
-                <Topbar />
-                <main className="flex-1 w-full min-w-0 px-3 sm:px-4 pt-3 sm:pt-4 pb-6 sm:pb-8">
+            {/* 3. MOBILE & TABLET WRAPPER */}
+            <div className="flex flex-col xl:hidden absolute inset-0 w-full h-full overflow-hidden">
+                <div className="w-full shrink-0 z-30">
+                    <Topbar />
+                </div>
+                <main className={cn(
+                    "flex-1 w-full min-w-0 min-h-0",
+                    isFixedPage
+                        ? "p-3 sm:px-4 sm:pt-4 sm:pb-3 lg:p-4 lg:pt-5 lg:pb-3 flex flex-col overflow-y-auto lg:overflow-hidden"
+                        : "px-3 sm:px-4 pt-3 sm:pt-4 pb-4 sm:pb-4.5 overflow-y-auto"
+                )}>
                     <motion.div
                         key={pathname}
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="w-full min-w-0"
+                        className={cn("w-full", isFixedPage ? "min-h-0 flex-1 flex flex-col lg:h-full" : "")}
                     >
                         {children}
                     </motion.div>

@@ -30,7 +30,7 @@ export function Sidebar() {
                 className={cn(
                     "fixed left-0 top-0 z-40 h-screen border-r border-border bg-white flex-col",
                     "shadow-[4px_0_24px_-2px_rgba(0,0,0,0.04)]",
-                    "hidden lg:flex"
+                    "hidden xl:flex"
                 )}
             >
                 {/* Logo / Brand + Hamburger Toggle */}
@@ -183,7 +183,7 @@ export function Sidebar() {
                         animate={{ x: 0 }}
                         exit={{ x: -280 }}
                         transition={{ duration: 0.25, ease: "easeInOut" }}
-                        className="fixed left-0 top-0 z-[70] h-screen w-[280px] border-r border-border bg-white flex flex-col shadow-2xl lg:hidden"
+                        className="fixed left-0 top-0 z-[70] h-screen w-[280px] border-r border-border bg-white flex flex-col shadow-2xl xl:hidden"
                     >
                         {/* Header */}
                         <div className="flex h-16 items-center justify-between px-4 border-b border-border">
