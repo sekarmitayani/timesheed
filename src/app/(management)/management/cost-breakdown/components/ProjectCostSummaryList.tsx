@@ -51,52 +51,66 @@ export function ProjectCostSummaryList({ projects, isLoading }: ProjectCostSumma
         <div className="mb-8">
             <h2 className="text-lg font-black text-slate-800 mb-4">Project Cost Summary</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
                 {isLoading ? (
                     [...Array(3)].map((_, i) => (
-                        <Card key={i} className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden">
-                            <CardContent className="p-5">
-                                <Skeleton className="h-6 w-32 mb-4" />
-                                <Skeleton className="h-8 w-24 mb-4" />
-                                <Skeleton className="h-2 w-full mb-6" />
-                                <Skeleton className="h-8 w-full" />
+                        <Card key={i} className="bg-white border-slate-100 shadow-2xs rounded-md overflow-hidden p-0 py-0 gap-0">
+                            <CardContent className="p-3.5 sm:p-4 space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <Skeleton className="h-4 w-32" />
+                                    <Skeleton className="h-4 w-12" />
+                                </div>
+                                <div className="space-y-1">
+                                    <Skeleton className="h-2.5 w-24" />
+                                    <Skeleton className="h-6 w-28" />
+                                </div>
+                                <div className="space-y-1.5 pt-1">
+                                    <div className="flex justify-between">
+                                        <Skeleton className="h-2.5 w-24" />
+                                        <Skeleton className="h-2.5 w-12" />
+                                    </div>
+                                    <Skeleton className="h-1.5 w-full rounded-full" />
+                                </div>
+                                <Skeleton className="h-8 w-full rounded-md pt-1" />
                             </CardContent>
                         </Card>
                     ))
                 ) : !displayedProjects || displayedProjects.length === 0 ? (
-                    <div className="col-span-full py-8 text-center text-sm text-slate-500 font-medium bg-slate-50 rounded-xl border border-slate-100 border-dashed">
+                    <div className="col-span-full py-8 text-center text-sm text-slate-500 font-medium bg-slate-50 rounded-md border border-slate-100 border-dashed">
                         No active projects found.
                     </div>
                 ) : (
                     displayedProjects.map((project) => (
-                        <Card key={project.project_id} className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden flex flex-col hover:border-blue-100 transition-colors">
-                            <CardContent className="p-5 flex-1 flex flex-col">
-                                <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-sm font-bold text-slate-900 truncate pr-2">{project.project_name}</h3>
-                                    <Badge variant="outline" className={`text-[9px] uppercase tracking-wider font-bold border-none px-2 rounded-sm ${getStatusBadge(project.status)}`}>
-                                        {formatStatus(project.status)}
-                                    </Badge>
-                                </div>
-                                
-                                <div className="mb-5">
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Project Cost</p>
-                                    <p className="text-xl font-black text-slate-800 tracking-tight">{fmtCurrencyShort(project.total_cost)}</p>
-                                </div>
-                                
-                                <div className="mb-5 flex-1">
-                                    <div className="flex justify-between text-[10px] font-bold text-slate-500 mb-1.5">
-                                        <span>Salary vs Resources</span>
-                                        <span>{project.salary_percent}% / {project.resource_percent}%</span>
+                        <Card key={project.project_id} className="bg-white border-slate-100 shadow-2xs hover:shadow-xs rounded-md overflow-hidden flex flex-col hover:border-blue-100 transition-all p-0 py-0 gap-0">
+                            <CardContent className="p-3.5 sm:p-4 flex flex-col justify-between flex-1">
+                                <div>
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h3 className="text-sm font-bold text-slate-900 truncate pr-2">{project.project_name}</h3>
+                                        <Badge variant="outline" className={`text-[9px] uppercase tracking-wider font-bold border-none px-2 py-0.5 rounded-sm shrink-0 ${getStatusBadge(project.status)}`}>
+                                            {formatStatus(project.status)}
+                                        </Badge>
                                     </div>
-                                    <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
-                                        <div className="h-full bg-[#0f45a6]" style={{ width: `${project.salary_percent}%` }}></div>
-                                        <div className="h-full bg-amber-700" style={{ width: `${project.resource_percent}%` }}></div>
+                                    
+                                    <div className="mb-2.5">
+                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Total Project Cost</p>
+                                        <p className="text-lg sm:text-xl font-black text-slate-800 tracking-tight">{fmtCurrencyShort(project.total_cost)}</p>
+                                    </div>
+                                    
+                                    <div className="mb-3">
+                                        <div className="flex justify-between text-[10px] font-semibold text-slate-500 mb-1">
+                                            <span>Salary vs Resources</span>
+                                            <span>{project.salary_percent}% / {project.resource_percent}%</span>
+                                        </div>
+                                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                                            <div className="h-full bg-[#0f45a6]" style={{ width: `${project.salary_percent}%` }}></div>
+                                            <div className="h-full bg-amber-700" style={{ width: `${project.resource_percent}%` }}></div>
+                                        </div>
                                     </div>
                                 </div>
                                 
                                 <Button 
                                     variant="outline" 
-                                    className="w-full text-[#4B7BEC] font-bold text-xs hover:bg-blue-50 border-slate-200 h-9"
+                                    className="w-full text-[#4B7BEC] font-bold text-xs hover:bg-blue-50/70 border-slate-200 h-8 rounded-md mt-auto"
                                     onClick={() => setSelectedProject(project)}
                                 >
                                     View Details <ArrowRight className="ml-1.5 h-3 w-3" />

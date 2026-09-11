@@ -69,9 +69,9 @@ export function DashboardCardSkeleton({
 
 export function ProjectCardsSkeleton({ count = 6 }: { count?: number }) {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4 pb-6">
             {Array.from({ length: count }).map((_, i) => (
-                <div key={i} className="bg-white border border-slate-100 rounded-xl p-5 shadow-xs space-y-4">
+                <div key={i} className="bg-white border border-slate-100 rounded-md p-4 shadow-2xs space-y-3">
                     <div className="flex items-start justify-between">
                         <div className="space-y-1.5 flex-1">
                             <Skeleton className="h-4 w-36 bg-slate-200/70" />

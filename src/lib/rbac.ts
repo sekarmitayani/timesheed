@@ -113,7 +113,7 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
                 { label: "Profitability", href: "/management/profitability", icon: TrendingUp },
                 { label: "Cost Breakdown", href: "/management/cost-breakdown", icon: PieChart },
                 { label: "Liability Monitor", href: "/management/liability", icon: Scale },
-                { label: "Resources", href: "/management/resources", icon: Package },
+                { label: "Resource", href: "/management/resources", icon: Package },
             ]
         },
         {

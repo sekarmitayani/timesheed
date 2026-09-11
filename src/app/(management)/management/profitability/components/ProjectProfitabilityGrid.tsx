@@ -18,7 +18,7 @@ export function ProjectProfitabilityGrid({ projects }: ProjectProfitabilityGridP
 
     if (!projects || projects.length === 0) {
         return (
-            <div className="py-12 text-center text-sm text-slate-500 font-medium bg-white rounded-xl border border-slate-100 shadow-sm">
+            <div className="py-12 text-center text-sm text-slate-500 font-medium bg-white rounded-md border border-slate-100 shadow-xs">
                 No project data available.
             </div>
         );
@@ -59,15 +59,15 @@ export function ProjectProfitabilityGrid({ projects }: ProjectProfitabilityGridP
                     const formatStatus = (s: string) => s.replace(/[_-]/g, ' ');
 
                     return (
-                        <Card key={project.project_id} className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden">
-                            <CardContent className="p-5">
+                        <Card key={project.project_id} className="bg-white border-slate-100 shadow-2xs hover:shadow-xs rounded-md overflow-hidden transition-shadow p-0 py-0 gap-0">
+                            <CardContent className="p-3.5 sm:p-4">
                                 {/* Header */}
-                                <div className="flex items-start justify-between mb-3">
-                                    <div>
-                                        <h4 className="font-bold text-slate-800 text-sm tracking-tight line-clamp-1 pr-2">
+                                <div className="flex items-start justify-between mb-1.5">
+                                    <div className="min-w-0 flex-1 pr-2">
+                                        <h4 className="font-bold text-slate-800 text-sm tracking-tight truncate">
                                             {project.project_name}
                                         </h4>
-                                        <p className="text-[11px] font-medium text-slate-500 line-clamp-1 mt-0.5">
+                                        <p className="text-[11px] font-medium text-slate-500 truncate mt-0.5">
                                             {project.client_name || "Internal Project"}
                                         </p>
                                     </div>
@@ -77,45 +77,45 @@ export function ProjectProfitabilityGrid({ projects }: ProjectProfitabilityGridP
                                 </div>
 
                                 {/* PM */}
-                                <div className="flex items-center gap-1.5 mb-6 text-slate-500">
-                                    <User className="h-3.5 w-3.5" />
+                                <div className="flex items-center gap-1.5 mb-2.5 text-slate-500">
+                                    <User className="h-3.5 w-3.5 shrink-0" />
                                     <span className="text-xs font-medium truncate">
                                         {project.pm_name || "Unassigned"}
                                     </span>
                                 </div>
 
                                 {/* Contract & Expenses */}
-                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                <div className="grid grid-cols-2 gap-3 mb-2">
                                     <div>
-                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
                                             CONTRACT VAL
                                         </p>
-                                        <p className="text-xs font-bold text-slate-700">
+                                        <p className="text-xs sm:text-[13px] font-bold text-slate-700 truncate">
                                             {fmtCurrency(project.contract_value)}
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
                                             EXPENSES
                                         </p>
-                                        <p className="text-xs font-bold text-slate-700">
+                                        <p className="text-xs sm:text-[13px] font-bold text-slate-700 truncate">
                                             {fmtCurrency(project.total_expenses)}
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Net Margin Box */}
-                                <div className="bg-slate-50 rounded-lg p-3 flex items-end justify-between mb-4 border border-slate-100">
+                                <div className="bg-slate-50/80 rounded-md px-3 py-1.5 sm:py-2 flex items-end justify-between mb-2.5 border border-slate-100">
                                     <div>
-                                        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-0.5">
+                                        <p className="text-[9px] font-bold text-blue-600 uppercase tracking-widest mb-0.5">
                                             NET MARGIN
                                         </p>
-                                        <p className={`text-base font-black tracking-tight ${marginTextColor}`}>
+                                        <p className={`text-sm sm:text-base font-black tracking-tight ${marginTextColor}`}>
                                             {!isPositive && "- "}
                                             {fmtCurrency(Math.abs(project.net_margin))}
                                         </p>
                                     </div>
-                                    <div className="text-xl font-black text-slate-800 tracking-tight">
+                                    <div className="text-lg sm:text-xl font-black text-slate-800 tracking-tight">
                                         {!isPositive && "-"}
                                         {marginAbs.toFixed(0)}%
                                     </div>

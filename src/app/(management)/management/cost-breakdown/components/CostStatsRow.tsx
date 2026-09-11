@@ -57,7 +57,7 @@ function TrendBadge({ change, invertColor = false }: TrendProps) {
 }
 
 export function CostStatsRow({ data, isLoading }: CostStatsRowProps) {
-    const cardClass = "bg-white border border-slate-100 shadow-sm rounded-xl h-[78px] flex flex-col overflow-hidden hover:shadow-md transition-shadow p-0 py-0 gap-0";
+    const cardClass = "bg-white border border-slate-100 shadow-xs rounded-md h-[78px] flex flex-col overflow-hidden hover:shadow-sm transition-shadow p-0 py-0 gap-0";
 
     if (isLoading || !data) {
         return (
