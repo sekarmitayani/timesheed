@@ -46,12 +46,10 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             ]
         },
         {
-            title: "WORK SPACE",
+            title: "PROJECTS",
             items: [
                 { label: "Tasks", href: "/pm/tasks", icon: ListTodo },
                 { label: "Projects", href: "/pm/projects", icon: FolderKanban },
-                { label: "Timesheet", href: "/pm/timesheet", icon: ClipboardClock },
-                { label: "Earnings", href: "/pm/earnings", icon: Wallet },
             ]
         },
         {
@@ -59,6 +57,13 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             items: [
                 { label: "Resource Request", href: "/pm/resources", icon: Package },
                 { label: "Approvals", href: "/pm/approvals", icon: Inbox, badge: "AI" },
+            ]
+        },
+        {
+            title: "WORK SPACE",
+            items: [
+                { label: "Timesheet", href: "/pm/timesheet", icon: ClipboardClock },
+                { label: "Earnings", href: "/pm/earnings", icon: Wallet },
             ]
         }
     ],
@@ -103,13 +108,6 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             ]
         },
         {
-            title: "WORK SPACE",
-            items: [
-                { label: "Timesheet", href: "/management/timesheet", icon: ClipboardClock },
-                { label: "Earnings", href: "/management/earnings", icon: Wallet },
-            ]
-        },
-        {
             title: "OVERSIGHT",
             items: [
                 { label: "Profitability", href: "/management/profitability", icon: TrendingUp },
@@ -122,6 +120,13 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             title: "REPORTS",
             items: [
                 { label: "Reports & Export", href: "/management/reports", icon: FileSpreadsheet },
+            ]
+        },
+        {
+            title: "WORK SPACE",
+            items: [
+                { label: "Timesheet", href: "/management/timesheet", icon: ClipboardClock },
+                { label: "Earnings", href: "/management/earnings", icon: Wallet },
             ]
         }
     ],
@@ -133,13 +138,6 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             ]
         },
         {
-            title: "WORK SPACE",
-            items: [
-                { label: "Timesheet", href: "/management/timesheet", icon: ClipboardClock },
-                { label: "Earnings", href: "/management/earnings", icon: Wallet },
-            ]
-        },
-        {
             title: "OVERSIGHT",
             items: [
                 { label: "Profitability", href: "/management/profitability", icon: TrendingUp },
@@ -152,6 +150,13 @@ export const roleMenus: Record<Role, MenuCategory[]> = {
             title: "REPORTS",
             items: [
                 { label: "Reports & Export", href: "/management/reports", icon: FileSpreadsheet },
+            ]
+        },
+        {
+            title: "WORK SPACE",
+            items: [
+                { label: "Timesheet", href: "/management/timesheet", icon: ClipboardClock },
+                { label: "Earnings", href: "/management/earnings", icon: Wallet },
             ]
         }
     ],
