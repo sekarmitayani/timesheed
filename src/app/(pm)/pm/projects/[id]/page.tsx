@@ -65,7 +65,7 @@ export default function PMProjectDetailPage() {
             <div className={cn(
                 "flex-1 min-h-0 flex flex-col",
                 isFixedView 
-                    ? "flex flex-col lg:overflow-hidden" 
+                    ? "overflow-y-auto sm:overflow-visible lg:overflow-hidden custom-scrollbar pr-1 pb-3 sm:pb-0 flex flex-col" 
                     : "overflow-y-auto custom-scrollbar pr-1 pb-3 sm:pb-4 flex flex-col"
             )}>
                 <div className={cn("animate-in fade-in duration-300", isFixedView ? "flex-1 flex flex-col min-h-0" : "flex-1")}>

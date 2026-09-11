@@ -140,7 +140,7 @@ export function PMTaskViewsContainer({
     };
 
     return (
-        <div className="flex flex-col w-full h-full min-h-0">
+        <div className="flex flex-col w-full lg:h-full min-h-0">
             {/* Toolbar - Search/Filter/Add */}
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between shrink-0 mb-2.5 px-1">
                 <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto flex-1">
@@ -176,7 +176,7 @@ export function PMTaskViewsContainer({
             </div>
             
             {/* Views Content */}
-            <div className="flex-1 min-h-0 animate-in fade-in duration-300 overflow-hidden flex flex-col">
+            <div className="flex-1 min-h-0 animate-in fade-in duration-300 lg:overflow-hidden flex flex-col">
                 {activeTab === "Kanban" && (
                     <PMTaskKanbanView projectId={String(project.id)} tasks={tasks} members={members} onTaskClick={handleTaskClick} onEdit={onEdit} onDelete={onDelete} />
                 )}
