@@ -18,6 +18,7 @@ export function usePMProjectDetailData(projectId: string) {
     const [taskFilterAssignee, setTaskFilterAssignee] = useState("all");
     const [resSearch, setResSearch] = useState("");
     const [resFilterStatus, setResFilterStatus] = useState("all");
+    const [resFilterType, setResFilterType] = useState("all");
 
     // Modal States
     const [taskDialogOpen, setTaskDialogOpen] = useState(false);
@@ -130,11 +131,12 @@ export function usePMProjectDetailData(projectId: string) {
     const filteredResources = useMemo(() => {
         const q = resSearch.toLowerCase();
         return (resources as ResourceRequest[]).filter(r => {
-            const matchesSearch = r.details.toLowerCase().includes(q) || r.type.toLowerCase().includes(q);
-            const matchesStatus = resFilterStatus === "all" || r.status === resFilterStatus;
-            return matchesSearch && matchesStatus;
+            const matchesSearch = (r.details?.toLowerCase() || "").includes(q) || (r.type?.toLowerCase() || "").includes(q);
+            const matchesStatus = resFilterStatus === "all" || r.status?.toLowerCase() === resFilterStatus.toLowerCase();
+            const matchesType = resFilterType === "all" || r.type?.toLowerCase() === resFilterType.toLowerCase();
+            return matchesSearch && matchesStatus && matchesType;
         });
-    }, [resources, resSearch, resFilterStatus]);
+    }, [resources, resSearch, resFilterStatus, resFilterType]);
 
     const stats = {
         todo: (tasks as ApiTask[]).filter(t => t.status === "todo").length,
@@ -205,14 +207,14 @@ export function usePMProjectDetailData(projectId: string) {
     return {
         state: {
             project, members, tasks, resources, isLoading,
-            activeTab, taskSearch, taskFilterStatus, taskFilterAssignee, resSearch, resFilterStatus,
+            activeTab, taskSearch, taskFilterStatus, taskFilterAssignee, resSearch, resFilterStatus, resFilterType,
             taskDialogOpen, taskEditing, resDialogOpen, resEditing, resDetailOpen, selectedRes, deleteTarget,
             taskForm, resForm, filteredTasks, filteredResources, stats,
             isSaving: saveTaskMutation.isPending || saveResMutation.isPending,
             isDeleting: deleteTaskMutation.isPending || deleteResMutation.isPending
         },
         actions: {
-            setActiveTab, setTaskSearch, setTaskFilterStatus, setTaskFilterAssignee, setResSearch, setResFilterStatus,
+            setActiveTab, setTaskSearch, setTaskFilterStatus, setTaskFilterAssignee, setResSearch, setResFilterStatus, setResFilterType,
             setTaskDialogOpen, setResDialogOpen, setResDetailOpen, setSelectedRes, setDeleteTarget,
             setTaskForm, setResForm,
             openCreateTask, openEditTask, openCreateRes, openEditRes,

@@ -111,6 +111,8 @@ export default function PMProjectDetailPage() {
                             setSearch={actions.setResSearch}
                             filterStatus={state.resFilterStatus}
                             setFilterStatus={actions.setResFilterStatus}
+                            filterType={state.resFilterType}
+                            setFilterType={actions.setResFilterType}
                             onCreate={actions.openCreateRes}
                             onViewDetail={(r) => {
                                 actions.setSelectedRes(r);

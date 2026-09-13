@@ -65,28 +65,28 @@ export function PMTeamsTab({
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
                 {members.map((member) => (
                     <Card
                         key={member.id}
-                        className="border-[#E2E8F0] shadow-sm rounded-xl hover:border-[#4B7BEC]/30 hover:shadow-md transition-all group cursor-pointer"
+                        className="border-[#E2E8F0] bg-white shadow-2xs rounded-md hover:border-[#4B7BEC]/40 hover:shadow-xs transition-all group cursor-pointer p-0 py-0 gap-0 overflow-hidden"
                         onClick={() => handleCardClick(member)}
                     >
-                        <CardContent className="p-5 flex items-center gap-4">
-                            <Avatar className="h-11 w-11 border border-slate-100 shadow-sm">
+                        <CardContent className="p-3.5 sm:p-4 flex items-center gap-3.5">
+                            <Avatar className="h-10 w-10 sm:h-11 sm:w-11 border border-slate-100 shadow-2xs shrink-0">
                                 <AvatarFallback className="text-xs font-bold bg-gradient-to-br from-[#2568C1] to-[#1a4f99] text-white">
                                     {getInitials(member.user?.full_name || "")}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-sm font-bold text-slate-800 truncate">{member.user?.full_name || `User #${member.user_id}`}</span>
+                                    <span className="text-sm font-bold text-slate-800 truncate leading-snug">{member.user?.full_name || `User #${member.user_id}`}</span>
                                 </div>
-                                <span className="text-[11px] font-bold text-[#4B7BEC] uppercase tracking-wider block mt-0.5">
+                                <span className="text-[10px] sm:text-[11px] font-bold text-[#4B7BEC] uppercase tracking-wider block leading-tight mt-0.5 truncate">
                                     {member.role_in_project}
                                 </span>
                                 {member.user?.email && (
-                                    <span className="text-[11px] font-medium text-slate-400 truncate block mt-0.5">{member.user.email}</span>
+                                    <span className="text-[11px] font-medium text-slate-400 truncate block leading-tight mt-0.5">{member.user.email}</span>
                                 )}
                             </div>
                         </CardContent>
@@ -94,7 +94,7 @@ export function PMTeamsTab({
                 ))}
 
                 {members.length === 0 && (
-                    <div className="col-span-full py-12 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50/50">
+                    <div className="col-span-full py-12 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-slate-100 rounded-md bg-slate-50/50">
                         <Users className="h-10 w-10 text-slate-200" />
                         <p className="text-sm font-medium text-slate-400">No members match your criteria.</p>
                     </div>

@@ -16,6 +16,8 @@ interface PMResourcesTabProps {
     setSearch: (v: string) => void;
     filterStatus: string;
     setFilterStatus: (v: string) => void;
+    filterType: string;
+    setFilterType: (v: string) => void;
     onCreate: () => void;
     onViewDetail: (r: ResourceRequest) => void;
 }
@@ -27,7 +29,7 @@ const resStatusColors: Record<string, string> = {
 };
 
 export function PMResourcesTab({
-    resources, search, setSearch, filterStatus, setFilterStatus, onCreate, onViewDetail
+    resources, search, setSearch, filterStatus, setFilterStatus, filterType, setFilterType, onCreate, onViewDetail
 }: PMResourcesTabProps) {
     return (
         <div className="space-y-6">
@@ -36,8 +38,8 @@ export function PMResourcesTab({
                     <h2 className="text-[15px] font-bold text-slate-800">Project Resources</h2>
                     <p className="text-xs text-slate-500">Track and manage resource requests for this project.</p>
                 </div>
-                <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-                    <div className="relative w-full sm:w-[250px] shrink-0 p-0.5">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
+                    <div className="relative w-full sm:w-[220px] md:w-[250px] shrink-0 p-0.5">
                         <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground pointer-events-none" />
                         <Input
                             placeholder="Search requests..."
@@ -47,7 +49,7 @@ export function PMResourcesTab({
                         />
                     </div>
                     <Select value={filterStatus} onValueChange={setFilterStatus}>
-                        <SelectTrigger className="w-[180px] h-10 bg-white border-slate-200">
+                        <SelectTrigger className="w-[130px] sm:w-[140px] h-10 bg-white border-slate-200">
                             <SelectValue placeholder="All Status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -55,6 +57,18 @@ export function PMResourcesTab({
                             <SelectItem value="pending">Pending</SelectItem>
                             <SelectItem value="approved">Approved</SelectItem>
                             <SelectItem value="rejected">Rejected</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Select value={filterType} onValueChange={setFilterType}>
+                        <SelectTrigger className="w-[140px] sm:w-[150px] h-10 bg-white border-slate-200">
+                            <SelectValue placeholder="All Types" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Types</SelectItem>
+                            <SelectItem value="manpower">Manpower</SelectItem>
+                            <SelectItem value="tools">Tools</SelectItem>
+                            <SelectItem value="infrastructure">Infrastructure</SelectItem>
+                            <SelectItem value="accommodation">Accommodation</SelectItem>
                         </SelectContent>
                     </Select>
                     <Button size="sm" className="h-10 gap-2 bg-[#2568C1] hover:bg-[#1a4f99] font-bold px-4 shrink-0 w-full sm:w-auto" onClick={onCreate}>
