@@ -16,6 +16,7 @@ import {
     ChevronDown, ChevronUp
 } from "lucide-react";
 import { format } from "date-fns";
+import DOMPurify from "dompurify";
 import { ApiTask, TaskComment, TaskAuditLog } from "@/lib/services/task-service";
 import { TimesheetLog } from "@/lib/services/timesheet-service";
 import { User } from "@/lib/types";
@@ -99,7 +100,7 @@ export function TaskDetailDialog({
             html = html.replace(/(<li>.*?<\/li>)+/g, "<ol class='list-decimal pl-5 my-1'>$&</ol>");
         }
 
-        return html;
+        return DOMPurify.sanitize(html);
     };
 
     return (

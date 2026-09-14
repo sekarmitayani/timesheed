@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
 import { MessageCircle, X, Send, Bot, Loader2 } from "lucide-react";
+import DOMPurify from "dompurify";
 import { fetchApi } from "@/lib/api";
 
 type Message = {
@@ -82,7 +83,7 @@ export function ChatbotWidget() {
         let formatted = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
         formatted = formatted.replace(/\*(.*?)\*/g, "<em>$1</em>");
         formatted = formatted.replace(/__(.*?)__/g, "<u>$1</u>");
-        return formatted;
+        return DOMPurify.sanitize(formatted);
     };
 
     const scrollToBottom = () => {
@@ -205,7 +206,7 @@ export function ChatbotWidget() {
                                     )}
                                     <div 
                                         className={`px-4 py-2.5 rounded-2xl max-w-[80%] text-sm whitespace-pre-wrap shadow-sm ${msg.role === "user" ? "bg-[#2568C1] text-white rounded-br-sm" : "bg-white border border-slate-100 text-slate-700 rounded-bl-sm"}`}
-                                        dangerouslySetInnerHTML={{ __html: msg.role === "bot" ? formatMessage(msg.content) : msg.content }}
+                                        dangerouslySetInnerHTML={{ __html: msg.role === "bot" ? formatMessage(msg.content) : DOMPurify.sanitize(msg.content) }}
                                     />
                                 </div>
                             ))}
