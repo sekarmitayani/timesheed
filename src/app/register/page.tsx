@@ -92,7 +92,7 @@ export default function RegisterPage() {
                         transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
                         className="inline-flex h-16 w-16 items-center justify-center rounded-2xl shadow-2xl shadow-[#2568C1]/25 mb-4"
                     >
-                        <img src="/logo.png" alt="Haerarchy Logo" className="h-full w-full object-contain rounded-2xl" />
+                        <img src="/logo.png" alt="Haerarchy Logo" className="h-full w-full object-contain " />
                     </motion.div>
                     <h1 className="text-3xl font-bold tracking-tight text-[#0f172a]">Setup Admin</h1>
                     <p className="text-sm text-[#64748b] mt-2">

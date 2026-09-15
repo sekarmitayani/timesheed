@@ -47,9 +47,9 @@ export function Sidebar() {
                             >
                                 <div className="flex items-center gap-2">
                                     <div className="flex items-center justify-center">
-                                        <img src="/logo.png" alt="Haerarchy Logo" className="h-8 w-auto object-contain rounded-md" />
+                                        <img src="/logo.png" alt="Haerarchy Logo" className="h-8 w-auto object-contain" />
                                     </div>
-                                    <span className="font-bold text-sm tracking-tight text-[#0f172a]">Haerarchy</span>
+
                                 </div>
                                 <TooltipProvider delayDuration={100}>
                                     <Tooltip>
@@ -83,10 +83,10 @@ export function Sidebar() {
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <div className="relative flex items-center justify-center h-8 w-8">
-                                                <img 
-                                                    src="/logo.png" 
-                                                    alt="Logo" 
-                                                    className="h-8 w-8 object-contain rounded-md transition-opacity duration-200 group-hover:opacity-0 absolute" 
+                                                <img
+                                                    src="/ae.png"
+                                                    alt="Logo"
+                                                    className="h-8 w-8 object-contain rounded-md transition-opacity duration-200 group-hover:opacity-0 absolute"
                                                 />
                                                 <PanelLeftOpen className="h-5 w-5 text-muted-foreground transition-opacity duration-200 opacity-0 group-hover:opacity-100 group-hover:text-foreground absolute" />
                                             </div>
@@ -107,7 +107,7 @@ export function Sidebar() {
                         {allItems.map((item) => {
                             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
                             const Icon = item.icon;
-                            
+
                             const innerContent = (
                                 <div
                                     className={cn(
@@ -189,9 +189,9 @@ export function Sidebar() {
                         <div className="flex h-16 items-center justify-between px-4 border-b border-border">
                             <div className="flex items-center gap-2">
                                 <div className="flex items-center justify-center">
-                                    <img src="/logo.png" alt="Haerarchy Logo" className="h-8 w-auto object-contain rounded-md" />
+                                    <img src="/logo.png" alt="Haerarchy Logo" className="h-8 w-auto object-contain" />
                                 </div>
-                                <span className="font-bold text-sm tracking-tight text-[#0f172a]">Haerarchy</span>
+
                             </div>
                             <Button
                                 variant="ghost"
