@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { UserPlus, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -70,9 +71,9 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#f0f4fa] flex items-center justify-center p-6 relative overflow-hidden">
+        <div className="min-h-screen w-full bg-[#f0f4fa] flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-x-hidden overflow-y-auto">
             {/* Background effects */}
-            <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-[#2568C1]/8 blur-3xl" />
                 <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-[#FFBE18]/10 blur-3xl" />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-[#2568C1]/4 blur-3xl" />
@@ -81,33 +82,44 @@ export default function RegisterPage() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="relative w-full max-w-md"
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="relative w-full max-w-sm sm:max-w-md my-auto py-6 sm:py-8 flex flex-col items-center"
             >
-                {/* Logo */}
-                <div className="text-center mb-8">
+                {/* Branding & Logo */}
+                <div className="text-center mb-5 sm:mb-6 w-full flex flex-col items-center">
                     <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
-                        className="inline-flex h-16 w-16 items-center justify-center rounded-2xl shadow-2xl shadow-[#2568C1]/25 mb-4"
+                        initial={{ opacity: 0, y: -24, scale: 0.88, filter: "blur(4px)" }}
+                        animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                        transition={{ 
+                            duration: 0.8, 
+                            ease: [0.16, 1, 0.3, 1] 
+                        }}
+                        className="flex items-center justify-center mb-3"
                     >
-                        <img src="/logo.png" alt="Haerarchy Logo" className="h-full w-full object-contain " />
+                        <img 
+                            src="/logo.png" 
+                            alt="Haerarchy Logo" 
+                            className="h-10 sm:h-12 md:h-14 w-auto object-contain select-none" 
+                        />
                     </motion.div>
-                    <h1 className="text-3xl font-bold tracking-tight text-[#0f172a]">Setup Admin</h1>
-                    <p className="text-sm text-[#64748b] mt-2">
-                        Initialize the master admin account for Haerarchy
-                    </p>
+                    <motion.p 
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+                        className="text-xs sm:text-sm text-[#64748b] font-medium tracking-tight text-center"
+                    >
+                        Enterprise Project & Workforce Management
+                    </motion.p>
                 </div>
 
                 {/* Register Form */}
-                <Card className="border-[#e2e8f0] bg-white/90 backdrop-blur-xl shadow-2xl shadow-[#2568C1]/5">
-                    <CardHeader className="text-center pb-2">
-                        <CardTitle className="text-lg text-[#0f172a]">Admin Registration</CardTitle>
-                        <CardDescription>Create the first admin user</CardDescription>
+                <Card className="w-full border-[#e2e8f0] bg-white/95 backdrop-blur-xl shadow-xl sm:shadow-2xl shadow-[#2568C1]/5 rounded-2xl overflow-hidden p-0 py-0 gap-0">
+                    <CardHeader className="text-center px-6 pt-5 pb-2 gap-1 flex flex-col items-center">
+                        <CardTitle className="text-lg sm:text-xl font-bold text-[#0f172a] tracking-tight">Admin Registration</CardTitle>
+                        <CardDescription className="text-xs sm:text-sm text-[#64748b]">Initialize master administrator account</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-2">
-                        <form onSubmit={handleRegister} className="space-y-4">
+                    <CardContent className="px-6 pb-6 pt-2">
+                        <form onSubmit={handleRegister} className="space-y-3.5">
                             {/* Error / Success Messages */}
                             {error && (
                                 <motion.div
@@ -229,7 +241,17 @@ export default function RegisterPage() {
                     </CardContent>
                 </Card>
 
-                <p className="text-center text-[11px] text-[#94a3b8] mt-6">
+                {/* Back to Login Link */}
+                <div className="mt-4 text-center">
+                    <p className="text-xs sm:text-sm text-[#64748b]">
+                        Already have an account?{" "}
+                        <Link href="/login" className="font-semibold text-[#2568C1] hover:underline">
+                            Sign In
+                        </Link>
+                    </p>
+                </div>
+
+                <p className="text-center text-[11px] text-[#94a3b8] mt-4">
                     © 2026 Haerarchy. All rights reserved.
                 </p>
             </motion.div>
