@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { AuditLog } from "@/lib/services/audit-service";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import DOMPurify from "dompurify";
 
 interface AuditDetailDialogProps {
     open: boolean;
@@ -33,7 +34,7 @@ const DataViewer = ({ data, emptyMessage, level = 0 }: { data: any, emptyMessage
                             ) : typeof value === 'string' && /<\/?[a-z][\s\S]*>/i.test(value) ? (
                                 <div 
                                     className="font-medium bg-transparent p-0 min-h-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:my-1 [&_ol]:my-1" 
-                                    dangerouslySetInnerHTML={{ __html: value }} 
+                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value) }} 
                                 />
                             ) : (
                                 String(value)
