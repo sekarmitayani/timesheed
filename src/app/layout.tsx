@@ -19,6 +19,22 @@ export const metadata: Metadata = {
     ],
   },
   manifest: '/favicon/site.webmanifest',
+  openGraph: {
+    title: "Haerarchy",
+    description: "AI-Powered Project & Workforce Management System",
+    url: "https://haerarchy.com",
+    siteName: "Haerarchy",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Haerarchy Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
